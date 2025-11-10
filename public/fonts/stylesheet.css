@@ -1,0 +1,9 @@
+@font-face {
+    font-family: 'Logga';
+    src: url('LoggaRegular.woff2') format('woff2'),
+        url('LoggaRegular.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+

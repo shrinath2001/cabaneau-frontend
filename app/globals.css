@@ -1,4 +1,48 @@
+@import url('https://fonts.googleapis.com/css2?family=Jost:ital,wght@0,100..900;1,100..900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Raleway:ital,wght@0,100..900;1,100..900&display=swap');
 @import "tailwindcss";
+@font-face {
+    font-family: 'Logga';
+    src: url('../public/fonts/LoggaRegular.woff2') format('woff2'),
+        url('../public/fonts/LoggaRegular.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+
+
+
+@layer base {
+  :root {
+    --font-heading: 'Jost', sans-serif;
+    --font-body: 'Raleway', sans-serif;
+    --font-custom: 'Logga', sans-serif;
+
+    --brand: #FF5733;
+    --brand-dark: #C13A18;
+    --bg-tint: #F0E8C64D;
+    --bg-button1: #939D92;
+    --bg-customgreen: #495D4D;
+    --bg-hoverorange: #F49A4A; 
+    --text-customyellow: #F0E8C6;
+  }
+
+  html {
+    font-family: var(--font-body);
+  }
+}
+
+@layer utilities {
+  .font-heading { font-family: var(--font-heading); }
+  .font-body { font-family: var(--font-body); }
+  .font-custom { font-family: var(--font-custom); }
+  .bg-tint { background-color: var(--bg-tint); }
+  .bg-button1 { background-color: var(--bg-button1); }
+  .bg-customgreen{ background-color: var(--bg-customgreen); }
+  .bg-hoverorange{ background-color: var(--bg-hoverorange); }
+  .text-customyellow { color: var(--text-customyellow); }
+}
+
 
 :root {
   --background: #ffffff;
