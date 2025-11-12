@@ -1,54 +1,7 @@
 'use client';
 import React, { useRef } from 'react';
 import CabinCard from './CabinCard';
-
-const cabins = [
-  {
-    imageSrc: '/assets/d206536ef067f64b29cad184324fe360bb763e30.jpg',
-    title: 'TUBE',
-    rating: 5,
-    area: '35m2',
-    capacity: '2-4 Persons',
-    availability: '30/12',
-    price: '$300.00',
-  },
-  {
-    imageSrc: '/assets/d206536ef067f64b29cad184324fe360bb763e30.jpg',
-    title: 'WIWAXY',
-    rating: 4,
-    area: '40m2',
-    capacity: '2-6 Persons',
-    availability: '28/12',
-    price: '$350.00',
-  },
-  {
-    imageSrc: '/assets/d206536ef067f64b29cad184324fe360bb763e30.jpg',
-    title: 'GARDNER',
-    rating: 5,
-    area: '30m2',
-    capacity: '2-3 Persons',
-    availability: '25/12',
-    price: '$280.00',
-  },
-  {
-    imageSrc: '/assets/d206536ef067f64b29cad184324fe360bb763e30.jpg',
-    title: 'TUBE',
-    rating: 5,
-    area: '35m2',
-    capacity: '2-4 Persons',
-    availability: '30/12',
-    price: '$300.00',
-  },
-  {
-    imageSrc: '/assets/d206536ef067f64b29cad184324fe360bb763e30.jpg',
-    title: 'TUBE',
-    rating: 5,
-    area: '35m2',
-    capacity: '2-4 Persons',
-    availability: '30/12',
-    price: '$300.00',
-  },
-];
+import { cabins } from '@/app/data/cabins';
 
 const CabinsSection = () => {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
@@ -103,7 +56,7 @@ const CabinsSection = () => {
               </button>
             </div>
           </div>
-          <div className="w-full max-w-[1192px] mx-auto">
+          <div className="w-full max-w-[1278px] mx-auto">
             <div
               ref={scrollContainerRef}
               className="flex overflow-x-auto space-x-6 pb-8 no-scrollbar"
