@@ -1,31 +1,37 @@
 import Image from 'next/image';
-import React from 'react';
 
 const HostsSection = () => {
   return (
-    <section className="py-5 px-20 bg-tint ">
-      <div className="container mx-auto ">
-        <div className="max-w-[1278px] mx-auto">
-          <h2 className="text-4xl font-normal font-custom text-left mb-8">THE HOSTS</h2>
-          <div className="flex flex-col md:flex-row md:space-x-8">
-            <div>
-              <div className="relative w-full h-64 md:h-96 md:w-96">
+    <section className="py-5 px-20 bg-white">
+      <div className="container mx-auto">
+        <div className="max-w-[1390px] mx-auto">
+          <h2 className="font-logga text-[40px] font-semibold text-left mb-12">THE HOSTS</h2>
+
+          <div className="flex flex-col md:flex-row gap-8 md:gap-12">
+            {/* Image Section */}
+            <div className="flex-shrink-0">
+              <div className="relative w-full md:w-[501px] h-[400px] md:h-[569px]">
                 <Image
                   src="/assets/d206536ef067f64b29cad184324fe360bb763e30.jpg"
-                  alt="Host"
-                  layout="fill"
-                  objectFit="cover"
+                  alt="Daniel & Yannick - Hosts"
+                  fill
+                  style={{ objectFit: 'cover' }}
+                  className="object-top"
                 />
               </div>
             </div>
-            <div className="flex-1 flex flex-col justify-center">
-              <h3 className="text-4xl font-heading font-medium mb-4">DANIEL & YANNICK</h3>
-              <p className="text-lg font-body text-gray-400">
+
+            {/* Text Section */}
+            <div className="flex-1 flex flex-col justify-start">
+              <h3 className="font-jost text-[40px] font-medium mb-6 tracking-wide">
+                DANIEL & YANNICK
+              </h3>
+              <p className="font-raleway text-[17px] font-medium leading-[32px] text-gray-600">
                 Loremp ipsum asdas as sds sds sdasjdasd. asdasdaasd d nasdjasd jasdd asdasda
                 asdnja sd ka sdk asd mk asdAssdasdasdasd sd sd bf skdaskndakmnsdakmsd d da sdo
                 kasd as doasdnoa da osdnas dtiqeote fvoqe f Loremp ipsum asdas as sds sds sdasjdasd.
                 asdasdaasd d nasdjasd jasdd asdasda asdnja sd ka sdk asd mk asdAssdasdasdasd sd sd
-                bf skdaskndakmnsdakmsd d da sdo kasd as doasdnoa da osdnas dtiqeote fvoqe fLoremp
+                bf skdaskndakmnsdakmsd d da sdo kasd as doasdnoa da osdnas dtiqeote fvoqe f Loremp
                 ipsum asdas as sds sds sdasjdasd. asdasdaasd d nasdjasd jasdd asdasda
                 asdnja sd ka sdk asd mk asdAssdasdasdasd sd sd bf skdaskndakmnsdakmsd d da sdo
                 kasd as doasdnoa da osdnas dtiqeote fvoqe f

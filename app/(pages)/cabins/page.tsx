@@ -1,5 +1,11 @@
+import type { Metadata } from 'next';
 import CabinCard from "@/app/components/CabinCard";
 import { cabins } from "@/app/data/cabins";
+
+export const metadata: Metadata = {
+  title: 'Our Cabins - Cabaneau',
+  description: 'Browse our collection of luxury cabins with private wellness facilities. Find your perfect retreat.',
+};
 
 export default function CabinsPage() {
   return (

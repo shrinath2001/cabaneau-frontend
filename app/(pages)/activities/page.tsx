@@ -1,3 +1,10 @@
+import type { Metadata } from 'next';
+
+export const metadata: Metadata = {
+  title: 'Activities - Cabaneau',
+  description: 'Explore exciting activities and experiences available at Cabaneau.',
+};
+
 export default function ActivitiesPage() {
   return (
     <main>

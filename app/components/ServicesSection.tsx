@@ -1,4 +1,3 @@
-import React from 'react';
 import ServiceCard from './ServiceCard';
 
 const services = [
@@ -19,9 +18,10 @@ const services = [
 const ServicesSection = () => {
   return (
     <section className="py-5 px-20 bg-tint">
-      <div className="container mx-auto ">
-        <h2 className="text-4xl font-normal font-custom text-center mb-8">OUR SERVICES</h2>
-        <div className="flex flex-col sm:flex-row sm:space-x-6 space-y-6 sm:space-y-0 sm:justify-center">
+      <div className="container mx-auto">
+        <div className="max-w-[1390px] mx-auto">
+          <h2 className="font-logga text-[40px] font-semibold text-center mb-8">OUR SERVICES</h2>
+        <div className="flex flex-col sm:flex-row gap-3 justify-between">
           {services.map((service, index) => (
             <ServiceCard key={index} {...service} />
           ))}
@@ -30,6 +30,7 @@ const ServicesSection = () => {
           <button className="py-3 px-6 bg-green-800 text-white  hover:bg-green-700 transition-colors">
             DISCOVER ALL SERVICES
           </button>
+        </div>
         </div>
       </div>
     </section>

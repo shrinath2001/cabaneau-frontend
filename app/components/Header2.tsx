@@ -49,6 +49,7 @@ const Header2 = () => {
             <button
               className="text-black"
               onClick={() => setIsMenuOpen(!isMenuOpen)}
+              aria-label="Toggle mobile menu"
             >
               <svg
                 className="w-6 h-6"

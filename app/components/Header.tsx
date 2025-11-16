@@ -8,7 +8,7 @@ const Header = () => {
 
   return (
     <div
-      className="relative bg-cover bg-center min-h-screen"
+      className="relative bg-cover bg-center h-[859px]"
       style={{
         backgroundImage:
           "url(/assets/d206536ef067f64b29cad184324fe360bb763e30.jpg)",
@@ -29,26 +29,26 @@ const Header = () => {
               </Link>
             </div>
             <nav className="hidden md:flex items-center space-x-8">
-              <Link href="/cabins" className="text-white font-heading text-lg ">
+              <Link href="/cabins" className="font-jost font-semibold text-[18px]" style={{ color: '#FFFFFF9C' }}>
                 OUR CABINS
               </Link>
-              <Link href="/activities" className="text-white font-heading text-lg">
+              <Link href="/activities" className="font-jost font-semibold text-[18px]" style={{ color: '#FFFFFF9C' }}>
                 ACTIVITIES
               </Link>
-              <Link href="/eat-drink" className="text-white font-heading text-lg">
+              <Link href="/eat-drink" className="font-jost font-semibold text-[18px]" style={{ color: '#FFFFFF9C' }}>
                 EAT & DRINK
               </Link>
             </nav>
             <div className="hidden md:flex items-center space-x-4">
               <Link
                 href="/gift-voucher"
-                className="text-white px-5 py-3.5 font-heading text-md bg-button1"
+                className="text-white w-[134px] h-[50px] flex items-center justify-center font-medium text-sm bg-[#939D92] hover:bg-[#7d8d7d] transition"
               >
                 GIFT VOUCHER
               </Link>
               <Link
                 href="/book-now"
-                className="bg-customgreen text-white px-5 py-3.5"
+                className="bg-[#495D4D] text-white w-[134px] h-[50px] flex items-center justify-center font-medium text-sm hover:bg-[#3d5a3d] transition"
               >
                 BOOK NOW
               </Link>
@@ -57,6 +57,7 @@ const Header = () => {
               <button
                 className="text-white"
                 onClick={() => setIsMenuOpen(!isMenuOpen)}
+                aria-label="Toggle mobile menu"
               >
                 <svg
                   className="w-6 h-6"
@@ -87,7 +88,7 @@ const Header = () => {
             className={`md:hidden mt-4 ${isMenuOpen ? 'block' : 'hidden'}`}
           >
             <nav className="flex flex-col space-y-4">
-              <Link href="/cabins" className="text-.white">
+              <Link href="/cabins" className="text-white">
                 OUR CABINS
               </Link>
               <Link href="/activities" className="text-white">
@@ -113,9 +114,9 @@ const Header = () => {
         </div>
       </header>
       <div className="absolute inset-0 flex flex-col items-center justify-center text-white text-center">
-        <p className="text-lg font-heading uppercase">Luxury Cabines with Private Wellness</p>
-        <h1 className="text-7xl font-custom uppercase">Sleep, <span className="text-customyellow">Eat & Relax</span></h1>
-        <h2 className="text-7xl font-custom uppercase">Above Trees</h2>
+        <p className="font-jost font-normal text-[18px] uppercase" style={{ letterSpacing: '0.15px' }}>Luxury Cabines with Private Wellness</p>
+        <h1 className="font-logga font-normal text-[68px] uppercase">Sleep, <span className="text-customyellow">Eat & Relax</span></h1>
+        <h2 className="font-logga font-normal text-[68px] uppercase">Above Trees</h2>
       </div>
     </div>
   );

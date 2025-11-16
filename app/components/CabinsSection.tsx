@@ -1,5 +1,5 @@
 'use client';
-import React, { useRef } from 'react';
+import { useRef } from 'react';
 import CabinCard from './CabinCard';
 import { cabins } from '@/app/data/cabins';
 
@@ -8,7 +8,7 @@ const CabinsSection = () => {
 
   const scrollLeft = () => {
     if (scrollContainerRef.current) {
-      const scrollAmount = window.innerWidth < 640 ? scrollContainerRef.current.clientWidth : 344;
+      const scrollAmount = 400; // Card width (380px) + gap (20px)
       scrollContainerRef.current.scrollBy({
         left: -scrollAmount,
         behavior: 'smooth',
@@ -18,7 +18,7 @@ const CabinsSection = () => {
 
   const scrollRight = () => {
     if (scrollContainerRef.current) {
-      const scrollAmount = window.innerWidth < 640 ? scrollContainerRef.current.clientWidth : 344;
+      const scrollAmount = 400; // Card width (380px) + gap (20px)
       scrollContainerRef.current.scrollBy({
         left: scrollAmount,
         behavior: 'smooth',
@@ -38,38 +38,58 @@ const CabinsSection = () => {
         }
       `}</style>
       <section className="bg-white py-5 px-20">
-        <div className="container mx-auto ">
-          <div className="flex justify-between items-center mb-8">
-            <h2 className="text-4xl font-normal font-custom text-center grow">OUR CABINES</h2>
-            <div className="flex space-x-2">
-              <button
-                onClick={scrollLeft}
-                className="p-2 rounded-4xl text-yellow-200 border-2 border-yellow-200 hover:bg-gray-100"
+        <div className="container mx-auto">
+          <div className="max-w-[1390px] mx-auto">
+            {/* Header with Title and Navigation */}
+            <div className="flex justify-center items-center mb-10 relative">
+              <h2 className="font-logga text-[40px] font-semibold text-center">
+                OUR CABINES
+              </h2>
+
+              {/* Navigation Arrows */}
+              <div className="absolute right-0 flex gap-2">
+                <button
+                  onClick={scrollLeft}
+                  className="w-10 h-10 rounded-full border-2 border-gray-300 flex items-center justify-center hover:border-gray-400 hover:bg-gray-50 transition text-gray-600"
+                  aria-label="Scroll to previous cabin"
+                >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                  </svg>
+                </button>
+                <button
+                  onClick={scrollRight}
+                  className="w-10 h-10 rounded-full border-2 border-gray-800 flex items-center justify-center hover:bg-gray-800 hover:text-white transition text-gray-800"
+                  aria-label="Scroll to next cabin"
+                >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                  </svg>
+                </button>
+              </div>
+            </div>
+
+            {/* Cabins Carousel */}
+            <div className="w-full overflow-hidden">
+              <div
+                ref={scrollContainerRef}
+                className="flex gap-[19.42px] overflow-x-auto no-scrollbar pb-4"
+                style={{ scrollSnapType: 'x mandatory' }}
               >
-                {'<'}
-              </button>
-              <button
-                onClick={scrollRight}
-                className="p-2 rounded-4xl text-green-900 border-2 border-green-900 hover:bg-gray-100"
-              >
-                {'>'}
+                {cabins.map((cabin) => (
+                  <div key={cabin.id} style={{ scrollSnapAlign: 'start' }}>
+                    <CabinCard {...cabin} />
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Discover All Button */}
+            <div className="text-center mt-10">
+              <button className="px-8 py-3 bg-[#3d5a3d] text-white text-sm font-medium tracking-widest hover:bg-[#2d4a2d] transition-colors">
+                DISCOVER ALL CABINES
               </button>
             </div>
-          </div>
-          <div className="w-full max-w-[1278px] mx-auto">
-            <div
-              ref={scrollContainerRef}
-              className="flex overflow-x-auto space-x-6 pb-8 no-scrollbar"
-            >
-              {cabins.map((cabin, index) => (
-                <CabinCard key={index} {...cabin} />
-              ))}
-            </div>
-          </div>
-          <div className="text-center mt-8">
-            <button className="py-3 px-6 bg-green-800 text-white  hover:bg-green-700 transition-colors">
-              DISCOVER ALL CABINES
-            </button>
           </div>
         </div>
       </section>

@@ -1,4 +1,3 @@
-import React from 'react';
 import ActivityCard from './ActivityCard';
 
 const activities = [
@@ -19,9 +18,10 @@ const activities = [
 const ActivitiesSection = () => {
   return (
     <section className="py-5 px-20 bg-white">
-      <div className="container mx-auto ">
-        <h2 className="text-4xl font-normal font-custom text-center mb-8">ACTIVITIES IN THE REGION</h2>
-        <div className="flex flex-col sm:flex-row sm:space-x-6 space-y-6 sm:space-y-0 sm:justify-center">
+      <div className="container mx-auto">
+        <div className="max-w-[1390px] mx-auto">
+          <h2 className="font-logga text-[40px] font-semibold text-center mb-8">ACTIVITIES IN THE REGION</h2>
+        <div className="flex flex-col sm:flex-row gap-3 justify-between">
           {activities.map((activity, index) => (
             <ActivityCard key={index} {...activity} />
           ))}
@@ -30,6 +30,7 @@ const ActivitiesSection = () => {
           <button className="py-3 px-6 bg-green-800 text-white  hover:bg-green-700 transition-colors">
             DISCOVER ALL ACTIVITIES
           </button>
+        </div>
         </div>
       </div>
     </section>

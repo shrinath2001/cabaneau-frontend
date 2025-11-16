@@ -1,3 +1,10 @@
+import type { Metadata } from 'next';
+
+export const metadata: Metadata = {
+  title: 'Eat & Drink - Cabaneau',
+  description: 'Discover dining and beverage options at Cabaneau.',
+};
+
 export default function EatDrinkPage() {
   return (
     <main>
