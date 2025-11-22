@@ -2,9 +2,21 @@
 import { useRef, useState, useEffect } from 'react';
 import CabinCard from './CabinCard';
 
+interface CabinData {
+  id: number;
+  slug: string;
+  images: string[];
+  title: string;
+  rating: number;
+  area: string;
+  capacity: string;
+  availability: string;
+  price: string;
+}
+
 const CabinsSection = () => {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
-  const [cabins, setCabins] = useState<any[]>([]);
+  const [cabins, setCabins] = useState<CabinData[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -28,7 +40,16 @@ const CabinsSection = () => {
         console.log('API Data received:', data);
 
         // Transform API data to match CabinCard props
-        const transformedCabins = data.data.map((cabin: any) => ({
+        const transformedCabins: CabinData[] = data.data.map((cabin: {
+          lodgifyId: string;
+          slug: string;
+          images: string[];
+          featuredImage: string;
+          name: string;
+          squareMeters?: number;
+          capacity: number;
+          basePrice: number;
+        }) => ({
           id: parseInt(cabin.lodgifyId),
           slug: cabin.slug,
           images: cabin.images.length > 0 ? cabin.images : [cabin.featuredImage],
