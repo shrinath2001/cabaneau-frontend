@@ -34,13 +34,13 @@ const Header2 = () => {
           <div className="hidden md:flex items-center space-x-4">
             <Link
               href="/gift-voucher"
-              className="text-black border border-black px-4 py-2 rounded-md"
+              className="text-white w-[134px] h-[50px] flex items-center justify-center font-medium text-sm bg-[#939D92] hover:bg-[#7d8d7d] transition"
             >
               GIFT VOUCHER
             </Link>
             <Link
               href="/book-now"
-              className="bg-green-500 text-white px-4 py-2 rounded-md"
+              className="bg-[#495D4D] text-white w-[134px] h-[50px] flex items-center justify-center font-medium text-sm hover:bg-[#3d5a3d] transition"
             >
               BOOK NOW
             </Link>
@@ -83,13 +83,13 @@ const Header2 = () => {
             </Link>
             <Link
               href="/gift-voucher"
-              className="text-black border border-black px-4 py-2 rounded-md text-center"
+              className="text-white border border-white px-4 py-2 rounded-md text-center bg-[#939D92] hover:bg-[#7d8d7d] transition"
             >
               GIFT VOUCHER
             </Link>
             <Link
               href="/book-now"
-              className="bg-green-500 text-white px-4 py-2 rounded-md text-center"
+              className="bg-[#495D4D] text-white px-4 py-2 rounded-md text-center hover:bg-[#3d5a3d] transition"
             >
               BOOK NOW
             </Link>

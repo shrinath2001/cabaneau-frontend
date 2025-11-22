@@ -4,7 +4,8 @@ import Image from 'next/image';
 import Link from 'next/link';
 
 interface CabinCardProps {
-  id: number;
+  id?: number;
+  slug?: string;
   images: string[];
   title: string;
   rating: number;
@@ -16,6 +17,7 @@ interface CabinCardProps {
 
 const CabinCard: React.FC<CabinCardProps> = ({
   id,
+  slug,
   images,
   title,
   rating,
@@ -25,6 +27,9 @@ const CabinCard: React.FC<CabinCardProps> = ({
   price,
 }) => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+
+  // Debug: Log the slug being used
+  console.log('CabinCard:', { title, slug, id, linkTo: `/cabins/${slug || id}` });
 
   const nextImage = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -140,7 +145,7 @@ const CabinCard: React.FC<CabinCardProps> = ({
         </div>
 
         {/* Book Now Button */}
-        <Link href={`/cabins/${id}`} className="w-full">
+        <Link href={`/cabins/${slug || id}`} className="w-full">
           <button className="w-full py-2.5 px-4 border border-black text-black text-sm font-medium tracking-wider hover:bg-black hover:text-white transition-colors">
             BOOK NOW
           </button>

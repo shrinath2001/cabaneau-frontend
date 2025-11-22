@@ -30,6 +30,7 @@ const CabinsSection = () => {
         // Transform API data to match CabinCard props
         const transformedCabins = data.data.map((cabin: any) => ({
           id: parseInt(cabin.lodgifyId),
+          slug: cabin.slug,
           images: cabin.images.length > 0 ? cabin.images : [cabin.featuredImage],
           title: cabin.name || 'Luxury Cabin',
           rating: 5, // Default rating
@@ -91,36 +92,39 @@ const CabinsSection = () => {
                 OUR CABINES
               </h2>
 
-              {/* Navigation Arrows */}
-              <div className="absolute right-0 flex gap-2">
-                <button
-                  onClick={scrollLeft}
-                  className="w-10 h-10 rounded-full border-2 border-gray-300 flex items-center justify-center hover:border-gray-400 hover:bg-gray-50 transition text-gray-600"
-                  aria-label="Scroll to previous cabin"
-                >
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-                  </svg>
-                </button>
-                <button
-                  onClick={scrollRight}
-                  className="w-10 h-10 rounded-full border-2 border-gray-800 flex items-center justify-center hover:bg-gray-800 hover:text-white transition text-gray-800"
-                  aria-label="Scroll to next cabin"
-                >
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                  </svg>
-                </button>
-              </div>
+              {/* Navigation Arrows - Only show if more than 3 cabins */}
+              {cabins.length > 3 && (
+                <div className="absolute right-0 flex gap-2">
+                  <button
+                    onClick={scrollLeft}
+                    className="w-10 h-10 rounded-full border-2 border-gray-300 flex items-center justify-center hover:border-gray-400 hover:bg-gray-50 transition text-gray-600"
+                    aria-label="Scroll to previous cabin"
+                  >
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                    </svg>
+                  </button>
+                  <button
+                    onClick={scrollRight}
+                    className="w-10 h-10 rounded-full border-2 border-gray-800 flex items-center justify-center hover:bg-gray-800 hover:text-white transition text-gray-800"
+                    aria-label="Scroll to next cabin"
+                  >
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                    </svg>
+                  </button>
+                </div>
+              )}
             </div>
 
-            {/* Cabins Carousel */}
+            {/* Cabins Carousel or Centered Grid */}
             <div className="w-full overflow-hidden">
               {loading ? (
                 <div className="text-center py-12">
                   <p className="text-gray-600">Loading cabins...</p>
                 </div>
-              ) : (
+              ) : cabins.length > 3 ? (
+                // Carousel layout for more than 3 cabins (shows 3.5 cards)
                 <div
                   ref={scrollContainerRef}
                   className="flex gap-[19.42px] overflow-x-auto no-scrollbar pb-4"
@@ -128,6 +132,15 @@ const CabinsSection = () => {
                 >
                   {cabins.map((cabin) => (
                     <div key={cabin.id} style={{ scrollSnapAlign: 'start' }}>
+                      <CabinCard {...cabin} />
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                // Centered layout for 3 or fewer cabins
+                <div className="flex gap-[19.42px] justify-center pb-4">
+                  {cabins.map((cabin) => (
+                    <div key={cabin.id}>
                       <CabinCard {...cabin} />
                     </div>
                   ))}

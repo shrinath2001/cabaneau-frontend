@@ -124,7 +124,7 @@ export default function SearchPage() {
                   {cabins.map((cabin) => (
                     <CabinCard
                       key={cabin.id}
-                      id={parseInt(cabin.id.split('-')[0], 16) || 0} // Convert UUID to number for now
+                      slug={cabin.slug}
                       images={cabin.images.length > 0 ? cabin.images : [cabin.featuredImage]}
                       title={cabin.name}
                       rating={5} // Default rating since API doesn't provide it
