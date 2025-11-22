@@ -1,5 +1,5 @@
 'use client';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import CabinCard from '@/app/components/CabinCard';
 
@@ -23,7 +23,7 @@ interface SearchResponse {
   total: number;
 }
 
-export default function SearchPage() {
+function SearchResults() {
   const searchParams = useSearchParams();
   const [cabins, setCabins] = useState<SearchCabin[]>([]);
   const [loading, setLoading] = useState(true);
@@ -163,5 +163,19 @@ export default function SearchPage() {
         )}
       </div>
     </main>
+  );
+}
+
+export default function SearchPage() {
+  return (
+    <Suspense fallback={
+      <div className="container mx-auto px-4 py-16">
+        <div className="flex justify-center items-center py-16">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900"></div>
+        </div>
+      </div>
+    }>
+      <SearchResults />
+    </Suspense>
   );
 }
