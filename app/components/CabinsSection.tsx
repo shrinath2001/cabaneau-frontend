@@ -1,10 +1,55 @@
 'use client';
-import { useRef } from 'react';
+import { useRef, useState, useEffect } from 'react';
 import CabinCard from './CabinCard';
-import { cabins } from '@/app/data/cabins';
 
 const CabinsSection = () => {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const [cabins, setCabins] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchCabins = async () => {
+      try {
+        console.log('Fetching cabins from API...');
+        const response = await fetch('/api/cabins', {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        });
+
+        console.log('Response status:', response.status);
+
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const data = await response.json();
+        console.log('API Data received:', data);
+
+        // Transform API data to match CabinCard props
+        const transformedCabins = data.data.map((cabin: any) => ({
+          id: parseInt(cabin.lodgifyId),
+          images: cabin.images.length > 0 ? cabin.images : [cabin.featuredImage],
+          title: cabin.name || 'Luxury Cabin',
+          rating: 5, // Default rating
+          area: cabin.squareMeters ? `${cabin.squareMeters}m²` : 'TBA',
+          capacity: `${cabin.capacity || 2} Person${cabin.capacity > 1 ? 's' : ''}`,
+          availability: 'Available Now', // Default availability
+          price: cabin.basePrice ? `$${cabin.basePrice.toFixed(2)}` : 'Coming Soon'
+        }));
+
+        setCabins(transformedCabins);
+      } catch (error) {
+        console.error('❌ Error fetching cabins:', error);
+        console.error('Error details:', error instanceof Error ? error.message : 'Unknown error');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchCabins();
+  }, []);
 
   const scrollLeft = () => {
     if (scrollContainerRef.current) {
@@ -71,17 +116,23 @@ const CabinsSection = () => {
 
             {/* Cabins Carousel */}
             <div className="w-full overflow-hidden">
-              <div
-                ref={scrollContainerRef}
-                className="flex gap-[19.42px] overflow-x-auto no-scrollbar pb-4"
-                style={{ scrollSnapType: 'x mandatory' }}
-              >
-                {cabins.map((cabin) => (
-                  <div key={cabin.id} style={{ scrollSnapAlign: 'start' }}>
-                    <CabinCard {...cabin} />
-                  </div>
-                ))}
-              </div>
+              {loading ? (
+                <div className="text-center py-12">
+                  <p className="text-gray-600">Loading cabins...</p>
+                </div>
+              ) : (
+                <div
+                  ref={scrollContainerRef}
+                  className="flex gap-[19.42px] overflow-x-auto no-scrollbar pb-4"
+                  style={{ scrollSnapType: 'x mandatory' }}
+                >
+                  {cabins.map((cabin) => (
+                    <div key={cabin.id} style={{ scrollSnapAlign: 'start' }}>
+                      <CabinCard {...cabin} />
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
 
             {/* Discover All Button */}
