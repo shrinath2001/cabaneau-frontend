@@ -9,6 +9,7 @@ import ImageGallery from './components/ImageGallery';
 import AmenitiesSection from './components/AmenitiesSection';
 import ExtraServicesSection from './components/ExtraServicesSection';
 import SleepingAreasSection from './components/SleepingAreasSection';
+import { cabins as staticCabins } from '@/app/data/cabins';
 
 interface CabinDetails {
   id: string;
@@ -79,7 +80,49 @@ const SingleCabinPage = () => {
       } catch (err) {
         const errorMessage = err instanceof Error ? err.message : 'An error occurred';
         console.error('❌ Error fetching cabin:', errorMessage, err);
-        setError(errorMessage);
+        console.log('📦 Attempting to use static cabin data as fallback');
+
+        // Try to find cabin from static data as fallback
+        // Extract cabin number from slug (e.g., "cabin-1" -> 1, "tube" -> 1)
+        const cabinNumber = slug.match(/\d+/) ? parseInt(slug.match(/\d+/)![0]) : null;
+
+        // Try to find by ID or by matching slug/title
+        const staticCabin = cabinNumber
+          ? staticCabins.find(c => c.id === cabinNumber)
+          : staticCabins.find(c =>
+              c.title.toLowerCase().includes(slug.toLowerCase()) ||
+              slug.toLowerCase().includes(c.title.toLowerCase())
+            );
+
+        if (staticCabin) {
+          console.log('✅ Found static cabin data:', staticCabin.title);
+          // Transform static cabin to match CabinDetails interface
+          const transformedCabin: CabinDetails = {
+            id: staticCabin.id.toString(),
+            lodgifyId: staticCabin.id.toString(),
+            name: {
+              en: staticCabin.title,
+            },
+            slug: slug,
+            description: {
+              en: staticCabin.description,
+            },
+            shortDescription: {
+              en: staticCabin.description.substring(0, 200) + '...',
+            },
+            capacity: staticCabin.guests,
+            bedrooms: staticCabin.bedrooms,
+            bathrooms: staticCabin.bathrooms,
+            squareMeters: parseInt(staticCabin.area) || undefined,
+            basePrice: parseFloat(staticCabin.price.replace('$', '')) || 300,
+            featuredImage: staticCabin.images[0],
+            images: staticCabin.images,
+            isActive: true,
+          };
+          setCabin(transformedCabin);
+        } else {
+          setError(errorMessage);
+        }
       } finally {
         setLoading(false);
       }
