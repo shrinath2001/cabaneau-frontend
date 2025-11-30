@@ -1,6 +1,7 @@
 'use client';
 import { useRef, useState, useEffect } from 'react';
 import CabinCard from './CabinCard';
+import { cabins as staticCabins } from '@/app/data/cabins';
 
 interface CabinData {
   id: number;
@@ -65,6 +66,22 @@ const CabinsSection = () => {
       } catch (error) {
         console.error('❌ Error fetching cabins:', error);
         console.error('Error details:', error instanceof Error ? error.message : 'Unknown error');
+        console.log('📦 Using static cabin data as fallback');
+
+        // Use static cabin data as fallback
+        const fallbackCabins: CabinData[] = staticCabins.map((cabin) => ({
+          id: cabin.id,
+          slug: `cabin-${cabin.id}`, // Create slug from id
+          images: cabin.images,
+          title: cabin.title,
+          rating: cabin.rating,
+          area: cabin.area,
+          capacity: cabin.capacity,
+          availability: cabin.availability,
+          price: cabin.price
+        }));
+
+        setCabins(fallbackCabins);
       } finally {
         setLoading(false);
       }
