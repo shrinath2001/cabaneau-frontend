@@ -171,7 +171,7 @@ const CabinsSection = () => {
 
             {/* Discover All Button */}
             <div className="text-center mt-10">
-              <button className="px-8 py-3 bg-[#3d5a3d] text-white text-sm font-medium tracking-widest hover:bg-[#2d4a2d] transition-colors">
+              <button className="px-8 py-3 bg-[#495D4D] text-white text-lg font-heading font-medium tracking-widest hover:bg-[#2d4a2d] transition-colors">
                 DISCOVER ALL CABINES
               </button>
             </div>

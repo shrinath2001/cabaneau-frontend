@@ -27,7 +27,7 @@ const ActivitiesSection = () => {
           ))}
         </div>
         <div className="text-center mt-8">
-          <button className="py-3 px-6 bg-green-800 text-white  hover:bg-green-700 transition-colors">
+          <button className="py-3 px-6 bg-[#495D4D] text-white text-lg font-heading font-medium tracking-widest hover:bg-[#2d4a2d] transition-colors">
             DISCOVER ALL ACTIVITIES
           </button>
         </div>

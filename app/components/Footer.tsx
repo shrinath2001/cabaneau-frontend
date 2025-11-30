@@ -79,7 +79,7 @@ const Footer = () => {
           </div>
 
           {/* Column 6: Buttons */}
-          <div className="flex flex-col gap-3 md:col-span-2 lg:col-span-1">
+          <div className="flex flex-col gap-3 md:col-span-2 lg:col-span-1 lg:items-end">
             <Link href="/book" className="bg-[#495D4D] text-white w-full md:w-[134px] h-[43px] flex items-center justify-center text-sm font-medium tracking-wider hover:bg-[#3d5a3d] transition whitespace-nowrap">
               BOOK NOW
             </Link>

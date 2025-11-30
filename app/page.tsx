@@ -4,11 +4,13 @@ import ServicesSection from "./components/ServicesSection";
 import ActivitiesSection from "./components/ActivitiesSection";
 import HostsSection from "./components/HostsSection";
 import LocationSection from "./components/LocationSection";
+import LogoSlider from "./components/LogoSlider";
 
 export default function Home() {
   return (
     <div>
       <main>
+        <LogoSlider />
         <CabinsSection />
         <ServicesSection />
         <ActivitiesSection />
