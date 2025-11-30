@@ -172,7 +172,7 @@ const CabinsSection = () => {
             {/* Discover All Button */}
             <div className="text-center mt-10">
               <button className="px-8 py-3 bg-[#495D4D] text-white text-lg font-heading font-medium tracking-widest hover:bg-[#2d4a2d] transition-colors">
-                DISCOVER ALL CABINES
+                DISCOVER ALL CABINESS
               </button>
             </div>
           </div>
