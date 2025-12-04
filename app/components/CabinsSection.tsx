@@ -121,7 +121,7 @@ const CabinsSection = () => {
           scrollbar-width: none;
         }
       `}</style>
-      <section className="bg-white py-5 px-20">
+      <section className="bg-white py-5 pl-20">
         <div className="container mx-auto">
           <div className="max-w-[1390px] mx-auto">
             {/* Header with Title and Navigation */}
