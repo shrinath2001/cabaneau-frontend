@@ -166,7 +166,10 @@ const CabinsSection = () => {
                 <div
                   ref={scrollContainerRef}
                   className="flex gap-[19.42px] overflow-x-auto no-scrollbar pb-4"
-                  style={{ scrollSnapType: 'x mandatory' }}
+                  style={{
+                    scrollSnapType: 'x mandatory',
+                    maxWidth: 'calc((380px * 3.5) + (19.42px * 3))', // Shows exactly 3.5 cards
+                  }}
                 >
                   {cabins.map((cabin) => (
                     <div key={cabin.id} style={{ scrollSnapAlign: 'start' }}>
