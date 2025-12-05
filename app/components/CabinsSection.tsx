@@ -62,7 +62,24 @@ const CabinsSection = () => {
           price: cabin.basePrice ? `$${cabin.basePrice.toFixed(2)}` : 'Coming Soon'
         }));
 
-        setCabins(transformedCabins);
+        // Add static cabins to supplement API data
+        const staticCabinData: CabinData[] = staticCabins.map((cabin) => ({
+          id: cabin.id + 1000, // Offset IDs to avoid conflicts
+          slug: `cabin-${cabin.id}`,
+          images: cabin.images,
+          title: cabin.title,
+          rating: cabin.rating,
+          area: cabin.area,
+          capacity: cabin.capacity,
+          availability: cabin.availability,
+          price: cabin.price
+        }));
+
+        // Combine API cabins with static cabins
+        const combinedCabins = [...transformedCabins, ...staticCabinData];
+        console.log(`✅ Combined ${transformedCabins.length} API cabins with ${staticCabinData.length} static cabins`);
+
+        setCabins(combinedCabins);
       } catch (error) {
         console.error('❌ Error fetching cabins:', error);
         console.error('Error details:', error instanceof Error ? error.message : 'Unknown error');
@@ -71,7 +88,7 @@ const CabinsSection = () => {
         // Use static cabin data as fallback
         const fallbackCabins: CabinData[] = staticCabins.map((cabin) => ({
           id: cabin.id,
-          slug: `cabin-${cabin.id}`, // Create slug from id
+          slug: `cabin-${cabin.id}`,
           images: cabin.images,
           title: cabin.title,
           rating: cabin.rating,
@@ -123,7 +140,7 @@ const CabinsSection = () => {
       `}</style>
       <section className="bg-white py-5">
         <div className="w-full">
-          <div className="max-w-[1390px] mx-auto px-20">
+          <div className="max-w-full mx-auto pl-20">
             {/* Header with Title and Navigation */}
             <div className="flex justify-center items-center mb-10 relative">
               <h2 className="font-logga text-[40px] font-semibold text-center">
