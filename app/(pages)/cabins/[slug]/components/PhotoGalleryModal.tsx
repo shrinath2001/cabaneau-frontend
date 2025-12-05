@@ -105,6 +105,14 @@ const PhotoGalleryModal = ({ isOpen, onClose, images, featuredImage }: PhotoGall
     { name: 'Working area', id: 'working', imageCount: 7 },
   ];
 
+  // Scroll to category function
+  const scrollToCategory = (categoryId: string) => {
+    const element = document.getElementById(`category-${categoryId}`);
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  };
+
   // Create placeholder image function
   const createPlaceholderImages = (count: number) => {
     const images: string[] = [];
@@ -134,35 +142,41 @@ const PhotoGalleryModal = ({ isOpen, onClose, images, featuredImage }: PhotoGall
   ];
 
   return (
-    <div className="fixed inset-0 bg-white z-50 py-5 px-20 overflow-y-auto">
-      <div className="max-w-7xl mx-auto px-6 py-8">
-        {/* Header */}
-        <div className="flex items-center mb-8">
-          <button
-            onClick={onClose}
-            className="flex items-center text-gray-700 hover:text-black"
-          >
-            <svg className="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-            </svg>
-          </button>
-          <h2 className="text-2xl font-semibold ml-4">Photo tour</h2>
-        </div>
+    <div className="fixed inset-0 bg-white z-50 overflow-y-auto">
+      {/* Sticky Header - Airbnb Style */}
+      <div className="sticky top-0 bg-white z-10 border-b border-gray-200 py-4 px-6 md:px-20">
+        <button
+          onClick={onClose}
+          className="flex items-center text-gray-700 hover:text-black transition"
+        >
+          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+          </svg>
+        </button>
+      </div>
+
+      <div className="max-w-7xl mx-auto px-6 md:px-20 py-8">
+        {/* Photo Tour Title */}
+        <h2 className="text-3xl font-semibold mb-8">Photo tour</h2>
 
         {/* Category Thumbnails Grid */}
         <div className="flex flex-wrap gap-6 mb-12">
           {[
-            { name: 'Living room', img: displayImages[0] },
-            { name: 'Full kitchen', img: displayImages[1] },
-            { name: 'Bedroom', img: displayImages[2] },
-            { name: 'Dining area', img: displayImages[3] },
-            { name: 'Bathroom', img: displayImages[4] },
-            { name: 'Wellness', img: displayImages[0] },
-            { name: 'Working area', img: displayImages[1] },
-            { name: 'Additional photos', img: displayImages[2] },
+            { name: 'Living room', img: displayImages[0], id: 'living' },
+            { name: 'Full kitchen', img: displayImages[1], id: 'kitchen' },
+            { name: 'Bedroom', img: displayImages[2], id: 'bedroom' },
+            { name: 'Dining area', img: displayImages[3], id: 'living' },
+            { name: 'Bathroom', img: displayImages[4], id: 'bathroom' },
+            { name: 'Wellness', img: displayImages[0], id: 'wellness' },
+            { name: 'Working area', img: displayImages[1], id: 'working' },
+            { name: 'Additional photos', img: displayImages[2], id: 'living' },
           ].map((category, idx) => (
-            <div key={idx} className="cursor-pointer group">
-              <div className="relative w-[185px] h-[90px] bg-gray-200 overflow-hidden mb-2">
+            <div
+              key={idx}
+              className="cursor-pointer group"
+              onClick={() => scrollToCategory(category.id)}
+            >
+              <div className="relative w-[185px] h-[90px] bg-gray-200 overflow-hidden mb-2 ">
                 <Image
                   src={category.img}
                   alt={category.name}
@@ -171,7 +185,7 @@ const PhotoGalleryModal = ({ isOpen, onClose, images, featuredImage }: PhotoGall
                   sizes="185px"
                 />
               </div>
-              <p className="text-sm font-medium">{category.name}</p>
+              <p className="text-sm font-medium text-gray-800">{category.name}</p>
             </div>
           ))}
         </div>
@@ -188,13 +202,17 @@ const PhotoGalleryModal = ({ isOpen, onClose, images, featuredImage }: PhotoGall
             const masonryItems = getMasonryPattern(catImages.length, 0, catImages);
 
             return (
-              <div key={category.id} className="grid grid-cols-[200px_1fr] gap-8">
+              <div
+                key={category.id}
+                id={`category-${category.id}`}
+                className="grid grid-cols-[200px_1fr] gap-8 scroll-mt-24"
+              >
                 <div>
-                  <h3 className="text-xl font-semibold sticky top-8">{category.name}</h3>
+                  <h3 className="text-xl font-semibold sticky top-24">{category.name}</h3>
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   {masonryItems.map((item, idx) => (
-                    <div key={idx} className={`relative ${item.className} bg-gray-200 overflow-hidden`}>
+                    <div key={idx} className={`relative ${item.className} bg-gray-200 overflow-hidden `}>
                       <Image
                         src={item.img}
                         alt={category.name}
