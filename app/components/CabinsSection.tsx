@@ -157,7 +157,7 @@ const CabinsSection = () => {
           </div>
 
           {/* Cabins Carousel or Centered Grid */}
-          <div className="w-full overflow-hidden max-w-[1468px]">
+          <div className="w-[1468px] overflow-hidden">
             {loading ? (
               <div className="text-center py-12">
                 <p className="text-gray-600">Loading cabins...</p>
