@@ -44,7 +44,7 @@ const BookingCard = ({ cabinName, basePrice, capacity }: BookingCardProps) => {
   };
 
   return (
-    <div className="bg-white border border-gray-300 sticky top-0" style={{ width: '464px', height: '417px' }}>
+    <div className="bg-white border border-gray-300 sticky top-0 overflow-y-auto" style={{ width: '464px', maxHeight: 'calc(100vh - 100px)' }}>
       {/* Cabin Name and Price - Same Line with Background */}
       <div className="mb-6 flex items-center justify-between p-6" style={{ backgroundColor: '#F1FAF7' }}>
         <h2 className="font-heading font-medium text-[24px] uppercase" style={{ color: '#212121' }}>

@@ -121,9 +121,9 @@ const CabinsSection = () => {
           scrollbar-width: none;
         }
       `}</style>
-      <section className="bg-white py-5 px-20">
-        <div className="container mx-auto">
-          <div className="max-w-[1390px] mx-auto">
+      <section className="bg-white py-5">
+        <div className="w-full">
+          <div className="max-w-[1390px] mx-auto px-20">
             {/* Header with Title and Navigation */}
             <div className="flex justify-center items-center mb-10 relative">
               <h2 className="font-logga text-[40px] font-semibold text-center">
@@ -154,38 +154,40 @@ const CabinsSection = () => {
                 </div>
               )}
             </div>
+          </div>
 
-            {/* Cabins Carousel or Centered Grid */}
-            <div className="w-full overflow-hidden">
-              {loading ? (
-                <div className="text-center py-12">
-                  <p className="text-gray-600">Loading cabins...</p>
-                </div>
-              ) : cabins.length > 3 ? (
-                // Carousel layout for more than 3 cabins (shows 3.5 cards)
-                <div
-                  ref={scrollContainerRef}
-                  className="flex gap-[19.42px] overflow-x-auto no-scrollbar pb-4"
-                   style={{ scrollSnapType: 'x mandatory' }}
-                >
-                  {cabins.map((cabin) => (
-                    <div key={cabin.id} style={{ scrollSnapAlign: 'start' }}>
-                      <CabinCard {...cabin} />
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                // Centered layout for 3 or fewer cabins
-                <div className="flex gap-[19.42px] justify-center pb-4">
-                  {cabins.map((cabin) => (
-                    <div key={cabin.id}>
-                      <CabinCard {...cabin} />
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
+          {/* Cabins Carousel or Centered Grid */}
+          <div className="w-full overflow-hidden">
+            {loading ? (
+              <div className="text-center py-12">
+                <p className="text-gray-600">Loading cabins...</p>
+              </div>
+            ) : cabins.length > 3 ? (
+              // Carousel layout for more than 3 cabins (shows 3.5 cards)
+              <div
+                ref={scrollContainerRef}
+                className="flex gap-[19.42px] overflow-x-auto no-scrollbar pb-4 pl-20"
+                style={{ scrollSnapType: 'x mandatory' }}
+              >
+                {cabins.map((cabin) => (
+                  <div key={cabin.id} style={{ scrollSnapAlign: 'start' }}>
+                    <CabinCard {...cabin} />
+                  </div>
+                ))}
+              </div>
+            ) : (
+              // Centered layout for 3 or fewer cabins
+              <div className="flex gap-[19.42px] justify-center pb-4 px-20">
+                {cabins.map((cabin) => (
+                  <div key={cabin.id}>
+                    <CabinCard {...cabin} />
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
 
+          <div className="max-w-[1390px] mx-auto px-20">
             {/* Discover All Button */}
             <div className="text-center mt-10">
               <button className="px-8 py-3 bg-[#495D4D] text-white text-lg font-heading font-medium tracking-widest hover:bg-[#2d4a2d] transition-colors">

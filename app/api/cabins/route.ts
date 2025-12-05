@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { cabins as staticCabins } from '@/app/data/cabins';
 
 export async function GET() {
   try {
@@ -14,24 +15,22 @@ export async function GET() {
         'Content-Type': 'application/json',
         'x-api-key': apiKey || '',
       },
+      signal: AbortSignal.timeout(5000), // 5 second timeout
     });
 
     console.log('📥 Response status:', response.status);
 
     if (!response.ok) {
-      return NextResponse.json(
-        { error: `API error: ${response.statusText}` },
-        { status: response.status }
-      );
+      console.log('⚠️ API responded with error, using static fallback');
+      return NextResponse.json(staticCabins);
     }
 
     const data = await response.json();
     return NextResponse.json(data);
   } catch (error) {
     console.error('Error proxying request:', error);
-    return NextResponse.json(
-      { error: 'Failed to fetch cabins' },
-      { status: 500 }
-    );
+    console.log('📦 Using static cabin data as fallback');
+    // Return static data instead of error
+    return NextResponse.json(staticCabins);
   }
 }

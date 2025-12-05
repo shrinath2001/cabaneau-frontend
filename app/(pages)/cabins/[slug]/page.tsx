@@ -225,6 +225,9 @@ const SingleCabinPage = () => {
 
             {/* Extra Services Section Component */}
             <ExtraServicesSection />
+
+            {/* Sleeping Areas Section Component */}
+            <SleepingAreasSection />
           </div>
 
           {/* Right Column - Booking Panel Component */}
@@ -236,9 +239,6 @@ const SingleCabinPage = () => {
             />
           </div>
         </div>
-
-        {/* Sleeping Areas Section Component - Full Width */}
-        <SleepingAreasSection />
       </div>
 
       {/* Photo Gallery Modal Component */}

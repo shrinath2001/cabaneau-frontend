@@ -44,7 +44,7 @@ const CabinCard: React.FC<CabinCardProps> = ({
   };
 
   return (
-    <div className="bg-white border p-[15px] border-black w-[380px] h-[491px] shrink-0 flex flex-col">
+    <div className="group bg-white border p-[15px] border-black w-[380px] h-[491px] shrink-0 flex flex-col transition-all duration-300 hover:shadow-2xl hover:-translate-y-2">
       {/* Image Section */}
       <div className="relative w-[350px] h-[232.9px] bg-gray-100">
         <Image
@@ -80,7 +80,7 @@ const CabinCard: React.FC<CabinCardProps> = ({
                 setCurrentImageIndex(index);
               }}
               className={`w-2 h-2 rounded-full transition ${
-                index === currentImageIndex ? 'bg-orange-500' : 'bg-white/80'
+                index === currentImageIndex ? 'bg-[#F49A4A]' : 'bg-white/80'
               }`}
               aria-label={`Go to image ${index + 1}`}
             />
@@ -97,7 +97,7 @@ const CabinCard: React.FC<CabinCardProps> = ({
             {Array.from({ length: 5 }).map((_, i) => (
               <svg
                 key={i}
-                className={`w-6 h-6 ${i < rating ? 'text-orange-500' : 'text-gray-300'}`}
+                className={`w-6 h-6 ${i < rating ? 'text-[#F49A4A]' : 'text-gray-300'}`}
                 fill="currentColor"
                 viewBox="0 0 20 20"
               >
@@ -146,7 +146,7 @@ const CabinCard: React.FC<CabinCardProps> = ({
 
         {/* Book Now Button */}
         <Link href={`/cabins/${slug || id}`} className="w-full">
-          <button className="w-full py-2.5 px-4 border border-black text-black text-sm font-medium tracking-wider hover:bg-black hover:text-white transition-colors">
+          <button className="w-full py-2.5 px-4 border border-black text-black text-sm font-medium tracking-wider group-hover:bg-[#F49A4A] group-hover:text-white group-hover:border-[#F49A4A] transition-all duration-300">
             BOOK NOW
           </button>
         </Link>
