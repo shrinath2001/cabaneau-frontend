@@ -228,6 +228,7 @@ const SingleCabinPage = () => {
 
             {/* Sleeping Areas Section Component */}
             <SleepingAreasSection />
+            
           </div>
 
           {/* Right Column - Booking Panel Component */}

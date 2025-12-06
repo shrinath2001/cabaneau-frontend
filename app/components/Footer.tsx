@@ -12,9 +12,7 @@ const Footer = () => {
               <Image src="/assets/Group 1.png" alt="Cabanéau Logo" width={205} height={35} className="w-auto h-auto max-w-full" />
             </div>
             <p className="text-sm font-raleway leading-relaxed text-gray-300 max-w-[354px]">
-              Luxury Cabines with private wellness.<br />
-              Eat, sleep & relax above the trees in<br />
-              Eupen, Belgium.
+              Luxury Cabines with private wellness.<br/>Eat, sleep & relax above the trees in Eupen, Belgium.
             </p>
           </div>
 
@@ -69,11 +67,11 @@ const Footer = () => {
                 </svg>
                 <a href="mailto:hello@cabaneau.com" className="hover:text-white transition">hello@cabaneau.com</a>
               </li>
-              <li className="flex items-start gap-2">
+              <li className="flex items-start gap-2 ">
                 <svg className="w-4 h-4 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
                   <path fillRule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clipRule="evenodd" />
                 </svg>
-                <span>Bettendijkstraat 19A, 4700<br />Eupen - Belgium</span>
+                <span>Bettendijkstraat 19A, 4700 Eupen - Belgium</span>
               </li>
             </ul>
           </div>

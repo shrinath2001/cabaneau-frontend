@@ -2,7 +2,7 @@ import Image from 'next/image';
 
 const HostsSection = () => {
   return (
-    <section className="py-5 px-20 bg-white">
+    <section className="py-5 px-20 bg-white mt-12">
       <div className="container mx-auto">
         <div className="max-w-[1390px] mx-auto">
           <h2 className="font-logga text-[40px] font-semibold text-left mb-12">THE HOSTS</h2>

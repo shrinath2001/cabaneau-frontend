@@ -138,18 +138,18 @@ const CabinsSection = () => {
           scrollbar-width: none;
         }
       `}</style>
-      <section className="bg-white py-5">
+      <section className="bg-white py-5 mt-12">
         <div className="w-full">
           <div className="max-w-full mx-auto pl-20">
             {/* Header with Title and Navigation */}
-            <div className="flex justify-center items-center mb-10 relative">
+            <div className="flex justify-center items-center mb-16 relative">
               <h2 className="font-logga text-[40px] font-semibold text-center">
                 OUR CABINES
               </h2>
 
               {/* Navigation Arrows - Only show if more than 3 cabins */}
               {cabins.length > 3 && (
-                <div className="absolute right-0 flex gap-2">
+                <div className="absolute right-0 flex gap-2 mr-16">
                   <button
                     onClick={scrollLeft}
                     className="w-10 h-10 rounded-full border-2 border-gray-300 flex items-center justify-center hover:border-gray-400 hover:bg-gray-50 transition text-gray-600"
@@ -204,7 +204,7 @@ const CabinsSection = () => {
             </div>
 
             {/* Discover All Button */}
-            <div className="text-center mt-10">
+            <div className="text-center mt-10 mb-8">
               <button className="px-8 py-3 bg-[#495D4D] text-white text-lg font-heading font-medium tracking-widest hover:bg-[#2d4a2d] transition-colors">
                 DISCOVER ALL CABINESS
               </button>

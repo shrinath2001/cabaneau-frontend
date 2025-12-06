@@ -23,13 +23,13 @@ const Header2 = () => {
             </Link>
           </div>
           <nav className="hidden md:flex items-center space-x-8">
-            <Link href="/cabins" className="text-black">
+            <Link href="/cabins" className="text-black font-heading font-medium hover:font-semibold hover:text-orange-300 text-[18px] space-x-0.5 ">
               OUR CABINS
             </Link>
-            <Link href="/activities" className="text-black">
+            <Link href="/activities" className="text-black font-heading font-medium hover:font-semibold hover:text-orange-300 text-[18px] space-x-0.5">
               ACTIVITIES
             </Link>
-            <Link href="/eat-drink" className="text-black">
+            <Link href="/eat-drink" className="text-black font-heading font-medium hover:font-semibold hover:text-orange-300 text-[18px] space-x-0.5">
               EAT & DRINK
             </Link>
           </nav>
