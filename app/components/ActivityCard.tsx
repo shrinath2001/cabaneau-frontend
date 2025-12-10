@@ -7,10 +7,14 @@ interface ActivityCardProps {
 
 const ActivityCard: React.FC<ActivityCardProps> = ({ imageSrc, activityName }) => {
   return (
-    <div className="relative h-[461px] w-full sm:w-[410px] overflow-hidden">
+    <div className="relative h-[461px] w-full sm:w-[410px] overflow-hidden group cursor-pointer">
       <Image src={imageSrc} alt={activityName} fill style={{ objectFit: 'cover' }} />
-      <div className="absolute inset-0 flex items-end justify-center p-6 bg-gradient-to-t from-black/60 to-transparent">
+      <div className="absolute inset-0 flex items-end justify-center p-6 bg-gradient-to-t from-black/60 to-transparent group-hover:opacity-0 transition-opacity duration-300">
         <h3 className="text-white text-2xl font-bold">{activityName}</h3>
+      </div>
+      {/* Hover Overlay */}
+      <div className="absolute inset-0 bg-[#F49A4A] opacity-0 group-hover:opacity-95 transition-opacity duration-300 flex items-center justify-center">
+        <h3 className="text-[#F0E8C6] text-3xl font-logga font-extrabold tracking-wider drop-shadow-lg">{activityName}</h3>
       </div>
     </div>
   );

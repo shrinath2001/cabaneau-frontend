@@ -21,90 +21,39 @@ const CabinsSection = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchCabins = async () => {
-      try {
-        console.log('Fetching cabins from API...');
-        const response = await fetch('/api/cabins', {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        });
+    // Using static cabin data directly (API server needs to be revamped)
+    const loadCabins = () => {
+      const cabinData: CabinData[] = staticCabins.map((cabin) => ({
+        id: cabin.id,
+        slug: `cabin-${cabin.id}`,
+        images: cabin.images,
+        title: cabin.title,
+        rating: cabin.rating,
+        area: cabin.area,
+        capacity: cabin.capacity,
+        availability: cabin.availability,
+        price: cabin.price
+      }));
 
-        console.log('Response status:', response.status);
-
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
-        const data = await response.json();
-        console.log('API Data received:', data);
-
-        // Transform API data to match CabinCard props
-        const transformedCabins: CabinData[] = data.data.map((cabin: {
-          lodgifyId: string;
-          slug: string;
-          images: string[];
-          featuredImage: string;
-          name: string;
-          squareMeters?: number;
-          capacity: number;
-          basePrice: number;
-        }) => ({
-          id: parseInt(cabin.lodgifyId),
-          slug: cabin.slug,
-          images: cabin.images.length > 0 ? cabin.images : [cabin.featuredImage],
-          title: cabin.name || 'Luxury Cabin',
-          rating: 5, // Default rating
-          area: cabin.squareMeters ? `${cabin.squareMeters}m²` : 'TBA',
-          capacity: `${cabin.capacity || 2} Person${cabin.capacity > 1 ? 's' : ''}`,
-          availability: 'Available Now', // Default availability
-          price: cabin.basePrice ? `$${cabin.basePrice.toFixed(2)}` : 'Coming Soon'
-        }));
-
-        // Add static cabins to supplement API data
-        const staticCabinData: CabinData[] = staticCabins.map((cabin) => ({
-          id: cabin.id + 1000, // Offset IDs to avoid conflicts
-          slug: `cabin-${cabin.id}`,
-          images: cabin.images,
-          title: cabin.title,
-          rating: cabin.rating,
-          area: cabin.area,
-          capacity: cabin.capacity,
-          availability: cabin.availability,
-          price: cabin.price
-        }));
-
-        // Combine API cabins with static cabins
-        const combinedCabins = [...transformedCabins, ...staticCabinData];
-        console.log(`✅ Combined ${transformedCabins.length} API cabins with ${staticCabinData.length} static cabins`);
-
-        setCabins(combinedCabins);
-      } catch (error) {
-        console.error('❌ Error fetching cabins:', error);
-        console.error('Error details:', error instanceof Error ? error.message : 'Unknown error');
-        console.log('📦 Using static cabin data as fallback');
-
-        // Use static cabin data as fallback
-        const fallbackCabins: CabinData[] = staticCabins.map((cabin) => ({
-          id: cabin.id,
-          slug: `cabin-${cabin.id}`,
-          images: cabin.images,
-          title: cabin.title,
-          rating: cabin.rating,
-          area: cabin.area,
-          capacity: cabin.capacity,
-          availability: cabin.availability,
-          price: cabin.price
-        }));
-
-        setCabins(fallbackCabins);
-      } finally {
-        setLoading(false);
-      }
+      setCabins(cabinData);
+      setLoading(false);
     };
 
-    fetchCabins();
+    loadCabins();
+
+    // TODO: Re-enable API integration once server is revamped
+    // const fetchCabins = async () => {
+    //   try {
+    //     const response = await fetch('/api/cabins');
+    //     const data = await response.json();
+    //     if (data?.data && Array.isArray(data.data)) {
+    //       const transformedCabins = data.data.map((cabin) => ({...}));
+    //       setCabins(transformedCabins);
+    //     }
+    //   } catch (error) {
+    //     console.error('Error fetching cabins:', error);
+    //   }
+    // };
   }, []);
 
   const scrollLeft = () => {
@@ -152,20 +101,20 @@ const CabinsSection = () => {
                 <div className="absolute right-0 flex gap-2 mr-16">
                   <button
                     onClick={scrollLeft}
-                    className="w-10 h-10 rounded-full border-2 border-gray-300 flex items-center justify-center hover:border-gray-400 hover:bg-gray-50 transition text-gray-600"
+                    className="w-10 h-10 rounded-full border-2 border-[#F0E8C6] bg-white flex items-center justify-center hover:bg-[#F0E8C6] transition-all duration-300 text-[#F0E8C6] hover:text-white"
                     aria-label="Scroll to previous cabin"
                   >
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                    <svg className="w-5 h-4" fill="currentColor" viewBox="0 0 20 16">
+                      <path d="M20 7H6L11 2L9.5 0.5L0.5 8L9.5 15.5L11 14L6 9H20V7Z" />
                     </svg>
                   </button>
                   <button
                     onClick={scrollRight}
-                    className="w-10 h-10 rounded-full border-2 border-gray-800 flex items-center justify-center hover:bg-gray-800 hover:text-white transition text-gray-800"
+                    className="w-10 h-10 rounded-full border-2 border-[#495D4D] bg-white flex items-center justify-center hover:bg-[#495D4D] transition-all duration-300 text-[#495D4D] hover:text-white"
                     aria-label="Scroll to next cabin"
                   >
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                    <svg className="w-5 h-4" fill="currentColor" viewBox="0 0 20 16">
+                      <path d="M0 7H14L9 2L10.5 0.5L19.5 8L10.5 15.5L9 14L14 9H0V7Z" />
                     </svg>
                   </button>
                 </div>
@@ -173,7 +122,7 @@ const CabinsSection = () => {
             </div>
 
             {/* Cabins Carousel or Centered Grid */}
-            <div className="w-full overflow-hidden">
+            <div className="w-full">
               {loading ? (
                 <div className="text-center py-12">
                   <p className="text-gray-600">Loading cabins...</p>
@@ -182,7 +131,7 @@ const CabinsSection = () => {
                 // Carousel layout for more than 3 cabins (shows 3.5 cards)
                 <div
                   ref={scrollContainerRef}
-                  className="flex gap-[19.42px] overflow-x-auto no-scrollbar pb-4"
+                  className="flex gap-[19.42px] overflow-x-auto no-scrollbar py-4"
                    style={{ scrollSnapType: 'x mandatory' }}
                 >
                   {cabins.map((cabin) => (
@@ -193,7 +142,7 @@ const CabinsSection = () => {
                 </div>
               ) : (
                 // Centered layout for 3 or fewer cabins
-                <div className="flex gap-[19.42px] justify-center pb-4">
+                <div className="flex gap-[19.42px] justify-center py-4">
                   {cabins.map((cabin) => (
                     <div key={cabin.id}>
                       <CabinCard {...cabin} />

@@ -56,17 +56,21 @@ const CabinCard: React.FC<CabinCardProps> = ({
         {/* Navigation Arrows */}
         <button
           onClick={prevImage}
-          className="absolute left-2 top-1/2 -translate-y-1/2 w-6 h-6 flex items-center justify-center bg-white/80 hover:bg-white transition text-gray-700 text-sm"
+          className="absolute left-3 top-1/2 -translate-y-1/2 flex items-center justify-center transition hover:opacity-70"
           aria-label="Previous image"
         >
-          &lt;
+          <svg className="w-8 h-8" fill="none" stroke="white" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
+            <polyline points="15 18 9 12 15 6"></polyline>
+          </svg>
         </button>
         <button
           onClick={nextImage}
-          className="absolute right-2 top-1/2 -translate-y-1/2 w-6 h-6 flex items-center justify-center bg-white/80 hover:bg-white transition text-gray-700 text-sm"
+          className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center justify-center transition hover:opacity-70"
           aria-label="Next image"
         >
-          &gt;
+          <svg className="w-8 h-8" fill="none" stroke="white" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
         </button>
 
         {/* Carousel Dots */}
