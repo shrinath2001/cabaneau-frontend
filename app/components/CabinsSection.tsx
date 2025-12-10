@@ -101,7 +101,7 @@ const CabinsSection = () => {
                 <div className="absolute right-0 flex gap-2 mr-16">
                   <button
                     onClick={scrollLeft}
-                    className="w-10 h-10 rounded-full border-2 border-[#F0E8C6] bg-white flex items-center justify-center hover:bg-[#F0E8C6] transition-all duration-300 text-[#F0E8C6] hover:text-white"
+                    className="w-12 h-12 rounded-full border-2 border-[#F0E8C6] bg-white flex items-center justify-center hover:bg-[#F0E8C6] transition-all duration-300 text-[#F0E8C6] hover:text-white"
                     aria-label="Scroll to previous cabin"
                   >
                     <svg className="w-5 h-4" fill="currentColor" viewBox="0 0 20 16">
@@ -110,7 +110,7 @@ const CabinsSection = () => {
                   </button>
                   <button
                     onClick={scrollRight}
-                    className="w-10 h-10 rounded-full border-2 border-[#495D4D] bg-white flex items-center justify-center hover:bg-[#495D4D] transition-all duration-300 text-[#495D4D] hover:text-white"
+                    className="w-12 h-12 rounded-full border-2 border-[#495D4D] bg-white flex items-center justify-center hover:bg-[#495D4D] transition-all duration-300 text-[#495D4D] hover:text-white"
                     aria-label="Scroll to next cabin"
                   >
                     <svg className="w-5 h-4" fill="currentColor" viewBox="0 0 20 16">
