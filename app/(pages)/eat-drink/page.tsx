@@ -1,16 +1,160 @@
-import type { Metadata } from 'next';
+'use client';
 
-export const metadata: Metadata = {
-  title: 'Eat & Drink - Cabaneau',
-  description: 'Discover dining and beverage options at Cabaneau.',
-};
+import { useState } from 'react';
+import { dining, breakfast, drinks, EatDrinkItem } from '@/app/data/eatdrink';
+import EatDrinkCard from '@/app/components/EatDrinkCard';
+import EatDrinkDetailModal from '@/app/components/EatDrinkDetailModal';
 
 export default function EatDrinkPage() {
+  const [activeTab, setActiveTab] = useState<'dining' | 'breakfast' | 'drinks'>('dining');
+  const [selectedItem, setSelectedItem] = useState<EatDrinkItem | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const handleReadMore = (item: EatDrinkItem) => {
+    setSelectedItem(item);
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    setTimeout(() => setSelectedItem(null), 300);
+  };
+
+  const getCurrentItems = () => {
+    switch (activeTab) {
+      case 'dining':
+        return dining;
+      case 'breakfast':
+        return breakfast;
+      case 'drinks':
+        return drinks;
+      default:
+        return dining;
+    }
+  };
+
   return (
     <main>
-      <div className="container mx-auto px-4 py-16 text-center">
-        <h1 className="text-4xl font-bold">Eat & Drink</h1>
-      </div>
+      {/* Hero Section */}
+      <section className="relative h-[300px] md:h-[400px] flex items-center justify-center">
+        <div
+          className="absolute inset-0 bg-cover bg-center"
+          style={{
+            backgroundImage: 'url(/assets/d206536ef067f64b29cad184324fe360bb763e30.jpg)',
+          }}
+        >
+          <div className="absolute inset-0 bg-black bg-opacity-40"style={{ backgroundColor: 'rgba(0, 0, 0, 0.50)' }}></div>
+        </div>
+        <h1 className="relative z-10 text-white text-4xl md:text-5xl lg:text-6xl font-custom text-center px-4">
+          OUR EAT & DRINK SERVICES
+         </h1>
+      </section>
+
+      {/* Tabs Section */}
+      <section className="bg-white border-b border-gray-200">
+        <div className="container mx-auto px-4 max-w-6xl">
+          <div className="flex justify-center gap-4 sm:gap-8 md:gap-12 overflow-x-auto">
+            <button
+              onClick={() => setActiveTab('dining')}
+              className="py-4 px-2 text-[24px] font-medium font-heading uppercase tracking-wider transition-colors relative whitespace-nowrap"
+              style={{ color: activeTab === 'dining' ? '#F49A4A' : '#495D4D' }}
+            >
+              DINING
+              {activeTab === 'dining' && (
+                <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#F49A4A]"></span>
+              )}
+            </button>
+            <button
+              onClick={() => setActiveTab('breakfast')}
+              className="py-4 px-2 text-[24px] font-medium font-heading uppercase tracking-wider transition-colors relative whitespace-nowrap"
+              style={{ color: activeTab === 'breakfast' ? '#F49A4A' : '#495D4D' }}
+            >
+              BREAKFAST
+              {activeTab === 'breakfast' && (
+                <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#F49A4A]"></span>
+              )}
+            </button>
+            <button
+              onClick={() => setActiveTab('drinks')}
+              className="py-4 px-2 text-[24px] font-medium font-heading uppercase tracking-wider transition-colors relative whitespace-nowrap"
+              style={{ color: activeTab === 'drinks' ? '#F49A4A' : '#495D4D' }}
+            >
+              DRINKS
+              {activeTab === 'drinks' && (
+                <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#F49A4A]"></span>
+              )}
+            </button>
+          </div>
+        </div>
+      </section>
+
+      {/* Items List */}
+      <section className="py-12 bg-white">
+        <div className="container mx-auto px-4 max-w-6xl">
+          <div className="space-y-6">
+            {getCurrentItems().map((item, index) => (
+              <EatDrinkCard
+                key={item.id}
+                item={item}
+                onReadMore={handleReadMore}
+                isReversed={index % 2 !== 0}
+              />
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Discover More Section */}
+      <section className="grid grid-cols-1 md:grid-cols-2">
+        {/* Drinks Section */}
+        <div className="relative h-[300px] md:h-[400px] flex flex-col items-center justify-center">
+          <div
+            className="absolute inset-0 bg-cover bg-center"
+            style={{
+              backgroundImage: 'url(/assets/dinner.png)',
+            }}
+          >
+            <div className="absolute inset-0" style={{ backgroundColor: 'rgba(0, 0, 0, 0.50)' }}></div>
+          </div>
+          <h2 className="relative z-10 text-white text-2xl md:text-3xl lg:text-4xl font-custom text-center px-4 mb-6">
+            OUR<br />DRINKS OFFERING
+          </h2>
+          <button
+            className="relative z-10 px-8 py-3 text-white font-heading tracking-wider transition-all hover:bg-hoverorange"
+            style={{ backgroundColor: '#939D92', fontSize: '18px', fontWeight: 500 }}
+          >
+            DISCOVER OUR SELECTION
+          </button>
+        </div>
+
+        {/* Breakfast Section */}
+        <div className="relative h-[300px] md:h-[400px] flex flex-col items-center justify-center">
+          <div
+            className="absolute inset-0 bg-cover bg-center"
+            style={{
+              backgroundImage: 'url(/assets/breakfast.jpg)',
+            }}
+          >
+            <div className="absolute inset-0" style={{ backgroundColor: 'rgba(0, 0, 0, 0.50)' }}></div>
+          </div>
+          <h2 className="relative z-10 text-white text-2xl md:text-3xl lg:text-4xl font-custom text-center px-4 mb-6">
+            OUR<br />BREAKFAST OFFERING
+          </h2>
+          <button
+            className="relative z-10 px-8 py-3 text-white font-heading tracking-wider transition-all hover:bg-hoverorange"
+            style={{ backgroundColor: '#939D92', fontSize: '18px', fontWeight: 500 }}
+          >
+            DISCOVER OUR SELECTION
+          </button>
+        </div>
+      </section>
+
+      {/* Detail Modal */}
+      <EatDrinkDetailModal
+        item={selectedItem}
+        isOpen={isModalOpen}
+        onClose={handleCloseModal}
+      />
     </main>
   );
 }
