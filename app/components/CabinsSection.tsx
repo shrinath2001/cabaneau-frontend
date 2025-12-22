@@ -87,33 +87,33 @@ const CabinsSection = () => {
           scrollbar-width: none;
         }
       `}</style>
-      <section className="bg-white py-5 mt-12">
+      <section className="bg-white py-6 md:py-5 md:mt-12 px-4 md:px-0">
         <div className="w-full">
-          <div className="max-w-full mx-auto pl-20">
+          <div className="max-w-full mx-auto md:pl-20">
             {/* Header with Title and Navigation */}
-            <div className="flex justify-center items-center mb-16 relative">
-              <h2 className="font-logga text-[40px] font-semibold text-center">
+            <div className="flex justify-center items-center mb-8 md:mb-16 relative">
+              <h2 className="font-logga text-[20px] md:text-[40px] font-semibold text-center">
                 OUR CABINES
               </h2>
 
-              {/* Navigation Arrows - Only show if more than 3 cabins */}
-              {cabins.length > 3 && (
-                <div className="absolute right-0 flex gap-2 mr-16">
+              {/* Navigation Arrows - Show on mobile and desktop when more than 1 cabin */}
+              {cabins.length > 1 && (
+                <div className="absolute right-0 flex gap-1.5 md:gap-2 mr-4 md:mr-16">
                   <button
                     onClick={scrollLeft}
-                    className="w-12 h-12 rounded-full border-2 border-[#F0E8C6] bg-white flex items-center justify-center hover:bg-[#F0E8C6] transition-all duration-300 text-[#F0E8C6] hover:text-white"
+                    className="w-8 h-8 md:w-12 md:h-12 rounded-full border-2 border-[#F0E8C6] bg-white flex items-center justify-center hover:bg-[#F0E8C6] transition-all duration-300 text-[#F0E8C6] hover:text-white"
                     aria-label="Scroll to previous cabin"
                   >
-                    <svg className="w-5 h-4" fill="currentColor" viewBox="0 0 20 16">
+                    <svg className="w-3 h-2.5 md:w-5 md:h-4" fill="currentColor" viewBox="0 0 20 16">
                       <path d="M20 7H6L11 2L9.5 0.5L0.5 8L9.5 15.5L11 14L6 9H20V7Z" />
                     </svg>
                   </button>
                   <button
                     onClick={scrollRight}
-                    className="w-12 h-12 rounded-full border-2 border-[#495D4D] bg-white flex items-center justify-center hover:bg-[#495D4D] transition-all duration-300 text-[#495D4D] hover:text-white"
+                    className="w-8 h-8 md:w-12 md:h-12 rounded-full border-2 border-[#495D4D] bg-white flex items-center justify-center hover:bg-[#495D4D] transition-all duration-300 text-[#495D4D] hover:text-white"
                     aria-label="Scroll to next cabin"
                   >
-                    <svg className="w-5 h-4" fill="currentColor" viewBox="0 0 20 16">
+                    <svg className="w-3 h-2.5 md:w-5 md:h-4" fill="currentColor" viewBox="0 0 20 16">
                       <path d="M0 7H14L9 2L10.5 0.5L19.5 8L10.5 15.5L9 14L14 9H0V7Z" />
                     </svg>
                   </button>
@@ -127,22 +127,28 @@ const CabinsSection = () => {
                 <div className="text-center py-12">
                   <p className="text-gray-600">Loading cabins...</p>
                 </div>
-              ) : cabins.length > 3 ? (
-                // Carousel layout for more than 3 cabins (shows 3.5 cards)
-                <div
-                  ref={scrollContainerRef}
-                  className="flex gap-[19.42px] overflow-x-auto no-scrollbar py-4"
-                   style={{ scrollSnapType: 'x mandatory' }}
-                >
-                  {cabins.map((cabin) => (
-                    <div key={cabin.id} style={{ scrollSnapAlign: 'start' }}>
-                      <CabinCard {...cabin} />
-                    </div>
-                  ))}
+              ) : cabins.length > 1 ? (
+                // Carousel layout - shows 1 card on mobile (centered), 3.5 cards on desktop
+                <div className="relative">
+                  <div
+                    ref={scrollContainerRef}
+                    className="flex gap-[19.42px] overflow-x-auto no-scrollbar py-4 justify-start md:justify-start"
+                    style={{ scrollSnapType: 'x mandatory' }}
+                  >
+                    {/* Add padding to center the first card on mobile */}
+                    <div className="flex-shrink-0 w-[calc((100%-380px)/2)] md:w-0"></div>
+                    {cabins.map((cabin) => (
+                      <div key={cabin.id} className="flex-shrink-0" style={{ scrollSnapAlign: 'center' }}>
+                        <CabinCard {...cabin} />
+                      </div>
+                    ))}
+                    {/* Add padding to center the last card on mobile */}
+                    <div className="flex-shrink-0 w-[calc((100%-380px)/2)] md:w-0"></div>
+                  </div>
                 </div>
               ) : (
-                // Centered layout for 3 or fewer cabins
-                <div className="flex gap-[19.42px] justify-center py-4">
+                // Single cabin - centered
+                <div className="flex justify-center py-4">
                   {cabins.map((cabin) => (
                     <div key={cabin.id}>
                       <CabinCard {...cabin} />
@@ -153,8 +159,8 @@ const CabinsSection = () => {
             </div>
 
             {/* Discover All Button */}
-            <div className="text-center mt-10 mb-8">
-              <button className="px-8 py-3 bg-[#495D4D] text-white text-lg font-heading font-medium tracking-widest hover:bg-[#2d4a2d] transition-colors">
+            <div className="text-center mt-6 md:mt-10 mb-6 md:mb-8">
+              <button className="px-8 py-3 bg-[#495D4D] text-white text-base md:text-lg font-heading font-medium tracking-widest hover:bg-[#2d4a2d] transition-colors">
                 DISCOVER ALL CABINESS
               </button>
             </div>

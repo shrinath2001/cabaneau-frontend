@@ -44,77 +44,129 @@ const BookingCard = ({ cabinName, basePrice, capacity }: BookingCardProps) => {
   };
 
   return (
-    <div className="bg-white border border-gray-300 sticky top-0 overflow-y-auto" style={{ width: '464px', maxHeight: 'calc(100vh - 100px)' }}>
-      {/* Cabin Name and Price - Same Line with Background */}
-      <div className="mb-6 flex items-center justify-between p-6" style={{ backgroundColor: '#F1FAF7' }}>
-        <h2 className="font-heading font-medium text-[24px] uppercase" style={{ color: '#212121' }}>
+    <div className="bg-white border-2 border-gray-300 w-full md:w-[464px] md:sticky md:top-0 md:overflow-y-auto" style={{ maxHeight: 'calc(100vh - 100px)' }}>
+      {/* Cabin Name - Top Section */}
+      <div className="px-6 py-4 border-b border-gray-300">
+        <h2 className="font-jost font-medium text-[18px] md:text-[20px] uppercase text-gray-800">
           {cabinName}
         </h2>
-        <p className="font-heading font-medium text-[24px]" style={{ color: '#37463A' }}>
-          {basePrice}€/NIGHT
-        </p>
       </div>
 
-      <div className="space-y-4 p-5">
-        {/* Arrival and Departure */}
-        <div className="grid grid-cols-2 gap-3">
-          <div className="border border-gray-300 p-3">
-            <label className="text-xs text-gray-500 block mb-1 uppercase">Arrival</label>
-            <input
-              type="date"
-              value={arrival}
-              onChange={(e) => setArrival(e.target.value)}
-              className="w-full outline-none text-sm"
-              min={new Date().toISOString().split('T')[0]}
-            />
-          </div>
-          <div className="border border-gray-300 p-3 relative">
-            <label className="text-xs text-gray-500 block mb-1 uppercase">Departure</label>
-            <input
-              type="date"
-              value={departure}
-              onChange={(e) => setDeparture(e.target.value)}
-              className="w-full outline-none text-sm"
-              min={arrival || new Date().toISOString().split('T')[0]}
-            />
-            {/* Arrow between dates */}
-            <div className="absolute left-[-16px] top-1/2 -translate-y-1/2 text-gray-400">
-              →
+      <div className="p-4 md:p-6 space-y-4">
+        {/* Mobile Version - Simplified */}
+        <div className="md:hidden space-y-4">
+          {/* Arrival and Departure Row with Guest Counter */}
+          <div className="flex items-center gap-2">
+            <div className="flex-1 flex items-center gap-2 text-sm uppercase text-gray-600 font-medium">
+              <span>ARRIVAL</span>
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
+              </svg>
+              <span>DEPARTURE</span>
             </div>
-          </div>
-        </div>
 
-        {/* Guests Selector */}
-        <div className="border border-gray-300 p-4">
-          <div className="flex items-center justify-between">
-            <span className="text-sm font-medium">Guests</span>
-            <div className="flex items-center gap-4">
+            {/* Guest Counter - Right Side */}
+            <div className="flex items-center gap-2">
               <button
                 onClick={handleGuestsDecrease}
-                className="w-10 h-10 flex items-center justify-center bg-gray-300 text-white text-xl hover:bg-gray-400 disabled:opacity-30 disabled:cursor-not-allowed"
+                className="w-8 h-8 flex items-center justify-center bg-[#939D92] text-white text-lg hover:bg-[#7d8d7d] disabled:opacity-30 disabled:cursor-not-allowed transition"
                 disabled={guests <= 1}
+                aria-label="Decrease guests"
               >
                 −
               </button>
-              <span className="w-8 text-center font-medium">{guests}</span>
+              <span className="w-8 text-center font-medium text-sm">{guests}</span>
               <button
                 onClick={handleGuestsIncrease}
-                className="w-10 h-10 flex items-center justify-center bg-gray-300 text-white text-xl hover:bg-gray-400 disabled:opacity-30 disabled:cursor-not-allowed"
+                className="w-8 h-8 flex items-center justify-center bg-[#939D92] text-white text-lg hover:bg-[#7d8d7d] disabled:opacity-30 disabled:cursor-not-allowed transition"
                 disabled={guests >= capacity}
+                aria-label="Increase guests"
               >
                 +
               </button>
             </div>
           </div>
+
+          {/* Book Button with Price */}
+          <div className="flex items-stretch gap-0">
+            <button
+              onClick={handleBooking}
+              className="flex-1 bg-[#495D4D] text-white py-3 px-6 text-sm font-bold tracking-wide hover:bg-[#3d5a3d] transition uppercase font-jost"
+            >
+              BOOK YOUR STAY
+            </button>
+            <div className="bg-white border-2 border-[#495D4D] px-4 flex items-center justify-center">
+              <span className="font-jost font-medium text-sm text-gray-800 whitespace-nowrap">
+                {basePrice}€/NIGHT
+              </span>
+            </div>
+          </div>
         </div>
 
-        {/* Book Button */}
-        <button
-          onClick={handleBooking}
-          className="w-full bg-[#5a6c5a] text-white py-4 text-sm font-bold tracking-wide hover:bg-[#4a5c4a] transition uppercase"
-        >
-          BOOK YOUR STAY
-        </button>
+        {/* Desktop Version - Full Form */}
+        <div className="hidden md:block space-y-4">
+          {/* Date Inputs */}
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <label className="block text-xs font-medium text-gray-700 mb-1 uppercase">Arrival</label>
+              <input
+                type="date"
+                value={arrival}
+                onChange={(e) => setArrival(e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 focus:outline-none focus:border-[#495D4D] text-sm"
+              />
+            </div>
+            <div>
+              <label className="block text-xs font-medium text-gray-700 mb-1 uppercase">Departure</label>
+              <input
+                type="date"
+                value={departure}
+                onChange={(e) => setDeparture(e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 focus:outline-none focus:border-[#495D4D] text-sm"
+              />
+            </div>
+          </div>
+
+          {/* Guest Counter */}
+          <div className="flex items-center justify-between">
+            <span className="text-sm font-medium text-gray-700 uppercase">Guests</span>
+            <div className="flex items-center gap-3">
+              <button
+                onClick={handleGuestsDecrease}
+                className="w-10 h-10 flex items-center justify-center bg-[#939D92] text-white text-lg hover:bg-[#7d8d7d] disabled:opacity-30 disabled:cursor-not-allowed transition"
+                disabled={guests <= 1}
+                aria-label="Decrease guests"
+              >
+                −
+              </button>
+              <span className="w-10 text-center font-medium">{guests}</span>
+              <button
+                onClick={handleGuestsIncrease}
+                className="w-10 h-10 flex items-center justify-center bg-[#939D92] text-white text-lg hover:bg-[#7d8d7d] disabled:opacity-30 disabled:cursor-not-allowed transition"
+                disabled={guests >= capacity}
+                aria-label="Increase guests"
+              >
+                +
+              </button>
+            </div>
+          </div>
+
+          {/* Price Display */}
+          <div className="border-t border-gray-300 pt-4">
+            <div className="flex justify-between items-center mb-4">
+              <span className="font-jost font-medium text-base text-gray-800">Price per night</span>
+              <span className="font-jost font-bold text-lg text-gray-800">{basePrice}€</span>
+            </div>
+          </div>
+
+          {/* Book Button */}
+          <button
+            onClick={handleBooking}
+            className="w-full bg-[#495D4D] text-white py-4 px-6 text-base font-bold tracking-wide hover:bg-[#3d5a3d] transition uppercase font-jost"
+          >
+            BOOK YOUR STAY
+          </button>
+        </div>
       </div>
     </div>
   );

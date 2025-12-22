@@ -11,7 +11,7 @@ const Header = () => {
 
   return (
     <div
-      className="relative bg-cover bg-center h-[859px]"
+      className="relative bg-cover bg-center h-screen md:h-[859px]"
       style={{
         backgroundImage:
           "url(/assets/d206536ef067f64b29cad184324fe360bb763e30.jpg)",
@@ -192,10 +192,10 @@ const Header = () => {
           </div>
         </div>
       </header>
-      <div className="absolute inset-0 flex flex-col items-center justify-center text-white text-center px-4 z-10">
-        <p className="font-jost font-normal text-[18px] uppercase mb-4" style={{ letterSpacing: '0.15px' }}>Luxury Cabines with Private Wellness</p>
-        <h1 className="font-logga font-normal text-[68px] uppercase leading-tight">Sleep, <span className="text-customyellow">Eat & Relax</span></h1>
-        <h2 className="font-logga font-normal text-[68px] uppercase mb-12">Above the Trees</h2>
+      <div className="absolute inset-0 flex flex-col items-center justify-center text-white text-center px-4 md:px-4 z-10 pt-12 md:pt-0">
+        <p className="font-jost font-normal text-[12px] uppercase mb-2 md:mb-4" style={{ letterSpacing: '0.15px' }}>Luxury Cabines with Private Wellness</p>
+        <h1 className="font-logga font-normal text-[32px] md:text-[68px] uppercase leading-tight">Sleep, <span className="text-customyellow">Eat & Relax</span></h1>
+        <h2 className="font-logga font-normal text-[32px] md:text-[68px] uppercase mb-4 md:mb-12">Above the Trees</h2>
 
         {/* Search Form */}
         <SearchForm />
