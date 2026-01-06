@@ -53,12 +53,12 @@ const LodgifyBookingWidget = ({ languageCode = 'en' }: LodgifyBookingWidgetProps
         /* Lodgify Portable Search Bar - Cabaneau Glass Design */
         :root {
           /* Background & Layout - Glass effect */
-          --ldg-psb-background: rgba(255, 255, 255, 0.15);
-          --ldg-psb-border-radius: 0;
-          --ldg-psb-box-shadow: none;
-          --ldg-psb-padding: 0;
-          --ldg-psb-input-background: rgba(255, 255, 255, 0.2);
-          --ldg-psb-button-border-radius: 0;
+          --ldg-psb-background: transparent !important;
+          --ldg-psb-border-radius: 0 !important;
+          --ldg-psb-box-shadow: none !important;
+          --ldg-psb-padding: 0 !important;
+          --ldg-psb-input-background: transparent !important;
+          --ldg-psb-button-border-radius: 0 !important;
 
           /* Brand Colors - Cabaneau Green */
           --ldg-psb-color-primary: #495d4d;
@@ -79,8 +79,30 @@ const LodgifyBookingWidget = ({ languageCode = 'en' }: LodgifyBookingWidgetProps
         /* Glass morphism container */
         #lodgify-search-bar {
           width: 100%;
-          backdrop-filter: blur(10px);
-          -webkit-backdrop-filter: blur(10px);
+          background: rgba(255, 255, 255, 0.1) !important;
+          backdrop-filter: blur(8px) !important;
+          -webkit-backdrop-filter: blur(8px) !important;
+        }
+
+        /* Force transparent backgrounds on ALL elements */
+        #lodgify-search-bar *,
+        #lodgify-search-bar > div,
+        #lodgify-search-bar > div > div,
+        #lodgify-search-bar [class*="field"],
+        #lodgify-search-bar [class*="Field"],
+        #lodgify-search-bar [class*="input"],
+        #lodgify-search-bar [class*="Input"],
+        #lodgify-search-bar [class*="picker"],
+        #lodgify-search-bar [class*="Picker"],
+        #lodgify-search-bar [class*="date"],
+        #lodgify-search-bar [class*="Date"],
+        #lodgify-search-bar [class*="guest"],
+        #lodgify-search-bar [class*="Guest"] {
+          background: transparent !important;
+          background-color: transparent !important;
+          border: none !important;
+          border-color: transparent !important;
+          box-shadow: none !important;
         }
 
         /* Override input styling for glass look */
@@ -88,40 +110,81 @@ const LodgifyBookingWidget = ({ languageCode = 'en' }: LodgifyBookingWidgetProps
         #lodgify-search-bar button:not([type="submit"]) {
           color: white !important;
           background: transparent !important;
+          background-color: transparent !important;
         }
 
         #lodgify-search-bar input::placeholder {
-          color: rgba(255, 255, 255, 0.8) !important;
+          color: rgba(255, 255, 255, 0.7) !important;
         }
 
-        /* Style the labels/text */
+        /* Style ALL text white */
+        #lodgify-search-bar,
+        #lodgify-search-bar *,
         #lodgify-search-bar label,
-        #lodgify-search-bar span:not([class*="button"]) {
+        #lodgify-search-bar span {
           color: white !important;
         }
 
-        /* Search button styling */
+        /* Search button/link - icon only, square shape */
         #lodgify-search-bar button[type="submit"],
+        #lodgify-search-bar a[href*="search"],
         #lodgify-search-bar [class*="search-button"],
-        #lodgify-search-bar [class*="SearchButton"] {
+        #lodgify-search-bar [class*="SearchButton"],
+        #lodgify-search-bar [class*="submit"],
+        #lodgify-search-bar [class*="Submit"] {
+          background: #495d4d !important;
           background-color: #495d4d !important;
           border-radius: 0 !important;
-          min-height: 52px;
+          min-width: 52px !important;
+          max-width: 52px !important;
+          min-height: 52px !important;
+          padding: 0 !important;
+          display: flex !important;
+          align-items: center !important;
+          justify-content: center !important;
+          overflow: hidden !important;
+          font-size: 0 !important;
+          text-indent: -9999px !important;
         }
 
-        #lodgify-search-bar button[type="submit"]:hover {
+        /* Hide text in search button/link, show only icon */
+        #lodgify-search-bar button[type="submit"] span,
+        #lodgify-search-bar a[href*="search"] span,
+        #lodgify-search-bar [class*="SearchButton"] span {
+          display: none !important;
+        }
+
+        #lodgify-search-bar button[type="submit"] svg,
+        #lodgify-search-bar a[href*="search"] svg,
+        #lodgify-search-bar [class*="SearchButton"] svg {
+          display: block !important;
+          width: 20px !important;
+          height: 20px !important;
+          text-indent: 0 !important;
+        }
+
+        #lodgify-search-bar button[type="submit"]:hover,
+        #lodgify-search-bar a[href*="search"]:hover,
+        #lodgify-search-bar [class*="SearchButton"]:hover {
+          background: #3d5a3d !important;
           background-color: #3d5a3d !important;
         }
 
-        /* Icon colors */
-        #lodgify-search-bar svg {
+        /* Icon colors - white */
+        #lodgify-search-bar svg,
+        #lodgify-search-bar svg * {
           color: white !important;
           fill: white !important;
         }
 
-        /* Dividers between fields */
-        #lodgify-search-bar > div > div {
-          border-color: rgba(255, 255, 255, 0.2) !important;
+        /* Remove borders from date picker buttons */
+        #lodgify-search-bar button[aria-label*="date"],
+        #lodgify-search-bar button[aria-label*="Date"],
+        #lodgify-search-bar [class*="DatePicker"],
+        #lodgify-search-bar [class*="datePicker"] {
+          border: none !important;
+          outline: none !important;
+          box-shadow: none !important;
         }
       `}</style>
 
