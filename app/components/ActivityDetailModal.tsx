@@ -30,7 +30,7 @@ const ActivityDetailModal: React.FC<ActivityDetailModalProps> = ({ activity, isO
       onClick={onClose}
     >
       <div
-        className="bg-white w-full max-w-[708px] max-h-[927px] overflow-y-auto shadow-2xl relative"
+        className="bg-white w-[398px] max-h-[572px] md:w-full md:max-w-[708px] md:max-h-[927px] overflow-y-auto shadow-2xl relative"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Close Button */}
@@ -52,14 +52,14 @@ const ActivityDetailModal: React.FC<ActivityDetailModalProps> = ({ activity, isO
         </div>
 
         {/* Content */}
-        <div className="p-8">
+        <div className="p-[17px] md:p-8">
           {/* Title and Subtitle */}
           <h2 className="text-xl font-bold font-heading mb-2 uppercase tracking-wide">{activity.title}</h2>
           <p className="text-sm text-gray-600 mb-6">{activity.subtitle}</p>
 
           {/* Info Row with Icons */}
           {(activity.duration || activity.startLocation || activity.tags) && (
-            <div className="flex flex-wrap gap-6 mb-5">
+            <div className="flex flex-wrap gap-[12px] md:gap-6 mb-5">
               {activity.duration && (
                 <div className="flex items-center gap-2">
                   <svg className="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -90,7 +90,7 @@ const ActivityDetailModal: React.FC<ActivityDetailModalProps> = ({ activity, isO
 
           {/* Tags */}
           {activity.tags && activity.tags.length > 0 && (
-            <div className="flex gap-2 mb-6">
+            <div className="flex gap-[12px] md:gap-2 mb-6">
               {activity.tags.map((tag, index) => (
                 <span
                   key={index}

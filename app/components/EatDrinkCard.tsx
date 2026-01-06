@@ -10,7 +10,7 @@ interface EatDrinkCardProps {
 
 const EatDrinkCard: React.FC<EatDrinkCardProps> = ({ item, onReadMore, isReversed = false }) => {
   return (
-    <div className="bg-white border border-gray-300">
+    <div className="bg-white border border-black  ">
       <div className={`flex flex-col md:flex-row p-4 sm:p-6 ${isReversed ? 'md:flex-row-reverse' : ''}`}>
         {/* Image Section - 358px × 366px */}
         <div className={`w-full md:w-[358px] h-[250px] md:h-[366px] flex-shrink-0 mb-4 md:mb-0 ${isReversed ? 'md:ml-6' : 'md:mr-6'}`}>

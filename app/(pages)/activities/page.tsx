@@ -44,7 +44,7 @@ export default function ActivitiesPage() {
           <div className="flex justify-center gap-6 sm:gap-12 overflow-x-auto">
             <button
               onClick={() => setActiveTab('activities')}
-              className="py-4 px-2 text-[24px] font-medium font-heading uppercase tracking-wider transition-colors relative whitespace-nowrap"
+              className="py-4 px-2 text-[16px] md:text-[24px] font-medium font-heading uppercase tracking-wider transition-colors relative whitespace-nowrap"
               style={{ color: activeTab === 'activities' ? '#F49A4A' : '#495D4D' }}
             >
               ACTIVITIES
@@ -54,7 +54,7 @@ export default function ActivitiesPage() {
             </button>
             <button
               onClick={() => setActiveTab('restaurants')}
-              className="py-4 px-2 text-[24px] font-medium font-heading uppercase tracking-wider transition-colors relative whitespace-nowrap"
+              className="py-4 px-2 text-[16px] md:text-[24px] font-medium font-heading uppercase tracking-wider transition-colors relative whitespace-nowrap"
               style={{ color: activeTab === 'restaurants' ? '#F49A4A' : '#495D4D' }}
             >
               RESTAURANTS

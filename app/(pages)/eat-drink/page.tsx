@@ -56,7 +56,7 @@ export default function EatDrinkPage() {
           <div className="flex justify-center gap-4 sm:gap-8 md:gap-12 overflow-x-auto">
             <button
               onClick={() => setActiveTab('dining')}
-              className="py-4 px-2 text-[24px] font-medium font-heading uppercase tracking-wider transition-colors relative whitespace-nowrap"
+              className="py-4 px-2 text-[16px] md:text-[24px] font-medium font-heading uppercase tracking-wider transition-colors relative whitespace-nowrap"
               style={{ color: activeTab === 'dining' ? '#F49A4A' : '#495D4D' }}
             >
               DINING
@@ -66,7 +66,7 @@ export default function EatDrinkPage() {
             </button>
             <button
               onClick={() => setActiveTab('breakfast')}
-              className="py-4 px-2 text-[24px] font-medium font-heading uppercase tracking-wider transition-colors relative whitespace-nowrap"
+              className="py-4 px-2 text-[16px] md:text-[24px] font-medium font-heading uppercase tracking-wider transition-colors relative whitespace-nowrap"
               style={{ color: activeTab === 'breakfast' ? '#F49A4A' : '#495D4D' }}
             >
               BREAKFAST
@@ -76,7 +76,7 @@ export default function EatDrinkPage() {
             </button>
             <button
               onClick={() => setActiveTab('drinks')}
-              className="py-4 px-2 text-[24px] font-medium font-heading uppercase tracking-wider transition-colors relative whitespace-nowrap"
+              className="py-4 px-2 text-[16px] md:text-[24px] font-medium font-heading uppercase tracking-wider transition-colors relative whitespace-nowrap"
               style={{ color: activeTab === 'drinks' ? '#F49A4A' : '#495D4D' }}
             >
               DRINKS

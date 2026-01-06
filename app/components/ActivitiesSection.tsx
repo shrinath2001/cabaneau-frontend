@@ -21,7 +21,7 @@ const ActivitiesSection = () => {
       <div className="container mx-auto">
         <div className="max-w-[1390px] mx-auto">
           <h2 className="font-logga text-[20px] md:text-[40px] font-semibold text-center mb-8 md:mb-16">ACTIVITIES IN THE REGION</h2>
-        <div className="flex flex-col md:flex-row gap-3 justify-between">
+        <div className="flex flex-col md:flex-row gap-[18px] md:gap-3 justify-between">
           {activities.map((activity, index) => (
             <ActivityCard key={index} {...activity} />
           ))}
