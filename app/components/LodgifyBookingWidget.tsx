@@ -50,15 +50,15 @@ const LodgifyBookingWidget = ({ languageCode = 'en' }: LodgifyBookingWidgetProps
   return (
     <>
       <style jsx global>{`
-        /* Lodgify Portable Search Bar - Cabaneau Custom Styling */
+        /* Lodgify Portable Search Bar - Cabaneau Glass Design */
         :root {
-          /* Background & Layout */
-          --ldg-psb-background: #ffffff;
-          --ldg-psb-border-radius: 0.42em;
-          --ldg-psb-box-shadow: 0px 24px 54px 0px rgba(0, 0, 0, 0.1);
-          --ldg-psb-padding: 14px;
-          --ldg-psb-input-background: #ffffff;
-          --ldg-psb-button-border-radius: 0px;
+          /* Background & Layout - Glass effect */
+          --ldg-psb-background: rgba(255, 255, 255, 0.15);
+          --ldg-psb-border-radius: 0;
+          --ldg-psb-box-shadow: none;
+          --ldg-psb-padding: 0;
+          --ldg-psb-input-background: rgba(255, 255, 255, 0.2);
+          --ldg-psb-button-border-radius: 0;
 
           /* Brand Colors - Cabaneau Green */
           --ldg-psb-color-primary: #495d4d;
@@ -76,12 +76,56 @@ const LodgifyBookingWidget = ({ languageCode = 'en' }: LodgifyBookingWidgetProps
           --ldg-component-modal-z-index: 999;
         }
 
+        /* Glass morphism container */
         #lodgify-search-bar {
           width: 100%;
+          backdrop-filter: blur(10px);
+          -webkit-backdrop-filter: blur(10px);
+        }
+
+        /* Override input styling for glass look */
+        #lodgify-search-bar input,
+        #lodgify-search-bar button:not([type="submit"]) {
+          color: white !important;
+          background: transparent !important;
+        }
+
+        #lodgify-search-bar input::placeholder {
+          color: rgba(255, 255, 255, 0.8) !important;
+        }
+
+        /* Style the labels/text */
+        #lodgify-search-bar label,
+        #lodgify-search-bar span:not([class*="button"]) {
+          color: white !important;
+        }
+
+        /* Search button styling */
+        #lodgify-search-bar button[type="submit"],
+        #lodgify-search-bar [class*="search-button"],
+        #lodgify-search-bar [class*="SearchButton"] {
+          background-color: #495d4d !important;
+          border-radius: 0 !important;
+          min-height: 52px;
+        }
+
+        #lodgify-search-bar button[type="submit"]:hover {
+          background-color: #3d5a3d !important;
+        }
+
+        /* Icon colors */
+        #lodgify-search-bar svg {
+          color: white !important;
+          fill: white !important;
+        }
+
+        /* Dividers between fields */
+        #lodgify-search-bar > div > div {
+          border-color: rgba(255, 255, 255, 0.2) !important;
         }
       `}</style>
 
-      <div className="w-full max-w-[650px] relative z-10">
+      <div className="w-full max-w-[650px] relative z-10 bg-white/10 backdrop-blur-sm">
         <div
           id="lodgify-search-bar"
           data-website-id="572847"
