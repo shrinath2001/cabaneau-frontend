@@ -1,86 +1,81 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
-const LodgifyBookingWidget = () => {
+interface LodgifyBookingWidgetProps {
+  languageCode?: string;
+}
+
+/**
+ * Lodgify Portable Search Bar Widget
+ *
+ * Uses Lodgify's official widget for search functionality.
+ * Redirects to /search on our site (not Lodgify's) after user searches.
+ *
+ * Lodgify handles all complex booking rules:
+ * - Minimum stay per season/date
+ * - Check-in day restrictions
+ * - Blocked dates from bookings
+ * - Guest policies (adults only, pets allowed, etc.)
+ *
+ * @see CLAUDE.md for integration details
+ */
+const LodgifyBookingWidget = ({ languageCode = 'en' }: LodgifyBookingWidgetProps) => {
+  const [searchPageUrl, setSearchPageUrl] = useState('/search');
+
   useEffect(() => {
+    // Set the full search page URL using current origin
+    if (typeof window !== 'undefined') {
+      setSearchPageUrl(`${window.location.origin}/search`);
+    }
+  }, []);
+
+  useEffect(() => {
+    // Official Lodgify Portable Search Bar script
+    const scriptUrl = 'https://app.lodgify.com/portable-search-bar/stable/renderPortableSearchBar.js';
+
     // Check if script already exists
-    if (document.querySelector('script[src*="lodgify"]')) {
-      console.log('Lodgify script already loaded');
-      if ((window as any).lodgify) {
-        (window as any).lodgify.init();
-      }
+    if (document.querySelector(`script[src="${scriptUrl}"]`)) {
       return;
     }
 
-    // Try multiple script URLs in order
-    const scriptUrls = [
-      'https://d1u05kai0crme2.cloudfront.net/widgets/search-bar-stable.js',
-      'https://d1u05kai0crme2.cloudfront.net/searchbar/index.js',
-      'https://d1u05kai0crme2.cloudfront.net/property-search-bar/stable/index.js'
-    ];
+    const script = document.createElement('script');
+    script.src = scriptUrl;
+    script.defer = true;
+    document.head.appendChild(script);
 
-    let currentUrlIndex = 0;
-
-    const tryLoadScript = () => {
-      if (currentUrlIndex >= scriptUrls.length) {
-        console.error('All Lodgify script URLs failed to load');
-        return;
-      }
-
-      const script = document.createElement('script');
-      script.src = scriptUrls[currentUrlIndex];
-      script.async = true;
-
-      script.onload = () => {
-        console.log(`Lodgify script loaded successfully from: ${scriptUrls[currentUrlIndex]}`);
-        if ((window as any).lodgify) {
-          console.log('Initializing Lodgify widget...');
-          (window as any).lodgify.init();
-        }
-      };
-
-      script.onerror = () => {
-        console.warn(`Failed to load from: ${scriptUrls[currentUrlIndex]}, trying next URL...`);
-        script.remove();
-        currentUrlIndex++;
-        tryLoadScript();
-      };
-
-      document.head.appendChild(script);
-    };
-
-    tryLoadScript();
-
-    return () => {
-      // Cleanup on unmount
-      const existingScript = document.querySelector('script[src*="lodgify"]');
-      if (existingScript) {
-        existingScript.remove();
-      }
-    };
+    // No cleanup - script is expensive to reload
   }, []);
 
   return (
     <>
       <style jsx global>{`
+        /* Lodgify Portable Search Bar - Cabaneau Custom Styling */
         :root {
+          /* Background & Layout */
           --ldg-psb-background: #ffffff;
           --ldg-psb-border-radius: 0.42em;
           --ldg-psb-box-shadow: 0px 24px 54px 0px rgba(0, 0, 0, 0.1);
           --ldg-psb-padding: 14px;
           --ldg-psb-input-background: #ffffff;
           --ldg-psb-button-border-radius: 0px;
-          --ldg-psb-color-primary: #495c4d;
+
+          /* Brand Colors - Cabaneau Green */
+          --ldg-psb-color-primary: #495d4d;
           --ldg-psb-color-primary-lighter: #a4aea6;
-          --ldg-psb-color-primary-darker: #252e27;
+          --ldg-psb-color-primary-darker: #252f27;
           --ldg-psb-color-primary-contrast: #ffffff;
-          --ldg-semantic-color-primary: #495c4d;
+
+          /* Semantic Colors */
+          --ldg-semantic-color-primary: #495d4d;
           --ldg-semantic-color-primary-lighter: #a4aea6;
-          --ldg-semantic-color-primary-darker: #252e27;
+          --ldg-semantic-color-primary-darker: #252f27;
           --ldg-semantic-color-primary-contrast: #ffffff;
+
+          /* Modal z-index */
           --ldg-component-modal-z-index: 999;
         }
+
         #lodgify-search-bar {
           width: 100%;
         }
@@ -90,31 +85,32 @@ const LodgifyBookingWidget = () => {
         <div
           id="lodgify-search-bar"
           data-website-id="572847"
-          data-language-code="en"
-          data-search-page-url="https://cabaneau.lodgify.com"
+          data-language-code={languageCode}
+          data-search-page-url={searchPageUrl}
+          data-new-tab="false"
+          data-version="stable"
+          data-has-guests-breakdown
+          data-hide-location
           data-dates-check-in-label="Check-in"
           data-dates-check-out-label="Check-out"
           data-guests-counter-label="Guests"
           data-guests-input-singular-label="{{NumberOfGuests}} guest"
           data-guests-input-plural-label="{{NumberOfGuests}} guests"
-          data-location-input-label="Location"
           data-search-button-label="Search"
           data-dates-input-min-stay-tooltip-text='{"one":"Minimum {minStay} night","other":"Minimum {minStay} nights"}'
           data-guests-breakdown-label="Guests"
           data-adults-label='{"one":"adult","other":"adults"}'
-          data-adults-description="Ages {minAge} or above"
+          data-adults-description="Ages 18 or above"
           data-children-label='{"one":"child","other":"children"}'
-          data-children-description="Ages {minAge}-{maxAge}"
+          data-children-description="Ages 2-17"
           data-children-not-allowed-label="Not suitable for children"
           data-infants-label='{"one":"infant","other":"infants"}'
-          data-infants-description="Under {maxAge}"
+          data-infants-description="Under 2"
           data-infants-not-allowed-label="Not suitable for infants"
           data-pets-label='{"one":"pet","other":"pets"}'
           data-pets-not-allowed-label="Not allowed"
           data-done-label="Done"
-          data-new-tab="true"
-          data-version="stable"
-        ></div>
+        />
       </div>
     </>
   );

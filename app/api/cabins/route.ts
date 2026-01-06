@@ -4,12 +4,13 @@ import { cabins as staticCabins } from '@/app/data/cabins';
 export async function GET() {
   try {
     const apiKey = process.env.API_KEY;
+    const apiBaseUrl = process.env.API_BASE_URL || 'http://localhost:3000/api/v1';
 
     console.log('🔑 API Key exists:', !!apiKey);
     console.log('🔑 API Key length:', apiKey?.length || 0);
-    console.log('📡 Making request to:', 'https://api.cabaneau-backend.amplyfitdigital.com/api/v1/cabins');
+    console.log('📡 Making request to:', `${apiBaseUrl}/cabins`);
 
-    const response = await fetch('https://api.cabaneau-backend.amplyfitdigital.com/api/v1/cabins', {
+    const response = await fetch(`${apiBaseUrl}/cabins`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',

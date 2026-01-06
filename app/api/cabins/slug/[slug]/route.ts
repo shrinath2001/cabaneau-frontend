@@ -6,6 +6,7 @@ export async function GET(
 ) {
   try {
     const apiKey = process.env.API_KEY;
+    const apiBaseUrl = process.env.API_BASE_URL || 'http://localhost:3000/api/v1';
     const { slug } = await params;
 
     console.log('🔍 Fetching cabin with slug:', slug);
@@ -18,7 +19,7 @@ export async function GET(
       );
     }
 
-    const apiUrl = `https://api.cabaneau-backend.amplyfitdigital.com/api/v1/cabins/slug/${slug}`;
+    const apiUrl = `${apiBaseUrl}/cabins/slug/${slug}`;
     console.log('📡 Making request to:', apiUrl);
 
     const response = await fetch(apiUrl, {

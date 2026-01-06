@@ -2,7 +2,7 @@
 import { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import SearchForm from './SearchForm';
+import LodgifyBookingWidget from './LodgifyBookingWidget';
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -318,8 +318,8 @@ const Header = () => {
         <h1 className="font-logga font-normal text-[32px] md:text-[68px] uppercase leading-tight">Sleep, <span className="text-customyellow">Eat & Relax</span></h1>
         <h2 className="font-logga font-normal text-[32px] md:text-[68px] uppercase mb-4 md:mb-12">Above the Trees</h2>
 
-        {/* Search Form */}
-        <SearchForm />
+        {/* Lodgify Search Widget - handles all booking rules */}
+        <LodgifyBookingWidget languageCode={selectedLanguage} />
       </div>
       {/* Marker element for scroll detection */}
       <div id="header-scroll-marker" className="absolute bottom-0 h-1 w-full"></div>

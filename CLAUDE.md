@@ -94,3 +94,72 @@ Uses **Tailwind CSS 4** with custom CSS variables defined in `app/globals.css`:
 - **Dynamic Routing**: Cabin detail pages use `useParams()` to fetch cabin by ID from static data
 - **Image Optimization**: Uses standard `<img>` tags (not Next.js Image component) - consider migrating for performance
 - **Responsive Design**: Mobile-first with Tailwind breakpoints (md, lg)
+
+---
+
+## Lodgify Search Widget Integration
+
+### Overview
+The homepage search uses Lodgify's official Portable Search Bar widget, styled to match Cabaneau's design. When users search, they stay on our site (not redirected to Lodgify).
+
+### How It Works
+
+```
+1. User sees Lodgify widget on homepage (LodgifyBookingWidget.tsx)
+2. Widget handles: date validation, min stay rules, blocked dates, guest breakdown
+3. User clicks "Search"
+4. Lodgify redirects to: /search?arrival=2026-01-15&departure=2026-01-17&adults=2&children=1
+5. Search page parses params, calls our API
+6. Results displayed on our site
+```
+
+### Components
+
+| Component | Purpose |
+|-----------|---------|
+| `LodgifyBookingWidget.tsx` | Loads Lodgify widget, points to `/search` |
+| `(pages)/search/page.tsx` | Parses Lodgify params, displays results |
+| `api/cabins/search/route.ts` | Proxies search to backend API |
+
+### Lodgify URL Parameters
+
+When Lodgify redirects, it sends these query params:
+
+| Param | Description | Example |
+|-------|-------------|---------|
+| `arrival` | Check-in date (YYYY-MM-DD) | `2026-01-15` |
+| `departure` | Check-out date (YYYY-MM-DD) | `2026-01-17` |
+| `adults` | Number of adults | `2` |
+| `children` | Number of children (optional) | `1` |
+| `infants` | Number of infants (optional) | `0` |
+| `pets` | Number of pets (optional) | `0` |
+
+### CSS Variables (Styling)
+
+The widget uses CSS variables for customization:
+
+```css
+--ldg-psb-color-primary: #495d4d;      /* Cabaneau green */
+--ldg-psb-background: #ffffff;
+--ldg-psb-border-radius: 0.42em;
+--ldg-psb-box-shadow: 0px 24px 54px 0px rgba(0, 0, 0, 0.1);
+```
+
+### Widget Configuration
+
+Key data attributes:
+- `data-website-id="572847"` - Lodgify account ID
+- `data-search-page-url="/search"` - Redirect to OUR search page
+- `data-new-tab="false"` - Stay on same tab
+- `data-has-guests-breakdown` - Show adults/children/pets selector
+- `data-hide-location` - Hide location (single location)
+
+### Why Use Lodgify Widget?
+
+Lodgify controls complex booking rules that are hard to replicate:
+- Minimum stay per season/date
+- Check-in day restrictions (e.g., no Sunday check-ins)
+- Blocked dates from bookings
+- Guest policies (adults only, pets allowed, etc.)
+
+By using their widget, we get all validation for free while keeping users on our site.

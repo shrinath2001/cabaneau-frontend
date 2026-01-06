@@ -15,12 +15,93 @@ interface SearchCabin {
   featuredImage: string;
   images: string[];
   lodgifyId?: string;
+  petsAllowed?: boolean;
+  adultsOnly?: boolean;
 }
 
 interface SearchResponse {
   cabins: SearchCabin[];
   searchParams: Record<string, unknown>;
   total: number;
+}
+
+/**
+ * Guest breakdown from Lodgify widget
+ */
+interface GuestBreakdown {
+  adults: number;
+  children: number;
+  infants: number;
+  pets: number;
+  total: number;
+}
+
+/**
+ * Convert Lodgify date format (YYYYMMDD) to ISO format (YYYY-MM-DD)
+ * Lodgify sends: 20260106
+ * We need: 2026-01-06
+ */
+function normalizeDateFormat(dateStr: string | null): string | null {
+  if (!dateStr) return null;
+
+  // Already in ISO format (YYYY-MM-DD)
+  if (dateStr.includes('-')) return dateStr;
+
+  // Lodgify format (YYYYMMDD) - convert to ISO
+  if (dateStr.length === 8 && /^\d{8}$/.test(dateStr)) {
+    const year = dateStr.substring(0, 4);
+    const month = dateStr.substring(4, 6);
+    const day = dateStr.substring(6, 8);
+    return `${year}-${month}-${day}`;
+  }
+
+  // Unknown format, return as-is
+  return dateStr;
+}
+
+/**
+ * Parse search parameters from either Lodgify format or legacy format
+ *
+ * Lodgify params: arrival, departure, adults, children, infants, pets
+ * Legacy params: checkIn, checkOut, guests
+ *
+ * Note: Lodgify sends dates as YYYYMMDD (no dashes), we convert to YYYY-MM-DD
+ */
+function parseSearchParams(params: URLSearchParams): {
+  checkIn: string | null;
+  checkOut: string | null;
+  guests: GuestBreakdown;
+} {
+  // Try Lodgify format first (arrival/departure), normalize date format
+  const rawCheckIn = params.get('arrival') || params.get('checkIn');
+  const rawCheckOut = params.get('departure') || params.get('checkOut');
+
+  const checkIn = normalizeDateFormat(rawCheckIn);
+  const checkOut = normalizeDateFormat(rawCheckOut);
+
+  // Parse guest breakdown (Lodgify sends separate counts)
+  const adults = parseInt(params.get('adults') || '0', 10) || 0;
+  const children = parseInt(params.get('children') || '0', 10) || 0;
+  const infants = parseInt(params.get('infants') || '0', 10) || 0;
+  const pets = parseInt(params.get('pets') || '0', 10) || 0;
+
+  // Legacy format: single "guests" param
+  const legacyGuests = parseInt(params.get('guests') || '0', 10) || 0;
+
+  // Calculate total guests (infants don't count toward capacity)
+  const total = legacyGuests > 0 ? legacyGuests : adults + children;
+
+  return {
+    checkIn,
+    checkOut,
+    guests: {
+      adults: legacyGuests > 0 ? legacyGuests : adults,
+      children,
+      infants,
+      pets,
+      total: total || 1, // Default to 1 guest minimum
+    },
+  };
 }
 
 function SearchResults() {
@@ -30,9 +111,8 @@ function SearchResults() {
   const [error, setError] = useState<string | null>(null);
   const [total, setTotal] = useState(0);
 
-  const checkIn = searchParams.get('checkIn');
-  const checkOut = searchParams.get('checkOut');
-  const guests = searchParams.get('guests');
+  // Parse both Lodgify and legacy parameter formats
+  const { checkIn, checkOut, guests } = parseSearchParams(searchParams);
 
   useEffect(() => {
     const fetchCabins = async () => {
@@ -40,11 +120,12 @@ function SearchResults() {
         setLoading(true);
         setError(null);
 
-        // Build query string
+        // Build query string using backend format
         const params = new URLSearchParams();
         if (checkIn) params.append('checkIn', checkIn);
         if (checkOut) params.append('checkOut', checkOut);
-        if (guests) params.append('guests', guests);
+        if (guests.total > 0) params.append('guests', guests.total.toString());
+        if (guests.pets > 0) params.append('pets', guests.pets.toString());
 
         const response = await fetch(`/api/cabins/search?${params.toString()}`);
 
@@ -64,7 +145,7 @@ function SearchResults() {
     };
 
     fetchCabins();
-  }, [checkIn, checkOut, guests]);
+  }, [checkIn, checkOut, guests.total, guests.pets]);
 
   // Format date for display
   const formatDate = (dateStr: string | null) => {
@@ -73,22 +154,44 @@ function SearchResults() {
     return date.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
   };
 
+  /**
+   * Format guest breakdown for display
+   */
+  const formatGuestBreakdown = () => {
+    const parts: string[] = [];
+
+    if (guests.adults > 0) {
+      parts.push(`${guests.adults} ${guests.adults === 1 ? 'Adult' : 'Adults'}`);
+    }
+    if (guests.children > 0) {
+      parts.push(`${guests.children} ${guests.children === 1 ? 'Child' : 'Children'}`);
+    }
+    if (guests.infants > 0) {
+      parts.push(`${guests.infants} ${guests.infants === 1 ? 'Infant' : 'Infants'}`);
+    }
+    if (guests.pets > 0) {
+      parts.push(`${guests.pets} ${guests.pets === 1 ? 'Pet' : 'Pets'}`);
+    }
+
+    return parts.length > 0 ? parts.join(', ') : `${guests.total} ${guests.total === 1 ? 'Guest' : 'Guests'}`;
+  };
+
   return (
     <main>
       <div className="container mx-auto px-4 py-16">
         {/* Search Info Header */}
         <div className="mb-8">
           <h1 className="text-4xl font-bold text-center mb-4">Search Results</h1>
-          {(checkIn || checkOut || guests) && (
+          {(checkIn || checkOut || guests.total > 0) && (
             <div className="text-center text-gray-600 font-jost">
               {checkIn && checkOut && (
                 <p className="text-lg">
                   {formatDate(checkIn)} - {formatDate(checkOut)}
                 </p>
               )}
-              {guests && (
+              {guests.total > 0 && (
                 <p className="text-lg mt-1">
-                  {guests} {parseInt(guests) === 1 ? 'Guest' : 'Guests'}
+                  {formatGuestBreakdown()}
                 </p>
               )}
             </div>
