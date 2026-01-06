@@ -2,6 +2,7 @@
 import { useEffect, useState, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import CabinCard from '@/app/components/CabinCard';
+import SearchPageWidget from '@/app/components/SearchPageWidget';
 
 interface SearchCabin {
   id: string;
@@ -179,23 +180,17 @@ function SearchResults() {
   return (
     <main>
       <div className="container mx-auto px-4 py-16">
-        {/* Search Info Header */}
+        {/* Header */}
         <div className="mb-8">
           <h1 className="text-4xl font-bold text-center mb-4">Search Results</h1>
-          {(checkIn || checkOut || guests.total > 0) && (
-            <div className="text-center text-gray-600 font-jost">
-              {checkIn && checkOut && (
-                <p className="text-lg">
-                  {formatDate(checkIn)} - {formatDate(checkOut)}
-                </p>
-              )}
-              {guests.total > 0 && (
-                <p className="text-lg mt-1">
-                  {formatGuestBreakdown()}
-                </p>
-              )}
-            </div>
-          )}
+          <p className="text-center text-gray-600 font-jost">
+            Modify your search below to find available cabins
+          </p>
+        </div>
+
+        {/* Search Widget */}
+        <div className="flex justify-center mb-12">
+          <SearchPageWidget />
         </div>
 
         {/* Loading State */}
