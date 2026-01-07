@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useParams, notFound } from 'next/navigation';
 import PhotoGalleryModal from './components/PhotoGalleryModal';
-import BookingCard from './components/BookingCard';
+import LodgifyBookNowWidget from '@/app/components/LodgifyBookNowWidget';
 import ImageGallery from './components/ImageGallery';
 import AmenitiesSection from './components/AmenitiesSection';
 import ExtraServicesSection from './components/ExtraServicesSection';
@@ -220,15 +220,6 @@ const SingleCabinPage = () => {
               </p>
             </div>
 
-            {/* Booking Card - Mobile Only (shown after description) */}
-            <div className="lg:hidden mb-6">
-              <BookingCard
-                cabinName={cabin.name?.en || 'THE TUBE'}
-                basePrice={cabin.basePrice}
-                capacity={cabin.capacity}
-              />
-            </div>
-
             {/* Amenities Section Component */}
             <AmenitiesSection />
 
@@ -240,12 +231,11 @@ const SingleCabinPage = () => {
 
           </div>
 
-          {/* Right Column - Booking Panel Component (Desktop Only) */}
-          <div className="hidden lg:block">
-            <BookingCard
-              cabinName={cabin.name?.en || 'THE TUBE'}
-              basePrice={cabin.basePrice}
-              capacity={cabin.capacity}
+          {/* Lodgify Book Now Widget - Desktop: right sidebar */}
+          <div>
+            <LodgifyBookNowWidget
+              rentalId={cabin.lodgifyId}
+              languageCode="en"
             />
           </div>
         </div>
