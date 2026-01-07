@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useParams, useSearchParams, notFound } from 'next/navigation';
 import PhotoGalleryModal from './components/PhotoGalleryModal';
-import LodgifyBookNowWidget from '@/app/components/LodgifyBookNowWidget';
+import BookingSection from '@/app/components/booking/BookingSection';
 import ImageGallery from './components/ImageGallery';
 import AmenitiesSection from './components/AmenitiesSection';
 import ExtraServicesSection from './components/ExtraServicesSection';
@@ -240,17 +240,23 @@ const SingleCabinPage = () => {
 
           </div>
 
-          {/* Lodgify Book Now Widget - Desktop: right sidebar */}
-          <div>
-            <LodgifyBookNowWidget
-              rentalId={cabin.lodgifyId}
-              languageCode="en"
-              arrival={arrival}
-              departure={departure}
-              adults={adults}
-              children={children}
-              infants={infants}
-              pets={pets}
+          {/* Booking Section - Desktop: right sidebar */}
+          <div className="hidden lg:block">
+            <BookingSection
+              cabin={{
+                slug: cabin.slug,
+                name: cabin.name?.en || cabin.slug,
+                lodgifyId: cabin.lodgifyId,
+                capacity: cabin.capacity,
+              }}
+              searchParams={{
+                arrival,
+                departure,
+                adults,
+                children,
+                infants,
+                pets,
+              }}
             />
           </div>
         </div>
@@ -263,6 +269,29 @@ const SingleCabinPage = () => {
         images={cabin.images || []}
         featuredImage={cabin.featuredImage}
       />
+
+      {/* Mobile Booking Section - Fixed sticky bar and bottom sheet */}
+      <div className="lg:hidden">
+        <BookingSection
+          cabin={{
+            slug: cabin.slug,
+            name: cabin.name?.en || cabin.slug,
+            lodgifyId: cabin.lodgifyId,
+            capacity: cabin.capacity,
+          }}
+          searchParams={{
+            arrival,
+            departure,
+            adults,
+            children,
+            infants,
+            pets,
+          }}
+        />
+      </div>
+
+      {/* Bottom padding for mobile sticky bar */}
+      <div className="h-24 lg:hidden" />
     </div>
   );
 };
