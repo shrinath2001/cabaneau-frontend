@@ -188,8 +188,8 @@ export default function DesktopBookingCard({
           </div>
         )}
 
-        {/* Success State with Pricing */}
-        {!loading && !error && quote?.available && quote.pricing && (
+        {/* Success State with Full Pricing */}
+        {!loading && !error && quote?.available && quote.pricingAvailable && quote.pricing && (
           <div className="border-t border-gray-300 pt-4">
             {/* Price Breakdown */}
             <div className="space-y-2 mb-4">
@@ -230,6 +230,34 @@ export default function DesktopBookingCard({
               className="w-full bg-[#495D4D] text-white py-4 px-6 text-base font-bold tracking-wide hover:bg-[#3d5a3d] transition uppercase font-jost mt-4"
             >
               BOOK YOUR STAY
+            </button>
+          </div>
+        )}
+
+        {/* Available but Pricing Not Available - Show minPrice fallback */}
+        {!loading && !error && quote?.available && !quote.pricingAvailable && (
+          <div className="border-t border-gray-300 pt-4">
+            {/* Minimum Price Info */}
+            <div className="space-y-2 mb-4">
+              {quote.minPrice && (
+                <div className="flex justify-between items-center">
+                  <span className="text-sm text-gray-600">Starting from</span>
+                  <span className="text-sm text-gray-800 font-medium">
+                    {formatCurrency(quote.minPrice, quote.currency || 'EUR')}/night
+                  </span>
+                </div>
+              )}
+              <p className="text-xs text-gray-500">
+                Final price will be shown on the booking page
+              </p>
+            </div>
+
+            {/* Book Button */}
+            <button
+              onClick={handleBooking}
+              className="w-full bg-[#495D4D] text-white py-4 px-6 text-base font-bold tracking-wide hover:bg-[#3d5a3d] transition uppercase font-jost mt-4"
+            >
+              VIEW PRICING & BOOK
             </button>
           </div>
         )}

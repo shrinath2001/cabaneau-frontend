@@ -91,8 +91,8 @@ export default function MobileStickyBar({
     );
   }
 
-  // Success state with pricing
-  if (quote?.available && quote.pricing) {
+  // Success state with full pricing
+  if (quote?.available && quote.pricingAvailable && quote.pricing) {
     const { pricing, checkIn, checkOut } = quote;
 
     return (
@@ -111,6 +111,38 @@ export default function MobileStickyBar({
             className="bg-[#F49A4A] hover:bg-[#e08a3a] text-white font-semibold py-3 px-6 rounded-lg transition-colors"
           >
             Reserve
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  // Available but pricing not available - show minPrice fallback
+  if (quote?.available && !quote.pricingAvailable) {
+    return (
+      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 shadow-[0_-2px_10px_rgba(0,0,0,0.1)] z-50 lg:hidden">
+        <div className="flex items-center justify-between px-5 py-4">
+          <div className="flex flex-col">
+            {quote.minPrice ? (
+              <>
+                <span className="text-lg font-bold text-gray-900">
+                  From {formatCurrency(quote.minPrice, quote.currency || 'EUR')}/night
+                </span>
+                <span className="text-sm text-gray-500">
+                  Final price on booking page
+                </span>
+              </>
+            ) : (
+              <span className="text-base font-medium text-gray-900">
+                View pricing
+              </span>
+            )}
+          </div>
+          <button
+            onClick={handleReserve}
+            className="bg-[#F49A4A] hover:bg-[#e08a3a] text-white font-semibold py-3 px-6 rounded-lg transition-colors"
+          >
+            Book Now
           </button>
         </div>
       </div>

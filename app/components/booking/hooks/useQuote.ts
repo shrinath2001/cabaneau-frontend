@@ -27,7 +27,10 @@ export interface QuoteGuests {
 
 export interface QuoteResponse {
   available: boolean;
+  pricingAvailable: boolean;
   pricing?: QuotePricing;
+  minPrice?: number;
+  currency?: string;
   checkoutUrl: string;
   unavailableReason?: string;
   checkIn: string;
