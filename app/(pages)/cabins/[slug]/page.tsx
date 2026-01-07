@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { useParams, notFound } from 'next/navigation';
+import { useParams, useSearchParams, notFound } from 'next/navigation';
 import PhotoGalleryModal from './components/PhotoGalleryModal';
 import LodgifyBookNowWidget from '@/app/components/LodgifyBookNowWidget';
 import ImageGallery from './components/ImageGallery';
@@ -46,12 +46,21 @@ interface CabinDetails {
 
 const SingleCabinPage = () => {
   const params = useParams();
+  const searchParams = useSearchParams();
   const slug = params.slug as string;
 
   const [cabin, setCabin] = useState<CabinDetails | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [showPhotoGallery, setShowPhotoGallery] = useState(false);
+
+  // Get booking params from URL (passed from search page)
+  const arrival = searchParams.get('arrival') || undefined;
+  const departure = searchParams.get('departure') || undefined;
+  const adults = searchParams.get('adults') || undefined;
+  const children = searchParams.get('children') || undefined;
+  const infants = searchParams.get('infants') || undefined;
+  const pets = searchParams.get('pets') || undefined;
 
   useEffect(() => {
     const fetchCabin = async () => {
@@ -236,6 +245,12 @@ const SingleCabinPage = () => {
             <LodgifyBookNowWidget
               rentalId={cabin.lodgifyId}
               languageCode="en"
+              arrival={arrival}
+              departure={departure}
+              adults={adults}
+              children={children}
+              infants={infants}
+              pets={pets}
             />
           </div>
         </div>

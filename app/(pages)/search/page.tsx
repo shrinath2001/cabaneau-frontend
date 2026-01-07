@@ -230,6 +230,14 @@ function SearchResults() {
                       capacity={`${cabin.capacity} Guest${cabin.capacity > 1 ? 's' : ''}`}
                       availability={checkIn ? formatDate(checkIn) : 'Available'}
                       price={`£${cabin.basePrice}`}
+                      searchParams={{
+                        arrival: searchParams.get('arrival') || undefined,
+                        departure: searchParams.get('departure') || undefined,
+                        adults: searchParams.get('adults') || undefined,
+                        children: searchParams.get('children') || undefined,
+                        infants: searchParams.get('infants') || undefined,
+                        pets: searchParams.get('pets') || undefined,
+                      }}
                     />
                   ))}
                 </div>

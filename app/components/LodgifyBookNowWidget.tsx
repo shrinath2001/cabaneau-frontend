@@ -5,6 +5,13 @@ import { useEffect, useRef } from 'react';
 interface LodgifyBookNowWidgetProps {
   rentalId: string;
   languageCode?: string;
+  // Pre-fill values from search page
+  arrival?: string;
+  departure?: string;
+  adults?: string;
+  children?: string;
+  infants?: string;
+  pets?: string;
 }
 
 /**
@@ -19,8 +26,20 @@ interface LodgifyBookNowWidgetProps {
 const LodgifyBookNowWidget = ({
   rentalId,
   languageCode = 'en',
+  arrival,
+  departure,
+  adults,
+  children,
+  infants,
+  pets,
 }: LodgifyBookNowWidgetProps) => {
   const widgetRef = useRef<HTMLDivElement>(null);
+
+  // Convert ISO date (YYYY-MM-DD) to Lodgify format (YYYYMMDD)
+  const formatForLodgify = (date: string | undefined) => {
+    if (!date) return '';
+    return date.includes('-') ? date.replace(/-/g, '') : date;
+  };
 
   useEffect(() => {
     if (!rentalId) return;
@@ -44,7 +63,7 @@ const LodgifyBookNowWidget = ({
     return () => {
       clearTimeout(timer);
     };
-  }, [rentalId]);
+  }, [rentalId, arrival, departure, adults, children, infants, pets]);
 
   // Fallback when lodgifyId is missing
   if (!rentalId) {
@@ -102,6 +121,13 @@ const LodgifyBookNowWidget = ({
         data-version="stable"
         data-hide-minimum-price
         data-has-guests-breakdown
+        // Pre-fill values from search page
+        {...(arrival && { 'data-arrival': formatForLodgify(arrival) })}
+        {...(departure && { 'data-departure': formatForLodgify(departure) })}
+        {...(adults && adults !== '0' && { 'data-adults': adults })}
+        {...(children && children !== '0' && { 'data-children': children })}
+        {...(infants && infants !== '0' && { 'data-infants': infants })}
+        {...(pets && pets !== '0' && { 'data-pets': pets })}
         // Labels
         data-check-in-label="Check-in"
         data-check-out-label="Check-out"

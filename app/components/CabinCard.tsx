@@ -3,6 +3,15 @@ import { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 
+interface SearchParams {
+  arrival?: string;
+  departure?: string;
+  adults?: string;
+  children?: string;
+  infants?: string;
+  pets?: string;
+}
+
 interface CabinCardProps {
   id?: number;
   slug?: string;
@@ -13,6 +22,7 @@ interface CabinCardProps {
   capacity: string;
   availability: string;
   price: string;
+  searchParams?: SearchParams;
 }
 
 const CabinCard: React.FC<CabinCardProps> = ({
@@ -25,11 +35,26 @@ const CabinCard: React.FC<CabinCardProps> = ({
   capacity,
   availability,
   price,
+  searchParams,
 }) => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
-  // Debug: Log the slug being used
-  console.log('CabinCard:', { title, slug, id, linkTo: `/cabins/${slug || id}` });
+  // Build cabin URL with search params for pre-filling booking widget
+  const buildCabinUrl = () => {
+    const base = `/cabins/${slug || id}`;
+    if (!searchParams) return base;
+
+    const params = new URLSearchParams();
+    if (searchParams.arrival) params.set('arrival', searchParams.arrival);
+    if (searchParams.departure) params.set('departure', searchParams.departure);
+    if (searchParams.adults) params.set('adults', searchParams.adults);
+    if (searchParams.children) params.set('children', searchParams.children);
+    if (searchParams.infants) params.set('infants', searchParams.infants);
+    if (searchParams.pets) params.set('pets', searchParams.pets);
+
+    const queryString = params.toString();
+    return queryString ? `${base}?${queryString}` : base;
+  };
 
   const nextImage = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -149,7 +174,7 @@ const CabinCard: React.FC<CabinCardProps> = ({
         </div>
 
         {/* Book Now Button */}
-        <Link href={`/cabins/${slug || id}`} className="w-full">
+        <Link href={buildCabinUrl()} className="w-full">
           <button className="w-full py-2.5 px-4 border border-black text-black text-sm font-medium tracking-wider group-hover:bg-[#F49A4A] group-hover:text-white group-hover:border-[#F49A4A] transition-all duration-300">
             BOOK NOW
           </button>
