@@ -186,9 +186,77 @@ const LodgifyBookingWidget = ({ languageCode = 'en' }: LodgifyBookingWidgetProps
           outline: none !important;
           box-shadow: none !important;
         }
+
+        /* Force single row layout on mobile */
+        #lodgify-search-bar > div {
+          display: flex !important;
+          flex-direction: row !important;
+          flex-wrap: nowrap !important;
+          align-items: stretch !important;
+          gap: 0 !important;
+        }
+
+        /* Make date fields share space equally */
+        #lodgify-search-bar > div > div:first-child {
+          flex: 1 !important;
+          min-width: 0 !important;
+        }
+
+        /* Guest counter - compact */
+        #lodgify-search-bar > div > div:nth-child(2) {
+          flex: 0 0 auto !important;
+          min-width: 80px !important;
+        }
+
+        /* Search button container */
+        #lodgify-search-bar > div > div:last-child,
+        #lodgify-search-bar > div > a:last-child {
+          flex: 0 0 52px !important;
+        }
+
+        /* Date inputs side by side */
+        #lodgify-search-bar [class*="dates"],
+        #lodgify-search-bar [class*="Dates"] {
+          display: flex !important;
+          flex-direction: row !important;
+          flex: 1 !important;
+        }
+
+        /* Compact date fields */
+        #lodgify-search-bar [class*="check-in"],
+        #lodgify-search-bar [class*="checkIn"],
+        #lodgify-search-bar [class*="CheckIn"],
+        #lodgify-search-bar [class*="check-out"],
+        #lodgify-search-bar [class*="checkOut"],
+        #lodgify-search-bar [class*="CheckOut"] {
+          flex: 1 !important;
+          min-width: 0 !important;
+          padding: 8px !important;
+        }
+
+        /* Compact guest selector */
+        #lodgify-search-bar [class*="guest"],
+        #lodgify-search-bar [class*="Guest"] {
+          padding: 4px 8px !important;
+        }
+
+        /* Smaller text on mobile */
+        @media (max-width: 640px) {
+          #lodgify-search-bar label,
+          #lodgify-search-bar span {
+            font-size: 12px !important;
+          }
+
+          #lodgify-search-bar button[type="submit"],
+          #lodgify-search-bar a[href*="search"] {
+            min-width: 44px !important;
+            max-width: 44px !important;
+            min-height: 44px !important;
+          }
+        }
       `}</style>
 
-      <div className="w-full max-w-[650px] relative z-10 bg-white/10 backdrop-blur-sm">
+      <div className="w-full max-w-[800px] relative z-10 bg-white/10 backdrop-blur-sm">
         <div
           id="lodgify-search-bar"
           data-website-id="572847"
