@@ -129,6 +129,7 @@ export default function BookingSection({
           loading={loading}
           error={error}
           onCheckAvailability={() => setShowBottomSheet(true)}
+          onChangeDates={() => setShowBottomSheet(true)}
         />
 
         {/* Bottom sheet with Lodgify widget */}

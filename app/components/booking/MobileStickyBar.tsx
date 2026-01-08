@@ -8,6 +8,7 @@ interface MobileStickyBarProps {
   loading: boolean;
   error: string | null;
   onCheckAvailability: () => void;
+  onChangeDates?: () => void;
 }
 
 /**
@@ -23,6 +24,7 @@ export default function MobileStickyBar({
   loading,
   error,
   onCheckAvailability,
+  onChangeDates,
 }: MobileStickyBarProps) {
   // Mode 1: No dates selected - show "Check Availability"
   if (!hasDateParams) {
@@ -114,12 +116,22 @@ export default function MobileStickyBar({
               For {pricing.nights} night{pricing.nights !== 1 ? 's' : ''} · {formatDateRange(checkIn, checkOut)}
             </span>
           </div>
-          <button
-            onClick={handleReserve}
-            className="bg-[#F49A4A] hover:bg-[#e08a3a] text-white font-semibold py-3 px-6 rounded-lg transition-colors"
-          >
-            Reserve
-          </button>
+          <div className="flex flex-col items-center gap-1">
+            <button
+              onClick={handleReserve}
+              className="bg-[#F49A4A] hover:bg-[#e08a3a] text-white font-semibold py-3 px-6 rounded-lg transition-colors"
+            >
+              Reserve
+            </button>
+            {onChangeDates && (
+              <button
+                onClick={onChangeDates}
+                className="text-xs text-[#495D4D] hover:text-[#3d5a3d] underline"
+              >
+                Change dates
+              </button>
+            )}
+          </div>
         </div>
       </div>
     );
@@ -146,12 +158,22 @@ export default function MobileStickyBar({
               </span>
             )}
           </div>
-          <button
-            onClick={handleReserve}
-            className="bg-[#F49A4A] hover:bg-[#e08a3a] text-white font-semibold py-3 px-6 rounded-lg transition-colors"
-          >
-            Book Now
-          </button>
+          <div className="flex flex-col items-center gap-1">
+            <button
+              onClick={handleReserve}
+              className="bg-[#F49A4A] hover:bg-[#e08a3a] text-white font-semibold py-3 px-6 rounded-lg transition-colors"
+            >
+              Book Now
+            </button>
+            {onChangeDates && (
+              <button
+                onClick={onChangeDates}
+                className="text-xs text-[#495D4D] hover:text-[#3d5a3d] underline"
+              >
+                Change dates
+              </button>
+            )}
+          </div>
         </div>
       </div>
     );
