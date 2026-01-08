@@ -48,7 +48,7 @@ export default function MobileBottomSheet({
   // Extract params from Lodgify widget's checkout URL
   const extractParamsFromWidget = useCallback(() => {
     const bookNowLink = document.querySelector(
-      '#lodgify-bottom-sheet-widget a[href*="checkout.lodgify.com"]'
+      '#lodgify-book-now-box a[href*="checkout.lodgify.com"]'
     ) as HTMLAnchorElement | null;
 
     if (bookNowLink) {
@@ -97,7 +97,7 @@ export default function MobileBottomSheet({
     const timer = setTimeout(() => {
       const script = document.createElement('script');
       script.src = scriptUrl;
-      script.async = true;
+      script.defer = true;
       document.head.appendChild(script);
     }, 200);
 
@@ -120,7 +120,7 @@ export default function MobileBottomSheet({
         extractParamsFromWidget();
       });
 
-      const widgetContainer = document.getElementById('lodgify-bottom-sheet-widget');
+      const widgetContainer = document.getElementById('lodgify-book-now-box');
       if (widgetContainer) {
         observerRef.current.observe(widgetContainer, {
           childList: true,
@@ -206,22 +206,43 @@ export default function MobileBottomSheet({
           ref={widgetContainerRef}
           className="flex-1 overflow-y-auto px-5 py-4"
         >
-          {/* CSS to hide Lodgify's Book Now button */}
+          {/* CSS to style Lodgify widget and hide Book Now button */}
           <style jsx global>{`
-            #lodgify-bottom-sheet-widget a[href*="checkout.lodgify.com"],
-            #lodgify-bottom-sheet-widget button[type="submit"] {
-              display: none !important;
-            }
-
-            #lodgify-bottom-sheet-widget {
+            :root {
+              --ldg-bnb-background: #ffffff;
+              --ldg-bnb-border-radius: 0.42em;
+              --ldg-bnb-box-shadow: none;
+              --ldg-bnb-padding: 14px;
+              --ldg-bnb-input-background: #ffffff;
+              --ldg-bnb-button-border-radius: 0px;
               --ldg-bnb-color-primary: #495d4d;
               --ldg-bnb-color-primary-lighter: #a4aea6;
               --ldg-bnb-color-primary-darker: #252f27;
+              --ldg-bnb-color-primary-contrast: #ffffff;
+              --ldg-component-calendar-cell-selection-bg-color: #495d4d;
+              --ldg-component-calendar-cell-selection-color: #ffffff;
+              --ldg-component-calendar-cell-selected-bg-color: #a4aea6;
+              --ldg-component-calendar-cell-selected-color: #ffffff;
+              --ldg-bnb-font-family: inherit;
+            }
+            #lodgify-book-now-box {
+              width: 100%;
+            }
+            #lodgify-book-now-box a[href*="checkout.lodgify.com"],
+            #lodgify-book-now-box button[type="submit"] {
+              display: none !important;
+            }
+            /* Hide price display from widget */
+            #lodgify-book-now-box [class*="price"],
+            #lodgify-book-now-box [class*="Price"],
+            #lodgify-book-now-box [class*="total"],
+            #lodgify-book-now-box [class*="Total"] {
+              display: none !important;
             }
           `}</style>
 
           <div
-            id="lodgify-bottom-sheet-widget"
+            id="lodgify-book-now-box"
             data-rental-id={cabin.lodgifyId}
             data-website-id="572847"
             data-slug="cabaneau"
@@ -235,11 +256,15 @@ export default function MobileBottomSheet({
             data-guests-label="Guests"
             data-guests-singular-label="{{NumberOfGuests}} guest"
             data-guests-plural-label="{{NumberOfGuests}} guests"
-            data-adults-label="Adults"
-            data-children-label="Children"
-            data-infants-label="Infants"
-            data-pets-label="Pets"
-            data-book-label="Book Now"
+            data-adults-label='{"one":"adult","other":"adults"}'
+            data-adults-description="Ages 18 or above"
+            data-children-label='{"one":"child","other":"children"}'
+            data-children-description="Ages 2-17"
+            data-infants-label='{"one":"infant","other":"infants"}'
+            data-infants-description="Under 2"
+            data-pets-label='{"one":"pet","other":"pets"}'
+            data-done-label="Done"
+            data-book-button-label="Book Now"
           />
         </div>
 

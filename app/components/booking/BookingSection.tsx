@@ -5,7 +5,7 @@ import { useQuote } from './hooks/useQuote';
 import MobileStickyBar from './MobileStickyBar';
 import MobileBottomSheet from './MobileBottomSheet';
 import DesktopBookingCard from './DesktopBookingCard';
-import LodgifyWidgetWrapper from './LodgifyWidgetWrapper';
+import DesktopBookingModal from './DesktopBookingModal';
 
 interface CabinInfo {
   slug: string;
@@ -36,9 +36,9 @@ interface BookingSectionProps {
  * 2. Date state (no dates vs dates pre-selected in URL)
  *
  * States:
- * - Mobile + No dates: Sticky bar with "Check Availability" button
+ * - Mobile + No dates: Sticky bar with "Check Availability" -> opens bottom sheet with Lodgify widget
  * - Mobile + Has dates: Sticky bar with price + "Reserve" button
- * - Desktop + No dates: Lodgify widget with "Save" button
+ * - Desktop + No dates: Card with "Check Availability" -> opens modal with Lodgify widget
  * - Desktop + Has dates: Custom booking card with price + "Book Your Stay"
  */
 export default function BookingSection({
@@ -47,6 +47,7 @@ export default function BookingSection({
 }: BookingSectionProps) {
   const [isMobile, setIsMobile] = useState(false);
   const [showBottomSheet, setShowBottomSheet] = useState(false);
+  const [showDesktopModal, setShowDesktopModal] = useState(false);
 
   // Check if we have date params (converts URL format if needed)
   const arrival = searchParams.arrival;
@@ -154,11 +155,32 @@ export default function BookingSection({
     );
   }
 
-  // Desktop without dates - show Lodgify widget with Save button
+  // Desktop without dates - show Check Availability button + modal
   return (
-    <LodgifyWidgetWrapper
-      cabin={cabin}
-      onSave={handleSaveFromWidget}
-    />
+    <>
+      {/* Check Availability Card */}
+      <div className="bg-white border-2 border-gray-300 w-full md:w-[464px] md:sticky md:top-24 p-6">
+        <h3 className="font-jost font-medium text-lg text-gray-800 mb-4">
+          {cabin.name}
+        </h3>
+        <p className="text-gray-600 mb-6">
+          Select your dates to see availability and pricing
+        </p>
+        <button
+          onClick={() => setShowDesktopModal(true)}
+          className="w-full bg-[#F49A4A] hover:bg-[#e08a3a] text-white font-semibold py-3 px-6 rounded-lg transition-colors"
+        >
+          Check Availability
+        </button>
+      </div>
+
+      {/* Desktop Modal with Lodgify widget */}
+      <DesktopBookingModal
+        isOpen={showDesktopModal}
+        onClose={() => setShowDesktopModal(false)}
+        cabin={cabin}
+        onSave={handleSaveFromWidget}
+      />
+    </>
   );
 }
