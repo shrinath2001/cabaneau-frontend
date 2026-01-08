@@ -17,6 +17,8 @@ interface DesktopBookingModalProps {
     departure: string;
     adults: number;
     children: number;
+    infants: number;
+    pets: number;
   }) => void;
 }
 
@@ -40,6 +42,8 @@ export default function DesktopBookingModal({
     departure: string;
     adults: number;
     children: number;
+    infants: number;
+    pets: number;
   } | null>(null);
   const [canSave, setCanSave] = useState(false);
   const observerRef = useRef<MutationObserver | null>(null);
@@ -57,6 +61,8 @@ export default function DesktopBookingModal({
         const departure = url.searchParams.get('departure');
         const adults = parseInt(url.searchParams.get('adults') || '1', 10);
         const children = parseInt(url.searchParams.get('children') || '0', 10);
+        const infants = parseInt(url.searchParams.get('infants') || '0', 10);
+        const pets = parseInt(url.searchParams.get('pets') || '0', 10);
 
         if (arrival && departure) {
           // Convert ISO to Lodgify format (YYYYMMDD)
@@ -68,6 +74,8 @@ export default function DesktopBookingModal({
             departure: formatToLodgify(departure),
             adults,
             children,
+            infants,
+            pets,
           });
           setCanSave(true);
           return;
@@ -236,10 +244,9 @@ export default function DesktopBookingModal({
                 display: none !important;
               }
               /* Hide price display from widget */
-              #lodgify-book-now-box [class*="price"],
-              #lodgify-book-now-box [class*="Price"],
-              #lodgify-book-now-box [class*="total"],
-              #lodgify-book-now-box [class*="Total"] {
+              #lodgify-book-now-box [data-testid="book-now-box.total-price.price"],
+              #lodgify-book-now-box [data-testid="book-now-box.total-price.label"],
+              #lodgify-book-now-box [data-testid*="total-price"] {
                 display: none !important;
               }
             `}</style>

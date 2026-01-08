@@ -94,14 +94,22 @@ export default function MobileStickyBar({
   // Success state with full pricing
   if (quote?.available && quote.pricingAvailable && quote.pricing) {
     const { pricing, checkIn, checkOut } = quote;
+    const hasDiscount = !!pricing.discount;
 
     return (
       <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 shadow-[0_-2px_10px_rgba(0,0,0,0.1)] z-50 lg:hidden">
         <div className="flex items-center justify-between px-5 py-4">
           <div className="flex flex-col">
-            <span className="text-lg font-bold text-gray-900">
-              {formatCurrency(pricing.total, pricing.currency)}
-            </span>
+            <div className="flex items-center gap-2">
+              <span className="text-lg font-bold text-gray-900">
+                {formatCurrency(pricing.total, pricing.currency)}
+              </span>
+              {hasDiscount && (
+                <span className="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded font-medium">
+                  -{pricing.discount!.percentage || Math.round((pricing.discount!.amount / pricing.subtotal) * 100)}%
+                </span>
+              )}
+            </div>
             <span className="text-sm text-gray-500">
               For {pricing.nights} night{pricing.nights !== 1 ? 's' : ''} · {formatDateRange(checkIn, checkOut)}
             </span>

@@ -103,12 +103,16 @@ export default function BookingSection({
     departure: string;
     adults: number;
     children: number;
+    infants: number;
+    pets: number;
   }) => {
     const url = new URL(window.location.href);
     url.searchParams.set('arrival', params.arrival);
     url.searchParams.set('departure', params.departure);
     url.searchParams.set('adults', params.adults.toString());
     url.searchParams.set('children', params.children.toString());
+    url.searchParams.set('infants', params.infants.toString());
+    url.searchParams.set('pets', params.pets.toString());
 
     // Refresh page with new params
     window.location.href = url.toString();
@@ -140,18 +144,29 @@ export default function BookingSection({
 
   // DESKTOP VIEW
   if (hasDateParams) {
-    // Desktop with dates selected - show custom booking card
+    // Desktop with dates selected - show custom booking card + modal for changing dates
     return (
-      <DesktopBookingCard
-        cabin={cabin}
-        checkIn={checkIn!}
-        checkOut={checkOut!}
-        adults={adults}
-        children={children}
-        quote={quote}
-        loading={loading}
-        error={error}
-      />
+      <>
+        <DesktopBookingCard
+          cabin={cabin}
+          checkIn={checkIn!}
+          checkOut={checkOut!}
+          adults={adults}
+          children={children}
+          quote={quote}
+          loading={loading}
+          error={error}
+          onChangeDates={() => setShowDesktopModal(true)}
+        />
+
+        {/* Desktop Modal for changing dates */}
+        <DesktopBookingModal
+          isOpen={showDesktopModal}
+          onClose={() => setShowDesktopModal(false)}
+          cabin={cabin}
+          onSave={handleSaveFromWidget}
+        />
+      </>
     );
   }
 
@@ -159,19 +174,28 @@ export default function BookingSection({
   return (
     <>
       {/* Check Availability Card */}
-      <div className="bg-white border-2 border-gray-300 w-full md:w-[464px] md:sticky md:top-24 p-6">
-        <h3 className="font-jost font-medium text-lg text-gray-800 mb-4">
-          {cabin.name}
-        </h3>
-        <p className="text-gray-600 mb-6">
-          Select your dates to see availability and pricing
-        </p>
-        <button
-          onClick={() => setShowDesktopModal(true)}
-          className="w-full bg-[#F49A4A] hover:bg-[#e08a3a] text-white font-semibold py-3 px-6 rounded-lg transition-colors"
-        >
-          Check Availability
-        </button>
+      <div
+        className="bg-white border-2 border-gray-300 w-full md:w-[464px] md:sticky md:top-24"
+        style={{ maxHeight: 'calc(100vh - 100px)' }}
+      >
+        {/* Cabin Name Header */}
+        <div className="px-6 py-4 border-b border-gray-300">
+          <h2 className="font-jost font-medium text-[18px] md:text-[20px] uppercase text-gray-800">
+            {cabin.name}
+          </h2>
+        </div>
+
+        <div className="p-4 md:p-6 space-y-4">
+          <p className="text-sm text-gray-600">
+            Select your dates to see availability and pricing
+          </p>
+          <button
+            onClick={() => setShowDesktopModal(true)}
+            className="w-full bg-[#F49A4A] hover:bg-[#e08a3a] text-white font-semibold py-3 px-6 rounded-lg transition-colors"
+          >
+            Check Availability
+          </button>
+        </div>
       </div>
 
       {/* Desktop Modal with Lodgify widget */}

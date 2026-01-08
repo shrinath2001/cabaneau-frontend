@@ -18,6 +18,7 @@ interface DesktopBookingCardProps {
   quote: QuoteResponse | null;
   loading: boolean;
   error: string | null;
+  onChangeDates: () => void;
 }
 
 /**
@@ -39,6 +40,7 @@ export default function DesktopBookingCard({
   quote,
   loading,
   error,
+  onChangeDates,
 }: DesktopBookingCardProps) {
   // Format dates for display
   const formatDateForDisplay = (dateStr: string): string => {
@@ -48,18 +50,6 @@ export default function DesktopBookingCard({
       month: '2-digit',
       year: 'numeric',
     });
-  };
-
-  // Handle change dates - clear URL params
-  const handleChangeDates = () => {
-    const url = new URL(window.location.href);
-    url.searchParams.delete('arrival');
-    url.searchParams.delete('departure');
-    url.searchParams.delete('adults');
-    url.searchParams.delete('children');
-    url.searchParams.delete('infants');
-    url.searchParams.delete('pets');
-    window.location.href = url.toString();
   };
 
   // Handle booking - redirect to checkout
@@ -133,7 +123,7 @@ export default function DesktopBookingCard({
         {/* Change Dates Link */}
         <div className="text-right">
           <button
-            onClick={handleChangeDates}
+            onClick={onChangeDates}
             className="text-sm text-[#495D4D] hover:text-[#3d5a3d] underline font-medium"
           >
             Change dates
@@ -180,7 +170,7 @@ export default function DesktopBookingCard({
               </p>
             </div>
             <button
-              onClick={handleChangeDates}
+              onClick={onChangeDates}
               className="w-full bg-gray-400 text-white py-4 px-6 text-base font-bold tracking-wide uppercase font-jost"
             >
               SELECT DIFFERENT DATES
@@ -203,15 +193,34 @@ export default function DesktopBookingCard({
                 </span>
               </div>
 
-              {/* Fees */}
-              {quote.pricing.fees.map((fee, index) => (
-                <div key={index} className="flex justify-between items-center">
-                  <span className="text-sm text-gray-600">{fee.name}</span>
-                  <span className="text-sm text-gray-800">
-                    {formatCurrency(fee.amount, quote.pricing!.currency)}
+              {/* Fees (excluding discounts) */}
+              {quote.pricing.fees
+                .filter((fee) => fee.amount >= 0)
+                .map((fee, index) => (
+                  <div key={index} className="flex justify-between items-center">
+                    <span className="text-sm text-gray-600">{fee.name}</span>
+                    <span className="text-sm text-gray-800">
+                      {formatCurrency(fee.amount, quote.pricing!.currency)}
+                    </span>
+                  </div>
+                ))}
+
+              {/* Discount (special styling) */}
+              {quote.pricing.discount && (
+                <div className="flex justify-between items-center bg-green-50 -mx-4 px-4 py-2 rounded">
+                  <span className="text-sm text-green-700 font-medium">
+                    {quote.pricing.discount.name}
+                    {quote.pricing.discount.percentage && (
+                      <span className="text-green-600 ml-1">
+                        (-{quote.pricing.discount.percentage}%)
+                      </span>
+                    )}
+                  </span>
+                  <span className="text-sm text-green-700 font-medium">
+                    -{formatCurrency(quote.pricing.discount.amount, quote.pricing.currency)}
                   </span>
                 </div>
-              ))}
+              )}
             </div>
 
             {/* Total */}

@@ -9,6 +9,12 @@ export interface QuoteFee {
   isTax?: boolean;
 }
 
+export interface QuoteDiscount {
+  name: string;
+  amount: number;
+  percentage?: number | null;
+}
+
 export interface QuotePricing {
   currency: string;
   nightlyRate: number;
@@ -16,6 +22,7 @@ export interface QuotePricing {
   subtotal: number;
   fees: QuoteFee[];
   total: number;
+  discount?: QuoteDiscount;
 }
 
 export interface QuoteGuests {
