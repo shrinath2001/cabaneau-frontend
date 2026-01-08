@@ -5,7 +5,7 @@ const HostsSection = () => {
     <section className="py-6 md:py-5 px-4 md:px-20 bg-white md:mt-12">
       <div className="container mx-auto">
         <div className="max-w-[1390px] mx-auto">
-          <h2 className="font-logga text-[20px] md:text-[40px] font-semibold text-left mb-8 md:mb-12">THE HOSTS</h2>
+          <h2 className="font-logga text-[28px] md:text-[52px] font-semibold text-left mb-8 md:mb-12">THE HOSTS</h2>
 
           <div className="flex flex-col md:flex-row gap-8 md:gap-12">
             {/* Image Section */}

@@ -33,17 +33,19 @@ const ActivityDetailModal: React.FC<ActivityDetailModalProps> = ({ activity, isO
         className="bg-white w-[398px] max-h-[572px] md:w-full md:max-w-[708px] md:max-h-[927px] overflow-y-auto shadow-2xl relative"
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Close Button */}
-        <button
-          onClick={onClose}
-          className="absolute top-3 right-3 z-10 w-7 h-7 flex items-center justify-center bg-gray-200 hover:bg-gray-300 transition-colors"
-          aria-label="Close modal"
-        >
-          <span className="text-gray-600 text-lg font-bold">×</span>
-        </button>
+        {/* Sticky Close Button Container */}
+        <div className="sticky top-0 z-20 flex justify-end p-3 pointer-events-none">
+          <button
+            onClick={onClose}
+            className="w-7 h-7 flex items-center justify-center bg-gray-200 hover:bg-gray-300 transition-colors pointer-events-auto"
+            aria-label="Close modal"
+          >
+            <span className="text-gray-600 text-lg font-bold">×</span>
+          </button>
+        </div>
 
         {/* Image */}
-        <div className="w-full h-[280px] relative">
+        <div className="w-full h-[280px] relative -mt-[52px]">
           <img
             src={activity.detailImage || activity.image}
             alt={activity.title}

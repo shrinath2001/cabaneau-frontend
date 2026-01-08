@@ -92,7 +92,7 @@ const CabinsSection = () => {
           <div className="max-w-full mx-auto md:pl-20">
             {/* Header with Title and Navigation */}
             <div className="flex justify-center items-center mb-8 md:mb-16 relative">
-              <h2 className="font-logga text-[20px] md:text-[40px] font-semibold text-center">
+              <h2 className="font-logga text-[28px] md:text-[52px] font-semibold text-center">
                 OUR CABINES
               </h2>
 

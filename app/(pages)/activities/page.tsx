@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { activities, restaurants } from '@/app/data/activities';
 import ActivityListCard from '@/app/components/ActivityListCard';
 import ActivityDetailModal from '@/app/components/ActivityDetailModal';
@@ -10,6 +10,8 @@ export default function ActivitiesPage() {
   const [activeTab, setActiveTab] = useState<'activities' | 'restaurants'>('activities');
   const [selectedActivity, setSelectedActivity] = useState<Activity | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isTabsSticky, setIsTabsSticky] = useState(true);
+  const discoverSectionRef = useRef<HTMLElement>(null);
 
   const handleReadMore = (activity: Activity) => {
     setSelectedActivity(activity);
@@ -20,6 +22,25 @@ export default function ActivitiesPage() {
     setIsModalOpen(false);
     setTimeout(() => setSelectedActivity(null), 300);
   };
+
+  useEffect(() => {
+    const handleScroll = () => {
+      if (discoverSectionRef.current) {
+        const discoverSectionTop = discoverSectionRef.current.getBoundingClientRect().top;
+        const headerHeight = 70; // Header height
+
+        // If the discover section is about to reach the sticky tabs position, unstick them
+        if (discoverSectionTop <= headerHeight + 60) {
+          setIsTabsSticky(false);
+        } else {
+          setIsTabsSticky(true);
+        }
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   return (
     <main>
@@ -39,9 +60,9 @@ export default function ActivitiesPage() {
       </section>
 
       {/* Tabs Section */}
-      <section className="bg-white border-b border-gray-200">
+      <section className={`bg-white border-b border-gray-200 ${isTabsSticky ? 'sticky top-[70px]' : 'relative'} z-40 md:static md:top-0`}>
         <div className="container mx-auto px-4 max-w-6xl">
-          <div className="flex justify-center gap-6 sm:gap-12 overflow-x-auto">
+          <div className="flex justify-center gap-6 sm:gap-12 overflow-x-auto pb-4">
             <button
               onClick={() => setActiveTab('activities')}
               className="py-4 px-2 text-[16px] md:text-[24px] font-medium font-heading uppercase tracking-wider transition-colors relative whitespace-nowrap"
@@ -82,7 +103,7 @@ export default function ActivitiesPage() {
       </section>
 
       {/* Discover Restaurants Section */}
-      <section className="relative h-[300px] md:h-[400px] flex items-center justify-center">
+      <section ref={discoverSectionRef} className="relative h-[300px] md:h-[400px] flex items-center justify-center">
         <div
           className="absolute inset-0 bg-cover bg-center"
           style={{

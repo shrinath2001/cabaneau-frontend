@@ -7,6 +7,7 @@ interface PhotoGalleryModalProps {
   onClose: () => void;
   images: string[];
   featuredImage?: string;
+  onImageClick?: (imageIndex: number) => void;
 }
 
 // Define masonry layout patterns that eliminate white gaps
@@ -83,7 +84,7 @@ const getMasonryPattern = (imageCount: number, startIndex: number, images: strin
   return items;
 };
 
-const PhotoGalleryModal = ({ isOpen, onClose, images, featuredImage }: PhotoGalleryModalProps) => {
+const PhotoGalleryModal = ({ isOpen, onClose, images, featuredImage, onImageClick }: PhotoGalleryModalProps) => {
   if (!isOpen) return null;
 
   // Prepare all images - include featured image first
@@ -192,7 +193,7 @@ const PhotoGalleryModal = ({ isOpen, onClose, images, featuredImage }: PhotoGall
 
         {/* Photo Categories with Dynamic Masonry Layout */}
         <div className="space-y-16">
-          {categories.map((category) => {
+          {categories.map((category, catIdx) => {
             const catImages = categoryImages[category.id];
 
             // Skip categories with no images
@@ -200,6 +201,15 @@ const PhotoGalleryModal = ({ isOpen, onClose, images, featuredImage }: PhotoGall
 
             // Get masonry pattern for this category
             const masonryItems = getMasonryPattern(catImages.length, 0, catImages);
+
+            // Calculate starting index for this category
+            let startingIndex = 0;
+            for (let i = 0; i < catIdx; i++) {
+              const prevCatImages = categoryImages[categories[i].id];
+              if (prevCatImages) {
+                startingIndex += prevCatImages.length;
+              }
+            }
 
             return (
               <div
@@ -211,17 +221,28 @@ const PhotoGalleryModal = ({ isOpen, onClose, images, featuredImage }: PhotoGall
                   <h3 className="text-xl font-semibold sticky top-24">{category.name}</h3>
                 </div>
                 <div className="grid grid-cols-2 gap-4">
-                  {masonryItems.map((item, idx) => (
-                    <div key={idx} className={`relative ${item.className} bg-gray-200 overflow-hidden `}>
-                      <Image
-                        src={item.img}
-                        alt={category.name}
-                        fill
-                        className="object-cover"
-                        sizes="(max-width: 768px) 100vw, 50vw"
-                      />
-                    </div>
-                  ))}
+                  {masonryItems.map((item, idx) => {
+                    const globalIndex = startingIndex + idx;
+                    const actualImageIndex = globalIndex % allImages.length;
+
+                    return (
+                      <div
+                        key={idx}
+                        onClick={() => onImageClick?.(actualImageIndex)}
+                        className={`relative ${item.className} bg-gray-200 overflow-hidden cursor-pointer group`}
+                      >
+                        <Image
+                          src={item.img}
+                          alt={category.name}
+                          fill
+                          className="object-cover group-hover:scale-105 transition-transform duration-200"
+                          sizes="(max-width: 768px) 100vw, 50vw"
+                        />
+                        {/* Hover overlay */}
+                        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-200" />
+                      </div>
+                    );
+                  })}
                 </div>
               </div>
             );

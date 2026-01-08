@@ -30,20 +30,22 @@ const EatDrinkDetailModal: React.FC<EatDrinkDetailModalProps> = ({ item, isOpen,
       onClick={onClose}
     >
       <div
-        className="bg-white rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-2xl"
+        className="bg-white w-[398px] max-h-[572px] md:w-full md:max-w-[708px] md:max-h-[927px] overflow-y-auto shadow-2xl relative"
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Close Button */}
-        <button
-          onClick={onClose}
-          className="absolute top-4 right-4 z-10 w-8 h-8 flex items-center justify-center bg-white rounded-full shadow-lg hover:bg-gray-100 transition-colors"
-          aria-label="Close modal"
-        >
-          <span className="text-gray-600 text-xl">×</span>
-        </button>
+        {/* Sticky Close Button Container */}
+        <div className="sticky top-0 z-20 flex justify-end p-3 pointer-events-none">
+          <button
+            onClick={onClose}
+            className="w-7 h-7 flex items-center justify-center bg-gray-200 hover:bg-gray-300 transition-colors pointer-events-auto"
+            aria-label="Close modal"
+          >
+            <span className="text-gray-600 text-lg font-bold">×</span>
+          </button>
+        </div>
 
         {/* Image */}
-        <div className="w-full h-64 relative">
+        <div className="w-full h-[280px] relative -mt-[52px]">
           <img
             src={item.detailImage || item.image}
             alt={item.title}
@@ -52,23 +54,27 @@ const EatDrinkDetailModal: React.FC<EatDrinkDetailModalProps> = ({ item, isOpen,
         </div>
 
         {/* Content */}
-        <div className="p-8">
-          <h2 className="text-2xl font-bold font-heading mb-2 uppercase">{item.title}</h2>
-          <p className="text-sm text-gray-600 mb-4">{item.subtitle}</p>
+        <div className="p-[17px] md:p-8">
+          {/* Title and Subtitle */}
+          <h2 className="text-xl font-bold font-heading mb-2 uppercase tracking-wide">{item.title}</h2>
+          <p className="text-sm text-gray-600 mb-6">{item.subtitle}</p>
 
           {/* Price */}
-          <div className="mb-6 pb-6 border-b border-gray-200">
-            <p className="text-xl font-bold text-gray-900">{item.price}</p>
-          </div>
+          {item.price && (
+            <div className="mb-6">
+              <h3 className="text-xs font-bold uppercase text-gray-900 mb-3 tracking-wide">PRICE</h3>
+              <p className="text-sm text-gray-700 font-medium">{item.price}</p>
+            </div>
+          )}
 
           {/* Description Section */}
           <div className="mb-6">
-            <h3 className="text-sm font-bold uppercase text-gray-700 mb-2">Description</h3>
+            <h3 className="text-xs font-bold uppercase text-gray-900 mb-3 tracking-wide">DESCRIPTION</h3>
             <p className="text-sm text-gray-700 leading-relaxed">{item.description}</p>
           </div>
 
           {/* Social Media Icons */}
-          <div className="flex gap-4 pt-6 border-t border-gray-200">
+          <div className="flex justify-center gap-5 pt-6 border-t border-gray-200">
             <a href="#" className="text-gray-400 hover:text-gray-600 transition-colors" aria-label="Facebook">
               <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
                 <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>

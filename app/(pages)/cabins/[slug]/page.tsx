@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useParams, notFound } from 'next/navigation';
 import PhotoGalleryModal from './components/PhotoGalleryModal';
+import MobileCarouselModal from './components/MobileCarouselModal';
 import BookingCard from './components/BookingCard';
 import ImageGallery from './components/ImageGallery';
 import AmenitiesSection from './components/AmenitiesSection';
@@ -52,6 +53,8 @@ const SingleCabinPage = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [showPhotoGallery, setShowPhotoGallery] = useState(false);
+  const [showMobileCarousel, setShowMobileCarousel] = useState(false);
+  const [mobileCarouselIndex, setMobileCarouselIndex] = useState(0);
 
   useEffect(() => {
     const fetchCabin = async () => {
@@ -174,6 +177,10 @@ const SingleCabinPage = () => {
           images={cabin.images || []}
           featuredImage={cabin.featuredImage}
           onShowAllClick={() => setShowPhotoGallery(true)}
+          onMobileImageClick={(index) => {
+            setMobileCarouselIndex(index);
+            setShowMobileCarousel(true);
+          }}
         />
 
         {/* CONTENT SECTION BELOW IMAGES */}
@@ -251,12 +258,24 @@ const SingleCabinPage = () => {
         </div>
       </div>
 
-      {/* Photo Gallery Modal Component */}
+      {/* Photo Gallery Modal Component (Desktop) */}
       <PhotoGalleryModal
         isOpen={showPhotoGallery}
         onClose={() => setShowPhotoGallery(false)}
         images={cabin.images || []}
         featuredImage={cabin.featuredImage}
+        onImageClick={(index) => {
+          setMobileCarouselIndex(index);
+          setShowMobileCarousel(true);
+        }}
+      />
+
+      {/* Mobile Carousel Modal Component */}
+      <MobileCarouselModal
+        isOpen={showMobileCarousel}
+        onClose={() => setShowMobileCarousel(false)}
+        images={cabin.images || []}
+        initialIndex={mobileCarouselIndex}
       />
     </div>
   );
