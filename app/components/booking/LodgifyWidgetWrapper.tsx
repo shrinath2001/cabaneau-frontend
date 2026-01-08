@@ -167,6 +167,7 @@ export default function LodgifyWidgetWrapper({
           --ldg-bnb-color-primary: #495d4d;
           --ldg-bnb-color-primary-lighter: #a4aea6;
           --ldg-bnb-color-primary-darker: #252f27;
+          --ldg-component-modal-z-index: 9999;
           width: 100%;
         }
 
