@@ -14,7 +14,6 @@ interface LodgifyWidgetWrapperProps {
     arrival: string;
     departure: string;
     adults: number;
-    children: number;
   }) => void;
 }
 
@@ -32,7 +31,6 @@ export default function LodgifyWidgetWrapper({
     arrival: string;
     departure: string;
     adults: number;
-    children: number;
   } | null>(null);
   const [canSave, setCanSave] = useState(false);
   const widgetRef = useRef<HTMLDivElement>(null);
@@ -50,7 +48,6 @@ export default function LodgifyWidgetWrapper({
         const arrival = url.searchParams.get('arrival');
         const departure = url.searchParams.get('departure');
         const adults = parseInt(url.searchParams.get('adults') || '1', 10);
-        const children = parseInt(url.searchParams.get('children') || '0', 10);
 
         if (arrival && departure) {
           // Convert ISO to Lodgify format (YYYYMMDD)
@@ -61,7 +58,6 @@ export default function LodgifyWidgetWrapper({
             arrival: formatToLodgify(arrival),
             departure: formatToLodgify(departure),
             adults,
-            children,
           });
           setCanSave(true);
           return;
@@ -187,17 +183,12 @@ export default function LodgifyWidgetWrapper({
           data-new-tab="false"
           data-version="stable"
           data-hide-minimum-price
-          data-has-guests-breakdown
           data-check-in-label="Check-in"
           data-check-out-label="Check-out"
           data-guests-label="Guests"
           data-guests-singular-label="{{NumberOfGuests}} guest"
           data-guests-plural-label="{{NumberOfGuests}} guests"
-          data-adults-label="Adults"
-          data-children-label="Children"
-          data-infants-label="Infants"
-          data-pets-label="Pets"
-          data-book-label="Book Now"
+          data-book-button-label="Book Now"
         />
       </div>
 

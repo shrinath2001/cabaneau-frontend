@@ -22,9 +22,6 @@ const SearchPageWidget = () => {
   const arrival = searchParams.get('arrival') || '';
   const departure = searchParams.get('departure') || '';
   const adults = searchParams.get('adults') || '1';
-  const children = searchParams.get('children') || '0';
-  const infants = searchParams.get('infants') || '0';
-  const pets = searchParams.get('pets') || '0';
 
   // Convert ISO date (YYYY-MM-DD) to Lodgify format (YYYYMMDD)
   const formatForLodgify = (date: string) => {
@@ -139,15 +136,11 @@ const SearchPageWidget = () => {
           data-search-page-url={searchPageUrl}
           data-new-tab="false"
           data-version="stable"
-          data-has-guests-breakdown
           data-hide-location
-          // Pre-fill with current search params
+          // Pre-fill with current search params (guests go as adults)
           {...(arrival && { 'data-arrival': formatForLodgify(arrival) })}
           {...(departure && { 'data-departure': formatForLodgify(departure) })}
           {...(adults && adults !== '0' && { 'data-adults': adults })}
-          {...(children && children !== '0' && { 'data-children': children })}
-          {...(infants && infants !== '0' && { 'data-infants': infants })}
-          {...(pets && pets !== '0' && { 'data-pets': pets })}
           // Labels
           data-dates-check-in-label="Check-in"
           data-dates-check-out-label="Check-out"
@@ -156,18 +149,6 @@ const SearchPageWidget = () => {
           data-guests-input-plural-label="{{NumberOfGuests}} guests"
           data-search-button-label="Search"
           data-dates-input-min-stay-tooltip-text='{"one":"Minimum {minStay} night","other":"Minimum {minStay} nights"}'
-          data-guests-breakdown-label="Guests"
-          data-adults-label='{"one":"adult","other":"adults"}'
-          data-adults-description="Ages 18 or above"
-          data-children-label='{"one":"child","other":"children"}'
-          data-children-description="Ages 2-17"
-          data-children-not-allowed-label="Not suitable for children"
-          data-infants-label='{"one":"infant","other":"infants"}'
-          data-infants-description="Under 2"
-          data-infants-not-allowed-label="Not suitable for infants"
-          data-pets-label='{"one":"pet","other":"pets"}'
-          data-pets-not-allowed-label="Not allowed"
-          data-done-label="Done"
         />
       </div>
     </>

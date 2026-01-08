@@ -14,7 +14,6 @@ interface DesktopBookingCardProps {
   checkIn: string;
   checkOut: string;
   adults: number;
-  children: number;
   quote: QuoteResponse | null;
   loading: boolean;
   error: string | null;
@@ -36,7 +35,6 @@ export default function DesktopBookingCard({
   checkIn,
   checkOut,
   adults,
-  children,
   quote,
   loading,
   error,
@@ -59,7 +57,7 @@ export default function DesktopBookingCard({
     }
   };
 
-  const totalGuests = adults + children;
+  const totalGuests = adults;
 
   return (
     <div
@@ -137,12 +135,6 @@ export default function DesktopBookingCard({
           </span>
           <span className="font-medium text-gray-800">
             {totalGuests} {totalGuests === 1 ? 'guest' : 'guests'}
-            {children > 0 && (
-              <span className="text-gray-500 text-sm ml-1">
-                ({adults} adult{adults !== 1 ? 's' : ''}, {children} child
-                {children !== 1 ? 'ren' : ''})
-              </span>
-            )}
           </span>
         </div>
 

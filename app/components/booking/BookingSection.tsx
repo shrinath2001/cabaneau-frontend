@@ -18,9 +18,6 @@ interface SearchParams {
   arrival?: string;
   departure?: string;
   adults?: string;
-  children?: string;
-  infants?: string;
-  pets?: string;
 }
 
 interface BookingSectionProps {
@@ -54,11 +51,8 @@ export default function BookingSection({
   const departure = searchParams.departure;
   const hasDateParams = !!(arrival && departure);
 
-  // Parse guest counts
+  // Parse guest count (simple total, passed as adults)
   const adults = parseInt(searchParams.adults || '1', 10);
-  const children = parseInt(searchParams.children || '0', 10);
-  const infants = parseInt(searchParams.infants || '0', 10);
-  const pets = parseInt(searchParams.pets || '0', 10);
 
   // Convert Lodgify date format (YYYYMMDD) to ISO format (YYYY-MM-DD) if needed
   const formatDateForApi = (date: string | undefined): string | undefined => {
@@ -81,9 +75,6 @@ export default function BookingSection({
     checkIn,
     checkOut,
     adults,
-    children,
-    infants,
-    pets,
   });
 
   // Handle responsive detection
@@ -102,17 +93,11 @@ export default function BookingSection({
     arrival: string;
     departure: string;
     adults: number;
-    children: number;
-    infants: number;
-    pets: number;
   }) => {
     const url = new URL(window.location.href);
     url.searchParams.set('arrival', params.arrival);
     url.searchParams.set('departure', params.departure);
     url.searchParams.set('adults', params.adults.toString());
-    url.searchParams.set('children', params.children.toString());
-    url.searchParams.set('infants', params.infants.toString());
-    url.searchParams.set('pets', params.pets.toString());
 
     // Refresh page with new params
     window.location.href = url.toString();
@@ -153,7 +138,6 @@ export default function BookingSection({
           checkIn={checkIn!}
           checkOut={checkOut!}
           adults={adults}
-          children={children}
           quote={quote}
           loading={loading}
           error={error}

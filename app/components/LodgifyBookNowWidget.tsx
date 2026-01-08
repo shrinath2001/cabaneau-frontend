@@ -9,9 +9,6 @@ interface LodgifyBookNowWidgetProps {
   arrival?: string;
   departure?: string;
   adults?: string;
-  children?: string;
-  infants?: string;
-  pets?: string;
 }
 
 /**
@@ -29,9 +26,6 @@ const LodgifyBookNowWidget = ({
   arrival,
   departure,
   adults,
-  children,
-  infants,
-  pets,
 }: LodgifyBookNowWidgetProps) => {
   const widgetRef = useRef<HTMLDivElement>(null);
 
@@ -63,7 +57,7 @@ const LodgifyBookNowWidget = ({
     return () => {
       clearTimeout(timer);
     };
-  }, [rentalId, arrival, departure, adults, children, infants, pets]);
+  }, [rentalId, arrival, departure, adults]);
 
   // Fallback when lodgifyId is missing
   if (!rentalId) {
@@ -120,39 +114,21 @@ const LodgifyBookNowWidget = ({
         data-new-tab="false"
         data-version="stable"
         data-hide-minimum-price
-        data-has-guests-breakdown
-        // Pre-fill values from search page
+        // Pre-fill values from search page (guests go as adults)
         {...(arrival && { 'data-arrival': formatForLodgify(arrival) })}
         {...(departure && { 'data-departure': formatForLodgify(departure) })}
         {...(adults && adults !== '0' && { 'data-adults': adults })}
-        {...(children && children !== '0' && { 'data-children': children })}
-        {...(infants && infants !== '0' && { 'data-infants': infants })}
-        {...(pets && pets !== '0' && { 'data-pets': pets })}
         // Labels
         data-check-in-label="Check-in"
         data-check-out-label="Check-out"
         data-guests-label="Guests"
         data-guests-singular-label="{{NumberOfGuests}} guest"
         data-guests-plural-label="{{NumberOfGuests}} guests"
-        data-location-input-label="Location"
         data-total-price-label="Total price:"
         data-select-dates-to-see-price-label="Select dates to see total price"
         data-minimum-price-per-night-first-label="From"
         data-minimum-price-per-night-second-label="per night"
         data-book-button-label="Book Now"
-        // Guest breakdown labels
-        data-guests-breakdown-label="Guests"
-        data-adults-label='{"one":"adult","other":"adults"}'
-        data-adults-description="Ages 18 or above"
-        data-children-label='{"one":"child","other":"children"}'
-        data-children-description="Ages 2-17"
-        data-children-not-allowed-label="Not suitable for children"
-        data-infants-label='{"one":"infant","other":"infants"}'
-        data-infants-description="Under 2"
-        data-infants-not-allowed-label="Not suitable for infants"
-        data-pets-label='{"one":"pet","other":"pets"}'
-        data-pets-not-allowed-label="Not allowed"
-        data-done-label="Done"
       />
     </>
   );

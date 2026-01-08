@@ -16,9 +16,6 @@ interface MobileBottomSheetProps {
     arrival: string;
     departure: string;
     adults: number;
-    children: number;
-    infants: number;
-    pets: number;
   }) => void;
 }
 
@@ -41,9 +38,6 @@ export default function MobileBottomSheet({
     arrival: string;
     departure: string;
     adults: number;
-    children: number;
-    infants: number;
-    pets: number;
   } | null>(null);
   const [canSave, setCanSave] = useState(false);
   const widgetContainerRef = useRef<HTMLDivElement>(null);
@@ -61,9 +55,6 @@ export default function MobileBottomSheet({
         const arrival = url.searchParams.get('arrival');
         const departure = url.searchParams.get('departure');
         const adults = parseInt(url.searchParams.get('adults') || '1', 10);
-        const children = parseInt(url.searchParams.get('children') || '0', 10);
-        const infants = parseInt(url.searchParams.get('infants') || '0', 10);
-        const pets = parseInt(url.searchParams.get('pets') || '0', 10);
 
         if (arrival && departure) {
           // Convert ISO to Lodgify format (YYYYMMDD)
@@ -74,9 +65,6 @@ export default function MobileBottomSheet({
             arrival: formatToLodgify(arrival),
             departure: formatToLodgify(departure),
             adults,
-            children,
-            infants,
-            pets,
           });
           setCanSave(true);
           return;
@@ -231,6 +219,7 @@ export default function MobileBottomSheet({
               --ldg-component-calendar-cell-selection-color: #ffffff;
               --ldg-component-calendar-cell-selected-bg-color: #a4aea6;
               --ldg-component-calendar-cell-selected-color: #ffffff;
+              --ldg-component-modal-z-index: 9999;
               --ldg-bnb-font-family: inherit;
             }
             #lodgify-book-now-box {
@@ -257,20 +246,11 @@ export default function MobileBottomSheet({
             data-new-tab="false"
             data-version="stable"
             data-hide-minimum-price
-            data-has-guests-breakdown
             data-check-in-label="Check-in"
             data-check-out-label="Check-out"
             data-guests-label="Guests"
             data-guests-singular-label="{{NumberOfGuests}} guest"
             data-guests-plural-label="{{NumberOfGuests}} guests"
-            data-adults-label='{"one":"adult","other":"adults"}'
-            data-adults-description="Ages 18 or above"
-            data-children-label='{"one":"child","other":"children"}'
-            data-children-description="Ages 2-17"
-            data-infants-label='{"one":"infant","other":"infants"}'
-            data-infants-description="Under 2"
-            data-pets-label='{"one":"pet","other":"pets"}'
-            data-done-label="Done"
             data-book-button-label="Book Now"
           />
         </div>

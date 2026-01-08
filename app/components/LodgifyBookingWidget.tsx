@@ -196,7 +196,6 @@ const LodgifyBookingWidget = ({ languageCode = 'en' }: LodgifyBookingWidgetProps
           data-search-page-url={searchPageUrl}
           data-new-tab="false"
           data-version="stable"
-          data-has-guests-breakdown
           data-hide-location
           data-dates-check-in-label="Check-in"
           data-dates-check-out-label="Check-out"
@@ -205,18 +204,6 @@ const LodgifyBookingWidget = ({ languageCode = 'en' }: LodgifyBookingWidgetProps
           data-guests-input-plural-label="{{NumberOfGuests}} guests"
           data-search-button-label="Search"
           data-dates-input-min-stay-tooltip-text='{"one":"Minimum {minStay} night","other":"Minimum {minStay} nights"}'
-          data-guests-breakdown-label="Guests"
-          data-adults-label='{"one":"adult","other":"adults"}'
-          data-adults-description="Ages 18 or above"
-          data-children-label='{"one":"child","other":"children"}'
-          data-children-description="Ages 2-17"
-          data-children-not-allowed-label="Not suitable for children"
-          data-infants-label='{"one":"infant","other":"infants"}'
-          data-infants-description="Under 2"
-          data-infants-not-allowed-label="Not suitable for infants"
-          data-pets-label='{"one":"pet","other":"pets"}'
-          data-pets-not-allowed-label="Not allowed"
-          data-done-label="Done"
         />
       </div>
     </>
