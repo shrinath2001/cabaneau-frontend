@@ -72,8 +72,8 @@ const LodgifyBookingWidget = ({ languageCode = 'en' }: LodgifyBookingWidgetProps
           --ldg-semantic-color-primary-darker: #252f27;
           --ldg-semantic-color-primary-contrast: #ffffff;
 
-          /* Modal z-index - ensures calendar appears above other elements */
-          --ldg-component-modal-z-index: 9999;
+          /* Modal z-index */
+          --ldg-component-modal-z-index: 999;
         }
 
         /* Glass morphism container */

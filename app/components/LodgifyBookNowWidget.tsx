@@ -103,9 +103,6 @@ const LodgifyBookNowWidget = ({
 
           /* Font */
           --ldg-bnb-font-family: inherit;
-
-          /* Modal z-index - ensures calendar appears above other elements */
-          --ldg-component-modal-z-index: 9999;
         }
 
         #lodgify-book-now-box {

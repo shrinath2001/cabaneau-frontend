@@ -63,10 +63,6 @@ const SearchPageWidget = () => {
     <>
       <style jsx global>{`
         /* Search Page Widget - Light Theme */
-        :root {
-          --ldg-component-modal-z-index: 9999;
-        }
-
         #lodgify-search-bar {
           width: 100%;
           background: #f5f5f5 !important;
