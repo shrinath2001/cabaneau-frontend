@@ -14,19 +14,10 @@ import { cabins as staticCabins } from '@/app/data/cabins';
 interface CabinDetails {
   id: string;
   lodgifyId: string;
-  name: {
-    en: string;
-    fr?: string;
-    de?: string;
-  };
+  name: string; // API returns localized string
   slug: string;
-  description?: {
-    en: string;
-    fr?: string;
-  };
-  shortDescription?: {
-    en: string;
-  };
+  description?: string; // API returns localized string
+  shortDescription?: string; // API returns localized string
   capacity: number;
   bedrooms: number;
   bathrooms: number;
@@ -192,7 +183,7 @@ const SingleCabinPage = () => {
             {/* Cabin Details Title */}
             <div className="mb-4 md:mb-6">
               <h1 className="font-jost font-medium text-[14px] md:text-[20px] lg:text-[24px] mb-3 md:mb-4 uppercase tracking-wide" style={{ color: '#212121' }}>
-                {`${cabin.capacity} GUESTS · ${cabin.bedrooms} BEDROOM${cabin.bedrooms > 1 ? 'S' : ''} · ${cabin.bathrooms} BATHROOM${cabin.bathrooms > 1 ? 'S' : ''} · ${cabin.name?.en?.toUpperCase() || 'JACUZZI'} · SAUNA`}
+                {`${cabin.capacity} GUESTS · ${cabin.bedrooms} BEDROOM${cabin.bedrooms > 1 ? 'S' : ''} · ${cabin.bathrooms} BATHROOM${cabin.bathrooms > 1 ? 'S' : ''} · ${cabin.name?.toUpperCase() || 'JACUZZI'} · SAUNA`}
               </h1>
 
               {/* Quick Amenities Icons Row */}
@@ -225,7 +216,7 @@ const SingleCabinPage = () => {
 
               {/* Description */}
               <p className="font-raleway font-normal leading-relaxed text-[13px] md:text-[16px] mb-6 md:mb-8 text-gray-700">
-                {cabin.description?.en || cabin.shortDescription?.en || 'Lorem Ipsum Is Simply Dummy Text Of The Printing And Typesetting Industry. Lorem Ipsum Has Been The Industry\'s Standard Dummy Text Ever Since The 1500s, When An Unknown Printer Took A Galley Of Type And Scrambled It To Make A Type Specimen Book. It Has Survived Not Only Five Centuries, But Also The Leap Into Electronic Typesetting, Remaining Essentially Unchanged. It Was Popularised In The 1960s With The Release Of Letraset Sheets Containing Lorem Ipsum Passages, And...'}
+                {cabin.description || cabin.shortDescription || 'Lorem Ipsum Is Simply Dummy Text Of The Printing And Typesetting Industry. Lorem Ipsum Has Been The Industry\'s Standard Dummy Text Ever Since The 1500s, When An Unknown Printer Took A Galley Of Type And Scrambled It To Make A Type Specimen Book. It Has Survived Not Only Five Centuries, But Also The Leap Into Electronic Typesetting, Remaining Essentially Unchanged. It Was Popularised In The 1960s With The Release Of Letraset Sheets Containing Lorem Ipsum Passages, And...'}
               </p>
             </div>
 
@@ -245,7 +236,7 @@ const SingleCabinPage = () => {
             <BookingSection
               cabin={{
                 slug: cabin.slug,
-                name: cabin.name?.en || cabin.slug,
+                name: cabin.name || cabin.slug,
                 lodgifyId: cabin.lodgifyId,
                 capacity: cabin.capacity,
               }}
@@ -275,7 +266,7 @@ const SingleCabinPage = () => {
         <BookingSection
           cabin={{
             slug: cabin.slug,
-            name: cabin.name?.en || cabin.slug,
+            name: cabin.name || cabin.slug,
             lodgifyId: cabin.lodgifyId,
             capacity: cabin.capacity,
           }}
