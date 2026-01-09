@@ -227,7 +227,7 @@ function SearchResults() {
                   {cabins.map((cabin) => {
                     // Format price: use basePrice from CMS (EUR default)
                     const displayPrice = cabin.basePrice
-                      ? `€${cabin.basePrice.toFixed(2)}`
+                      ? `€${Number(cabin.basePrice).toFixed(2)}`
                       : '';
 
                     // Format search dates for display (e.g., "Jan 10 - Jan 11")
