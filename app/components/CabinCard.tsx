@@ -169,7 +169,10 @@ const CabinCard: React.FC<CabinCardProps> = ({
 
         {/* Availability and Price */}
         <div className="flex justify-between items-center mb-3">
-          <span className="font-jost font-medium text-[16px] text-gray-600">Next Availability: <span className="text-black font-medium">{availability}</span></span>
+          <span className="font-jost font-medium text-[16px] text-gray-600">
+            {availability.includes(' - ') ? 'Dates: ' : 'Next Availability: '}
+            <span className="text-black font-medium">{availability}</span>
+          </span>
           <span className="font-jost font-medium text-[24px]">{price}</span>
         </div>
 

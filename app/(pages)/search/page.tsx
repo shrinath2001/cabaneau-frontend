@@ -225,13 +225,20 @@ function SearchResults() {
                 </p>
                 <div className="flex flex-wrap justify-center gap-8">
                   {cabins.map((cabin) => {
-                    // Format price: prefer total from Lodgify quote, fallback to basePrice
-                    const currencySymbol = cabin.currency === 'EUR' ? '€' : cabin.currency;
-                    const displayPrice = cabin.totalPrice
-                      ? `${currencySymbol}${Math.round(cabin.totalPrice)} total`
-                      : cabin.nightlyRate
-                        ? `${currencySymbol}${Math.round(cabin.nightlyRate)}/night`
-                        : `${currencySymbol}${cabin.basePrice}`;
+                    // Format price: use basePrice from CMS (EUR default)
+                    const displayPrice = cabin.basePrice
+                      ? `€${cabin.basePrice.toFixed(2)}`
+                      : '';
+
+                    // Format search dates for display (e.g., "Jan 10 - Jan 11")
+                    const formatShortDate = (dateStr: string | null) => {
+                      if (!dateStr) return '';
+                      const date = new Date(dateStr);
+                      return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+                    };
+                    const searchDates = checkIn && checkOut
+                      ? `${formatShortDate(checkIn)} - ${formatShortDate(checkOut)}`
+                      : 'Available';
 
                     return (
                       <CabinCard
@@ -242,7 +249,7 @@ function SearchResults() {
                         rating={5} // Default rating since API doesn't provide it
                         area={`${cabin.bedrooms} Bedroom${cabin.bedrooms > 1 ? 's' : ''}`}
                         capacity={`${cabin.capacity} Guest${cabin.capacity > 1 ? 's' : ''}`}
-                        availability={cabin.numberOfNights ? `${cabin.numberOfNights} nights` : 'Available'}
+                        availability={searchDates}
                         price={displayPrice}
                         searchParams={{
                           arrival: searchParams.get('arrival') || undefined,
