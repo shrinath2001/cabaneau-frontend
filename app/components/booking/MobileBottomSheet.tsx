@@ -346,9 +346,9 @@ export default function MobileBottomSheet({
             #lodgify-book-now-box
               button[data-testid="book-now-box.date-picker.trigger"]
               span {
-              font-size: 12px !important;
+              font-size: 16px !important;
               color: #333 !important;
-              font-weight: 500 !important;
+              font-weight: 400 !important;
               white-space: nowrap !important;
             }
 
@@ -421,16 +421,16 @@ export default function MobileBottomSheet({
               min-width: 24px !important;
               padding: 0 !important;
               text-align: center !important;
-              font-size: 14px !important;
+              font-size: 16px !important;
               font-weight: 400 !important;
               border: none !important;
               background: transparent !important;
             }
 
-            /* Guest counter text (label next to number) */
-            #lodgify-book-now-box .styled-override span,
-            #lodgify-book-now-box .styled-override .css-mu0s7e span {
-              font-size: 14px !important;
+            /* Guest counter - all text elements */
+            #lodgify-book-now-box .styled-override,
+            #lodgify-book-now-box .styled-override * {
+              font-size: 16px !important;
               font-weight: 400 !important;
               color: #333 !important;
             }

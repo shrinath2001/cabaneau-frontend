@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import { useEffect, useRef } from 'react';
-import { useSearchParams } from 'next/navigation';
+import { useEffect, useRef } from "react";
+import { useSearchParams } from "next/navigation";
 
 /**
  * Lodgify Search Widget for the Search Results Page
@@ -19,18 +19,19 @@ const SearchPageWidget = () => {
   const widgetRef = useRef<HTMLDivElement>(null);
 
   // Parse URL params (Lodgify format: YYYYMMDD, also support ISO: YYYY-MM-DD)
-  const arrival = searchParams.get('arrival') || '';
-  const departure = searchParams.get('departure') || '';
-  const adults = searchParams.get('adults') || '1';
+  const arrival = searchParams.get("arrival") || "";
+  const departure = searchParams.get("departure") || "";
+  const adults = searchParams.get("adults") || "1";
 
   // Convert ISO date (YYYY-MM-DD) to Lodgify format (YYYYMMDD)
   const formatForLodgify = (date: string) => {
-    if (!date) return '';
-    return date.includes('-') ? date.replace(/-/g, '') : date;
+    if (!date) return "";
+    return date.includes("-") ? date.replace(/-/g, "") : date;
   };
 
   useEffect(() => {
-    const scriptUrl = 'https://app.lodgify.com/portable-search-bar/stable/renderPortableSearchBar.js';
+    const scriptUrl =
+      "https://app.lodgify.com/portable-search-bar/stable/renderPortableSearchBar.js";
 
     // Force re-initialization by removing existing script
     const existingScript = document.querySelector(`script[src="${scriptUrl}"]`);
@@ -40,7 +41,7 @@ const SearchPageWidget = () => {
 
     // Small delay to ensure DOM is ready and old script is cleaned up
     const timer = setTimeout(() => {
-      const script = document.createElement('script');
+      const script = document.createElement("script");
       script.src = scriptUrl;
       script.async = true;
       document.head.appendChild(script);
@@ -52,9 +53,10 @@ const SearchPageWidget = () => {
   }, []);
 
   // Build search page URL
-  const searchPageUrl = typeof window !== 'undefined'
-    ? `${window.location.origin}/search`
-    : '/search';
+  const searchPageUrl =
+    typeof window !== "undefined"
+      ? `${window.location.origin}/search`
+      : "/search";
 
   return (
     <>
@@ -139,6 +141,29 @@ const SearchPageWidget = () => {
           border-right: none !important;
           border-radius: 0 !important;
           padding: 12px 20px !important;
+        }
+
+        /* Desktop font sizes - 14px */
+        #portable-search-bar button > div > div:last-child,
+        #lodgify-search-bar
+          button[aria-haspopup="dialog"]
+          > div
+          > div:last-child {
+          font-size: 14px !important;
+          font-weight: 400 !important;
+        }
+
+        #portable-search-bar input[type="number"],
+        #lodgify-search-bar .styled-override input[type="number"] {
+          font-size: 14px !important;
+          font-weight: 400 !important;
+        }
+
+        #portable-search-bar > div:nth-child(3) span,
+        #portable-search-bar .styled-override span,
+        #lodgify-search-bar .styled-override span {
+          font-size: 14px !important;
+          font-weight: 400 !important;
         }
 
         /* Hide clear button completely */
@@ -235,23 +260,26 @@ const SearchPageWidget = () => {
             white-space: nowrap !important;
           }
 
-          /* Date labels - smaller on mobile */
+          /* Date labels (Check-in/Check-out placeholder text) */
           #portable-search-bar label,
           #lodgify-search-bar label {
-            font-size: 10px !important;
+            font-size: 16px !important;
             line-height: 1.2 !important;
-            font-weight: 500 !important;
-            text-transform: uppercase !important;
-            opacity: 0.85 !important;
-            letter-spacing: 0.3px !important;
+            font-weight: 400 !important;
+            text-transform: none !important;
+            opacity: 1 !important;
+            letter-spacing: 0 !important;
           }
 
           /* Date values */
           #portable-search-bar button > div > div:last-child,
-          #lodgify-search-bar button[aria-haspopup="dialog"] > div > div:last-child {
-            font-size: 14px !important;
+          #lodgify-search-bar
+            button[aria-haspopup="dialog"]
+            > div
+            > div:last-child {
+            font-size: 16px !important;
             line-height: 1.3 !important;
-            font-weight: 500 !important;
+            font-weight: 400 !important;
           }
 
           /* Guest counter - compact */
@@ -299,18 +327,18 @@ const SearchPageWidget = () => {
           /* Guest counter input */
           #portable-search-bar input[type="number"],
           #lodgify-search-bar .styled-override input[type="number"] {
-            width: 18px !important;
-            min-width: 18px !important;
+            width: 20px !important;
+            min-width: 20px !important;
             padding: 0 !important;
             text-align: center !important;
-            font-size: 13px !important;
-            font-weight: 600 !important;
+            font-size: 16px !important;
+            font-weight: 400 !important;
           }
 
           /* Guest label text */
           #portable-search-bar > div:nth-child(3) span,
           #portable-search-bar .styled-override span {
-            font-size: 12px !important;
+            font-size: 16px !important;
             margin-left: 2px !important;
           }
 
@@ -397,7 +425,10 @@ const SearchPageWidget = () => {
           }
 
           #portable-search-bar button > div > div:last-child,
-          #lodgify-search-bar button[aria-haspopup="dialog"] > div > div:last-child {
+          #lodgify-search-bar
+            button[aria-haspopup="dialog"]
+            > div
+            > div:last-child {
             font-size: 13px !important;
           }
 
@@ -435,9 +466,9 @@ const SearchPageWidget = () => {
           data-version="stable"
           data-hide-location
           // Pre-fill with current search params (guests go as adults)
-          {...(arrival && { 'data-arrival': formatForLodgify(arrival) })}
-          {...(departure && { 'data-departure': formatForLodgify(departure) })}
-          {...(adults && adults !== '0' && { 'data-adults': adults })}
+          {...(arrival && { "data-arrival": formatForLodgify(arrival) })}
+          {...(departure && { "data-departure": formatForLodgify(departure) })}
+          {...(adults && adults !== "0" && { "data-adults": adults })}
           // Labels
           data-dates-check-in-label="Check-in"
           data-dates-check-out-label="Check-out"

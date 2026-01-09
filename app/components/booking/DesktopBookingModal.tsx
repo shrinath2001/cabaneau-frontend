@@ -359,7 +359,7 @@ export default function DesktopBookingModal({
                 span {
                 font-size: 14px !important;
                 color: #333 !important;
-                font-weight: 500 !important;
+                font-weight: 400 !important;
               }
 
               /* Guest counter section - match date picker height */
@@ -410,9 +410,9 @@ export default function DesktopBookingModal({
                 background: transparent !important;
               }
 
-              /* Guest counter text (label next to number) */
-              #lodgify-book-now-box .styled-override span,
-              #lodgify-book-now-box .styled-override .css-mu0s7e span {
+              /* Guest counter - all text elements */
+              #lodgify-book-now-box .styled-override,
+              #lodgify-book-now-box .styled-override * {
                 font-size: 14px !important;
                 font-weight: 400 !important;
                 color: #333 !important;

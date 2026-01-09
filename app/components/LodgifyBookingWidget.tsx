@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState } from "react";
 
 interface LodgifyBookingWidgetProps {
   languageCode?: string;
@@ -20,26 +20,29 @@ interface LodgifyBookingWidgetProps {
  *
  * @see CLAUDE.md for integration details
  */
-const LodgifyBookingWidget = ({ languageCode = 'en' }: LodgifyBookingWidgetProps) => {
-  const [searchPageUrl, setSearchPageUrl] = useState('/search');
+const LodgifyBookingWidget = ({
+  languageCode = "en",
+}: LodgifyBookingWidgetProps) => {
+  const [searchPageUrl, setSearchPageUrl] = useState("/search");
 
   useEffect(() => {
     // Set the full search page URL using current origin
-    if (typeof window !== 'undefined') {
+    if (typeof window !== "undefined") {
       setSearchPageUrl(`${window.location.origin}/search`);
     }
   }, []);
 
   useEffect(() => {
     // Official Lodgify Portable Search Bar script
-    const scriptUrl = 'https://app.lodgify.com/portable-search-bar/stable/renderPortableSearchBar.js';
+    const scriptUrl =
+      "https://app.lodgify.com/portable-search-bar/stable/renderPortableSearchBar.js";
 
     // Check if script already exists
     if (document.querySelector(`script[src="${scriptUrl}"]`)) {
       return;
     }
 
-    const script = document.createElement('script');
+    const script = document.createElement("script");
     script.src = scriptUrl;
     script.defer = true;
     document.head.appendChild(script);
@@ -234,7 +237,6 @@ const LodgifyBookingWidget = ({ languageCode = 'en' }: LodgifyBookingWidgetProps
           padding: 4px 16px !important;
         }
 
-
         /* Date fields inside button - horizontal */
         #portable-search-bar > button > div,
         #lodgify-search-bar button[aria-haspopup="dialog"] > div {
@@ -268,6 +270,26 @@ const LodgifyBookingWidget = ({ languageCode = 'en' }: LodgifyBookingWidgetProps
         #lodgify-search-bar .styled-override label {
           font-size: 14px !important;
           opacity: 1 !important;
+        }
+
+        /* Desktop font sizes - 14px */
+        #portable-search-bar button > div > div:last-child,
+        #lodgify-search-bar button[aria-haspopup="dialog"] > div > div:last-child {
+          font-size: 14px !important;
+          font-weight: 400 !important;
+        }
+
+        #portable-search-bar input[type="number"],
+        #lodgify-search-bar .styled-override input[type="number"] {
+          font-size: 14px !important;
+          font-weight: 400 !important;
+        }
+
+        #portable-search-bar > div:nth-child(3) span,
+        #portable-search-bar .styled-override span,
+        #lodgify-search-bar .styled-override span {
+          font-size: 14px !important;
+          font-weight: 400 !important;
         }
 
         /* Search link - fixed width, taller to match container (desktop) */
@@ -326,23 +348,26 @@ const LodgifyBookingWidget = ({ languageCode = 'en' }: LodgifyBookingWidgetProps
             border: none !important;
           }
 
-          /* Date labels */
+          /* Date labels (Check-in/Check-out placeholder text) */
           #portable-search-bar label,
           #lodgify-search-bar label {
-            font-size: 10px !important;
+            font-size: 16px !important;
             line-height: 1.2 !important;
-            font-weight: 500 !important;
-            text-transform: uppercase !important;
-            opacity: 0.85 !important;
-            letter-spacing: 0.3px !important;
+            font-weight: 400 !important;
+            text-transform: none !important;
+            opacity: 1 !important;
+            letter-spacing: 0 !important;
           }
 
           /* Date values */
           #portable-search-bar button > div > div:last-child,
-          #lodgify-search-bar button[aria-haspopup="dialog"] > div > div:last-child {
-            font-size: 14px !important;
+          #lodgify-search-bar
+            button[aria-haspopup="dialog"]
+            > div
+            > div:last-child {
+            font-size: 16px !important;
             line-height: 1.3 !important;
-            font-weight: 500 !important;
+            font-weight: 400 !important;
           }
 
           /* Guest counter */
@@ -387,18 +412,18 @@ const LodgifyBookingWidget = ({ languageCode = 'en' }: LodgifyBookingWidgetProps
           /* Guest counter input */
           #portable-search-bar input[type="number"],
           #lodgify-search-bar .styled-override input[type="number"] {
-            width: 18px !important;
-            min-width: 18px !important;
+            width: 20px !important;
+            min-width: 20px !important;
             padding: 0 !important;
             text-align: center !important;
-            font-size: 13px !important;
-            font-weight: 600 !important;
+            font-size: 16px !important;
+            font-weight: 400 !important;
           }
 
           /* Guest label text */
           #portable-search-bar > div:nth-child(3) span,
           #portable-search-bar .styled-override span {
-            font-size: 12px !important;
+            font-size: 16px !important;
             margin-left: 2px !important;
           }
 
@@ -456,7 +481,7 @@ const LodgifyBookingWidget = ({ languageCode = 'en' }: LodgifyBookingWidgetProps
           /* Labels when dates are selected */
           #portable-search-bar label.has-value,
           #lodgify-search-bar label.has-value {
-            font-size: 9px !important;
+            font-size: 10px !important;
             line-height: 1.1 !important;
             margin-bottom: 1px !important;
           }
@@ -498,7 +523,10 @@ const LodgifyBookingWidget = ({ languageCode = 'en' }: LodgifyBookingWidgetProps
           }
 
           #portable-search-bar button > div > div:last-child,
-          #lodgify-search-bar button[aria-haspopup="dialog"] > div > div:last-child {
+          #lodgify-search-bar
+            button[aria-haspopup="dialog"]
+            > div
+            > div:last-child {
             font-size: 13px !important;
           }
 

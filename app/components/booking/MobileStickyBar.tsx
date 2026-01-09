@@ -126,7 +126,7 @@ export default function MobileStickyBar({
           </div>
           <button
             onClick={handleReserve}
-            className="bg-[#F49A4A] hover:bg-[#e08a3a] text-white font-semibold py-3 px-6 transition-colors"
+            className="bg-[#495d4d] hover:bg-[#3a4a3e] text-white font-semibold py-3 px-6 transition-colors"
           >
             Reserve
           </button>
