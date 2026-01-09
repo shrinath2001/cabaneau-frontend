@@ -113,6 +113,7 @@ const SearchPageWidget = () => {
           padding: 0 !important;
           border: 1px solid #e0e0e0 !important;
           border-right: none !important;
+          border-radius: 0 !important;
           outline: none !important;
         }
 
@@ -136,6 +137,7 @@ const SearchPageWidget = () => {
         #lodgify-search-bar .styled-override {
           border: 1px solid #e0e0e0 !important;
           border-right: none !important;
+          border-radius: 0 !important;
           padding: 12px 20px !important;
         }
 
