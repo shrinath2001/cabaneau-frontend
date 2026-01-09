@@ -405,9 +405,17 @@ export default function DesktopBookingModal({
                 padding: 0 !important;
                 text-align: center !important;
                 font-size: 14px !important;
-                font-weight: 600 !important;
+                font-weight: 400 !important;
                 border: none !important;
                 background: transparent !important;
+              }
+
+              /* Guest counter text (label next to number) */
+              #lodgify-book-now-box .styled-override span,
+              #lodgify-book-now-box .styled-override .css-mu0s7e span {
+                font-size: 14px !important;
+                font-weight: 400 !important;
+                color: #333 !important;
               }
 
               /* Hide the label, show only count */
