@@ -60,16 +60,22 @@ const SearchPageWidget = () => {
     <>
       <style jsx global>{`
         /* Search Page Widget - Light Theme */
-        #lodgify-search-bar {
-          width: 100%;
-          background: #f5f5f5 !important;
-          border: 1px solid #e0e0e0 !important;
+        :root {
+          --ldg-component-modal-z-index: 9999;
         }
 
+        #lodgify-search-bar {
+          width: 100%;
+          background: transparent !important;
+          border: none !important;
+        }
+
+        /* Reset all inner elements */
         #lodgify-search-bar *,
         #lodgify-search-bar > div,
         #lodgify-search-bar > div > div {
-          border-color: #e0e0e0 !important;
+          background: transparent !important;
+          box-shadow: none !important;
         }
 
         #lodgify-search-bar input,
@@ -80,50 +86,109 @@ const SearchPageWidget = () => {
 
         #lodgify-search-bar,
         #lodgify-search-bar label,
-        #lodgify-search-bar span:not([class*="SearchButton"] span) {
+        #lodgify-search-bar span {
           color: #333 !important;
         }
 
-        #lodgify-search-bar svg:not([class*="SearchButton"] svg) {
+        #lodgify-search-bar svg:not(a svg) {
           color: #666 !important;
           fill: #666 !important;
         }
 
-        /* Search button styling */
-        #lodgify-search-bar button[type="submit"],
-        #lodgify-search-bar a[href*="search"],
-        #lodgify-search-bar [class*="SearchButton"] {
+        /* Force single row layout */
+        #portable-search-bar,
+        #lodgify-search-bar section {
+          display: flex !important;
+          flex-direction: row !important;
+          flex-wrap: nowrap !important;
+          align-items: stretch !important;
+          gap: 0 !important;
+          padding: 0 !important;
+        }
+
+        /* Date picker button */
+        #portable-search-bar > button,
+        #lodgify-search-bar button[aria-haspopup="dialog"] {
+          flex: 0 0 auto !important;
+          padding: 0 !important;
+          border: 1px solid #e0e0e0 !important;
+          border-right: none !important;
+          outline: none !important;
+        }
+
+        /* Date picker inner divs - with border between check-in and check-out */
+        #portable-search-bar > button > div,
+        #lodgify-search-bar button[aria-haspopup="dialog"] > div {
+          padding: 12px 20px !important;
+          white-space: nowrap !important;
+          border: none !important;
+          outline: none !important;
+        }
+
+        /* Add border between check-in and check-out */
+        #portable-search-bar > button > div.right,
+        #portable-search-bar > button > div:last-of-type {
+          border-left: 1px solid #e0e0e0 !important;
+        }
+
+        /* Guest counter with border */
+        #portable-search-bar > div:not(:first-child),
+        #lodgify-search-bar .styled-override {
+          border: 1px solid #e0e0e0 !important;
+          border-right: none !important;
+          padding: 12px 20px !important;
+        }
+
+        /* Hide clear button completely */
+        #portable-search-bar [data-testid="date-picker-clear-cta"],
+        #lodgify-search-bar [data-testid="date-picker-clear-cta"] {
+          display: none !important;
+        }
+
+        /* Search button styling - icon only, hide text */
+        #portable-search-bar > a,
+        #lodgify-search-bar a[data-testid="button"] {
           background: #495d4d !important;
           border-radius: 0 !important;
-          min-width: 52px !important;
-          max-width: 52px !important;
-          min-height: 52px !important;
+          min-width: 56px !important;
+          width: 56px !important;
+          align-self: stretch !important;
           padding: 0 !important;
           display: flex !important;
           align-items: center !important;
           justify-content: center !important;
+          border: 1px solid #495d4d !important;
+          /* Hide text by making it zero-sized and transparent */
           font-size: 0 !important;
-          text-indent: -9999px !important;
+          color: transparent !important;
+          overflow: hidden !important;
         }
 
-        #lodgify-search-bar button[type="submit"] span,
-        #lodgify-search-bar a[href*="search"] span {
-          display: none !important;
-        }
-
-        #lodgify-search-bar button[type="submit"] svg,
-        #lodgify-search-bar a[href*="search"] svg {
+        /* SVG icon in search button */
+        #portable-search-bar > a svg,
+        #portable-search-bar > a svg.css-17l641c,
+        #lodgify-search-bar a[data-testid="button"] svg {
           display: block !important;
           width: 20px !important;
+          min-width: 20px !important;
           height: 20px !important;
-          text-indent: 0 !important;
+          min-height: 20px !important;
           color: white !important;
+          fill: white !important;
+          flex-shrink: 0 !important;
+        }
+
+        #portable-search-bar > a svg *,
+        #portable-search-bar > a svg path,
+        #lodgify-search-bar a[data-testid="button"] svg *,
+        #lodgify-search-bar a[data-testid="button"] svg path {
           fill: white !important;
         }
 
-        #lodgify-search-bar button[type="submit"]:hover,
-        #lodgify-search-bar a[href*="search"]:hover {
+        #portable-search-bar > a:hover,
+        #lodgify-search-bar a[data-testid="button"]:hover {
           background: #3d5a3d !important;
+          border-color: #3d5a3d !important;
         }
       `}</style>
 
