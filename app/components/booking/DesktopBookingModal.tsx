@@ -443,7 +443,7 @@ export default function DesktopBookingModal({
                 data-rental-id={cabin.lodgifyId}
                 data-website-id="572847"
                 data-slug="cabaneau"
-                data-language-code="en"
+                data-language-code="en-GB"
                 data-new-tab="false"
                 data-version="stable"
                 data-hide-minimum-price
