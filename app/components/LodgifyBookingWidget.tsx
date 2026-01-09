@@ -37,17 +37,23 @@ const LodgifyBookingWidget = ({
     const scriptUrl =
       "https://app.lodgify.com/portable-search-bar/stable/renderPortableSearchBar.js";
 
-    // Check if script already exists
-    if (document.querySelector(`script[src="${scriptUrl}"]`)) {
-      return;
+    // Force re-initialization by removing existing script (needed for SPA navigation)
+    const existingScript = document.querySelector(`script[src="${scriptUrl}"]`);
+    if (existingScript) {
+      existingScript.remove();
     }
 
-    const script = document.createElement("script");
-    script.src = scriptUrl;
-    script.defer = true;
-    document.head.appendChild(script);
+    // Small delay to ensure DOM is ready and old script is cleaned up
+    const timer = setTimeout(() => {
+      const script = document.createElement("script");
+      script.src = scriptUrl;
+      script.async = true;
+      document.head.appendChild(script);
+    }, 100);
 
-    // No cleanup - script is expensive to reload
+    return () => {
+      clearTimeout(timer);
+    };
   }, []);
 
   return (

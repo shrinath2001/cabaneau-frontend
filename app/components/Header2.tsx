@@ -13,7 +13,7 @@ const Header2 = () => {
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between py-6">
           <div className="flex items-center">
-            <Link href="/" passHref>
+            <Link href="/" scroll={true}>
               <Image
                 src="/assets/Group 1 (1).png"
                 alt="Cabaneau Logo"
@@ -153,7 +153,7 @@ const Header2 = () => {
           <div className="md:hidden fixed inset-0 bg-white z-50" suppressHydrationWarning>
             {/* Mobile Menu Header */}
             <div className="flex items-center justify-between px-4 py-6 border-b border-gray-200">
-              <Link href="/" onClick={() => setIsMenuOpen(false)}>
+              <Link href="/" scroll={true} onClick={() => setIsMenuOpen(false)}>
                 <Image
                   src="/assets/Group 1 (1).png"
                   alt="Cabaneau Logo"
