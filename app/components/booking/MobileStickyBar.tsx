@@ -115,23 +115,21 @@ export default function MobileStickyBar({
             <span className="text-sm text-gray-500">
               For {pricing.nights} night{pricing.nights !== 1 ? 's' : ''} · {formatDateRange(checkIn, checkOut)}
             </span>
-          </div>
-          <div className="flex flex-col items-center gap-1">
-            <button
-              onClick={handleReserve}
-              className="bg-[#F49A4A] hover:bg-[#e08a3a] text-white font-semibold py-3 px-6 rounded-lg transition-colors"
-            >
-              Reserve
-            </button>
             {onChangeDates && (
               <button
                 onClick={onChangeDates}
-                className="text-xs text-[#495D4D] hover:text-[#3d5a3d] underline"
+                className="text-xs text-[#495D4D] hover:text-[#3d5a3d] underline text-left mt-1"
               >
                 Change dates
               </button>
             )}
           </div>
+          <button
+            onClick={handleReserve}
+            className="bg-[#F49A4A] hover:bg-[#e08a3a] text-white font-semibold py-3 px-6 rounded-lg transition-colors"
+          >
+            Reserve
+          </button>
         </div>
       </div>
     );
@@ -157,23 +155,21 @@ export default function MobileStickyBar({
                 View pricing
               </span>
             )}
-          </div>
-          <div className="flex flex-col items-center gap-1">
-            <button
-              onClick={handleReserve}
-              className="bg-[#F49A4A] hover:bg-[#e08a3a] text-white font-semibold py-3 px-6 rounded-lg transition-colors"
-            >
-              Book Now
-            </button>
             {onChangeDates && (
               <button
                 onClick={onChangeDates}
-                className="text-xs text-[#495D4D] hover:text-[#3d5a3d] underline"
+                className="text-xs text-[#495D4D] hover:text-[#3d5a3d] underline text-left mt-1"
               >
                 Change dates
               </button>
             )}
           </div>
+          <button
+            onClick={handleReserve}
+            className="bg-[#F49A4A] hover:bg-[#e08a3a] text-white font-semibold py-3 px-6 rounded-lg transition-colors"
+          >
+            Book Now
+          </button>
         </div>
       </div>
     );

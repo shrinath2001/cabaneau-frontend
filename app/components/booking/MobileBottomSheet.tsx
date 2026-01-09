@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-import { useEffect, useRef, useState, useCallback } from 'react';
+import { useEffect, useRef, useState, useCallback } from "react";
 
 interface CabinInfo {
   slug: string;
@@ -40,6 +40,7 @@ export default function MobileBottomSheet({
     adults: number;
   } | null>(null);
   const [canSave, setCanSave] = useState(false);
+  const [widgetLoaded, setWidgetLoaded] = useState(false);
   const widgetContainerRef = useRef<HTMLDivElement>(null);
   const observerRef = useRef<MutationObserver | null>(null);
 
@@ -52,14 +53,14 @@ export default function MobileBottomSheet({
     if (bookNowLink) {
       try {
         const url = new URL(bookNowLink.href);
-        const arrival = url.searchParams.get('arrival');
-        const departure = url.searchParams.get('departure');
-        const adults = parseInt(url.searchParams.get('adults') || '1', 10);
+        const arrival = url.searchParams.get("arrival");
+        const departure = url.searchParams.get("departure");
+        const adults = parseInt(url.searchParams.get("adults") || "1", 10);
 
         if (arrival && departure) {
           // Convert ISO to Lodgify format (YYYYMMDD)
           const formatToLodgify = (date: string) =>
-            date.includes('-') ? date.replace(/-/g, '') : date;
+            date.includes("-") ? date.replace(/-/g, "") : date;
 
           setWidgetParams({
             arrival: formatToLodgify(arrival),
@@ -70,7 +71,7 @@ export default function MobileBottomSheet({
           return;
         }
       } catch (e) {
-        console.error('Error parsing widget URL:', e);
+        console.error("Error parsing widget URL:", e);
       }
     }
 
@@ -81,7 +82,11 @@ export default function MobileBottomSheet({
   useEffect(() => {
     if (!isOpen || !cabin.lodgifyId) return;
 
-    const scriptUrl = 'https://app.lodgify.com/book-now-box/stable/renderBookNowBox.js';
+    // Reset widget loaded state when sheet opens
+    setWidgetLoaded(false);
+
+    const scriptUrl =
+      "https://app.lodgify.com/book-now-box/stable/renderBookNowBox.js";
 
     // Clean up existing script
     const existingScript = document.querySelector(`script[src="${scriptUrl}"]`);
@@ -91,7 +96,7 @@ export default function MobileBottomSheet({
 
     // Load script after a small delay
     const timer = setTimeout(() => {
-      const script = document.createElement('script');
+      const script = document.createElement("script");
       script.src = scriptUrl;
       script.defer = true;
       document.head.appendChild(script);
@@ -101,6 +106,36 @@ export default function MobileBottomSheet({
       clearTimeout(timer);
     };
   }, [isOpen, cabin.lodgifyId]);
+
+  // Check if widget is fully loaded (has guest counter input)
+  useEffect(() => {
+    if (!isOpen) return;
+
+    let loadTimeout: NodeJS.Timeout | null = null;
+
+    const checkWidgetLoaded = () => {
+      // Check for the guest input which only exists when widget is fully rendered
+      const guestInput = document.querySelector(
+        '#lodgify-book-now-box input[data-testid="book-now-box.guests-input"]'
+      );
+      if (guestInput && !loadTimeout) {
+        // Add delay after element is found to ensure widget completes rendering
+        loadTimeout = setTimeout(() => {
+          setWidgetLoaded(true);
+        }, 300);
+      }
+    };
+
+    // Check periodically until widget is loaded
+    const interval = setInterval(checkWidgetLoaded, 50);
+
+    return () => {
+      clearInterval(interval);
+      if (loadTimeout) {
+        clearTimeout(loadTimeout);
+      }
+    };
+  }, [isOpen]);
 
   // Watch for widget updates using MutationObserver
   useEffect(() => {
@@ -116,13 +151,13 @@ export default function MobileBottomSheet({
         extractParamsFromWidget();
       });
 
-      const widgetContainer = document.getElementById('lodgify-book-now-box');
+      const widgetContainer = document.getElementById("lodgify-book-now-box");
       if (widgetContainer) {
         observerRef.current.observe(widgetContainer, {
           childList: true,
           subtree: true,
           attributes: true,
-          attributeFilter: ['href'],
+          attributeFilter: ["href"],
         });
       }
     };
@@ -152,24 +187,24 @@ export default function MobileBottomSheet({
   // Handle escape key
   useEffect(() => {
     const handleEscape = (e: KeyboardEvent) => {
-      if (e.key === 'Escape' && isOpen) {
+      if (e.key === "Escape" && isOpen) {
         onClose();
       }
     };
 
-    document.addEventListener('keydown', handleEscape);
-    return () => document.removeEventListener('keydown', handleEscape);
+    document.addEventListener("keydown", handleEscape);
+    return () => document.removeEventListener("keydown", handleEscape);
   }, [isOpen, onClose]);
 
   // Prevent body scroll when sheet is open
   useEffect(() => {
     if (isOpen) {
-      document.body.style.overflow = 'hidden';
+      document.body.style.overflow = "hidden";
     } else {
-      document.body.style.overflow = '';
+      document.body.style.overflow = "";
     }
     return () => {
-      document.body.style.overflow = '';
+      document.body.style.overflow = "";
     };
   }, [isOpen]);
 
@@ -197,20 +232,21 @@ export default function MobileBottomSheet({
           </h3>
         </div>
 
-        {/* Widget Container */}
+        {/* Widget Container - fixed height to prevent layout shift */}
         <div
           ref={widgetContainerRef}
-          className="flex-1 overflow-y-auto px-5 py-4"
+          className="px-5 py-4"
+          style={{ minHeight: "77px" }}
         >
-          {/* CSS to style Lodgify widget and hide Book Now button */}
+          {/* CSS to style Lodgify widget - same as desktop modal */}
           <style jsx global>{`
             :root {
               --ldg-bnb-background: #ffffff;
-              --ldg-bnb-border-radius: 0.42em;
+              --ldg-bnb-border-radius: 0;
               --ldg-bnb-box-shadow: none;
-              --ldg-bnb-padding: 14px;
+              --ldg-bnb-padding: 0;
               --ldg-bnb-input-background: #ffffff;
-              --ldg-bnb-button-border-radius: 0px;
+              --ldg-bnb-button-border-radius: 0;
               --ldg-bnb-color-primary: #495d4d;
               --ldg-bnb-color-primary-lighter: #a4aea6;
               --ldg-bnb-color-primary-darker: #252f27;
@@ -222,37 +258,211 @@ export default function MobileBottomSheet({
               --ldg-component-modal-z-index: 9999;
               --ldg-bnb-font-family: inherit;
             }
+
             #lodgify-book-now-box {
               width: 100%;
             }
+
+            /* Remove all backgrounds and shadows */
+            #lodgify-book-now-box *,
+            #lodgify-book-now-box > div,
+            #lodgify-book-now-box > div > div {
+              background: transparent !important;
+              box-shadow: none !important;
+            }
+
+            /* Hide Book Now button and price section */
+            #lodgify-book-now-box a[data-testid="book-now-box.cta-button"],
             #lodgify-book-now-box a[href*="checkout.lodgify.com"],
-            #lodgify-book-now-box button[type="submit"] {
+            #lodgify-book-now-box [data-testid*="total-price"],
+            #lodgify-book-now-box .css-1mwn02k {
               display: none !important;
             }
-            /* Hide price display from widget */
-            #lodgify-book-now-box [data-testid="book-now-box.total-price.price"],
-            #lodgify-book-now-box [data-testid="book-now-box.total-price.label"],
-            #lodgify-book-now-box [data-testid*="total-price"] {
+
+            /* Main container - force single row layout */
+            #lodgify-book-now-box [data-testid="book-now-box"] {
+              display: flex !important;
+              flex-direction: row !important;
+              flex-wrap: nowrap !important;
+              align-items: stretch !important;
+              gap: 0 !important;
+              padding: 0 !important;
+              width: 100% !important;
+              border: none !important;
+            }
+
+            /* Date picker button - takes available space */
+            #lodgify-book-now-box
+              button[data-testid="book-now-box.date-picker.trigger"] {
+              flex: 1 1 auto !important;
+              display: flex !important;
+              flex-direction: row !important;
+              align-items: stretch !important;
+              border: 1px solid #e0e0e0 !important;
+              border-right: none !important;
+              border-radius: 0 !important;
+              padding: 0 !important;
+              height: 45px !important;
+              min-height: 45px !important;
+              max-height: 45px !important;
+              background: transparent !important;
+              cursor: pointer !important;
+            }
+
+            /* Check-in section (div inside button) */
+            #lodgify-book-now-box
+              button[data-testid="book-now-box.date-picker.trigger"]
+              > div {
+              flex: 1 !important;
+              padding: 6px 10px !important;
+              display: flex !important;
+              flex-direction: column !important;
+              justify-content: center !important;
+              align-items: flex-start !important;
+              border: none !important;
+            }
+
+            /* Check-out section (span inside button) */
+            #lodgify-book-now-box
+              button[data-testid="book-now-box.date-picker.trigger"]
+              > span {
+              flex: 1 !important;
+              padding: 6px 10px !important;
+              display: flex !important;
+              flex-direction: column !important;
+              justify-content: center !important;
+              align-items: flex-start !important;
+              border-left: 1px solid #e0e0e0 !important;
+            }
+
+            /* Hide arrow icon between dates */
+            #lodgify-book-now-box
+              button[data-testid="book-now-box.date-picker.trigger"]
+              svg {
+              display: none !important;
+            }
+
+            /* Style the text labels */
+            #lodgify-book-now-box
+              button[data-testid="book-now-box.date-picker.trigger"]
+              span {
+              font-size: 12px !important;
+              color: #333 !important;
+              font-weight: 500 !important;
+              white-space: nowrap !important;
+            }
+
+            /* Date picker labels (Check-in, Check-out) */
+            #lodgify-book-now-box
+              button[data-testid="book-now-box.date-picker.trigger"]
+              label {
+              font-size: 10px !important;
+              white-space: nowrap !important;
+            }
+
+            /* Date values */
+            #lodgify-book-now-box
+              button[data-testid="book-now-box.date-picker.trigger"]
+              p {
+              font-size: 12px !important;
+              white-space: nowrap !important;
+            }
+
+            /* Guest counter section - match date picker height */
+            #lodgify-book-now-box .styled-override.css-pa7ehx,
+            #lodgify-book-now-box > div > div.styled-override,
+            #lodgify-book-now-box .styled-override {
+              flex: 0 0 auto !important;
+              border: 1px solid #e0e0e0 !important;
+              border-radius: 0 !important;
+              padding: 0 12px !important;
+              display: flex !important;
+              flex-direction: row !important;
+              align-items: center !important;
+              justify-content: center !important;
+              gap: 4px !important;
+              height: 45px !important;
+              min-height: 45px !important;
+              max-height: 45px !important;
+              background: transparent !important;
+              box-sizing: border-box !important;
+            }
+
+            /* Guest counter inner container */
+            #lodgify-book-now-box .styled-override > div {
+              height: 100% !important;
+              display: flex !important;
+              align-items: center !important;
+            }
+
+            /* Guest counter buttons */
+            #lodgify-book-now-box .styled-override button {
+              padding: 4px !important;
+              min-width: 28px !important;
+              width: 28px !important;
+              height: 28px !important;
+              display: flex !important;
+              align-items: center !important;
+              justify-content: center !important;
+              border-radius: 0 !important;
+            }
+
+            /* Guest counter input container */
+            #lodgify-book-now-box .styled-override .css-mu0s7e {
+              display: flex !important;
+              flex-direction: row !important;
+              align-items: center !important;
+              gap: 2px !important;
+            }
+
+            /* Guest counter input */
+            #lodgify-book-now-box .styled-override input[type="number"] {
+              width: 24px !important;
+              min-width: 24px !important;
+              padding: 0 !important;
+              text-align: center !important;
+              font-size: 14px !important;
+              font-weight: 600 !important;
+              border: none !important;
+              background: transparent !important;
+            }
+
+            /* Hide the label, show only count */
+            #lodgify-book-now-box .styled-override .css-1k396i {
               display: none !important;
             }
           `}</style>
 
-          <div
-            id="lodgify-book-now-box"
-            data-rental-id={cabin.lodgifyId}
-            data-website-id="572847"
-            data-slug="cabaneau"
-            data-language-code="en"
-            data-new-tab="false"
-            data-version="stable"
-            data-hide-minimum-price
-            data-check-in-label="Check-in"
-            data-check-out-label="Check-out"
-            data-guests-label="Guests"
-            data-guests-singular-label="{{NumberOfGuests}} guest"
-            data-guests-plural-label="{{NumberOfGuests}} guests"
-            data-book-button-label="Book Now"
-          />
+          {/* Widget wrapper with fixed height to prevent layout shift */}
+          <div className="relative" style={{ height: "45px" }}>
+            {/* Loading spinner - absolutely positioned */}
+            {!widgetLoaded && (
+              <div className="absolute inset-0 flex items-center justify-center">
+                <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-gray-400"></div>
+              </div>
+            )}
+
+            <div
+              id="lodgify-book-now-box"
+              data-rental-id={cabin.lodgifyId}
+              data-website-id="572847"
+              data-slug="cabaneau"
+              data-language-code="en"
+              data-new-tab="false"
+              data-version="stable"
+              data-hide-minimum-price
+              data-check-in-label="Check-in"
+              data-check-out-label="Check-out"
+              data-guests-label="Guests"
+              data-guests-singular-label="{{NumberOfGuests}} guest"
+              data-guests-plural-label="{{NumberOfGuests}} guests"
+              data-book-button-label="Book Now"
+              style={{
+                opacity: widgetLoaded ? 1 : 0,
+                transition: "opacity 0.2s ease-in-out",
+              }}
+            />
+          </div>
         </div>
 
         {/* Save Button */}
@@ -262,11 +472,11 @@ export default function MobileBottomSheet({
             disabled={!canSave}
             className={`w-full py-3 px-6 rounded-lg font-semibold transition-colors ${
               canSave
-                ? 'bg-[#495d4d] hover:bg-[#3a4a3e] text-white'
-                : 'bg-gray-200 text-gray-500 cursor-not-allowed'
+                ? "bg-[#495d4d] hover:bg-[#3a4a3e] text-white"
+                : "bg-gray-200 text-gray-500 cursor-not-allowed"
             }`}
           >
-            {canSave ? 'Save' : 'Select dates to continue'}
+            {canSave ? "Save" : "Select dates to continue"}
           </button>
         </div>
       </div>
