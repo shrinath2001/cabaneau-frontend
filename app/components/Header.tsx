@@ -32,13 +32,13 @@ const Header = () => {
               </Link>
             </div>
             <nav className="hidden md:flex items-center space-x-10 lg:space-x-12">
-              <Link href="/cabins" className="font-heading font-medium text-[18px]" style={{ color: '#FFFFFF9C' }}>
+              <Link href="/cabins" className="font-heading font-medium text-[18px] text-white/60 hover:text-white transition-colors">
                 OUR CABINS
               </Link>
-              <Link href="/activities" className="font-heading font-medium text-[18px]" style={{ color: '#FFFFFF9C' }}>
+              <Link href="/activities" className="font-heading font-medium text-[18px] text-white/60 hover:text-white transition-colors">
                 ACTIVITIES
               </Link>
-              <Link href="/eat-drink" className="font-heading font-medium text-[18px]" style={{ color: '#FFFFFF9C' }}>
+              <Link href="/eat-drink" className="font-heading font-medium text-[18px] text-white/60 hover:text-white transition-colors">
                 EAT & DRINK
               </Link>
             </nav>

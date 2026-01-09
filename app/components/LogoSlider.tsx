@@ -23,11 +23,17 @@ export default function LogoSlider() {
         }
 
         .animate-scroll {
-          animation: scroll 10s linear infinite;
+          animation: scroll 4s linear infinite;
         }
 
         .animate-scroll:hover {
           animation-play-state: paused;
+        }
+
+        @media (min-width: 768px) {
+          .animate-scroll {
+            animation: scroll 10s linear infinite;
+          }
         }
       `}</style>
 

@@ -13,7 +13,7 @@ const ServiceCard: React.FC<ServiceCardProps> = ({ imageSrc, serviceName }) => {
         <h3 className="text-white text-xl md:text-2xl font-bold">{serviceName}</h3>
       </div>
       {/* Hover Overlay */}
-      <div className="absolute inset-0 bg-[#495D4D] opacity-0 group-hover:opacity-95 transition-opacity duration-300 flex items-center justify-center">
+      <div className="absolute inset-0 bg-[#495D4D] opacity-0 group-hover:opacity-90 transition-opacity duration-300 flex items-center justify-center">
         <h3 className="text-[#F0E8C6] text-2xl md:text-3xl font-logga font-extrabold tracking-wider drop-shadow-lg">{serviceName}</h3>
       </div>
     </div>

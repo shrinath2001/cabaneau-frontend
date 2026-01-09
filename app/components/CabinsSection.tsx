@@ -87,12 +87,12 @@ const CabinsSection = () => {
           scrollbar-width: none;
         }
       `}</style>
-      <section className="bg-white py-6 md:py-5 md:mt-12 px-4 md:px-0">
+      <section className="bg-white py-6 md:py-5 md:mt-12 px-0">
         <div className="w-full">
           <div className="max-w-full mx-auto md:pl-20">
             {/* Header with Title and Navigation */}
-            <div className="flex justify-center items-center mb-8 md:mb-16 relative">
-              <h2 className="font-logga text-[28px] md:text-[52px] font-semibold text-center">
+            <div className="flex justify-center items-center mb-8 md:mb-16 relative px-4 md:px-0">
+              <h2 className="font-logga text-[28px] md:text-[42px] font-semibold text-center">
                 OUR CABINES
               </h2>
 
@@ -135,15 +135,15 @@ const CabinsSection = () => {
                     className="flex gap-[19.42px] overflow-x-auto no-scrollbar py-4 justify-start md:justify-start"
                     style={{ scrollSnapType: 'x mandatory' }}
                   >
-                    {/* Add padding to center the first card on mobile */}
-                    <div className="flex-shrink-0 w-[calc((100%-380px)/2)] md:w-0"></div>
-                    {cabins.map((cabin) => (
-                      <div key={cabin.id} className="flex-shrink-0" style={{ scrollSnapAlign: 'center' }}>
+                    {/* Minimal padding on mobile to show peek of next card, normal on desktop */}
+                    <div className="flex-shrink-0 w-[10px] md:w-0"></div>
+                    {cabins.map((cabin, index) => (
+                      <div key={cabin.id} className="flex-shrink-0" style={{ scrollSnapAlign: index === 0 ? 'start' : 'center' }}>
                         <CabinCard {...cabin} />
                       </div>
                     ))}
-                    {/* Add padding to center the last card on mobile */}
-                    <div className="flex-shrink-0 w-[calc((100%-380px)/2)] md:w-0"></div>
+                    {/* Add padding at the end */}
+                    <div className="flex-shrink-0 w-[10px] md:w-0"></div>
                   </div>
                 </div>
               ) : (
@@ -159,7 +159,7 @@ const CabinsSection = () => {
             </div>
 
             {/* Discover All Button */}
-            <div className="text-center mt-6 md:mt-10 mb-6 md:mb-8">
+            <div className="text-center mt-6 md:mt-10 mb-6 md:mb-8 px-4 md:px-0">
               <button className="px-8 py-3 bg-[#495D4D] text-white text-base md:text-lg font-heading font-medium tracking-widest hover:bg-[#2d4a2d] transition-colors">
                 DISCOVER ALL CABINESS
               </button>

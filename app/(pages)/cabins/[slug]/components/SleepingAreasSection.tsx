@@ -7,10 +7,10 @@ const SleepingAreasSection = () => {
         WHERE YOU WILL SLEEP
       </h2>
 
-      <div className="relative w-full h-[250px] sm:h-[350px] lg:h-[400px] bg-gray-100 overflow-hidden">
+      <div className="relative w-full h-[250px] sm:h-[350px] lg:h-[400px] bg-gray-200 overflow-hidden">
         {/* Map placeholder - replace with actual map image */}
         <div
-          className="w-full h-full"
+          className="w-full h-full bg-gray-200"
           style={{
             backgroundImage: 'url(/assets/cabin-map.jpg)',
             backgroundSize: 'cover',
@@ -51,7 +51,7 @@ const SleepingAreasSection = () => {
           <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
             <div className="relative">
               {/* Pin icon */}
-              <svg className="w-8 h-8 sm:w-10 sm:h-10 text-orange-500" fill="currentColor" viewBox="0 0 24 24">
+              <svg className="w-8 h-8 sm:w-10 sm:h-10" style={{ color: '#495D4D' }} fill="currentColor" viewBox="0 0 24 24">
                 <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" />
               </svg>
               {/* Label */}

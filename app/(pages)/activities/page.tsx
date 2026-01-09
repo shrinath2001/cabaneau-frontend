@@ -27,10 +27,11 @@ export default function ActivitiesPage() {
     const handleScroll = () => {
       if (discoverSectionRef.current) {
         const discoverSectionTop = discoverSectionRef.current.getBoundingClientRect().top;
-        const headerHeight = 70; // Header height
+        const isMobile = window.innerWidth < 768;
+        const stickyPosition = isMobile ? 70 + 70 : 86 + 70; // Header height + tabs approximate height
 
-        // If the discover section is about to reach the sticky tabs position, unstick them
-        if (discoverSectionTop <= headerHeight + 60) {
+        // Unstick tabs as soon as the discover section reaches the sticky tabs position
+        if (discoverSectionTop <= stickyPosition) {
           setIsTabsSticky(false);
         } else {
           setIsTabsSticky(true);
@@ -39,7 +40,12 @@ export default function ActivitiesPage() {
     };
 
     window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
+    window.addEventListener('resize', handleScroll); // Recalculate on resize
+    handleScroll(); // Initial check
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      window.removeEventListener('resize', handleScroll);
+    };
   }, []);
 
   return (
@@ -60,9 +66,9 @@ export default function ActivitiesPage() {
       </section>
 
       {/* Tabs Section */}
-      <section className={`bg-white border-b border-gray-200 ${isTabsSticky ? 'sticky top-[70px]' : 'relative'} z-40 md:static md:top-0`}>
+      <section className={`bg-white border-b border-gray-200 ${isTabsSticky ? 'sticky top-[70px] md:top-[86px]' : 'relative'} z-40`}>
         <div className="container mx-auto px-4 max-w-6xl">
-          <div className="flex justify-center gap-6 sm:gap-12 overflow-x-auto pb-4">
+          <div className="flex justify-center gap-6 sm:gap-12 overflow-x-auto pt-4 pb-4">
             <button
               onClick={() => setActiveTab('activities')}
               className="py-4 px-2 text-[16px] md:text-[24px] font-medium font-heading uppercase tracking-wider transition-colors relative whitespace-nowrap"

@@ -10,8 +10,8 @@ const Header2 = () => {
 
   return (
     <header className="fixed top-0 left-0 w-full z-50 bg-white shadow-md">
-      <div className="container mx-auto px-4">
-        <div className="flex items-center justify-between py-6">
+      <div className="container mx-auto px-4 md:px-8 lg:px-20">
+        <div className="flex items-center justify-between py-6 md:py-8">
           <div className="flex items-center">
             <Link href="/" passHref>
               <Image
@@ -22,27 +22,27 @@ const Header2 = () => {
               />
             </Link>
           </div>
-          <nav className="hidden md:flex items-center space-x-8">
-            <Link href="/cabins" className="text-black font-heading font-medium hover:font-semibold hover:text-orange-300 text-[18px] space-x-0.5 ">
+          <nav className="hidden md:flex items-center space-x-10 lg:space-x-12">
+            <Link href="/cabins" className="text-black font-heading font-medium text-[18px]">
               OUR CABINS
             </Link>
-            <Link href="/activities" className="text-black font-heading font-medium hover:font-semibold hover:text-orange-300 text-[18px] space-x-0.5">
+            <Link href="/activities" className="text-black font-heading font-medium text-[18px]">
               ACTIVITIES
             </Link>
-            <Link href="/eat-drink" className="text-black font-heading font-medium hover:font-semibold hover:text-orange-300 text-[18px] space-x-0.5">
+            <Link href="/eat-drink" className="text-black font-heading font-medium text-[18px]">
               EAT & DRINK
             </Link>
           </nav>
-          <div className="hidden md:flex items-center space-x-4">
+          <div className="hidden md:flex items-center space-x-3 lg:space-x-4">
             <Link
               href="/gift-voucher"
-              className="text-white w-[134px] h-[50px] flex items-center justify-center font-medium text-sm bg-[#939D92] hover:bg-[#7d8d7d] transition"
+              className="text-white w-[134px] h-[50px] flex items-center justify-center font-heading font-medium text-sm bg-[#939D92] hover:bg-[#7d8d7d] transition"
             >
               GIFT VOUCHER
             </Link>
             <Link
               href="/book-now"
-              className="bg-[#495D4D] text-white w-[134px] h-[50px] flex items-center justify-center font-medium text-sm hover:bg-[#3d5a3d] transition"
+              className="bg-[#495D4D] text-white w-[134px] h-[50px] flex items-center justify-center font-heading font-medium text-sm hover:bg-[#3d5a3d] transition"
             >
               BOOK NOW
             </Link>

@@ -162,8 +162,8 @@ const SingleCabinPage = () => {
   return (
     <div className="bg-white min-h-screen pt-6 md:pt-24 pb-0 md:pb-5 px-0 md:px-8 lg:px-20">
       <div className="max-w-[1400px] mx-auto px-0 md:px-6 py-0 md:py-8">
-        {/* Back to cabins link */}
-        <div className="mb-0 md:mb-6 px-4 md:px-0 py-3 md:py-0">
+        {/* Back to cabins link - Desktop Only */}
+        <div className="hidden md:block mb-0 md:mb-6 px-4 md:px-0 py-3 md:py-0">
           <Link href="/cabins" className="flex items-center text-gray-700 hover:text-black text-sm font-medium font-jost">
             <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
@@ -182,6 +182,13 @@ const SingleCabinPage = () => {
             setShowMobileCarousel(true);
           }}
         />
+
+        {/* Cabin Name - Mobile Only */}
+        <div className="md:hidden px-4 pt-1 pb-2">
+          <h1 className="font-jost font-medium text-[20px] uppercase tracking-wide" style={{ color: '#212121' }}>
+            {cabin.name?.en?.toUpperCase() || 'CABIN'}
+          </h1>
+        </div>
 
         {/* CONTENT SECTION BELOW IMAGES */}
         <div className="grid grid-cols-1 lg:grid-cols-[1fr_464px] gap-4 sm:gap-8 mt-0 md:mt-8 px-4 md:px-0">
