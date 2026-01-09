@@ -18,6 +18,11 @@ interface SearchCabin {
   lodgifyId?: string;
   petsAllowed?: boolean;
   adultsOnly?: boolean;
+  // Pricing from Lodgify quote
+  totalPrice?: number;
+  nightlyRate?: number;
+  numberOfNights?: number;
+  currency: string;
 }
 
 interface SearchResponse {
@@ -219,27 +224,37 @@ function SearchResults() {
                   Found {total} {total === 1 ? 'cabin' : 'cabins'} available
                 </p>
                 <div className="flex flex-wrap justify-center gap-8">
-                  {cabins.map((cabin) => (
-                    <CabinCard
-                      key={cabin.id}
-                      slug={cabin.slug}
-                      images={cabin.images.length > 0 ? cabin.images : [cabin.featuredImage]}
-                      title={cabin.name}
-                      rating={5} // Default rating since API doesn't provide it
-                      area={`${cabin.bedrooms} Bedroom${cabin.bedrooms > 1 ? 's' : ''}`}
-                      capacity={`${cabin.capacity} Guest${cabin.capacity > 1 ? 's' : ''}`}
-                      availability={checkIn ? formatDate(checkIn) : 'Available'}
-                      price={`£${cabin.basePrice}`}
-                      searchParams={{
-                        arrival: searchParams.get('arrival') || undefined,
-                        departure: searchParams.get('departure') || undefined,
-                        adults: searchParams.get('adults') || undefined,
-                        children: searchParams.get('children') || undefined,
-                        infants: searchParams.get('infants') || undefined,
-                        pets: searchParams.get('pets') || undefined,
-                      }}
-                    />
-                  ))}
+                  {cabins.map((cabin) => {
+                    // Format price: prefer total from Lodgify quote, fallback to basePrice
+                    const currencySymbol = cabin.currency === 'EUR' ? '€' : cabin.currency;
+                    const displayPrice = cabin.totalPrice
+                      ? `${currencySymbol}${Math.round(cabin.totalPrice)} total`
+                      : cabin.nightlyRate
+                        ? `${currencySymbol}${Math.round(cabin.nightlyRate)}/night`
+                        : `${currencySymbol}${cabin.basePrice}`;
+
+                    return (
+                      <CabinCard
+                        key={cabin.id}
+                        slug={cabin.slug}
+                        images={cabin.images.length > 0 ? cabin.images : [cabin.featuredImage]}
+                        title={cabin.name}
+                        rating={5} // Default rating since API doesn't provide it
+                        area={`${cabin.bedrooms} Bedroom${cabin.bedrooms > 1 ? 's' : ''}`}
+                        capacity={`${cabin.capacity} Guest${cabin.capacity > 1 ? 's' : ''}`}
+                        availability={cabin.numberOfNights ? `${cabin.numberOfNights} nights` : 'Available'}
+                        price={displayPrice}
+                        searchParams={{
+                          arrival: searchParams.get('arrival') || undefined,
+                          departure: searchParams.get('departure') || undefined,
+                          adults: searchParams.get('adults') || undefined,
+                          children: searchParams.get('children') || undefined,
+                          infants: searchParams.get('infants') || undefined,
+                          pets: searchParams.get('pets') || undefined,
+                        }}
+                      />
+                    );
+                  })}
                 </div>
               </>
             ) : (
