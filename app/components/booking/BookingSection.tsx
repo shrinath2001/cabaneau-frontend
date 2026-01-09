@@ -18,6 +18,9 @@ interface SearchParams {
   arrival?: string;
   departure?: string;
   adults?: string;
+  children?: string;
+  infants?: string;
+  pets?: string;
 }
 
 interface BookingSectionProps {
