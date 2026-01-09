@@ -195,7 +195,7 @@ const LodgifyBookingWidget = ({ languageCode = 'en' }: LodgifyBookingWidgetProps
           flex-direction: row !important;
           flex-wrap: nowrap !important;
           align-items: center !important;
-          gap: 4px !important;
+          gap: 8px !important;
           width: 100% !important;
         }
 
@@ -204,12 +204,12 @@ const LodgifyBookingWidget = ({ languageCode = 'en' }: LodgifyBookingWidgetProps
           display: none !important;
         }
 
-        /* Date picker button - flex grow */
+        /* Date picker button - flex grow (desktop) */
         #portable-search-bar > button,
         #lodgify-search-bar button[aria-haspopup="dialog"] {
           flex: 1 1 auto !important;
           min-width: 0 !important;
-          padding: 8px !important;
+          padding: 12px 16px !important;
         }
 
         /* Date fields inside button - horizontal */
@@ -219,20 +219,20 @@ const LodgifyBookingWidget = ({ languageCode = 'en' }: LodgifyBookingWidgetProps
           min-width: 0 !important;
         }
 
-        /* Guest counter - compact */
+        /* Guest counter (desktop) */
         #portable-search-bar > div:not(:first-child),
         #lodgify-search-bar .styled-override {
           flex: 0 0 auto !important;
-          min-width: 80px !important;
-          padding: 4px !important;
+          min-width: 120px !important;
+          padding: 8px !important;
         }
 
-        /* Search link - fixed width */
+        /* Search link - fixed width (desktop) */
         #portable-search-bar > a,
         #lodgify-search-bar a[data-testid="button"] {
-          flex: 0 0 44px !important;
-          min-width: 44px !important;
-          max-width: 44px !important;
+          flex: 0 0 52px !important;
+          min-width: 52px !important;
+          max-width: 52px !important;
         }
 
         /* Mobile-specific compact styles */
