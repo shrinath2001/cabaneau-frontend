@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useSearchParams } from "next/navigation";
 
 /**
@@ -17,6 +17,8 @@ import { useSearchParams } from "next/navigation";
 const SearchPageWidget = () => {
   const searchParams = useSearchParams();
   const widgetRef = useRef<HTMLDivElement>(null);
+  // Use state for searchPageUrl to avoid hydration mismatch
+  const [searchPageUrl, setSearchPageUrl] = useState("/search");
 
   // Parse URL params (Lodgify format: YYYYMMDD, also support ISO: YYYY-MM-DD)
   const arrival = searchParams.get("arrival") || "";
@@ -30,6 +32,9 @@ const SearchPageWidget = () => {
   };
 
   useEffect(() => {
+    // Set full URL after hydration to avoid mismatch
+    setSearchPageUrl(`${window.location.origin}/search`);
+
     const scriptUrl =
       "https://app.lodgify.com/portable-search-bar/stable/renderPortableSearchBar.js";
 
@@ -51,12 +56,6 @@ const SearchPageWidget = () => {
       clearTimeout(timer);
     };
   }, []);
-
-  // Build search page URL
-  const searchPageUrl =
-    typeof window !== "undefined"
-      ? `${window.location.origin}/search`
-      : "/search";
 
   return (
     <>
