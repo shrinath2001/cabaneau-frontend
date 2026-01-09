@@ -135,9 +135,9 @@ const LodgifyBookingWidget = ({ languageCode = 'en' }: LodgifyBookingWidgetProps
           background: #495d4d !important;
           background-color: #495d4d !important;
           border-radius: 0 !important;
-          min-width: 52px !important;
-          max-width: 52px !important;
-          min-height: 52px !important;
+          min-width: 60px !important;
+          max-width: 60px !important;
+          min-height: 60px !important;
           padding: 0 !important;
           display: flex !important;
           align-items: center !important;
@@ -195,8 +195,9 @@ const LodgifyBookingWidget = ({ languageCode = 'en' }: LodgifyBookingWidgetProps
           flex-direction: row !important;
           flex-wrap: nowrap !important;
           align-items: center !important;
-          gap: 8px !important;
+          gap: 16px !important;
           width: 100% !important;
+          padding: 0 !important;
         }
 
         /* Hide the empty first div */
@@ -204,13 +205,35 @@ const LodgifyBookingWidget = ({ languageCode = 'en' }: LodgifyBookingWidgetProps
           display: none !important;
         }
 
-        /* Date picker button - flex grow (desktop) */
+        /* Date picker button - no border */
         #portable-search-bar > button,
         #lodgify-search-bar button[aria-haspopup="dialog"] {
-          flex: 1 1 auto !important;
-          min-width: 0 !important;
-          padding: 12px 16px !important;
+          flex: 0 0 auto !important;
+          min-width: 280px !important;
+          padding: 0 !important;
+          border: none !important;
+          border-radius: 0 !important;
+          outline: none !important;
+          box-shadow: none !important;
+          background: transparent !important;
+          display: flex !important;
+          flex-direction: row !important;
+          align-items: center !important;
+          gap: 0 !important;
         }
+
+        /* Remove outline/border from date picker fields - prevent text wrap */
+        #portable-search-bar .css-hd63sv,
+        #portable-search-bar > button > div,
+        #lodgify-search-bar button[aria-haspopup="dialog"] > div {
+          outline: none !important;
+          border: none !important;
+          box-shadow: none !important;
+          white-space: nowrap !important;
+          flex: 1 !important;
+          padding: 4px 16px !important;
+        }
+
 
         /* Date fields inside button - horizontal */
         #portable-search-bar > button > div,
@@ -219,149 +242,186 @@ const LodgifyBookingWidget = ({ languageCode = 'en' }: LodgifyBookingWidgetProps
           min-width: 0 !important;
         }
 
-        /* Guest counter (desktop) */
+        /* Guest counter (desktop) - styled like reference */
         #portable-search-bar > div:not(:first-child),
         #lodgify-search-bar .styled-override {
-          flex: 0 0 auto !important;
-          min-width: 120px !important;
-          padding: 8px !important;
+          flex: 1 1 auto !important;
+          min-width: 180px !important;
+          padding: 8px 16px !important;
+          display: flex !important;
+          flex-direction: row !important;
+          align-items: center !important;
+          gap: 8px !important;
         }
 
-        /* Search link - fixed width (desktop) */
+        /* Guest counter inner container - horizontal layout */
+        #portable-search-bar > div:not(:first-child) > div,
+        #lodgify-search-bar .styled-override > div {
+          display: flex !important;
+          flex-direction: row !important;
+          align-items: center !important;
+          gap: 8px !important;
+        }
+
+        /* Guest label styling */
+        #portable-search-bar > div:not(:first-child) label,
+        #lodgify-search-bar .styled-override label {
+          font-size: 14px !important;
+          opacity: 1 !important;
+        }
+
+        /* Search link - fixed width, taller to match container (desktop) */
         #portable-search-bar > a,
         #lodgify-search-bar a[data-testid="button"] {
-          flex: 0 0 52px !important;
-          min-width: 52px !important;
-          max-width: 52px !important;
+          flex: 0 0 60px !important;
+          min-width: 60px !important;
+          max-width: 60px !important;
+          min-height: 60px !important;
+          height: 60px !important;
+          border-radius: 0 !important;
         }
 
-        /* Mobile-specific compact styles */
+        /* Mobile-specific: Single row layout */
         @media (max-width: 768px) {
-          /* Container spacing */
+          /* Force container to full width, single row */
           #portable-search-bar,
-          #lodgify-search-bar section {
-            padding: 6px !important;
-            gap: 4px !important;
+          #portable-search-bar.css-jj122v,
+          #lodgify-search-bar section,
+          section#portable-search-bar {
+            display: flex !important;
+            flex-direction: row !important;
+            flex-wrap: nowrap !important;
+            align-items: stretch !important;
+            gap: 0 !important;
+            padding: 0 !important;
+            width: auto !important;
+            max-width: 100% !important;
+            min-width: auto !important;
           }
 
-          /* Date picker button - more compact */
+          /* Hide the empty first div */
+          #portable-search-bar > div:first-child:empty {
+            display: none !important;
+          }
+
+          /* Date picker - takes available width */
           #portable-search-bar > button,
           #lodgify-search-bar button[aria-haspopup="dialog"] {
-            padding: 6px 8px !important;
-            min-height: 44px !important;
+            flex: 1 1 auto !important;
+            min-width: 0 !important;
+            max-width: none !important;
+            padding: 0 !important;
+            min-height: 48px !important;
+            border: none !important;
+            outline: none !important;
+            box-shadow: none !important;
           }
 
-          /* Compact date labels */
+          /* Date picker inner divs - horizontal layout */
+          #portable-search-bar > button > div,
+          #lodgify-search-bar button[aria-haspopup="dialog"] > div {
+            padding: 8px 12px !important;
+            white-space: nowrap !important;
+            outline: none !important;
+            border: none !important;
+          }
+
+          /* Date labels */
           #portable-search-bar label,
           #lodgify-search-bar label {
-            font-size: 9px !important;
-            line-height: 1.1 !important;
-            margin-bottom: 2px !important;
+            font-size: 10px !important;
+            line-height: 1.2 !important;
             font-weight: 500 !important;
-            letter-spacing: 0.3px !important;
             text-transform: uppercase !important;
-            opacity: 0.9 !important;
+            opacity: 0.85 !important;
+            letter-spacing: 0.3px !important;
           }
 
-          /* Date values - more compact display */
+          /* Date values */
           #portable-search-bar button > div > div:last-child,
           #lodgify-search-bar button[aria-haspopup="dialog"] > div > div:last-child {
-            font-size: 13px !important;
+            font-size: 14px !important;
             line-height: 1.3 !important;
             font-weight: 500 !important;
           }
 
-          /* Hide full month names on mobile - show abbreviated */
-          #portable-search-bar button span[class*="css-"],
-          #lodgify-search-bar button[aria-haspopup="dialog"] span[class*="css-"] {
-            max-width: 60px !important;
-            overflow: hidden !important;
-            text-overflow: ellipsis !important;
-            white-space: nowrap !important;
-          }
-
-          /* Clear dates button (X) - better positioning */
-          #portable-search-bar button[class*="css-1ofmm03"],
-          #lodgify-search-bar button[class*="css-1ofmm03"],
-          #portable-search-bar button[aria-label*="clear"],
-          #lodgify-search-bar button[aria-label*="clear"] {
-            position: absolute !important;
-            right: 4px !important;
-            top: 50% !important;
-            transform: translateY(-50%) !important;
-            width: 20px !important;
-            height: 20px !important;
-            padding: 2px !important;
-            opacity: 0.7 !important;
-            background: rgba(255, 255, 255, 0.1) !important;
-            border-radius: 50% !important;
-          }
-
-          #portable-search-bar button[class*="css-1ofmm03"]:hover,
-          #lodgify-search-bar button[class*="css-1ofmm03"]:hover {
-            opacity: 1 !important;
-            background: rgba(255, 255, 255, 0.2) !important;
-          }
-
-          /* Guest counter - ultra compact */
-          #portable-search-bar > div:not(:first-child),
+          /* Guest counter */
+          #portable-search-bar > div.styled-override,
+          #portable-search-bar > div:nth-child(3),
           #lodgify-search-bar .styled-override {
-            min-width: 90px !important;
-            max-width: 90px !important;
-            padding: 2px !important;
+            flex: 0 0 auto !important;
+            min-width: auto !important;
+            max-width: none !important;
+            padding: 4px 6px !important;
             display: flex !important;
             align-items: center !important;
             justify-content: center !important;
+            gap: 2px !important;
           }
 
-          /* Guest counter buttons - smaller and tighter */
-          #portable-search-bar > div:not(:first-child) button,
-          #lodgify-search-bar .styled-override button,
-          .styled-override button[class*="css-9vzmy9"] {
+          /* Guest counter inner - horizontal layout */
+          #portable-search-bar > div.styled-override > div,
+          #portable-search-bar > div:nth-child(3) > div,
+          #lodgify-search-bar .styled-override > div {
+            display: flex !important;
+            flex-direction: row !important;
+            align-items: center !important;
+            gap: 2px !important;
+          }
+
+          /* Guest counter buttons */
+          #portable-search-bar > div.styled-override button,
+          #portable-search-bar > div:nth-child(3) button,
+          #lodgify-search-bar .styled-override button {
             padding: 2px !important;
             min-width: 24px !important;
-            max-width: 24px !important;
             width: 24px !important;
             height: 24px !important;
             display: flex !important;
             align-items: center !important;
             justify-content: center !important;
-            font-size: 16px !important;
-            line-height: 1 !important;
-            border-radius: 2px !important;
-            margin: 0 !important;
+            font-size: 14px !important;
+            border-radius: 0 !important;
           }
 
-          /* Guest counter number display */
-          #portable-search-bar > div:not(:first-child) > div,
-          #lodgify-search-bar .styled-override > div,
-          .styled-override > div {
+          /* Guest counter input */
+          #portable-search-bar input[type="number"],
+          #lodgify-search-bar .styled-override input[type="number"] {
+            width: 18px !important;
+            min-width: 18px !important;
+            padding: 0 !important;
+            text-align: center !important;
+            font-size: 13px !important;
+            font-weight: 600 !important;
+          }
+
+          /* Guest label text */
+          #portable-search-bar > div:nth-child(3) span,
+          #portable-search-bar .styled-override span {
+            font-size: 12px !important;
+            margin-left: 2px !important;
+          }
+
+          /* Search button - icon only, full height */
+          #portable-search-bar > a,
+          #lodgify-search-bar a[data-testid="button"] {
+            flex: 0 0 auto !important;
+            min-width: 56px !important;
+            width: 56px !important;
+            height: auto !important;
+            min-height: 100% !important;
+            align-self: stretch !important;
+            border-radius: 0 !important;
             display: flex !important;
             align-items: center !important;
             justify-content: center !important;
-            gap: 4px !important;
+            padding: 0 !important;
           }
 
-          #portable-search-bar input[type="number"],
-          #lodgify-search-bar .styled-override input[type="number"] {
-            width: 28px !important;
-            min-width: 28px !important;
-            max-width: 28px !important;
-            padding: 0 2px !important;
-            text-align: center !important;
-            font-size: 14px !important;
-            font-weight: 600 !important;
-            margin: 0 !important;
-          }
-
-          /* Search button - smaller on mobile */
-          #portable-search-bar > a,
-          #lodgify-search-bar a[data-testid="button"] {
-            min-width: 40px !important;
-            max-width: 40px !important;
-            min-height: 40px !important;
-            flex: 0 0 40px !important;
-            padding: 8px !important;
+          /* Hide search text on mobile - icon only */
+          #portable-search-bar > a span,
+          #lodgify-search-bar a[data-testid="button"] span {
+            display: none !important;
           }
 
           #portable-search-bar > a svg,
@@ -370,86 +430,102 @@ const LodgifyBookingWidget = ({ languageCode = 'en' }: LodgifyBookingWidgetProps
             height: 18px !important;
           }
 
-          /* Improve glass morphism effect on mobile */
+          /* Selected date values - compact single line */
+          #portable-search-bar p.date,
+          #portable-search-bar p.date.has-value,
+          #lodgify-search-bar p.date,
+          #lodgify-search-bar p[data-testid="start-date"],
+          #lodgify-search-bar p[data-testid="end-date"] {
+            font-size: 12px !important;
+            line-height: 1.2 !important;
+            white-space: nowrap !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            display: block !important;
+          }
+
+          /* Date picker inner divs - tighter spacing when dates selected */
+          #portable-search-bar .css-hd63sv,
+          #portable-search-bar > button > div.left,
+          #portable-search-bar > button > div.right {
+            padding: 4px 8px !important;
+            gap: 2px !important;
+            min-width: auto !important;
+          }
+
+          /* Labels when dates are selected */
+          #portable-search-bar label.has-value,
+          #lodgify-search-bar label.has-value {
+            font-size: 9px !important;
+            line-height: 1.1 !important;
+            margin-bottom: 1px !important;
+          }
+
+          /* Hide the date input (it's hidden anyway but ensure) */
+          #portable-search-bar input[type="date"],
+          #lodgify-search-bar input[type="date"] {
+            display: none !important;
+          }
+
+          /* Hide clear button completely */
+          #portable-search-bar [data-testid="date-picker-clear-cta"],
+          #lodgify-search-bar [data-testid="date-picker-clear-cta"] {
+            display: none !important;
+          }
+
+          /* Glass morphism on mobile */
           #lodgify-search-bar {
             background: rgba(255, 255, 255, 0.12) !important;
             backdrop-filter: blur(10px) !important;
             -webkit-backdrop-filter: blur(10px) !important;
-            border: 1px solid rgba(255, 255, 255, 0.15) !important;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1) !important;
+            border: none !important;
+            border-radius: 0 !important;
           }
 
-          /* Better vertical alignment for all elements */
-          #portable-search-bar > *,
-          #lodgify-search-bar section > * {
-            align-self: center !important;
+          /* Override wrapper parent styling on mobile */
+          #lodgify-search-bar,
+          #lodgify-search-bar * {
+            box-sizing: border-box !important;
           }
         }
 
-        /* Extra small mobile optimization (iPhone SE, etc) */
+        /* Extra small mobile (iPhone SE, etc) */
         @media (max-width: 400px) {
-          /* Even tighter spacing */
-          #portable-search-bar,
-          #lodgify-search-bar section {
-            padding: 4px !important;
-            gap: 3px !important;
+          /* Slightly smaller text */
+          #portable-search-bar label,
+          #lodgify-search-bar label {
+            font-size: 9px !important;
           }
 
-          /* Ultra compact guest counter */
-          #portable-search-bar > div:not(:first-child),
-          #lodgify-search-bar .styled-override {
-            min-width: 80px !important;
-            max-width: 80px !important;
-          }
-
-          /* Smaller guest counter buttons */
-          #portable-search-bar > div:not(:first-child) button,
-          #lodgify-search-bar .styled-override button,
-          .styled-override button[class*="css-9vzmy9"] {
-            min-width: 22px !important;
-            max-width: 22px !important;
-            width: 22px !important;
-            height: 22px !important;
-            font-size: 14px !important;
-          }
-
-          #portable-search-bar input[type="number"],
-          #lodgify-search-bar .styled-override input[type="number"] {
-            width: 26px !important;
-            min-width: 26px !important;
-            max-width: 26px !important;
+          #portable-search-bar button > div > div:last-child,
+          #lodgify-search-bar button[aria-haspopup="dialog"] > div > div:last-child {
             font-size: 13px !important;
           }
 
-          /* Smaller date text */
-          #portable-search-bar button > div > div:last-child,
-          #lodgify-search-bar button[aria-haspopup="dialog"] > div > div:last-child {
-            font-size: 12px !important;
+          /* Tighter padding on date fields */
+          #portable-search-bar > button > div,
+          #lodgify-search-bar button[aria-haspopup="dialog"] > div {
+            padding: 6px 10px !important;
           }
 
-          #portable-search-bar label,
-          #lodgify-search-bar label {
-            font-size: 8px !important;
+          /* Smaller guest buttons */
+          #portable-search-bar > div:not(:first-child) button,
+          #lodgify-search-bar .styled-override button {
+            min-width: 26px !important;
+            width: 26px !important;
+            height: 26px !important;
           }
 
-          /* Smaller search button */
+          /* Smaller search button height */
           #portable-search-bar > a,
           #lodgify-search-bar a[data-testid="button"] {
-            min-width: 36px !important;
-            max-width: 36px !important;
-            min-height: 36px !important;
-            flex: 0 0 36px !important;
-          }
-
-          #portable-search-bar > a svg,
-          #lodgify-search-bar a[data-testid="button"] svg {
-            width: 16px !important;
-            height: 16px !important;
+            height: 44px !important;
+            min-height: 56px !important;
           }
         }
       `}</style>
 
-      <div className="w-full max-w-[800px] relative z-10 bg-white/10 backdrop-blur-sm">
+      <div className="w-full md:w-auto md:inline-flex relative z-10 bg-white/10 backdrop-blur-sm md:rounded">
         <div
           id="lodgify-search-bar"
           data-website-id="572847"
