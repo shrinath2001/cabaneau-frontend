@@ -100,16 +100,10 @@ const SingleCabinPage = () => {
           const transformedCabin: CabinDetails = {
             id: staticCabin.id.toString(),
             lodgifyId: staticCabin.id.toString(),
-            name: {
-              en: staticCabin.title,
-            },
+            name: staticCabin.title,
             slug: slug,
-            description: {
-              en: staticCabin.description,
-            },
-            shortDescription: {
-              en: staticCabin.description.substring(0, 200) + '...',
-            },
+            description: staticCabin.description,
+            shortDescription: staticCabin.description.substring(0, 200) + '...',
             capacity: staticCabin.guests,
             bedrooms: staticCabin.bedrooms,
             bathrooms: staticCabin.bathrooms,
