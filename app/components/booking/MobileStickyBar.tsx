@@ -38,7 +38,7 @@ export default function MobileStickyBar({
           </div>
           <button
             onClick={onCheckAvailability}
-            className="bg-[#F49A4A] hover:bg-[#e08a3a] text-white font-semibold py-3 px-6 rounded-lg transition-colors"
+            className="bg-[#F49A4A] hover:bg-[#e08a3a] text-white font-semibold py-3 px-6 transition-colors"
           >
             Check Availability
           </button>
@@ -84,7 +84,7 @@ export default function MobileStickyBar({
           </div>
           <button
             onClick={onCheckAvailability}
-            className="bg-gray-400 text-white font-semibold py-3 px-6 rounded-lg"
+            className="bg-gray-400 text-white font-semibold py-3 px-6"
           >
             Change Dates
           </button>
@@ -126,7 +126,7 @@ export default function MobileStickyBar({
           </div>
           <button
             onClick={handleReserve}
-            className="bg-[#F49A4A] hover:bg-[#e08a3a] text-white font-semibold py-3 px-6 rounded-lg transition-colors"
+            className="bg-[#F49A4A] hover:bg-[#e08a3a] text-white font-semibold py-3 px-6 transition-colors"
           >
             Reserve
           </button>
@@ -166,7 +166,7 @@ export default function MobileStickyBar({
           </div>
           <button
             onClick={handleReserve}
-            className="bg-[#F49A4A] hover:bg-[#e08a3a] text-white font-semibold py-3 px-6 rounded-lg transition-colors"
+            className="bg-[#F49A4A] hover:bg-[#e08a3a] text-white font-semibold py-3 px-6 transition-colors"
           >
             Book Now
           </button>

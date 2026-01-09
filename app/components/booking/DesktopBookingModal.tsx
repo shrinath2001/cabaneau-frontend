@@ -455,7 +455,7 @@ export default function DesktopBookingModal({
             <button
               onClick={handleSave}
               disabled={!canSave}
-              className={`w-full py-3 px-6 rounded-lg font-semibold transition-colors ${
+              className={`w-full py-3 px-6 font-semibold transition-colors ${
                 canSave
                   ? "bg-[#495d4d] hover:bg-[#3a4a3e] text-white"
                   : "bg-gray-200 text-gray-500 cursor-not-allowed"

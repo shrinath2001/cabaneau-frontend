@@ -169,7 +169,7 @@ export default function BookingSection({
           </p>
           <button
             onClick={() => setShowDesktopModal(true)}
-            className="w-full bg-[#F49A4A] hover:bg-[#e08a3a] text-white font-semibold py-3 px-6 rounded-lg transition-colors"
+            className="w-full bg-[#F49A4A] hover:bg-[#e08a3a] text-white font-semibold py-3 px-6 transition-colors"
           >
             Check Availability
           </button>
