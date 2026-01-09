@@ -1,6 +1,10 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
+
+// Simple cache to deduplicate requests across component instances
+const quoteCache = new Map<string, { data: QuoteResponse | null; timestamp: number; promise?: Promise<QuoteResponse> }>();
+const CACHE_TTL = 30000; // 30 seconds
 
 export interface QuoteFee {
   type: string;
@@ -74,11 +78,27 @@ export function useQuote({
   infants = 0,
   pets = 0,
 }: UseQuoteParams): UseQuoteResult {
-  const [quote, setQuote] = useState<QuoteResponse | null>(null);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  // Check cache for initial state (inline to avoid hooks ordering issues)
+  const cacheKey = `${slug}:${checkIn}:${checkOut}:${adults}:${children}:${infants}:${pets}`;
+  const cachedInitial = quoteCache.get(cacheKey);
+  const hasRequiredParams = !!(slug && checkIn && checkOut);
+  const hasCachedData = cachedInitial?.data && (Date.now() - cachedInitial.timestamp) < CACHE_TTL;
 
-  const fetchQuote = useCallback(async () => {
+  const [quote, setQuote] = useState<QuoteResponse | null>(() =>
+    hasCachedData ? cachedInitial!.data : null
+  );
+  const [loading, setLoading] = useState(() =>
+    hasRequiredParams && !hasCachedData
+  );
+  const [error, setError] = useState<string | null>(null);
+  const mountedRef = useRef(true);
+
+  // Generate cache key from params
+  const getCacheKey = useCallback(() => {
+    return `${slug}:${checkIn}:${checkOut}:${adults}:${children}:${infants}:${pets}`;
+  }, [slug, checkIn, checkOut, adults, children, infants, pets]);
+
+  const fetchQuote = useCallback(async (forceRefresh = false) => {
     // Don't fetch if we don't have required params
     if (!slug || !checkIn || !checkOut) {
       setQuote(null);
@@ -86,47 +106,98 @@ export function useQuote({
       return;
     }
 
+    const cacheKey = getCacheKey();
+    const cached = quoteCache.get(cacheKey);
+    const now = Date.now();
+
+    // Return cached data if valid and not forcing refresh
+    if (!forceRefresh && cached && cached.data && (now - cached.timestamp) < CACHE_TTL) {
+      setQuote(cached.data);
+      setLoading(false);
+      return;
+    }
+
+    // If there's an in-flight request, wait for it
+    if (cached?.promise) {
+      setLoading(true);
+      try {
+        const data = await cached.promise;
+        if (mountedRef.current) {
+          setQuote(data);
+          setLoading(false);
+        }
+      } catch (err) {
+        if (mountedRef.current) {
+          const message = err instanceof Error ? err.message : 'Failed to fetch quote';
+          setError(message);
+          setQuote(null);
+          setLoading(false);
+        }
+      }
+      return;
+    }
+
     setLoading(true);
     setError(null);
 
-    try {
-      const params = new URLSearchParams({
-        checkIn,
-        checkOut,
-        adults: adults.toString(),
-        children: children.toString(),
-        infants: infants.toString(),
-        pets: pets.toString(),
+    const params = new URLSearchParams({
+      checkIn,
+      checkOut,
+      adults: adults.toString(),
+      children: children.toString(),
+      infants: infants.toString(),
+      pets: pets.toString(),
+    });
+
+    // Create the fetch promise and store it in cache
+    const fetchPromise = fetch(`/api/cabins/slug/${slug}/quote?${params.toString()}`)
+      .then(async (response) => {
+        if (!response.ok) {
+          const errorData = await response.json().catch(() => ({}));
+          throw new Error(errorData.error || `Failed to fetch quote: ${response.status}`);
+        }
+        return response.json();
       });
 
-      const response = await fetch(`/api/cabins/slug/${slug}/quote?${params.toString()}`);
+    // Store promise in cache to deduplicate concurrent requests
+    quoteCache.set(cacheKey, { data: null, timestamp: now, promise: fetchPromise });
 
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
-        throw new Error(errorData.error || `Failed to fetch quote: ${response.status}`);
+    try {
+      const data: QuoteResponse = await fetchPromise;
+      // Update cache with result
+      quoteCache.set(cacheKey, { data, timestamp: Date.now() });
+      if (mountedRef.current) {
+        setQuote(data);
       }
-
-      const data: QuoteResponse = await response.json();
-      setQuote(data);
     } catch (err) {
-      const message = err instanceof Error ? err.message : 'Failed to fetch quote';
-      setError(message);
-      setQuote(null);
+      // Clear failed request from cache
+      quoteCache.delete(cacheKey);
+      if (mountedRef.current) {
+        const message = err instanceof Error ? err.message : 'Failed to fetch quote';
+        setError(message);
+        setQuote(null);
+      }
     } finally {
-      setLoading(false);
+      if (mountedRef.current) {
+        setLoading(false);
+      }
     }
-  }, [slug, checkIn, checkOut, adults, children, infants, pets]);
+  }, [slug, checkIn, checkOut, adults, children, infants, pets, getCacheKey]);
 
   // Fetch quote when params change
   useEffect(() => {
+    mountedRef.current = true;
     fetchQuote();
+    return () => {
+      mountedRef.current = false;
+    };
   }, [fetchQuote]);
 
   return {
     quote,
     loading,
     error,
-    refetch: fetchQuote,
+    refetch: () => fetchQuote(true), // Force refresh when manually called
   };
 }
 

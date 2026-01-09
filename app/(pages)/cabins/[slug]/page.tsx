@@ -228,6 +228,7 @@ const SingleCabinPage = () => {
           {/* Booking Section - Desktop: right sidebar */}
           <div className="hidden lg:block">
             <BookingSection
+              mode="desktop"
               cabin={{
                 slug: cabin.slug,
                 name: cabin.name || cabin.slug,
@@ -258,6 +259,7 @@ const SingleCabinPage = () => {
       {/* Mobile Booking Section - Fixed sticky bar and bottom sheet */}
       <div className="lg:hidden">
         <BookingSection
+          mode="mobile"
           cabin={{
             slug: cabin.slug,
             name: cabin.name || cabin.slug,

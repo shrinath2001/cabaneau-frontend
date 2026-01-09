@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useQuote } from './hooks/useQuote';
 import MobileStickyBar from './MobileStickyBar';
 import MobileBottomSheet from './MobileBottomSheet';
@@ -26,14 +26,15 @@ interface SearchParams {
 interface BookingSectionProps {
   cabin: CabinInfo;
   searchParams: SearchParams;
+  /** Render mode - 'desktop' or 'mobile'. Parent controls which is visible via CSS */
+  mode: 'desktop' | 'mobile';
 }
 
 /**
  * BookingSection - Main orchestrator for booking UI
  *
- * Decides which component to show based on:
- * 1. Device type (mobile vs desktop)
- * 2. Date state (no dates vs dates pre-selected in URL)
+ * Renders either desktop or mobile view based on `mode` prop.
+ * Parent component controls visibility via CSS (hidden lg:block / lg:hidden).
  *
  * States:
  * - Mobile + No dates: Sticky bar with "Check Availability" -> opens bottom sheet with Lodgify widget
@@ -44,8 +45,8 @@ interface BookingSectionProps {
 export default function BookingSection({
   cabin,
   searchParams,
+  mode,
 }: BookingSectionProps) {
-  const [isMobile, setIsMobile] = useState(false);
   const [showBottomSheet, setShowBottomSheet] = useState(false);
   const [showDesktopModal, setShowDesktopModal] = useState(false);
 
@@ -80,17 +81,6 @@ export default function BookingSection({
     adults,
   });
 
-  // Handle responsive detection
-  useEffect(() => {
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth < 1024); // lg breakpoint
-    };
-
-    checkMobile();
-    window.addEventListener('resize', checkMobile);
-    return () => window.removeEventListener('resize', checkMobile);
-  }, []);
-
   // Handle "Save" from widget - refreshes page with URL params
   const handleSaveFromWidget = (params: {
     arrival: string;
@@ -107,9 +97,9 @@ export default function BookingSection({
   };
 
   // MOBILE VIEW
-  if (isMobile) {
+  if (mode === 'mobile') {
     return (
-      <>
+      <div>
         {/* Sticky bottom bar */}
         <MobileStickyBar
           hasDateParams={hasDateParams}
@@ -127,7 +117,7 @@ export default function BookingSection({
           cabin={cabin}
           onSave={handleSaveFromWidget}
         />
-      </>
+      </div>
     );
   }
 
