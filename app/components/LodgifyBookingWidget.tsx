@@ -356,7 +356,15 @@ const LodgifyBookingWidget = ({
 
           /* Date labels (Check-in/Check-out placeholder text) */
           #portable-search-bar label,
-          #lodgify-search-bar label {
+          #portable-search-bar button label,
+          #portable-search-bar button > div label,
+          #portable-search-bar button > div > label,
+          #portable-search-bar button > div > div:first-child,
+          #portable-search-bar button span:not(.css-mu0s7e span),
+          #lodgify-search-bar label,
+          #lodgify-search-bar button label,
+          #lodgify-search-bar button[aria-haspopup="dialog"] label,
+          #lodgify-search-bar button[aria-haspopup="dialog"] > div > label {
             font-size: 16px !important;
             line-height: 1.2 !important;
             font-weight: 400 !important;
