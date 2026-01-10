@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { getLodgifyLocale } from "@/app/lib/language";
+import { getLodgifySearchLocale } from "@/app/lib/language";
 
 interface LodgifyBookingWidgetProps {
   languageCode?: string;
@@ -25,8 +25,8 @@ const LodgifyBookingWidget = ({
   languageCode = "en",
 }: LodgifyBookingWidgetProps) => {
   const [searchPageUrl, setSearchPageUrl] = useState("/search");
-  // Convert language code to Lodgify-compatible locale
-  const lodgifyLocale = getLodgifyLocale(languageCode);
+  // Convert language code to Lodgify-compatible locale (search widget only supports 'en', not 'en-GB')
+  const lodgifyLocale = getLodgifySearchLocale(languageCode);
 
   useEffect(() => {
     // Set the full search page URL using current origin

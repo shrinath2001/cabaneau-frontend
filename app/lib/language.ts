@@ -59,8 +59,8 @@ export function getLanguageFromCookie(cookieString: string | null): string {
 }
 
 /**
- * Convert language code to Lodgify-compatible locale code.
- * Lodgify widgets need proper locale codes for calendar formatting.
+ * Convert language code to Lodgify-compatible locale code for Book Now Box widgets.
+ * These widgets support full locale codes like 'en-GB' for proper calendar formatting.
  *
  * @example
  * getLodgifyLocale('en') // 'en-GB'
@@ -69,9 +69,31 @@ export function getLanguageFromCookie(cookieString: string | null): string {
 export function getLodgifyLocale(languageCode?: string): string {
   const code = languageCode || getLanguage();
 
-  // Map language codes to Lodgify locale codes
+  // Map language codes to Lodgify locale codes (Book Now Box supports en-GB)
   const localeMap: Record<string, string> = {
     en: 'en-GB',
+    fr: 'fr',
+    de: 'de',
+    nl: 'nl',
+  };
+
+  return localeMap[code] || code;
+}
+
+/**
+ * Convert language code to Lodgify-compatible locale code for Search widgets.
+ * The portable search bar only supports simple language codes like 'en', not 'en-GB'.
+ *
+ * @example
+ * getLodgifySearchLocale('en') // 'en'
+ * getLodgifySearchLocale('fr') // 'fr'
+ */
+export function getLodgifySearchLocale(languageCode?: string): string {
+  const code = languageCode || getLanguage();
+
+  // Search widget only supports simple language codes
+  const localeMap: Record<string, string> = {
+    en: 'en',
     fr: 'fr',
     de: 'de',
     nl: 'nl',
