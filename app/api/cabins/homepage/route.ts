@@ -1,20 +1,21 @@
 import { NextResponse } from 'next/server';
 import { cabins as staticCabins } from '@/app/data/cabins';
+import { getLanguageFromRequest } from '@/app/lib/server-language';
 
 export async function GET(request: Request) {
   try {
     const apiKey = process.env.API_KEY;
     const apiBaseUrl = process.env.API_BASE_URL || 'http://localhost:3000/api/v1';
+    const language = getLanguageFromRequest(request);
 
-    // Get Accept-Language from incoming request or default to 'en'
-    const acceptLanguage = request.headers.get('accept-language') || 'en';
+    console.log('🌐 Homepage language:', language);
 
     const response = await fetch(`${apiBaseUrl}/cabins/homepage`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
         'x-api-key': apiKey || '',
-        'Accept-Language': acceptLanguage,
+        'Accept-Language': language,
       },
       // Longer timeout for aggregated endpoint - cold cache takes ~20s
       signal: AbortSignal.timeout(30000),

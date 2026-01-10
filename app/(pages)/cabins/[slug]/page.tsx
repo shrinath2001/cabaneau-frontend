@@ -10,6 +10,7 @@ import AmenitiesSection from './components/AmenitiesSection';
 import ExtraServicesSection from './components/ExtraServicesSection';
 import SleepingAreasSection from './components/SleepingAreasSection';
 import { cabins as staticCabins } from '@/app/data/cabins';
+import { apiFetch } from '@/app/lib/api';
 
 interface CabinDetails {
   id: string;
@@ -60,7 +61,7 @@ const SingleCabinPage = () => {
         setError(null);
 
         console.log('🔍 Fetching cabin with slug:', slug);
-        const response = await fetch(`/api/cabins/slug/${slug}`);
+        const response = await apiFetch(`/api/cabins/slug/${slug}`);
 
         console.log('📥 Response status:', response.status);
 

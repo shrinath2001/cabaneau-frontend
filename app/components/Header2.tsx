@@ -3,15 +3,13 @@ import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { FlagIcon, getLanguageDisplayName, getLanguageLabel } from './FlagIcon';
+import { getLanguage, setLanguage, DEFAULT_LANGUAGE } from '@/app/lib/language';
 
 interface Language {
   code: string;
   name: string;
   isDefault: boolean;
 }
-
-const STORAGE_KEY = 'cabaneau_language';
-const DEFAULT_LANGUAGE = 'en';
 
 const Header2 = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -22,10 +20,8 @@ const Header2 = () => {
   // Fetch languages from API and restore from localStorage
   useEffect(() => {
     // Restore saved language preference
-    const savedLang = localStorage.getItem(STORAGE_KEY);
-    if (savedLang) {
-      setSelectedLanguage(savedLang);
-    }
+    const savedLang = getLanguage();
+    setSelectedLanguage(savedLang);
 
     // Fetch available languages
     const fetchLanguages = async () => {
@@ -34,13 +30,6 @@ const Header2 = () => {
         if (response.ok) {
           const data: Language[] = await response.json();
           setLanguages(data);
-          // If no saved language, use default from API
-          if (!savedLang) {
-            const defaultLang = data.find(l => l.isDefault);
-            if (defaultLang) {
-              setSelectedLanguage(defaultLang.code);
-            }
-          }
         }
       } catch (error) {
         console.error('Failed to fetch languages:', error);
@@ -57,11 +46,11 @@ const Header2 = () => {
     fetchLanguages();
   }, []);
 
-  // Save language to localStorage when changed
+  // Save language and reload to apply new language across the app
   const handleLanguageChange = (code: string) => {
-    setSelectedLanguage(code);
-    localStorage.setItem(STORAGE_KEY, code);
+    setLanguage(code); // Syncs to localStorage + cookie
     setIsLanguageOpen(false);
+    window.location.reload(); // Reload to fetch content in new language
   };
 
   return (

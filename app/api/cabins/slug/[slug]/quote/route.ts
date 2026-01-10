@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { getLanguageFromRequest } from '@/app/lib/server-language';
 
 export async function GET(
   request: NextRequest,
@@ -7,6 +8,7 @@ export async function GET(
   try {
     const apiKey = process.env.API_KEY;
     const apiBaseUrl = process.env.API_BASE_URL || 'http://localhost:3000/api/v1';
+    const language = getLanguageFromRequest(request);
     const { slug } = await params;
     const searchParams = request.nextUrl.searchParams;
 
@@ -24,6 +26,7 @@ export async function GET(
     console.log('💰 Fetching quote for cabin:', slug);
     console.log('📅 Dates:', checkIn, 'to', checkOut);
     console.log('👥 Guests:', { adults, children, infants, pets });
+    console.log('🌐 Language:', language);
 
     if (!slug) {
       return NextResponse.json(
@@ -67,6 +70,7 @@ export async function GET(
       headers: {
         'Content-Type': 'application/json',
         'x-api-key': apiKey || '',
+        'Accept-Language': language,
       },
     });
 

@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { getLanguageFromRequest } from '@/app/lib/server-language';
 
 /**
  * Search cabins API route
@@ -13,6 +14,7 @@ export async function GET(request: NextRequest) {
   try {
     const apiKey = process.env.API_KEY;
     const apiBaseUrl = process.env.API_BASE_URL || 'http://localhost:3000/api/v1';
+    const language = getLanguageFromRequest(request);
     const { searchParams } = request.nextUrl;
 
     // Get query parameters (already converted to backend format by search page)
@@ -22,6 +24,7 @@ export async function GET(request: NextRequest) {
     const pets = searchParams.get('pets'); // Optional: filter pet-friendly cabins
 
     console.log('🔍 Search params:', { checkIn, checkOut, guests, pets });
+    console.log('🌐 Language:', language);
     console.log('🔑 API Key exists:', !!apiKey);
 
     // Validate required parameters
@@ -76,6 +79,7 @@ export async function GET(request: NextRequest) {
       headers: {
         'Content-Type': 'application/json',
         'x-api-key': apiKey || '',
+        'Accept-Language': language,
       },
     });
 

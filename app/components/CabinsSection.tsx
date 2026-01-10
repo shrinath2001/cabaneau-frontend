@@ -2,6 +2,7 @@
 import { useRef, useState, useEffect } from 'react';
 import CabinCard from './CabinCard';
 import { cabins as staticCabins } from '@/app/data/cabins';
+import { apiFetch } from '@/app/lib/api';
 
 interface CabinData {
   id: number;
@@ -48,7 +49,7 @@ const CabinsSection = () => {
     const fetchCabins = async () => {
       try {
         // Use the new homepage endpoint with availability and pricing
-        const response = await fetch('/api/cabins/homepage');
+        const response = await apiFetch('/api/cabins/homepage');
         const result = await response.json();
 
         // Handle both API response format and static fallback format

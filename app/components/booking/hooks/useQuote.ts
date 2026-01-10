@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback, useRef } from 'react';
+import { apiFetch } from '@/app/lib/api';
 
 // Simple cache to deduplicate requests across component instances
 const quoteCache = new Map<string, { data: QuoteResponse | null; timestamp: number; promise?: Promise<QuoteResponse> }>();
@@ -150,7 +151,7 @@ export function useQuote({
     });
 
     // Create the fetch promise and store it in cache
-    const fetchPromise = fetch(`/api/cabins/slug/${slug}/quote?${params.toString()}`)
+    const fetchPromise = apiFetch(`/api/cabins/slug/${slug}/quote?${params.toString()}`)
       .then(async (response) => {
         if (!response.ok) {
           const errorData = await response.json().catch(() => ({}));

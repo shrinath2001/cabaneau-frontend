@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { getLanguageFromRequest } from '@/app/lib/server-language';
 
 export async function GET(
   request: NextRequest,
@@ -7,9 +8,11 @@ export async function GET(
   try {
     const apiKey = process.env.API_KEY;
     const apiBaseUrl = process.env.API_BASE_URL || 'http://localhost:3000/api/v1';
+    const language = getLanguageFromRequest(request);
     const { slug } = await params;
 
     console.log('🔍 Fetching cabin with slug:', slug);
+    console.log('🌐 Language:', language);
     console.log('🔑 API Key exists:', !!apiKey);
 
     if (!slug) {
@@ -27,6 +30,7 @@ export async function GET(
       headers: {
         'Content-Type': 'application/json',
         'x-api-key': apiKey || '',
+        'Accept-Language': language,
       },
     });
 

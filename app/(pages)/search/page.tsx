@@ -3,6 +3,7 @@ import { useEffect, useState, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import CabinCard from '@/app/components/CabinCard';
 import SearchPageWidget from '@/app/components/SearchPageWidget';
+import { apiFetch } from '@/app/lib/api';
 
 interface SearchCabin {
   id: string;
@@ -129,7 +130,7 @@ function SearchResults() {
         if (guests.total > 0) params.append('guests', guests.total.toString());
         if (guests.pets > 0) params.append('pets', guests.pets.toString());
 
-        const response = await fetch(`/api/cabins/search?${params.toString()}`);
+        const response = await apiFetch(`/api/cabins/search?${params.toString()}`);
 
         if (!response.ok) {
           throw new Error('Failed to search cabins');
