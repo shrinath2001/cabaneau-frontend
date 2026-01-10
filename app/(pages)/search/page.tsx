@@ -312,22 +312,27 @@ function SearchResults() {
                   {cabins.map((cabin) => {
                     // Format price: prefer Lodgify quote, fallback to CMS basePrice
                     let displayPrice = '';
-                    let priceSubtext = '';
+                    let originalPrice: string | undefined;
+                    let nights: number | undefined;
+                    let promotion: { name: string; amount: number } | undefined;
 
                     if (cabin.quote?.pricing) {
                       // Show total price from Lodgify quote
                       const currency = cabin.quote.pricing.currency === 'EUR' ? '€' : cabin.quote.pricing.currency;
                       displayPrice = `${currency}${cabin.quote.pricing.total.toFixed(2)}`;
-                      priceSubtext = `${cabin.quote.pricing.nights} ${cabin.quote.pricing.nights === 1 ? 'night' : 'nights'}`;
+                      nights = cabin.quote.pricing.nights;
 
-                      // Show discount if applicable
+                      // Show original price and promotion if discount applies
                       if (cabin.quote.pricing.discount) {
-                        priceSubtext += ` • ${cabin.quote.pricing.discount.name}`;
+                        originalPrice = `${currency}${cabin.quote.pricing.subtotal.toFixed(2)}`;
+                        promotion = {
+                          name: cabin.quote.pricing.discount.name,
+                          amount: cabin.quote.pricing.discount.amount,
+                        };
                       }
                     } else if (cabin.basePrice) {
                       // Fallback to CMS base price per night
-                      displayPrice = `€${Number(cabin.basePrice).toFixed(2)}`;
-                      priceSubtext = 'per night';
+                      displayPrice = `€${Number(cabin.basePrice).toFixed(2)}/night`;
                     }
 
                     // Format search dates for display (e.g., "Jan 10 - Jan 11")
@@ -351,7 +356,9 @@ function SearchResults() {
                         capacity={`2-${cabin.capacity} Persons`}
                         availability={searchDates}
                         price={displayPrice}
-                        priceSubtext={priceSubtext}
+                        originalPrice={originalPrice}
+                        nights={nights}
+                        promotion={promotion}
                         priceLoading={cabin.quoteLoading}
                         searchParams={{
                           arrival: searchParams.get('arrival') || undefined,

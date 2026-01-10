@@ -22,7 +22,12 @@ interface CabinCardProps {
   capacity: string;
   availability: string;
   price: string;
-  priceSubtext?: string;
+  originalPrice?: string;
+  nights?: number;
+  promotion?: {
+    name: string;
+    amount: number;
+  };
   priceLoading?: boolean;
   searchParams?: SearchParams;
 }
@@ -37,7 +42,9 @@ const CabinCard: React.FC<CabinCardProps> = ({
   capacity,
   availability,
   price,
-  priceSubtext,
+  originalPrice,
+  nights,
+  promotion,
   priceLoading,
   searchParams,
 }) => {
@@ -185,10 +192,29 @@ const CabinCard: React.FC<CabinCardProps> = ({
               </div>
             ) : (
               <>
-                <span className="font-jost font-medium text-[24px]">{price}</span>
-                {priceSubtext && (
-                  <p className="font-jost text-[12px] text-gray-500">{priceSubtext}</p>
-                )}
+                <div className="flex items-baseline justify-end gap-2">
+                  {originalPrice && promotion && (
+                    <span className="font-jost text-[16px] text-gray-400 line-through">
+                      {originalPrice}
+                    </span>
+                  )}
+                  <span className="font-jost font-medium text-[24px]">{price}</span>
+                </div>
+                <div className="flex items-center justify-end gap-2 mt-1">
+                  {nights && (
+                    <span className="font-jost text-[12px] text-gray-500">
+                      {nights} {nights === 1 ? 'night' : 'nights'}
+                    </span>
+                  )}
+                  {promotion && (
+                    <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-emerald-50 text-emerald-700 text-[11px] font-medium rounded-full border border-emerald-200">
+                      <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M5 2a2 2 0 00-2 2v14l3.5-2 3.5 2 3.5-2 3.5 2V4a2 2 0 00-2-2H5zm2.5 3a1.5 1.5 0 100 3 1.5 1.5 0 000-3zm6.207.293a1 1 0 00-1.414 0l-6 6a1 1 0 101.414 1.414l6-6a1 1 0 000-1.414zM12.5 10a1.5 1.5 0 100 3 1.5 1.5 0 000-3z" clipRule="evenodd" />
+                      </svg>
+                      {promotion.name}
+                    </span>
+                  )}
+                </div>
               </>
             )}
           </div>
