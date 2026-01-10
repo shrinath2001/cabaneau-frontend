@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState, useCallback } from 'react';
+import { getLanguage } from '@/app/lib/language';
 
 interface CabinInfo {
   slug: string;
@@ -33,8 +34,14 @@ export default function LodgifyWidgetWrapper({
     adults: number;
   } | null>(null);
   const [canSave, setCanSave] = useState(false);
+  const [languageCode, setLanguageCode] = useState('en');
   const widgetRef = useRef<HTMLDivElement>(null);
   const observerRef = useRef<MutationObserver | null>(null);
+
+  // Get user's language preference on mount
+  useEffect(() => {
+    setLanguageCode(getLanguage());
+  }, []);
 
   // Extract params from Lodgify widget's checkout URL
   const extractParamsFromWidget = useCallback(() => {
@@ -179,7 +186,7 @@ export default function LodgifyWidgetWrapper({
           data-rental-id={cabin.lodgifyId}
           data-website-id="572847"
           data-slug="cabaneau"
-          data-language-code="en-GB"
+          data-language-code={languageCode}
           data-new-tab="false"
           data-version="stable"
           data-hide-minimum-price

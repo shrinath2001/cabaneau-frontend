@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useSearchParams } from "next/navigation";
+import { getLanguage } from "@/app/lib/language";
 
 /**
  * Lodgify Search Widget for the Search Results Page
@@ -19,6 +20,8 @@ const SearchPageWidget = () => {
   const widgetRef = useRef<HTMLDivElement>(null);
   // Use state for searchPageUrl to avoid hydration mismatch
   const [searchPageUrl, setSearchPageUrl] = useState("/search");
+  // Get language from user preference
+  const [languageCode, setLanguageCode] = useState("en");
 
   // Parse URL params (Lodgify format: YYYYMMDD, also support ISO: YYYY-MM-DD)
   const arrival = searchParams.get("arrival") || "";
@@ -34,6 +37,8 @@ const SearchPageWidget = () => {
   useEffect(() => {
     // Set full URL after hydration to avoid mismatch
     setSearchPageUrl(`${window.location.origin}/search`);
+    // Get user's language preference
+    setLanguageCode(getLanguage());
 
     const scriptUrl =
       "https://app.lodgify.com/portable-search-bar/stable/renderPortableSearchBar.js";
@@ -459,7 +464,7 @@ const SearchPageWidget = () => {
           ref={widgetRef}
           id="lodgify-search-bar"
           data-website-id="572847"
-          data-language-code="en"
+          data-language-code={languageCode}
           data-search-page-url={searchPageUrl}
           data-new-tab="false"
           data-version="stable"
