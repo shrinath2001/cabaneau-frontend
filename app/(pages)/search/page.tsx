@@ -10,6 +10,7 @@ interface SearchCabin {
   name: string;
   shortDescription: string;
   capacity: number;
+  squareMeters?: number;
   bedrooms: number;
   bathrooms: number;
   basePrice: number;
@@ -18,11 +19,6 @@ interface SearchCabin {
   lodgifyId?: string;
   petsAllowed?: boolean;
   adultsOnly?: boolean;
-  // Pricing from Lodgify quote
-  totalPrice?: number;
-  nightlyRate?: number;
-  numberOfNights?: number;
-  currency: string;
 }
 
 interface SearchResponse {
@@ -247,8 +243,8 @@ function SearchResults() {
                         images={cabin.images.length > 0 ? cabin.images : [cabin.featuredImage]}
                         title={cabin.name}
                         rating={5} // Default rating since API doesn't provide it
-                        area={`${cabin.bedrooms} Bedroom${cabin.bedrooms > 1 ? 's' : ''}`}
-                        capacity={`${cabin.capacity} Guest${cabin.capacity > 1 ? 's' : ''}`}
+                        area={cabin.squareMeters ? `${cabin.squareMeters}m²` : ''}
+                        capacity={`2-${cabin.capacity} Persons`}
                         availability={searchDates}
                         price={displayPrice}
                         searchParams={{
