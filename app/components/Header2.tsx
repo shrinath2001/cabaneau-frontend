@@ -1,12 +1,68 @@
 'use client';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { FlagIcon, getLanguageDisplayName, getLanguageLabel } from './FlagIcon';
+
+interface Language {
+  code: string;
+  name: string;
+  isDefault: boolean;
+}
+
+const STORAGE_KEY = 'cabaneau_language';
+const DEFAULT_LANGUAGE = 'en';
 
 const Header2 = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isLanguageOpen, setIsLanguageOpen] = useState(false);
-  const [selectedLanguage, setSelectedLanguage] = useState<'en' | 'de'>('en');
+  const [selectedLanguage, setSelectedLanguage] = useState<string>(DEFAULT_LANGUAGE);
+  const [languages, setLanguages] = useState<Language[]>([]);
+
+  // Fetch languages from API and restore from localStorage
+  useEffect(() => {
+    // Restore saved language preference
+    const savedLang = localStorage.getItem(STORAGE_KEY);
+    if (savedLang) {
+      setSelectedLanguage(savedLang);
+    }
+
+    // Fetch available languages
+    const fetchLanguages = async () => {
+      try {
+        const response = await fetch('/api/languages');
+        if (response.ok) {
+          const data: Language[] = await response.json();
+          setLanguages(data);
+          // If no saved language, use default from API
+          if (!savedLang) {
+            const defaultLang = data.find(l => l.isDefault);
+            if (defaultLang) {
+              setSelectedLanguage(defaultLang.code);
+            }
+          }
+        }
+      } catch (error) {
+        console.error('Failed to fetch languages:', error);
+        // Fallback languages if API fails
+        setLanguages([
+          { code: 'en', name: 'English', isDefault: true },
+          { code: 'fr', name: 'French', isDefault: false },
+          { code: 'de', name: 'German', isDefault: false },
+          { code: 'nl', name: 'Dutch', isDefault: false },
+        ]);
+      }
+    };
+
+    fetchLanguages();
+  }, []);
+
+  // Save language to localStorage when changed
+  const handleLanguageChange = (code: string) => {
+    setSelectedLanguage(code);
+    localStorage.setItem(STORAGE_KEY, code);
+    setIsLanguageOpen(false);
+  };
 
   return (
     <header className="fixed top-0 left-0 w-full z-50 bg-white shadow-md">
@@ -52,31 +108,8 @@ const Header2 = () => {
                 onClick={() => setIsLanguageOpen(!isLanguageOpen)}
                 className="text-black flex items-center gap-2 font-heading font-medium text-sm hover:opacity-80 transition"
               >
-                {selectedLanguage === 'en' ? (
-                  <>
-                    <svg className="w-6 h-4" viewBox="0 0 60 30" xmlns="http://www.w3.org/2000/svg">
-                      <clipPath id="s2"><path d="M0,0 v30 h60 v-30 z"/></clipPath>
-                      <clipPath id="t2"><path d="M30,15 h30 v15 z v15 h-30 z h-30 v-15 z v-15 h30 z"/></clipPath>
-                      <g clipPath="url(#s2)">
-                        <path d="M0,0 v30 h60 v-30 z" fill="#012169"/>
-                        <path d="M0,0 L60,30 M60,0 L0,30" stroke="#fff" strokeWidth="6"/>
-                        <path d="M0,0 L60,30 M60,0 L0,30" clipPath="url(#t2)" stroke="#C8102E" strokeWidth="4"/>
-                        <path d="M30,0 v30 M0,15 h60" stroke="#fff" strokeWidth="10"/>
-                        <path d="M30,0 v30 M0,15 h60" stroke="#C8102E" strokeWidth="6"/>
-                      </g>
-                    </svg>
-                    <span>EN</span>
-                  </>
-                ) : (
-                  <>
-                    <svg className="w-6 h-4" viewBox="0 0 5 3" xmlns="http://www.w3.org/2000/svg">
-                      <rect width="5" height="3" y="0" x="0" fill="#000"/>
-                      <rect width="5" height="2" y="1" x="0" fill="#D00"/>
-                      <rect width="5" height="1" y="2" x="0" fill="#FFCE00"/>
-                    </svg>
-                    <span>DE</span>
-                  </>
-                )}
+                <FlagIcon code={selectedLanguage} className="w-6 h-4" idSuffix="-h2-desktop" />
+                <span>{getLanguageLabel(selectedLanguage)}</span>
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                 </svg>
@@ -84,41 +117,19 @@ const Header2 = () => {
 
               {/* Dropdown Menu */}
               {isLanguageOpen && (
-                <div className="absolute right-0 mt-2 w-32 bg-white rounded-md shadow-lg py-1 z-50 border border-gray-200">
-                  <button
-                    onClick={() => {
-                      setSelectedLanguage('en');
-                      setIsLanguageOpen(false);
-                    }}
-                    className="w-full px-4 py-2 text-left text-gray-700 hover:bg-gray-100 flex items-center gap-2 font-heading text-sm"
-                  >
-                    <svg className="w-6 h-4" viewBox="0 0 60 30" xmlns="http://www.w3.org/2000/svg">
-                      <clipPath id="s3"><path d="M0,0 v30 h60 v-30 z"/></clipPath>
-                      <clipPath id="t3"><path d="M30,15 h30 v15 z v15 h-30 z h-30 v-15 z v-15 h30 z"/></clipPath>
-                      <g clipPath="url(#s3)">
-                        <path d="M0,0 v30 h60 v-30 z" fill="#012169"/>
-                        <path d="M0,0 L60,30 M60,0 L0,30" stroke="#fff" strokeWidth="6"/>
-                        <path d="M0,0 L60,30 M60,0 L0,30" clipPath="url(#t3)" stroke="#C8102E" strokeWidth="4"/>
-                        <path d="M30,0 v30 M0,15 h60" stroke="#fff" strokeWidth="10"/>
-                        <path d="M30,0 v30 M0,15 h60" stroke="#C8102E" strokeWidth="6"/>
-                      </g>
-                    </svg>
-                    English
-                  </button>
-                  <button
-                    onClick={() => {
-                      setSelectedLanguage('de');
-                      setIsLanguageOpen(false);
-                    }}
-                    className="w-full px-4 py-2 text-left text-gray-700 hover:bg-gray-100 flex items-center gap-2 font-heading text-sm"
-                  >
-                    <svg className="w-6 h-4" viewBox="0 0 5 3" xmlns="http://www.w3.org/2000/svg">
-                      <rect width="5" height="3" y="0" x="0" fill="#000"/>
-                      <rect width="5" height="2" y="1" x="0" fill="#D00"/>
-                      <rect width="5" height="1" y="2" x="0" fill="#FFCE00"/>
-                    </svg>
-                    Deutsch
-                  </button>
+                <div className="absolute right-0 mt-2 w-36 bg-white rounded-md shadow-lg py-1 z-50 border border-gray-200">
+                  {languages.map((lang) => (
+                    <button
+                      key={lang.code}
+                      onClick={() => handleLanguageChange(lang.code)}
+                      className={`w-full px-4 py-2 text-left text-gray-700 hover:bg-gray-100 flex items-center gap-2 font-heading text-sm ${
+                        lang.code === selectedLanguage ? 'bg-gray-50' : ''
+                      }`}
+                    >
+                      <FlagIcon code={lang.code} className="w-6 h-4" idSuffix={`-h2-dd-${lang.code}`} />
+                      {getLanguageDisplayName(lang.code)}
+                    </button>
+                  ))}
                 </div>
               )}
             </div>
@@ -168,31 +179,8 @@ const Header2 = () => {
                     onClick={() => setIsLanguageOpen(!isLanguageOpen)}
                     className="flex items-center gap-1 font-heading font-medium text-sm"
                   >
-                    {selectedLanguage === 'en' ? (
-                      <>
-                        <svg className="w-5 h-3" viewBox="0 0 60 30" xmlns="http://www.w3.org/2000/svg">
-                          <clipPath id="s-mobile"><path d="M0,0 v30 h60 v-30 z"/></clipPath>
-                          <clipPath id="t-mobile"><path d="M30,15 h30 v15 z v15 h-30 z h-30 v-15 z v-15 h30 z"/></clipPath>
-                          <g clipPath="url(#s-mobile)">
-                            <path d="M0,0 v30 h60 v-30 z" fill="#012169"/>
-                            <path d="M0,0 L60,30 M60,0 L0,30" stroke="#fff" strokeWidth="6"/>
-                            <path d="M0,0 L60,30 M60,0 L0,30" clipPath="url(#t-mobile)" stroke="#C8102E" strokeWidth="4"/>
-                            <path d="M30,0 v30 M0,15 h60" stroke="#fff" strokeWidth="10"/>
-                            <path d="M30,0 v30 M0,15 h60" stroke="#C8102E" strokeWidth="6"/>
-                          </g>
-                        </svg>
-                        <span>EN</span>
-                      </>
-                    ) : (
-                      <>
-                        <svg className="w-5 h-3" viewBox="0 0 5 3" xmlns="http://www.w3.org/2000/svg">
-                          <rect width="5" height="3" y="0" x="0" fill="#000"/>
-                          <rect width="5" height="2" y="1" x="0" fill="#D00"/>
-                          <rect width="5" height="1" y="2" x="0" fill="#FFCE00"/>
-                        </svg>
-                        <span>DE</span>
-                      </>
-                    )}
+                    <FlagIcon code={selectedLanguage} className="w-5 h-3" idSuffix="-h2-mobile" />
+                    <span>{getLanguageLabel(selectedLanguage)}</span>
                     <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                     </svg>
@@ -200,41 +188,19 @@ const Header2 = () => {
 
                   {/* Language Dropdown */}
                   {isLanguageOpen && (
-                    <div className="absolute right-0 mt-2 w-32 bg-white rounded-md shadow-lg py-1 z-50 border border-gray-200">
-                      <button
-                        onClick={() => {
-                          setSelectedLanguage('en');
-                          setIsLanguageOpen(false);
-                        }}
-                        className="w-full px-4 py-2 text-left text-gray-700 hover:bg-gray-100 flex items-center gap-2 font-heading text-sm"
-                      >
-                        <svg className="w-5 h-3" viewBox="0 0 60 30" xmlns="http://www.w3.org/2000/svg">
-                          <clipPath id="s-mobile-en"><path d="M0,0 v30 h60 v-30 z"/></clipPath>
-                          <clipPath id="t-mobile-en"><path d="M30,15 h30 v15 z v15 h-30 z h-30 v-15 z v-15 h30 z"/></clipPath>
-                          <g clipPath="url(#s-mobile-en)">
-                            <path d="M0,0 v30 h60 v-30 z" fill="#012169"/>
-                            <path d="M0,0 L60,30 M60,0 L0,30" stroke="#fff" strokeWidth="6"/>
-                            <path d="M0,0 L60,30 M60,0 L0,30" clipPath="url(#t-mobile-en)" stroke="#C8102E" strokeWidth="4"/>
-                            <path d="M30,0 v30 M0,15 h60" stroke="#fff" strokeWidth="10"/>
-                            <path d="M30,0 v30 M0,15 h60" stroke="#C8102E" strokeWidth="6"/>
-                          </g>
-                        </svg>
-                        English
-                      </button>
-                      <button
-                        onClick={() => {
-                          setSelectedLanguage('de');
-                          setIsLanguageOpen(false);
-                        }}
-                        className="w-full px-4 py-2 text-left text-gray-700 hover:bg-gray-100 flex items-center gap-2 font-heading text-sm"
-                      >
-                        <svg className="w-5 h-3" viewBox="0 0 5 3" xmlns="http://www.w3.org/2000/svg">
-                          <rect width="5" height="3" y="0" x="0" fill="#000"/>
-                          <rect width="5" height="2" y="1" x="0" fill="#D00"/>
-                          <rect width="5" height="1" y="2" x="0" fill="#FFCE00"/>
-                        </svg>
-                        Deutsch
-                      </button>
+                    <div className="absolute right-0 mt-2 w-36 bg-white rounded-md shadow-lg py-1 z-50 border border-gray-200">
+                      {languages.map((lang) => (
+                        <button
+                          key={lang.code}
+                          onClick={() => handleLanguageChange(lang.code)}
+                          className={`w-full px-4 py-2 text-left text-gray-700 hover:bg-gray-100 flex items-center gap-2 font-heading text-sm ${
+                            lang.code === selectedLanguage ? 'bg-gray-50' : ''
+                          }`}
+                        >
+                          <FlagIcon code={lang.code} className="w-5 h-3" idSuffix={`-h2-mob-dd-${lang.code}`} />
+                          {getLanguageDisplayName(lang.code)}
+                        </button>
+                      ))}
                     </div>
                   )}
                 </div>
