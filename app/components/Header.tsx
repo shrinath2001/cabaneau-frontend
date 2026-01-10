@@ -5,6 +5,7 @@ import Link from 'next/link';
 import LodgifyBookingWidget from './LodgifyBookingWidget';
 import { FlagIcon, getLanguageDisplayName, getLanguageLabel } from './FlagIcon';
 import { getLanguage, setLanguage, STORAGE_KEY, DEFAULT_LANGUAGE } from '@/app/lib/language';
+import { useTranslations } from '@/app/providers/TranslationsProvider';
 
 interface Language {
   code: string;
@@ -17,6 +18,7 @@ const Header = () => {
   const [isLanguageOpen, setIsLanguageOpen] = useState(false);
   const [selectedLanguage, setSelectedLanguage] = useState<string>(DEFAULT_LANGUAGE);
   const [languages, setLanguages] = useState<Language[]>([]);
+  const { t } = useTranslations('navigation');
 
   // Scroll to top when homepage loads (fixes SPA navigation scroll issue)
   useEffect(() => {
@@ -85,28 +87,28 @@ const Header = () => {
               </Link>
             </div>
             <nav className="hidden md:flex items-center space-x-8">
-              <Link href="/cabins" className="font-heading font-medium text-[18px]" style={{ color: '#FFFFFF9C' }}>
-                OUR CABINS
+              <Link href="/cabins" className="font-heading font-medium text-[18px] uppercase" style={{ color: '#FFFFFF9C' }}>
+                {t('link.our_cabins', 'Our Cabins')}
               </Link>
-              <Link href="/activities" className="font-heading font-medium text-[18px]" style={{ color: '#FFFFFF9C' }}>
-                ACTIVITIES
+              <Link href="/activities" className="font-heading font-medium text-[18px] uppercase" style={{ color: '#FFFFFF9C' }}>
+                {t('link.activities', 'Activities')}
               </Link>
-              <Link href="/eat-drink" className="font-heading font-medium text-[18px]" style={{ color: '#FFFFFF9C' }}>
-                EAT & DRINK
+              <Link href="/eat-drink" className="font-heading font-medium text-[18px] uppercase" style={{ color: '#FFFFFF9C' }}>
+                {t('link.eat_drink', 'Eat & Drink')}
               </Link>
             </nav>
             <div className="hidden md:flex items-center space-x-4">
               <Link
                 href="/gift-voucher"
-                className="text-white w-[134px] h-[50px] flex items-center justify-center font-heading font-medium text-sm bg-[#939D92] hover:bg-[#7d8d7d] transition"
+                className="text-white w-[134px] h-[50px] flex items-center justify-center font-heading font-medium text-sm bg-[#939D92] hover:bg-[#7d8d7d] transition uppercase"
               >
-                GIFT VOUCHER
+                {t('button.gift_voucher', 'Gift Voucher')}
               </Link>
               <Link
                 href="/book-now"
-                className="bg-[#495D4D] text-white w-[134px] h-[50px] flex items-center justify-center font-heading font-medium text-sm hover:bg-[#3d5a3d] transition"
+                className="bg-[#495D4D] text-white w-[134px] h-[50px] flex items-center justify-center font-heading font-medium text-sm hover:bg-[#3d5a3d] transition uppercase"
               >
-                BOOK NOW
+                {t('button.book_now', 'Book Now')}
               </Link>
               {/* Language Selector */}
               <div className="relative">
@@ -235,23 +237,23 @@ const Header = () => {
                 <Link
                   href="/cabins"
                   onClick={() => setIsMenuOpen(false)}
-                  className="text-[#F49A4A] font-heading font-medium text-center py-4 border-b border-gray-200 text-[16px] tracking-wider"
+                  className="text-[#F49A4A] font-heading font-medium text-center py-4 border-b border-gray-200 text-[16px] tracking-wider uppercase"
                 >
-                  OUR CABINS
+                  {t('link.our_cabins', 'Our Cabins')}
                 </Link>
                 <Link
                   href="/activities"
                   onClick={() => setIsMenuOpen(false)}
-                  className="text-[#495D4D] font-heading font-medium text-center py-4 text-[16px] tracking-wider"
+                  className="text-[#495D4D] font-heading font-medium text-center py-4 text-[16px] tracking-wider uppercase"
                 >
-                  ACTIVITIES
+                  {t('link.activities', 'Activities')}
                 </Link>
                 <Link
                   href="/eat-drink"
                   onClick={() => setIsMenuOpen(false)}
-                  className="text-[#495D4D] font-heading font-medium text-center py-4 text-[16px] tracking-wider"
+                  className="text-[#495D4D] font-heading font-medium text-center py-4 text-[16px] tracking-wider uppercase"
                 >
-                  EAT & DRINK
+                  {t('link.eat_drink', 'Eat & Drink')}
                 </Link>
 
                 {/* Buttons */}
@@ -259,16 +261,16 @@ const Header = () => {
                   <Link
                     href="/gift-voucher"
                     onClick={() => setIsMenuOpen(false)}
-                    className="block text-white text-center py-3 bg-[#939D92] hover:bg-[#7d8d7d] transition font-heading font-medium text-[14px] tracking-wider"
+                    className="block text-white text-center py-3 bg-[#939D92] hover:bg-[#7d8d7d] transition font-heading font-medium text-[14px] tracking-wider uppercase"
                   >
-                    GIFT VOUCHER
+                    {t('button.gift_voucher', 'Gift Voucher')}
                   </Link>
                   <Link
                     href="/book-now"
                     onClick={() => setIsMenuOpen(false)}
-                    className="block bg-[#495D4D] text-white text-center py-3 hover:bg-[#3d5a3d] transition font-heading font-medium text-[14px] tracking-wider"
+                    className="block bg-[#495D4D] text-white text-center py-3 hover:bg-[#3d5a3d] transition font-heading font-medium text-[14px] tracking-wider uppercase"
                   >
-                    BOOK NOW
+                    {t('button.book_now', 'Book Now')}
                   </Link>
                 </div>
               </nav>

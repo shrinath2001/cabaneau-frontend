@@ -28,6 +28,29 @@ interface SearchResponse {
   total: number;
 }
 
+interface QuoteResponse {
+  available: boolean;
+  pricingAvailable: boolean;
+  pricing?: {
+    currency: string;
+    nightlyRate: number;
+    nights: number;
+    subtotal: number;
+    total: number;
+    fees: Array<{ type: string; name: string; amount: number }>;
+    discount?: { name: string; amount: number; percentage?: number };
+  };
+  minPrice?: number;
+  currency?: string;
+  checkoutUrl: string;
+}
+
+interface CabinWithQuote extends SearchCabin {
+  quote?: QuoteResponse;
+  quoteLoading?: boolean;
+  quoteError?: string;
+}
+
 /**
  * Guest breakdown from Lodgify widget
  */
@@ -109,13 +132,41 @@ function parseSearchParams(params: URLSearchParams): {
 
 function SearchResults() {
   const searchParams = useSearchParams();
-  const [cabins, setCabins] = useState<SearchCabin[]>([]);
+  const [cabins, setCabins] = useState<CabinWithQuote[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [total, setTotal] = useState(0);
 
   // Parse both Lodgify and legacy parameter formats
   const { checkIn, checkOut, guests } = parseSearchParams(searchParams);
+
+  // Fetch quote for a single cabin
+  const fetchQuote = async (cabin: SearchCabin): Promise<QuoteResponse | null> => {
+    if (!checkIn || !checkOut) return null;
+
+    try {
+      const params = new URLSearchParams({
+        checkIn,
+        checkOut,
+        adults: guests.adults.toString(),
+        children: guests.children.toString(),
+        infants: guests.infants.toString(),
+        pets: guests.pets.toString(),
+      });
+
+      const response = await apiFetch(`/api/cabins/slug/${cabin.slug}/quote?${params.toString()}`);
+
+      if (!response.ok) {
+        console.warn(`Failed to fetch quote for ${cabin.slug}`);
+        return null;
+      }
+
+      return await response.json();
+    } catch (err) {
+      console.warn(`Error fetching quote for ${cabin.slug}:`, err);
+      return null;
+    }
+  };
 
   useEffect(() => {
     const fetchCabins = async () => {
@@ -137,18 +188,55 @@ function SearchResults() {
         }
 
         const data: SearchResponse = await response.json();
-        setCabins(data.cabins);
+
+        // Initialize cabins with loading state for quotes
+        const cabinsWithQuoteLoading: CabinWithQuote[] = data.cabins.map((cabin) => ({
+          ...cabin,
+          quoteLoading: true,
+        }));
+
+        setCabins(cabinsWithQuoteLoading);
         setTotal(data.total);
+        setLoading(false);
+
+        // Fetch quotes for all cabins in parallel
+        if (checkIn && checkOut && data.cabins.length > 0) {
+          const quotePromises = data.cabins.map(async (cabin) => {
+            const quote = await fetchQuote(cabin);
+            return { slug: cabin.slug, quote };
+          });
+
+          const quotes = await Promise.all(quotePromises);
+
+          // Update cabins with quotes
+          setCabins((prevCabins) =>
+            prevCabins.map((cabin) => {
+              const quoteResult = quotes.find((q) => q.slug === cabin.slug);
+              return {
+                ...cabin,
+                quote: quoteResult?.quote || undefined,
+                quoteLoading: false,
+              };
+            })
+          );
+        } else {
+          // No dates selected, clear quote loading state
+          setCabins((prevCabins) =>
+            prevCabins.map((cabin) => ({
+              ...cabin,
+              quoteLoading: false,
+            }))
+          );
+        }
       } catch (err) {
         setError(err instanceof Error ? err.message : 'An error occurred');
         console.error('Error fetching cabins:', err);
-      } finally {
         setLoading(false);
       }
     };
 
     fetchCabins();
-  }, [checkIn, checkOut, guests.total, guests.pets]);
+  }, [checkIn, checkOut, guests.total, guests.pets, guests.adults, guests.children, guests.infants]);
 
   // Format date for display
   const formatDate = (dateStr: string | null) => {
@@ -222,10 +310,25 @@ function SearchResults() {
                 </p>
                 <div className="flex flex-wrap justify-center gap-8">
                   {cabins.map((cabin) => {
-                    // Format price: use basePrice from CMS (EUR default)
-                    const displayPrice = cabin.basePrice
-                      ? `€${Number(cabin.basePrice).toFixed(2)}`
-                      : '';
+                    // Format price: prefer Lodgify quote, fallback to CMS basePrice
+                    let displayPrice = '';
+                    let priceSubtext = '';
+
+                    if (cabin.quote?.pricing) {
+                      // Show total price from Lodgify quote
+                      const currency = cabin.quote.pricing.currency === 'EUR' ? '€' : cabin.quote.pricing.currency;
+                      displayPrice = `${currency}${cabin.quote.pricing.total.toFixed(2)}`;
+                      priceSubtext = `${cabin.quote.pricing.nights} ${cabin.quote.pricing.nights === 1 ? 'night' : 'nights'}`;
+
+                      // Show discount if applicable
+                      if (cabin.quote.pricing.discount) {
+                        priceSubtext += ` • ${cabin.quote.pricing.discount.name}`;
+                      }
+                    } else if (cabin.basePrice) {
+                      // Fallback to CMS base price per night
+                      displayPrice = `€${Number(cabin.basePrice).toFixed(2)}`;
+                      priceSubtext = 'per night';
+                    }
 
                     // Format search dates for display (e.g., "Jan 10 - Jan 11")
                     const formatShortDate = (dateStr: string | null) => {
@@ -248,6 +351,8 @@ function SearchResults() {
                         capacity={`2-${cabin.capacity} Persons`}
                         availability={searchDates}
                         price={displayPrice}
+                        priceSubtext={priceSubtext}
+                        priceLoading={cabin.quoteLoading}
                         searchParams={{
                           arrival: searchParams.get('arrival') || undefined,
                           departure: searchParams.get('departure') || undefined,

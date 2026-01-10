@@ -22,6 +22,8 @@ interface CabinCardProps {
   capacity: string;
   availability: string;
   price: string;
+  priceSubtext?: string;
+  priceLoading?: boolean;
   searchParams?: SearchParams;
 }
 
@@ -35,6 +37,8 @@ const CabinCard: React.FC<CabinCardProps> = ({
   capacity,
   availability,
   price,
+  priceSubtext,
+  priceLoading,
   searchParams,
 }) => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
@@ -173,7 +177,21 @@ const CabinCard: React.FC<CabinCardProps> = ({
             {availability.includes(' - ') ? 'Dates: ' : 'Next Availability: '}
             <span className="text-black font-medium">{availability}</span>
           </span>
-          <span className="font-jost font-medium text-[24px]">{price}</span>
+          <div className="text-right">
+            {priceLoading ? (
+              <div className="animate-pulse">
+                <div className="h-7 w-24 bg-gray-200 rounded mb-1"></div>
+                <div className="h-3 w-16 bg-gray-200 rounded ml-auto"></div>
+              </div>
+            ) : (
+              <>
+                <span className="font-jost font-medium text-[24px]">{price}</span>
+                {priceSubtext && (
+                  <p className="font-jost text-[12px] text-gray-500">{priceSubtext}</p>
+                )}
+              </>
+            )}
+          </div>
         </div>
 
         {/* Book Now Button */}
