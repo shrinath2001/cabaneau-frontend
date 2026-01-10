@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useRef } from 'react';
+import { getLodgifyLocale } from '@/app/lib/language';
 
 interface LodgifyBookNowWidgetProps {
   rentalId: string;
@@ -28,6 +29,8 @@ const LodgifyBookNowWidget = ({
   adults,
 }: LodgifyBookNowWidgetProps) => {
   const widgetRef = useRef<HTMLDivElement>(null);
+  // Convert language code to Lodgify-compatible locale
+  const lodgifyLocale = getLodgifyLocale(languageCode);
 
   // Convert ISO date (YYYY-MM-DD) to Lodgify format (YYYYMMDD)
   const formatForLodgify = (date: string | undefined) => {
@@ -110,7 +113,7 @@ const LodgifyBookNowWidget = ({
         data-rental-id={rentalId}
         data-website-id="572847"
         data-slug="cabaneau"
-        data-language-code={languageCode}
+        data-language-code={lodgifyLocale}
         data-new-tab="false"
         data-version="stable"
         data-hide-minimum-price

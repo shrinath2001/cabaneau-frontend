@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState, useCallback } from "react";
-import { getLanguage } from "@/app/lib/language";
+import { getLodgifyLocale } from "@/app/lib/language";
 
 interface CabinInfo {
   slug: string;
@@ -47,7 +47,7 @@ export default function DesktopBookingModal({
 
   // Get user's language preference on mount
   useEffect(() => {
-    setLanguageCode(getLanguage());
+    setLanguageCode(getLodgifyLocale());
   }, []);
 
   // Extract params from Lodgify widget's checkout URL

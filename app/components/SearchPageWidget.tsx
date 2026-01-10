@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useSearchParams } from "next/navigation";
-import { getLanguage } from "@/app/lib/language";
+import { getLodgifyLocale } from "@/app/lib/language";
 
 /**
  * Lodgify Search Widget for the Search Results Page
@@ -38,7 +38,7 @@ const SearchPageWidget = () => {
     // Set full URL after hydration to avoid mismatch
     setSearchPageUrl(`${window.location.origin}/search`);
     // Get user's language preference
-    setLanguageCode(getLanguage());
+    setLanguageCode(getLodgifyLocale());
 
     const scriptUrl =
       "https://app.lodgify.com/portable-search-bar/stable/renderPortableSearchBar.js";
