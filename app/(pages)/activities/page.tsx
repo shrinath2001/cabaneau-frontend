@@ -1,15 +1,81 @@
 'use client';
 
-import { useState } from 'react';
-import { activities, restaurants } from '@/app/data/activities';
+import { useState, useEffect } from 'react';
+import { activities as staticActivities, restaurants as staticRestaurants, Activity } from '@/app/data/activities';
 import ActivityListCard from '@/app/components/ActivityListCard';
 import ActivityDetailModal from '@/app/components/ActivityDetailModal';
-import { Activity } from '@/app/data/activities';
+import { apiFetch } from '@/app/lib/api';
+
+interface APIActivity {
+  id: string;
+  name: string;
+  slug: string;
+  tagline?: string;
+  description: string;
+  featuredImage?: string;
+  images?: string[];
+  category: string;
+  externalLink?: string;
+  contactPhone?: string;
+  contactEmail?: string;
+  displayOrder: number;
+}
+
+// Transform API response to match existing Activity interface
+function transformActivity(apiActivity: APIActivity, index: number): Activity {
+  return {
+    id: index + 1,
+    title: apiActivity.name,
+    subtitle: apiActivity.tagline || '',
+    description: apiActivity.description,
+    image: apiActivity.featuredImage || '/assets/d206536ef067f64b29cad184324fe360bb763e30.jpg',
+    detailImage: apiActivity.images?.[0],
+    icons: [],
+    phone: apiActivity.contactPhone || '',
+    email: apiActivity.contactEmail || '',
+    website: apiActivity.externalLink || '',
+  };
+}
 
 export default function ActivitiesPage() {
   const [activeTab, setActiveTab] = useState<'activities' | 'restaurants'>('activities');
   const [selectedActivity, setSelectedActivity] = useState<Activity | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [activities, setActivities] = useState<Activity[]>(staticActivities);
+  const [restaurants, setRestaurants] = useState<Activity[]>(staticRestaurants);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchActivities = async () => {
+      try {
+        const response = await apiFetch('/api/activities');
+        const result = await response.json();
+        const data = result?.data ?? result ?? [];
+
+        if (Array.isArray(data) && data.length > 0) {
+          // Split by category - DINING goes to restaurants, rest to activities
+          const apiActivities = data.filter((a: APIActivity) => a.category !== 'DINING');
+          const apiRestaurants = data.filter((a: APIActivity) => a.category === 'DINING');
+
+          // Only update if we have data, otherwise keep static fallback
+          if (apiActivities.length > 0) {
+            setActivities(apiActivities.map(transformActivity));
+          }
+          if (apiRestaurants.length > 0) {
+            setRestaurants(apiRestaurants.map(transformActivity));
+          }
+        }
+        // If API returns empty, keep the static fallback data (already set as initial state)
+      } catch (error) {
+        console.error('Error fetching activities:', error);
+        // Keep static fallback data
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchActivities();
+  }, []);
 
   const handleReadMore = (activity: Activity) => {
     setSelectedActivity(activity);
@@ -20,6 +86,8 @@ export default function ActivitiesPage() {
     setIsModalOpen(false);
     setTimeout(() => setSelectedActivity(null), 300);
   };
+
+  const currentItems = activeTab === 'activities' ? activities : restaurants;
 
   return (
     <main>
@@ -69,15 +137,25 @@ export default function ActivitiesPage() {
       {/* Activities List */}
       <section className="py-12 bg-white">
         <div className="container mx-auto px-4 max-w-6xl">
-          <div className="space-y-6">
-            {(activeTab === 'activities' ? activities : restaurants).map((item) => (
-              <ActivityListCard
-                key={item.id}
-                activity={item}
-                onReadMore={handleReadMore}
-              />
-            ))}
-          </div>
+          {loading ? (
+            <div className="text-center py-12">
+              <p className="text-gray-600">Loading activities...</p>
+            </div>
+          ) : currentItems.length === 0 ? (
+            <div className="text-center py-12">
+              <p className="text-gray-600">No {activeTab} available at the moment.</p>
+            </div>
+          ) : (
+            <div className="space-y-6">
+              {currentItems.map((item) => (
+                <ActivityListCard
+                  key={item.id}
+                  activity={item}
+                  onReadMore={handleReadMore}
+                />
+              ))}
+            </div>
+          )}
         </div>
       </section>
 

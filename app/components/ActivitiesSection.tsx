@@ -1,6 +1,16 @@
-import ActivityCard from './ActivityCard';
+'use client';
 
-const activities = [
+import { useState, useEffect } from 'react';
+import Link from 'next/link';
+import ActivityCard from './ActivityCard';
+import { apiFetch } from '@/app/lib/api';
+
+interface ActivityData {
+  imageSrc: string;
+  activityName: string;
+}
+
+const staticActivities: ActivityData[] = [
   {
     imageSrc: '/assets/sports & surfwave.png',
     activityName: 'SPORTS & SURFWAVE',
@@ -16,21 +26,63 @@ const activities = [
 ];
 
 const ActivitiesSection = () => {
+  const [activities, setActivities] = useState<ActivityData[]>(staticActivities);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchActivities = async () => {
+      try {
+        const response = await apiFetch('/api/activities');
+        const result = await response.json();
+        const data = result?.data ?? result ?? [];
+
+        if (Array.isArray(data) && data.length > 0) {
+          // Filter out DINING category and take first 3
+          const nonDiningActivities = data
+            .filter((a: any) => a.category !== 'DINING')
+            .slice(0, 3);
+
+          if (nonDiningActivities.length > 0) {
+            setActivities(nonDiningActivities.map((a: any) => ({
+              imageSrc: a.featuredImage || '/assets/d206536ef067f64b29cad184324fe360bb763e30.jpg',
+              activityName: a.name?.toUpperCase() || '',
+            })));
+          }
+        }
+      } catch (error) {
+        console.error('Error fetching activities:', error);
+        // Keep static fallback
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchActivities();
+  }, []);
+
   return (
     <section className="py-6 md:py-5 px-4 md:px-20 bg-white md:mt-12">
       <div className="container mx-auto">
         <div className="max-w-[1390px] mx-auto">
           <h2 className="font-logga text-[20px] md:text-[40px] font-semibold text-center mb-8 md:mb-16">ACTIVITIES IN THE REGION</h2>
-        <div className="flex flex-col md:flex-row gap-[18px] md:gap-3 justify-between">
-          {activities.map((activity, index) => (
-            <ActivityCard key={index} {...activity} />
-          ))}
-        </div>
-        <div className="text-center mt-6 md:mt-10 mb-6 md:mb-8">
-          <button className="py-3 px-6 bg-[#495D4D] text-white text-base md:text-lg font-heading font-medium tracking-widest hover:bg-[#2d4a2d] transition-colors">
-            DISCOVER ALL ACTIVITIES
-          </button>
-        </div>
+          {loading ? (
+            <div className="text-center py-12">
+              <p className="text-gray-600">Loading activities...</p>
+            </div>
+          ) : (
+            <div className="flex flex-col md:flex-row gap-[18px] md:gap-3 justify-between">
+              {activities.map((activity, index) => (
+                <ActivityCard key={index} {...activity} />
+              ))}
+            </div>
+          )}
+          <div className="text-center mt-6 md:mt-10 mb-6 md:mb-8">
+            <Link href="/activities">
+              <button className="py-3 px-6 bg-[#495D4D] text-white text-base md:text-lg font-heading font-medium tracking-widest hover:bg-[#2d4a2d] transition-colors">
+                DISCOVER ALL ACTIVITIES
+              </button>
+            </Link>
+          </div>
         </div>
       </div>
     </section>
