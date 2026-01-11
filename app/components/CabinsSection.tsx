@@ -132,7 +132,7 @@ const CabinsSection = () => {
                 <div className="relative">
                   <div
                     ref={scrollContainerRef}
-                    className="flex gap-[19.42px] overflow-x-auto no-scrollbar py-4 justify-start md:justify-start"
+                    className="flex gap-[19.42px] overflow-x-auto no-scrollbar py-8 justify-start md:justify-start"
                     style={{ scrollSnapType: 'x mandatory' }}
                   >
                     {/* Minimal padding on mobile to show peek of next card, normal on desktop */}
@@ -148,7 +148,7 @@ const CabinsSection = () => {
                 </div>
               ) : (
                 // Single cabin - centered
-                <div className="flex justify-center py-4">
+                <div className="flex justify-center py-8">
                   {cabins.map((cabin) => (
                     <div key={cabin.id}>
                       <CabinCard {...cabin} />
