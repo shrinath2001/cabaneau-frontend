@@ -10,23 +10,8 @@ interface ActivityData {
   activityName: string;
 }
 
-const staticActivities: ActivityData[] = [
-  {
-    imageSrc: '/assets/sports & surfwave.png',
-    activityName: 'SPORTS & SURFWAVE',
-  },
-  {
-    imageSrc: '/assets/hiking.png',
-    activityName: 'HIKING',
-  },
-  {
-    imageSrc: '/assets/city trips.png',
-    activityName: 'CITY TRIPS',
-  },
-];
-
 const ActivitiesSection = () => {
-  const [activities, setActivities] = useState<ActivityData[]>(staticActivities);
+  const [activities, setActivities] = useState<ActivityData[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -36,22 +21,19 @@ const ActivitiesSection = () => {
         const result = await response.json();
         const data = result?.data ?? result ?? [];
 
-        if (Array.isArray(data) && data.length > 0) {
+        if (Array.isArray(data)) {
           // Filter out DINING category and take first 3
           const nonDiningActivities = data
             .filter((a: any) => a.category !== 'DINING')
             .slice(0, 3);
 
-          if (nonDiningActivities.length > 0) {
-            setActivities(nonDiningActivities.map((a: any) => ({
-              imageSrc: a.featuredImage || '/assets/d206536ef067f64b29cad184324fe360bb763e30.jpg',
-              activityName: a.name?.toUpperCase() || '',
-            })));
-          }
+          setActivities(nonDiningActivities.map((a: any) => ({
+            imageSrc: a.featuredImage || '/assets/d206536ef067f64b29cad184324fe360bb763e30.jpg',
+            activityName: a.name?.toUpperCase() || '',
+          })));
         }
       } catch (error) {
         console.error('Error fetching activities:', error);
-        // Keep static fallback
       } finally {
         setLoading(false);
       }
@@ -68,6 +50,10 @@ const ActivitiesSection = () => {
           {loading ? (
             <div className="text-center py-12">
               <p className="text-gray-600">Loading activities...</p>
+            </div>
+          ) : activities.length === 0 ? (
+            <div className="text-center py-12">
+              <p className="text-gray-600 text-lg">Activities not found</p>
             </div>
           ) : (
             <div className="flex flex-col md:flex-row gap-[18px] md:gap-3 justify-between">

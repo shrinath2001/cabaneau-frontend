@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { activities as staticActivities, restaurants as staticRestaurants, Activity } from '@/app/data/activities';
+import { Activity } from '@/app/data/activities';
 import ActivityListCard from '@/app/components/ActivityListCard';
 import ActivityDetailModal from '@/app/components/ActivityDetailModal';
 import { apiFetch } from '@/app/lib/api';
@@ -41,8 +41,8 @@ export default function ActivitiesPage() {
   const [activeTab, setActiveTab] = useState<'activities' | 'restaurants'>('activities');
   const [selectedActivity, setSelectedActivity] = useState<Activity | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [activities, setActivities] = useState<Activity[]>(staticActivities);
-  const [restaurants, setRestaurants] = useState<Activity[]>(staticRestaurants);
+  const [activities, setActivities] = useState<Activity[]>([]);
+  const [restaurants, setRestaurants] = useState<Activity[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -52,23 +52,16 @@ export default function ActivitiesPage() {
         const result = await response.json();
         const data = result?.data ?? result ?? [];
 
-        if (Array.isArray(data) && data.length > 0) {
+        if (Array.isArray(data)) {
           // Split by category - DINING goes to restaurants, rest to activities
           const apiActivities = data.filter((a: APIActivity) => a.category !== 'DINING');
           const apiRestaurants = data.filter((a: APIActivity) => a.category === 'DINING');
 
-          // Only update if we have data, otherwise keep static fallback
-          if (apiActivities.length > 0) {
-            setActivities(apiActivities.map(transformActivity));
-          }
-          if (apiRestaurants.length > 0) {
-            setRestaurants(apiRestaurants.map(transformActivity));
-          }
+          setActivities(apiActivities.map(transformActivity));
+          setRestaurants(apiRestaurants.map(transformActivity));
         }
-        // If API returns empty, keep the static fallback data (already set as initial state)
       } catch (error) {
         console.error('Error fetching activities:', error);
-        // Keep static fallback data
       } finally {
         setLoading(false);
       }
@@ -143,7 +136,9 @@ export default function ActivitiesPage() {
             </div>
           ) : currentItems.length === 0 ? (
             <div className="text-center py-12">
-              <p className="text-gray-600">No {activeTab} available at the moment.</p>
+              <p className="text-gray-600 text-lg">
+                {activeTab === 'activities' ? 'Activities not found' : 'Restaurants not found'}
+              </p>
             </div>
           ) : (
             <div className="space-y-6">

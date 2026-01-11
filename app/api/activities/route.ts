@@ -1,5 +1,4 @@
 import { NextResponse } from 'next/server';
-import { activities as staticActivities } from '@/app/data/activities';
 import { getLanguageFromRequest } from '@/app/lib/server-language';
 
 export async function GET(request: Request) {
@@ -28,14 +27,14 @@ export async function GET(request: Request) {
     });
 
     if (!response.ok) {
-      console.log('Activities API error, using static fallback');
-      return NextResponse.json({ data: staticActivities });
+      console.error('Activities API error:', response.status);
+      return NextResponse.json({ data: [], total: 0 });
     }
 
     const data = await response.json();
     return NextResponse.json(data);
   } catch (error) {
     console.error('Error fetching activities:', error);
-    return NextResponse.json({ data: staticActivities });
+    return NextResponse.json({ data: [], total: 0 });
   }
 }
