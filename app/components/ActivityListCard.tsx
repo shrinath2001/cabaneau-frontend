@@ -84,11 +84,11 @@ const ActivityListCard: React.FC<ActivityListCardProps> = ({ activity, onReadMor
           <div className="flex flex-col sm:flex-row gap-3">
             <button
               onClick={() => onReadMore(activity)}
-              className="px-10 py-2.5 bg-[#939D92] text-white text-xs font-heading font-medium uppercase tracking-wider hover:bg-opacity-90 transition-colors text-center"
+              className="px-10 py-3 sm:py-2.5 bg-[#939D92] text-white text-[13px] sm:text-xs font-heading font-medium uppercase tracking-wider hover:bg-opacity-90 transition-colors text-center"
             >
               READ MORE
             </button>
-            <button className="px-10 py-2.5 bg-[#495D4D] text-white text-xs font-heading font-medium uppercase tracking-wider hover:bg-opacity-90 transition-colors text-center">
+            <button className="px-10 py-3 sm:py-2.5 bg-[#495D4D] text-white text-[13px] sm:text-xs font-heading font-medium uppercase tracking-wider hover:bg-opacity-90 transition-colors text-center">
               BOOK NOW
             </button>
           </div>

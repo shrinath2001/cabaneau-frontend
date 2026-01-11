@@ -22,12 +22,13 @@ const Header = () => {
         <div className="container mx-auto px-4 md:px-8 lg:px-20">
           <div className="flex items-center justify-between py-6 md:py-8">
             <div className="flex items-center">
-              <Link href="/" passHref>
+              <Link href="/">
                 <Image
                   src="/assets/Group 1.png"
                   alt="Cabaneau Logo"
-                  width={150}
-                  height={50}
+                  width={170}
+                  height={57}
+                  className="w-[130px] md:w-[170px] h-auto"
                 />
               </Link>
             </div>
@@ -132,7 +133,93 @@ const Header = () => {
                 )}
               </div>
             </div>
-            <div className="md:hidden">
+            <div className="md:hidden flex items-center gap-3">
+              {/* Book Now Button */}
+              <Link
+                href="/book-now"
+                className="bg-[#495D4D] text-white px-3 py-2 flex items-center justify-center font-heading font-medium text-xs hover:bg-[#3d5a3d] transition"
+              >
+                BOOK NOW
+              </Link>
+
+              {/* Language Selector */}
+              <div className="relative">
+                <button
+                  onClick={() => setIsLanguageOpen(!isLanguageOpen)}
+                  className="text-white flex items-center gap-1 font-heading font-medium text-sm"
+                >
+                  {selectedLanguage === 'en' ? (
+                    <>
+                      <svg className="w-5 h-3" viewBox="0 0 60 30" xmlns="http://www.w3.org/2000/svg">
+                        <clipPath id="s-header"><path d="M0,0 v30 h60 v-30 z"/></clipPath>
+                        <clipPath id="t-header"><path d="M30,15 h30 v15 z v15 h-30 z h-30 v-15 z v-15 h30 z"/></clipPath>
+                        <g clipPath="url(#s-header)">
+                          <path d="M0,0 v30 h60 v-30 z" fill="#012169"/>
+                          <path d="M0,0 L60,30 M60,0 L0,30" stroke="#fff" strokeWidth="6"/>
+                          <path d="M0,0 L60,30 M60,0 L0,30" clipPath="url(#t-header)" stroke="#C8102E" strokeWidth="4"/>
+                          <path d="M30,0 v30 M0,15 h60" stroke="#fff" strokeWidth="10"/>
+                          <path d="M30,0 v30 M0,15 h60" stroke="#C8102E" strokeWidth="6"/>
+                        </g>
+                      </svg>
+                      <span>EN</span>
+                    </>
+                  ) : (
+                    <>
+                      <svg className="w-5 h-3" viewBox="0 0 5 3" xmlns="http://www.w3.org/2000/svg">
+                        <rect width="5" height="3" y="0" x="0" fill="#000"/>
+                        <rect width="5" height="2" y="1" x="0" fill="#D00"/>
+                        <rect width="5" height="1" y="2" x="0" fill="#FFCE00"/>
+                      </svg>
+                      <span>DE</span>
+                    </>
+                  )}
+                  <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                  </svg>
+                </button>
+
+                {/* Language Dropdown */}
+                {isLanguageOpen && (
+                  <div className="absolute right-0 mt-2 w-32 bg-white rounded-md shadow-lg py-1 z-50 border border-gray-200">
+                    <button
+                      onClick={() => {
+                        setSelectedLanguage('en');
+                        setIsLanguageOpen(false);
+                      }}
+                      className="w-full px-4 py-2 text-left text-gray-700 hover:bg-gray-100 flex items-center gap-2 font-heading text-sm"
+                    >
+                      <svg className="w-5 h-3" viewBox="0 0 60 30" xmlns="http://www.w3.org/2000/svg">
+                        <clipPath id="s-header-en"><path d="M0,0 v30 h60 v-30 z"/></clipPath>
+                        <clipPath id="t-header-en"><path d="M30,15 h30 v15 z v15 h-30 z h-30 v-15 z v-15 h30 z"/></clipPath>
+                        <g clipPath="url(#s-header-en)">
+                          <path d="M0,0 v30 h60 v-30 z" fill="#012169"/>
+                          <path d="M0,0 L60,30 M60,0 L0,30" stroke="#fff" strokeWidth="6"/>
+                          <path d="M0,0 L60,30 M60,0 L0,30" clipPath="url(#t-header-en)" stroke="#C8102E" strokeWidth="4"/>
+                          <path d="M30,0 v30 M0,15 h60" stroke="#fff" strokeWidth="10"/>
+                          <path d="M30,0 v30 M0,15 h60" stroke="#C8102E" strokeWidth="6"/>
+                        </g>
+                      </svg>
+                      English
+                    </button>
+                    <button
+                      onClick={() => {
+                        setSelectedLanguage('de');
+                        setIsLanguageOpen(false);
+                      }}
+                      className="w-full px-4 py-2 text-left text-gray-700 hover:bg-gray-100 flex items-center gap-2 font-heading text-sm"
+                    >
+                      <svg className="w-5 h-3" viewBox="0 0 5 3" xmlns="http://www.w3.org/2000/svg">
+                        <rect width="5" height="3" y="0" x="0" fill="#000"/>
+                        <rect width="5" height="2" y="1" x="0" fill="#D00"/>
+                        <rect width="5" height="1" y="2" x="0" fill="#FFCE00"/>
+                      </svg>
+                      Deutsch
+                    </button>
+                  </div>
+                )}
+              </div>
+
+              {/* Hamburger Button */}
               <button
                 className="text-white"
                 onClick={() => setIsMenuOpen(!isMenuOpen)}
@@ -272,7 +359,7 @@ const Header = () => {
                 <Link
                   href="/cabins"
                   onClick={() => setIsMenuOpen(false)}
-                  className="text-[#F49A4A] font-heading font-medium text-center py-4 border-b border-gray-200 text-[16px] tracking-wider"
+                  className="text-[#F49A4A] font-heading font-medium text-center py-4 text-[16px] tracking-wider"
                 >
                   OUR CABINS
                 </Link>

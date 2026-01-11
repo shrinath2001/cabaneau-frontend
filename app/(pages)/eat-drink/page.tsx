@@ -133,20 +133,35 @@ export default function EatDrinkPage() {
 
       {/* Discover More Section */}
       <section ref={discoverSectionRef} className="grid grid-cols-1 md:grid-cols-2">
-        {/* Drinks Section */}
+        {/* First Section */}
         <div className="relative h-[300px] md:h-[400px] flex flex-col items-center justify-center">
           <div
             className="absolute inset-0 bg-cover bg-center"
             style={{
-              backgroundImage: 'url(/assets/dinner.png)',
+              backgroundImage: activeTab === 'dining'
+                ? 'url(/assets/dinner.png)'
+                : activeTab === 'breakfast'
+                ? 'url(/assets/dinner.png)'
+                : 'url(/assets/dinner.png)',
             }}
           >
             <div className="absolute inset-0" style={{ backgroundColor: 'rgba(0, 0, 0, 0.50)' }}></div>
           </div>
           <h2 className="relative z-10 text-white text-2xl md:text-3xl lg:text-4xl font-custom text-center px-4 mb-6">
-            OUR<br />DRINKS OFFERING
+            {activeTab === 'dining' ? (
+              <>OUR<br />DRINKS OFFERING</>
+            ) : activeTab === 'breakfast' ? (
+              <>OUR<br />DINING OFFERING</>
+            ) : (
+              <>OUR<br />DINING OFFERING</>
+            )}
           </h2>
           <button
+            onClick={() => {
+              const newTab = activeTab === 'dining' ? 'drinks' : 'dining';
+              setActiveTab(newTab);
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            }}
             className="relative z-10 px-8 py-3 text-white font-heading tracking-wider transition-all hover:bg-hoverorange"
             style={{ backgroundColor: '#939D92', fontSize: '18px', fontWeight: 500 }}
           >
@@ -154,20 +169,35 @@ export default function EatDrinkPage() {
           </button>
         </div>
 
-        {/* Breakfast Section */}
+        {/* Second Section */}
         <div className="relative h-[300px] md:h-[400px] flex flex-col items-center justify-center">
           <div
             className="absolute inset-0 bg-cover bg-center"
             style={{
-              backgroundImage: 'url(/assets/breakfast.jpg)',
+              backgroundImage: activeTab === 'dining'
+                ? 'url(/assets/breakfast.jpg)'
+                : activeTab === 'breakfast'
+                ? 'url(/assets/dinner.png)'
+                : 'url(/assets/breakfast.jpg)',
             }}
           >
             <div className="absolute inset-0" style={{ backgroundColor: 'rgba(0, 0, 0, 0.50)' }}></div>
           </div>
           <h2 className="relative z-10 text-white text-2xl md:text-3xl lg:text-4xl font-custom text-center px-4 mb-6">
-            OUR<br />BREAKFAST OFFERING
+            {activeTab === 'dining' ? (
+              <>OUR<br />BREAKFAST OFFERING</>
+            ) : activeTab === 'breakfast' ? (
+              <>OUR<br />DRINKS OFFERING</>
+            ) : (
+              <>OUR<br />BREAKFAST OFFERING</>
+            )}
           </h2>
           <button
+            onClick={() => {
+              const newTab = activeTab === 'dining' ? 'breakfast' : activeTab === 'breakfast' ? 'drinks' : 'breakfast';
+              setActiveTab(newTab);
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            }}
             className="relative z-10 px-8 py-3 text-white font-heading tracking-wider transition-all hover:bg-hoverorange"
             style={{ backgroundColor: '#939D92', fontSize: '18px', fontWeight: 500 }}
           >

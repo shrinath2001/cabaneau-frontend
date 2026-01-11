@@ -160,7 +160,7 @@ const SingleCabinPage = () => {
   }
 
   return (
-    <div className="bg-white min-h-screen pt-6 md:pt-24 pb-0 md:pb-5 px-0 md:px-8 lg:px-20">
+    <div className="bg-white min-h-screen pt-0 md:pt-8 pb-0 md:pb-5 px-0 md:px-8 lg:px-20">
       <div className="max-w-[1400px] mx-auto px-0 md:px-6 py-0 md:py-8">
         {/* Back to cabins link - Desktop Only */}
         <div className="hidden md:block mb-0 md:mb-6 px-4 md:px-0 py-3 md:py-0">

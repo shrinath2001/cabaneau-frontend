@@ -10,7 +10,7 @@ const Footer = () => {
           {/* Logo and Description */}
           <div className="mb-6">
             <div className="flex items-center gap-2 mb-4">
-              <Image src="/assets/Group 1.png" alt="Cabanéau Logo" width={270} height={45} className="max-w-full" />
+              <Image src="/assets/Group 1.png" alt="Cabanéau Logo" width={220} height={37} className="max-w-full" />
             </div>
             <p className="text-[16px] font-raleway leading-relaxed text-gray-100 max-w-[354px]">
               Luxury Cabines with private wellness.<br/>
@@ -91,7 +91,7 @@ const Footer = () => {
         <div className="hidden md:flex justify-between items-start mb-12">
           {/* Logo and Description */}
           <div className="w-[240px] flex-shrink-0">
-            <Image src="/assets/Group 1.png" alt="Cabanéau Logo" width={220} height={37} className="mb-3" />
+            <Image src="/assets/Group 1.png" alt="Cabanéau Logo" width={180} height={30} className="mb-3" />
             <p className="text-[13px] font-raleway leading-[1.4] text-white">
               Luxury Cabines with private wellness.<br/>
               Eat, sleep & relax above the trees in Eupen, Belgium.

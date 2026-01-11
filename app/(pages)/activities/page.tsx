@@ -108,8 +108,8 @@ export default function ActivitiesPage() {
         </div>
       </section>
 
-      {/* Discover Restaurants Section */}
-      <section ref={discoverSectionRef} className="relative h-[300px] md:h-[400px] flex items-center justify-center">
+      {/* Discover Section */}
+      <section ref={discoverSectionRef} className="relative h-[300px] md:h-[400px] flex flex-col items-center justify-center">
         <div
           className="absolute inset-0 bg-cover bg-center"
           style={{
@@ -118,9 +118,23 @@ export default function ActivitiesPage() {
         >
           <div className="absolute inset-0" style={{ backgroundColor: 'rgba(0, 0, 0, 0.50)' }}></div>
         </div>
-        <h2 className="relative z-10 text-white text-3xl md:text-4xl lg:text-5xl font-custom text-center px-4">
-          DISCOVER THE RESTAURANTS<br />AROUND
+        <h2 className="relative z-10 text-white text-3xl md:text-4xl lg:text-5xl font-custom text-center px-4 mb-6">
+          {activeTab === 'activities' ? (
+            <>DISCOVER THE RESTAURANTS<br />AROUND</>
+          ) : (
+            <>DISCOVER THE ACTIVITIES<br />AROUND</>
+          )}
         </h2>
+        <button
+          onClick={() => {
+            setActiveTab(activeTab === 'activities' ? 'restaurants' : 'activities');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+          }}
+          className="relative z-10 px-8 py-3 text-white font-heading tracking-wider transition-all hover:bg-hoverorange"
+          style={{ backgroundColor: '#939D92', fontSize: '18px', fontWeight: 500 }}
+        >
+          DISCOVER
+        </button>
       </section>
 
       {/* Activity Detail Modal */}
