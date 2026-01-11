@@ -1,14 +1,94 @@
 'use client';
 
-import { useState } from 'react';
-import { dining, breakfast, drinks, EatDrinkItem } from '@/app/data/eatdrink';
+import { useState, useEffect } from 'react';
+import { EatDrinkItem } from '@/app/data/eatdrink';
 import EatDrinkCard from '@/app/components/EatDrinkCard';
 import EatDrinkDetailModal from '@/app/components/EatDrinkDetailModal';
+import { apiFetch } from '@/app/lib/api';
+
+interface APIService {
+  id: string;
+  name: string;
+  slug: string;
+  shortDescription?: string;
+  description: string;
+  featuredImage?: string;
+  images?: string[];
+  category: string;
+  price?: number;
+  priceUnit?: string;
+  displayOrder: number;
+}
+
+// Format price from API to display format (e.g., "45€/PERSON")
+function formatPrice(price?: number, priceUnit?: string): string {
+  if (!price) return '';
+
+  const unitMap: Record<string, string> = {
+    'PER_PERSON': '/PERSON',
+    'PER_GROUP': '/GROUP',
+    'PER_HOUR': '/HOUR',
+    'PER_DAY': '/DAY',
+  };
+
+  const unit = priceUnit ? unitMap[priceUnit] || '' : '';
+  return `${price}€${unit}`;
+}
+
+// Transform API response to match existing EatDrinkItem interface
+function transformService(service: APIService, index: number): EatDrinkItem {
+  return {
+    id: index + 1,
+    title: service.name?.toUpperCase() || '',
+    subtitle: service.shortDescription || '',
+    price: formatPrice(service.price, service.priceUnit),
+    description: service.description || '',
+    image: service.featuredImage || '/assets/dinner.png',
+    detailImage: service.images?.[0],
+  };
+}
 
 export default function EatDrinkPage() {
   const [activeTab, setActiveTab] = useState<'dining' | 'breakfast' | 'drinks'>('dining');
   const [selectedItem, setSelectedItem] = useState<EatDrinkItem | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [dining, setDining] = useState<EatDrinkItem[]>([]);
+  const [breakfast, setBreakfast] = useState<EatDrinkItem[]>([]);
+  const [drinks, setDrinks] = useState<EatDrinkItem[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchServices = async () => {
+      try {
+        const response = await apiFetch('/api/eat-drink');
+        const result = await response.json();
+        const data = result?.data ?? result ?? [];
+
+        if (Array.isArray(data)) {
+          // Split by category
+          const diningItems = data
+            .filter((s: APIService) => s.category === 'DINING')
+            .map(transformService);
+          const breakfastItems = data
+            .filter((s: APIService) => s.category === 'BREAKFAST')
+            .map(transformService);
+          const drinksItems = data
+            .filter((s: APIService) => s.category === 'DRINKS')
+            .map(transformService);
+
+          setDining(diningItems);
+          setBreakfast(breakfastItems);
+          setDrinks(drinksItems);
+        }
+      } catch (error) {
+        console.error('Error fetching eat-drink services:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchServices();
+  }, []);
 
   const handleReadMore = (item: EatDrinkItem) => {
     setSelectedItem(item);
@@ -32,6 +112,8 @@ export default function EatDrinkPage() {
         return dining;
     }
   };
+
+  const currentItems = getCurrentItems();
 
   return (
     <main>
@@ -91,16 +173,30 @@ export default function EatDrinkPage() {
       {/* Items List */}
       <section className="py-12 bg-white">
         <div className="container mx-auto px-4 max-w-6xl">
-          <div className="space-y-6">
-            {getCurrentItems().map((item, index) => (
-              <EatDrinkCard
-                key={item.id}
-                item={item}
-                onReadMore={handleReadMore}
-                isReversed={index % 2 !== 0}
-              />
-            ))}
-          </div>
+          {loading ? (
+            <div className="text-center py-12">
+              <p className="text-gray-600">Loading...</p>
+            </div>
+          ) : currentItems.length === 0 ? (
+            <div className="text-center py-12">
+              <p className="text-gray-600 text-lg">
+                {activeTab === 'dining' && 'Dining options not found'}
+                {activeTab === 'breakfast' && 'Breakfast options not found'}
+                {activeTab === 'drinks' && 'Drinks options not found'}
+              </p>
+            </div>
+          ) : (
+            <div className="space-y-6">
+              {currentItems.map((item, index) => (
+                <EatDrinkCard
+                  key={item.id}
+                  item={item}
+                  onReadMore={handleReadMore}
+                  isReversed={index % 2 !== 0}
+                />
+              ))}
+            </div>
+          )}
         </div>
       </section>
 
@@ -120,6 +216,7 @@ export default function EatDrinkPage() {
             OUR<br />DRINKS OFFERING
           </h2>
           <button
+            onClick={() => setActiveTab('drinks')}
             className="relative z-10 px-8 py-3 text-white font-heading tracking-wider transition-all hover:bg-hoverorange"
             style={{ backgroundColor: '#939D92', fontSize: '18px', fontWeight: 500 }}
           >
@@ -141,6 +238,7 @@ export default function EatDrinkPage() {
             OUR<br />BREAKFAST OFFERING
           </h2>
           <button
+            onClick={() => setActiveTab('breakfast')}
             className="relative z-10 px-8 py-3 text-white font-heading tracking-wider transition-all hover:bg-hoverorange"
             style={{ backgroundColor: '#939D92', fontSize: '18px', fontWeight: 500 }}
           >
