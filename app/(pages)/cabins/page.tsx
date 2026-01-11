@@ -44,7 +44,8 @@ const formatNightlyRate = (rate?: number, currency = 'EUR'): string => {
 };
 
 async function getCabins() {
-  const apiBaseUrl = process.env.NEXT_PUBLIC_API_URL || process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:3000';
+  const apiKey = process.env.API_KEY;
+  const apiBaseUrl = process.env.API_BASE_URL || 'http://localhost:3000/api/v1';
 
   // Get language from headers
   const headersList = await headers();
@@ -56,6 +57,7 @@ async function getCabins() {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
+        'x-api-key': apiKey || '',
         'Accept-Language': language,
       },
       next: { revalidate: 300 }, // Cache for 5 minutes
