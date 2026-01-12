@@ -181,7 +181,7 @@ const SingleCabinPage = () => {
         {/* Cabin Name - Mobile Only */}
         <div className="md:hidden px-4 pt-1 pb-2">
           <h1 className="font-jost font-medium text-[20px] uppercase tracking-wide" style={{ color: '#212121' }}>
-            {cabin.name?.en?.toUpperCase() || 'CABIN'}
+            {cabin.name?.toUpperCase() || 'CABIN'}
           </h1>
         </div>
 

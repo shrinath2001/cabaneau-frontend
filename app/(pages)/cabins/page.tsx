@@ -85,9 +85,7 @@ export default async function CabinsPage() {
     images: cabin.images?.length > 0 ? cabin.images :
             cabin.featuredImage ? [cabin.featuredImage] :
             ['/assets/d206536ef067f64b29cad184324fe360bb763e30.jpg'],
-    title: typeof cabin.name === 'object'
-           ? ((cabin.name as any).en || (cabin.name as any).fr || (cabin.name as any).de || '')
-           : cabin.name || `Cabin ${index + 1}`,
+    title: cabin.name || `Cabin ${index + 1}`,
     rating: 5,
     area: cabin.squareMeters ? `${cabin.squareMeters}m²` : '',
     capacity: cabin.capacity ? `2-${cabin.capacity} Persons` : '2 Persons',

@@ -62,10 +62,7 @@ const CabinsSection = () => {
             images: cabin.images?.length > 0 ? cabin.images :
                     cabin.featuredImage ? [cabin.featuredImage] :
                     ['/assets/d206536ef067f64b29cad184324fe360bb763e30.jpg'],
-            title: (typeof cabin.name === 'object'
-                   ? (cabin.name.en || cabin.name.fr || cabin.name.de || '')
-                   : cabin.name || cabin.title || '')
-                   || cabin.slug?.replace(/-/g, ' ').toUpperCase() || `Cabin ${index + 1}`,
+            title: cabin.name || cabin.title || cabin.slug?.replace(/-/g, ' ').toUpperCase() || `Cabin ${index + 1}`,
             rating: cabin.rating ?? 5,
             area: cabin.squareMeters ? `${cabin.squareMeters}m²` : cabin.area || '',
             capacity: cabin.capacity ? `2-${cabin.capacity} Persons` : cabin.capacity || '2 Persons',
