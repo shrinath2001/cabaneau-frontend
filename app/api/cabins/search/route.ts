@@ -1,16 +1,30 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { getLanguageFromRequest } from '@/app/lib/server-language';
 
+/**
+ * Search cabins API route
+ *
+ * Accepts both:
+ * - Backend format: checkIn, checkOut, guests
+ * - Lodgify format: arrival, departure, adults, children (converted by search page)
+ *
+ * @see CLAUDE.md for Lodgify widget integration
+ */
 export async function GET(request: NextRequest) {
   try {
     const apiKey = process.env.API_KEY;
+    const apiBaseUrl = process.env.API_BASE_URL || 'http://localhost:3000/api/v1';
+    const language = getLanguageFromRequest(request);
     const { searchParams } = request.nextUrl;
 
-    // Get query parameters
+    // Get query parameters (already converted to backend format by search page)
     const checkIn = searchParams.get('checkIn');
     const checkOut = searchParams.get('checkOut');
     const guests = searchParams.get('guests');
+    const pets = searchParams.get('pets'); // Optional: filter pet-friendly cabins
 
-    console.log('🔍 Search params:', { checkIn, checkOut, guests });
+    console.log('🔍 Search params:', { checkIn, checkOut, guests, pets });
+    console.log('🌐 Language:', language);
     console.log('🔑 API Key exists:', !!apiKey);
 
     // Validate required parameters
@@ -52,7 +66,12 @@ export async function GET(request: NextRequest) {
     backendParams.append('checkOut', checkOut);
     backendParams.append('guests', guests);
 
-    const apiUrl = `https://api.cabaneau-backend.amplyfitdigital.com/api/v1/cabins/search?${backendParams.toString()}`;
+    // Add pets filter if specified
+    if (pets && parseInt(pets, 10) > 0) {
+      backendParams.append('pets', pets);
+    }
+
+    const apiUrl = `${apiBaseUrl}/cabins/search?${backendParams.toString()}`;
     console.log('📡 Making request to:', apiUrl);
 
     const response = await fetch(apiUrl, {
@@ -60,6 +79,7 @@ export async function GET(request: NextRequest) {
       headers: {
         'Content-Type': 'application/json',
         'x-api-key': apiKey || '',
+        'Accept-Language': language,
       },
     });
 

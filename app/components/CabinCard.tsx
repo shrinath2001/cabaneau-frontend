@@ -3,6 +3,15 @@ import { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 
+interface SearchParams {
+  arrival?: string;
+  departure?: string;
+  adults?: string;
+  children?: string;
+  infants?: string;
+  pets?: string;
+}
+
 interface CabinCardProps {
   id?: number;
   slug?: string;
@@ -13,6 +22,14 @@ interface CabinCardProps {
   capacity: string;
   availability: string;
   price: string;
+  originalPrice?: string;
+  nights?: number;
+  promotion?: {
+    name: string;
+    amount: number;
+  };
+  priceLoading?: boolean;
+  searchParams?: SearchParams;
 }
 
 const CabinCard: React.FC<CabinCardProps> = ({
@@ -25,11 +42,30 @@ const CabinCard: React.FC<CabinCardProps> = ({
   capacity,
   availability,
   price,
+  originalPrice,
+  nights,
+  promotion,
+  priceLoading,
+  searchParams,
 }) => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
-  // Debug: Log the slug being used
-  console.log('CabinCard:', { title, slug, id, linkTo: `/cabins/${slug || id}` });
+  // Build cabin URL with search params for pre-filling booking widget
+  const buildCabinUrl = () => {
+    const base = `/cabins/${slug || id}`;
+    if (!searchParams) return base;
+
+    const params = new URLSearchParams();
+    if (searchParams.arrival) params.set('arrival', searchParams.arrival);
+    if (searchParams.departure) params.set('departure', searchParams.departure);
+    if (searchParams.adults) params.set('adults', searchParams.adults);
+    if (searchParams.children) params.set('children', searchParams.children);
+    if (searchParams.infants) params.set('infants', searchParams.infants);
+    if (searchParams.pets) params.set('pets', searchParams.pets);
+
+    const queryString = params.toString();
+    return queryString ? `${base}?${queryString}` : base;
+  };
 
   const nextImage = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -144,12 +180,48 @@ const CabinCard: React.FC<CabinCardProps> = ({
 
         {/* Availability and Price */}
         <div className="flex justify-between items-center mb-3">
-          <span className="font-jost font-medium text-[16px] text-gray-600">Next Availability: <span className="text-black font-medium">{availability}</span></span>
-          <span className="font-jost font-medium text-[24px]">{price}</span>
+          <span className="font-jost font-medium text-[16px] text-gray-600">
+            {availability.includes(' - ') ? 'Dates: ' : 'Next Availability: '}
+            <span className="text-black font-medium">{availability}</span>
+          </span>
+          <div className="text-right">
+            {priceLoading ? (
+              <div className="animate-pulse">
+                <div className="h-7 w-24 bg-gray-200 rounded mb-1"></div>
+                <div className="h-3 w-16 bg-gray-200 rounded ml-auto"></div>
+              </div>
+            ) : (
+              <>
+                <div className="flex items-baseline justify-end gap-2">
+                  {originalPrice && promotion && (
+                    <span className="font-jost text-[16px] text-gray-400 line-through">
+                      {originalPrice}
+                    </span>
+                  )}
+                  <span className="font-jost font-medium text-[24px]">{price}</span>
+                </div>
+                <div className="flex items-center justify-end gap-2 mt-1">
+                  {nights && (
+                    <span className="font-jost text-[12px] text-gray-500">
+                      {nights} {nights === 1 ? 'night' : 'nights'}
+                    </span>
+                  )}
+                  {promotion && (
+                    <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-emerald-50 text-emerald-700 text-[11px] font-medium rounded-full border border-emerald-200">
+                      <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M5 2a2 2 0 00-2 2v14l3.5-2 3.5 2 3.5-2 3.5 2V4a2 2 0 00-2-2H5zm2.5 3a1.5 1.5 0 100 3 1.5 1.5 0 000-3zm6.207.293a1 1 0 00-1.414 0l-6 6a1 1 0 101.414 1.414l6-6a1 1 0 000-1.414zM12.5 10a1.5 1.5 0 100 3 1.5 1.5 0 000-3z" clipRule="evenodd" />
+                      </svg>
+                      {promotion.name}
+                    </span>
+                  )}
+                </div>
+              </>
+            )}
+          </div>
         </div>
 
         {/* Book Now Button */}
-        <Link href={`/cabins/${slug || id}`} className="w-full">
+        <Link href={buildCabinUrl()} className="w-full">
           <button className="w-full py-2.5 px-4 border border-black text-black text-sm font-medium tracking-wider group-hover:bg-[#F49A4A] group-hover:text-white group-hover:border-[#F49A4A] transition-all duration-300">
             BOOK NOW
           </button>

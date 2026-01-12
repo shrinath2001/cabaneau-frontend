@@ -2,6 +2,7 @@
 import { useRef, useState, useEffect } from 'react';
 import CabinCard from './CabinCard';
 import { cabins as staticCabins } from '@/app/data/cabins';
+import { apiFetch } from '@/app/lib/api';
 
 interface CabinData {
   id: number;
@@ -15,45 +16,87 @@ interface CabinData {
   price: string;
 }
 
+// Format date string (YYYY-MM-DD) to "Jan 15" format
+const formatAvailabilityDate = (dateStr?: string): string => {
+  if (!dateStr) return 'Available';
+
+  const date = new Date(dateStr);
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  // If the date is today, show "Available now"
+  if (date <= today) {
+    return 'Available now';
+  }
+
+  // Format as "Jan 15"
+  return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+};
+
+// Format nightly rate as "€225/night"
+const formatNightlyRate = (rate?: number, currency = 'EUR'): string => {
+  if (!rate) return '';
+  const symbol = currency === 'EUR' ? '€' : currency;
+  return `${symbol}${Math.round(rate)}/night`;
+};
+
 const CabinsSection = () => {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const [cabins, setCabins] = useState<CabinData[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Using static cabin data directly (API server needs to be revamped)
-    const loadCabins = () => {
-      const cabinData: CabinData[] = staticCabins.map((cabin) => ({
-        id: cabin.id,
-        slug: `cabin-${cabin.id}`,
-        images: cabin.images,
-        title: cabin.title,
-        rating: cabin.rating,
-        area: cabin.area,
-        capacity: cabin.capacity,
-        availability: cabin.availability,
-        price: cabin.price
-      }));
+    const fetchCabins = async () => {
+      try {
+        // Use the new homepage endpoint with availability and pricing
+        const response = await apiFetch('/api/cabins/homepage');
+        const result = await response.json();
 
-      setCabins(cabinData);
-      setLoading(false);
+        // Handle both API response format and static fallback format
+        const cabinArray = result?.data ?? result;
+
+        if (Array.isArray(cabinArray)) {
+          const transformedCabins: CabinData[] = cabinArray.map((cabin: any, index: number) => ({
+            id: cabin.lodgifyId ? parseInt(cabin.lodgifyId) : index + 1,
+            slug: cabin.slug || `cabin-${index + 1}`,
+            images: cabin.images?.length > 0 ? cabin.images :
+                    cabin.featuredImage ? [cabin.featuredImage] :
+                    ['/assets/d206536ef067f64b29cad184324fe360bb763e30.jpg'],
+            title: cabin.name || cabin.title || cabin.slug?.replace(/-/g, ' ').toUpperCase() || `Cabin ${index + 1}`,
+            rating: cabin.rating ?? 5,
+            area: cabin.squareMeters ? `${cabin.squareMeters}m²` : cabin.area || '',
+            capacity: cabin.capacity ? `2-${cabin.capacity} Persons` : cabin.capacity || '2 Persons',
+            // Use nextAvailableDate from Lodgify if present
+            availability: formatAvailabilityDate(cabin.nextAvailableDate) || cabin.availability || 'Available',
+            // Use nightlyRate from Lodgify if present, fallback to basePrice
+            price: cabin.nightlyRate
+                   ? formatNightlyRate(cabin.nightlyRate, cabin.currency)
+                   : cabin.basePrice
+                     ? `€${Number(cabin.basePrice).toFixed(2)}`
+                     : cabin.price || '',
+          }));
+          setCabins(transformedCabins);
+        }
+      } catch (error) {
+        console.error('Error fetching cabins:', error);
+        // Fallback to static data on error
+        setCabins(staticCabins.map((cabin) => ({
+          id: cabin.id,
+          slug: `cabin-${cabin.id}`,
+          images: cabin.images,
+          title: cabin.title,
+          rating: cabin.rating,
+          area: cabin.area,
+          capacity: cabin.capacity,
+          availability: cabin.availability,
+          price: cabin.price
+        })));
+      } finally {
+        setLoading(false);
+      }
     };
 
-    loadCabins();
-
-    // TODO: Re-enable API integration once server is revamped
-    // const fetchCabins = async () => {
-    //   try {
-    //     const response = await fetch('/api/cabins');
-    //     const data = await response.json();
-    //     if (data?.data && Array.isArray(data.data)) {
-    //       const transformedCabins = data.data.map((cabin) => ({...}));
-    //       setCabins(transformedCabins);
-    //     }
-    //   } catch (error) {
-    //     console.error('Error fetching cabins:', error);
-    //   }
-    // };
+    fetchCabins();
   }, []);
 
   const scrollLeft = () => {

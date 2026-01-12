@@ -2,32 +2,24 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { useParams, notFound } from 'next/navigation';
+import { useParams, useSearchParams, notFound } from 'next/navigation';
 import PhotoGalleryModal from './components/PhotoGalleryModal';
 import MobileCarouselModal from './components/MobileCarouselModal';
-import BookingCard from './components/BookingCard';
+import BookingSection from '@/app/components/booking/BookingSection';
 import ImageGallery from './components/ImageGallery';
 import AmenitiesSection from './components/AmenitiesSection';
 import ExtraServicesSection from './components/ExtraServicesSection';
 import SleepingAreasSection from './components/SleepingAreasSection';
 import { cabins as staticCabins } from '@/app/data/cabins';
+import { apiFetch } from '@/app/lib/api';
 
 interface CabinDetails {
   id: string;
   lodgifyId: string;
-  name: {
-    en: string;
-    fr?: string;
-    de?: string;
-  };
+  name: string; // API returns localized string
   slug: string;
-  description?: {
-    en: string;
-    fr?: string;
-  };
-  shortDescription?: {
-    en: string;
-  };
+  description?: string; // API returns localized string
+  shortDescription?: string; // API returns localized string
   capacity: number;
   bedrooms: number;
   bathrooms: number;
@@ -47,6 +39,7 @@ interface CabinDetails {
 
 const SingleCabinPage = () => {
   const params = useParams();
+  const searchParams = useSearchParams();
   const slug = params.slug as string;
 
   const [cabin, setCabin] = useState<CabinDetails | null>(null);
@@ -56,6 +49,14 @@ const SingleCabinPage = () => {
   const [showMobileCarousel, setShowMobileCarousel] = useState(false);
   const [mobileCarouselIndex, setMobileCarouselIndex] = useState(0);
 
+  // Get booking params from URL (passed from search page)
+  const arrival = searchParams.get('arrival') || undefined;
+  const departure = searchParams.get('departure') || undefined;
+  const adults = searchParams.get('adults') || undefined;
+  const children = searchParams.get('children') || undefined;
+  const infants = searchParams.get('infants') || undefined;
+  const pets = searchParams.get('pets') || undefined;
+
   useEffect(() => {
     const fetchCabin = async () => {
       try {
@@ -63,7 +64,7 @@ const SingleCabinPage = () => {
         setError(null);
 
         console.log('🔍 Fetching cabin with slug:', slug);
-        const response = await fetch(`/api/cabins/slug/${slug}`);
+        const response = await apiFetch(`/api/cabins/slug/${slug}`);
 
         console.log('📥 Response status:', response.status);
 
@@ -103,16 +104,10 @@ const SingleCabinPage = () => {
           const transformedCabin: CabinDetails = {
             id: staticCabin.id.toString(),
             lodgifyId: staticCabin.id.toString(),
-            name: {
-              en: staticCabin.title,
-            },
+            name: staticCabin.title,
             slug: slug,
-            description: {
-              en: staticCabin.description,
-            },
-            shortDescription: {
-              en: staticCabin.description.substring(0, 200) + '...',
-            },
+            description: staticCabin.description,
+            shortDescription: staticCabin.description.substring(0, 200) + '...',
             capacity: staticCabin.guests,
             bedrooms: staticCabin.bedrooms,
             bathrooms: staticCabin.bathrooms,
@@ -186,7 +181,7 @@ const SingleCabinPage = () => {
         {/* Cabin Name - Mobile Only */}
         <div className="md:hidden px-4 pt-1 pb-2">
           <h1 className="font-jost font-medium text-[20px] uppercase tracking-wide" style={{ color: '#212121' }}>
-            {cabin.name?.en?.toUpperCase() || 'CABIN'}
+            {cabin.name?.toUpperCase() || 'CABIN'}
           </h1>
         </div>
 
@@ -197,7 +192,7 @@ const SingleCabinPage = () => {
             {/* Cabin Details Title */}
             <div className="mb-4 md:mb-6">
               <h1 className="font-jost font-medium text-[14px] md:text-[20px] lg:text-[24px] mb-3 md:mb-4 uppercase tracking-wide" style={{ color: '#212121' }}>
-                {`${cabin.capacity} GUESTS · ${cabin.bedrooms} BEDROOM${cabin.bedrooms > 1 ? 'S' : ''} · ${cabin.bathrooms} BATHROOM${cabin.bathrooms > 1 ? 'S' : ''} · ${cabin.name?.en?.toUpperCase() || 'JACUZZI'} · SAUNA`}
+                {`${cabin.capacity} GUESTS · ${cabin.bedrooms} BEDROOM${cabin.bedrooms > 1 ? 'S' : ''} · ${cabin.bathrooms} BATHROOM${cabin.bathrooms > 1 ? 'S' : ''} · ${cabin.name?.toUpperCase() || 'JACUZZI'} · SAUNA`}
               </h1>
 
               {/* Quick Amenities Icons Row */}
@@ -230,17 +225,8 @@ const SingleCabinPage = () => {
 
               {/* Description */}
               <p className="font-raleway font-normal leading-relaxed text-[13px] md:text-[16px] mb-6 md:mb-8 text-gray-700">
-                {cabin.description?.en || cabin.shortDescription?.en || 'Lorem Ipsum Is Simply Dummy Text Of The Printing And Typesetting Industry. Lorem Ipsum Has Been The Industry\'s Standard Dummy Text Ever Since The 1500s, When An Unknown Printer Took A Galley Of Type And Scrambled It To Make A Type Specimen Book. It Has Survived Not Only Five Centuries, But Also The Leap Into Electronic Typesetting, Remaining Essentially Unchanged. It Was Popularised In The 1960s With The Release Of Letraset Sheets Containing Lorem Ipsum Passages, And...'}
+                {cabin.description || cabin.shortDescription || 'Lorem Ipsum Is Simply Dummy Text Of The Printing And Typesetting Industry. Lorem Ipsum Has Been The Industry\'s Standard Dummy Text Ever Since The 1500s, When An Unknown Printer Took A Galley Of Type And Scrambled It To Make A Type Specimen Book. It Has Survived Not Only Five Centuries, But Also The Leap Into Electronic Typesetting, Remaining Essentially Unchanged. It Was Popularised In The 1960s With The Release Of Letraset Sheets Containing Lorem Ipsum Passages, And...'}
               </p>
-            </div>
-
-            {/* Booking Card - Mobile Only (shown after description) */}
-            <div className="lg:hidden mb-6">
-              <BookingCard
-                cabinName={cabin.name?.en || 'THE TUBE'}
-                basePrice={cabin.basePrice}
-                capacity={cabin.capacity}
-              />
             </div>
 
             {/* Amenities Section Component */}
@@ -254,12 +240,24 @@ const SingleCabinPage = () => {
 
           </div>
 
-          {/* Right Column - Booking Panel Component (Desktop Only) */}
+          {/* Booking Section - Desktop: right sidebar */}
           <div className="hidden lg:block">
-            <BookingCard
-              cabinName={cabin.name?.en || 'THE TUBE'}
-              basePrice={cabin.basePrice}
-              capacity={cabin.capacity}
+            <BookingSection
+              mode="desktop"
+              cabin={{
+                slug: cabin.slug,
+                name: cabin.name || cabin.slug,
+                lodgifyId: cabin.lodgifyId,
+                capacity: cabin.capacity,
+              }}
+              searchParams={{
+                arrival,
+                departure,
+                adults,
+                children,
+                infants,
+                pets,
+              }}
             />
           </div>
         </div>
@@ -284,6 +282,30 @@ const SingleCabinPage = () => {
         images={cabin.images || []}
         initialIndex={mobileCarouselIndex}
       />
+
+      {/* Mobile Booking Section - Fixed sticky bar and bottom sheet */}
+      <div className="lg:hidden">
+        <BookingSection
+          mode="mobile"
+          cabin={{
+            slug: cabin.slug,
+            name: cabin.name || cabin.slug,
+            lodgifyId: cabin.lodgifyId,
+            capacity: cabin.capacity,
+          }}
+          searchParams={{
+            arrival,
+            departure,
+            adults,
+            children,
+            infants,
+            pets,
+          }}
+        />
+      </div>
+
+      {/* Bottom padding for mobile sticky bar */}
+      <div className="h-24 lg:hidden" />
     </div>
   );
 };

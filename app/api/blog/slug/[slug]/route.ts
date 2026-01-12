@@ -11,10 +11,6 @@ export async function GET(
     const language = getLanguageFromRequest(request);
     const { slug } = await params;
 
-    console.log('🔍 Fetching cabin with slug:', slug);
-    console.log('🌐 Language:', language);
-    console.log('🔑 API Key exists:', !!apiKey);
-
     if (!slug) {
       return NextResponse.json(
         { error: 'Slug parameter is required' },
@@ -22,8 +18,7 @@ export async function GET(
       );
     }
 
-    const apiUrl = `${apiBaseUrl}/cabins/slug/${slug}`;
-    console.log('📡 Making request to:', apiUrl);
+    const apiUrl = `${apiBaseUrl}/blog/slug/${slug}`;
 
     const response = await fetch(apiUrl, {
       method: 'GET',
@@ -34,32 +29,26 @@ export async function GET(
       },
     });
 
-    console.log('📥 Response status:', response.status);
-
     if (!response.ok) {
-      const errorText = await response.text();
-      console.error('❌ API error:', errorText);
-
       if (response.status === 404) {
         return NextResponse.json(
-          { error: 'Cabin not found' },
+          { error: 'Blog post not found' },
           { status: 404 }
         );
       }
 
       return NextResponse.json(
-        { error: `API error: ${response.statusText}`, details: errorText },
+        { error: `API error: ${response.statusText}` },
         { status: response.status }
       );
     }
 
     const data = await response.json();
-    console.log('✅ Cabin details fetched:', data.slug);
     return NextResponse.json(data);
   } catch (error) {
-    console.error('❌ Error fetching cabin:', error);
+    console.error('Error fetching blog post:', error);
     return NextResponse.json(
-      { error: 'Failed to fetch cabin details' },
+      { error: 'Failed to fetch blog post' },
       { status: 500 }
     );
   }

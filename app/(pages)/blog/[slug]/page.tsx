@@ -1,0 +1,174 @@
+'use client';
+
+import { useState, useEffect } from 'react';
+import { useParams, useRouter } from 'next/navigation';
+import Image from 'next/image';
+import Link from 'next/link';
+import { apiFetch } from '@/app/lib/api';
+
+interface BlogPost {
+  id: string;
+  title: string;
+  slug: string;
+  excerpt?: string;
+  content: string;
+  featuredImage?: string;
+  publishedAt?: string;
+  category?: {
+    id: string;
+    name: string;
+    slug: string;
+  };
+  tags?: string[];
+  metaTitle?: string;
+  metaDescription?: string;
+}
+
+export default function BlogPostPage() {
+  const params = useParams();
+  const router = useRouter();
+  const slug = params.slug as string;
+
+  const [post, setPost] = useState<BlogPost | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchPost = async () => {
+      if (!slug) return;
+
+      try {
+        const response = await apiFetch(`/api/blog/slug/${slug}`);
+
+        if (!response.ok) {
+          if (response.status === 404) {
+            setError('Blog post not found');
+          } else {
+            setError('Failed to load blog post');
+          }
+          return;
+        }
+
+        const data = await response.json();
+        setPost(data);
+      } catch (err) {
+        console.error('Error fetching blog post:', err);
+        setError('Failed to load blog post');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchPost();
+  }, [slug]);
+
+  const formatDate = (dateString?: string) => {
+    if (!dateString) return '';
+    return new Date(dateString).toLocaleDateString('en-GB', {
+      day: 'numeric',
+      month: 'long',
+      year: 'numeric',
+    });
+  };
+
+  if (loading) {
+    return (
+      <main>
+        <section className="py-20 bg-white">
+          <div className="container mx-auto px-4 max-w-4xl text-center">
+            <p className="text-gray-600">Loading...</p>
+          </div>
+        </section>
+      </main>
+    );
+  }
+
+  if (error || !post) {
+    return (
+      <main>
+        <section className="py-20 bg-white">
+          <div className="container mx-auto px-4 max-w-4xl text-center">
+            <h1 className="text-2xl font-semibold text-[#495D4D] mb-4">
+              {error || 'Blog post not found'}
+            </h1>
+            <Link
+              href="/blog"
+              className="inline-block bg-[#F49A4A] text-white px-6 py-3 rounded-lg hover:bg-[#e08c3c] transition-colors"
+            >
+              Back to Blog
+            </Link>
+          </div>
+        </section>
+      </main>
+    );
+  }
+
+  return (
+    <main>
+      {/* Hero Section */}
+      <section className="relative h-[300px] md:h-[400px] lg:h-[500px] flex items-center justify-center">
+        <div
+          className="absolute inset-0 bg-cover bg-center"
+          style={{
+            backgroundImage: post.featuredImage
+              ? `url(${post.featuredImage})`
+              : 'url(/assets/d206536ef067f64b29cad184324fe360bb763e30.jpg)',
+          }}
+        >
+          <div className="absolute inset-0" style={{ backgroundColor: 'rgba(0, 0, 0, 0.50)' }}></div>
+        </div>
+        <div className="relative z-10 text-center px-4 max-w-4xl">
+          {post.category && (
+            <span className="inline-block bg-[#F49A4A] text-white text-sm px-3 py-1 rounded mb-4">
+              {post.category.name}
+            </span>
+          )}
+          <h1 className="text-white text-3xl md:text-4xl lg:text-5xl font-custom mb-4">
+            {post.title}
+          </h1>
+          <p className="text-white/80 text-sm">
+            {formatDate(post.publishedAt)}
+          </p>
+        </div>
+      </section>
+
+      {/* Article Content */}
+      <section className="py-12 bg-white">
+        <div className="container mx-auto px-4 max-w-3xl">
+          {/* Back Link */}
+          <Link
+            href="/blog"
+            className="inline-flex items-center text-[#495D4D] hover:text-[#F49A4A] mb-8 transition-colors"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-4 h-4 mr-2">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18" />
+            </svg>
+            Back to Blog
+          </Link>
+
+          {/* Content */}
+          <article className="prose prose-lg max-w-none prose-headings:text-[#495D4D] prose-p:text-gray-700 prose-a:text-[#F49A4A] prose-a:no-underline hover:prose-a:underline">
+            <div dangerouslySetInnerHTML={{ __html: post.content }} />
+          </article>
+
+          {/* Tags */}
+          {post.tags && post.tags.length > 0 && (
+            <div className="mt-8 pt-8 border-t border-gray-200">
+              <h4 className="text-sm font-semibold text-[#495D4D] mb-3">Tags:</h4>
+              <div className="flex flex-wrap gap-2">
+                {post.tags.map((tag, index) => (
+                  <span
+                    key={index}
+                    className="bg-gray-100 text-gray-600 text-sm px-3 py-1 rounded"
+                  >
+                    {tag}
+                  </span>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+      </section>
+    </main>
+  );
+}
