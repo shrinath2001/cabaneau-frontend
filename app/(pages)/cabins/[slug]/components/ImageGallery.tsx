@@ -90,7 +90,10 @@ const ImageGallery = ({ images, featuredImage, onShowAllClick, onMobileImageClic
       {/* Desktop View - Grid Layout */}
       <div className="hidden md:grid grid-cols-[60fr_40fr] gap-2 mb-8">
         {/* Large main image - LEFT SIDE, full height */}
-        <div className="relative bg-gray-200 h-[341px]">
+        <div
+          className="relative bg-gray-200 h-[341px] cursor-pointer"
+          onClick={() => onMobileImageClick?.(0)}
+        >
           <Image
             src={displayImages[0]}
             alt="Cabin view 1"
@@ -103,7 +106,10 @@ const ImageGallery = ({ images, featuredImage, onShowAllClick, onMobileImageClic
         {/* RIGHT SIDE - 2x2 Grid of smaller images */}
         <div className="grid grid-cols-2 grid-rows-2 gap-2 h-[341px]">
           {/* Top left */}
-          <div className="relative bg-gray-200">
+          <div
+            className="relative bg-gray-200 cursor-pointer"
+            onClick={() => onMobileImageClick?.(1)}
+          >
             <Image
               src={displayImages[1]}
               alt="Cabin view 2"
@@ -114,7 +120,10 @@ const ImageGallery = ({ images, featuredImage, onShowAllClick, onMobileImageClic
           </div>
 
           {/* Top right */}
-          <div className="relative bg-gray-200">
+          <div
+            className="relative bg-gray-200 cursor-pointer"
+            onClick={() => onMobileImageClick?.(2)}
+          >
             <Image
               src={displayImages[2]}
               alt="Cabin view 3"
@@ -125,7 +134,10 @@ const ImageGallery = ({ images, featuredImage, onShowAllClick, onMobileImageClic
           </div>
 
           {/* Bottom left */}
-          <div className="relative bg-gray-200">
+          <div
+            className="relative bg-gray-200 cursor-pointer"
+            onClick={() => onMobileImageClick?.(3)}
+          >
             <Image
               src={displayImages[3]}
               alt="Cabin view 4"
@@ -136,7 +148,10 @@ const ImageGallery = ({ images, featuredImage, onShowAllClick, onMobileImageClic
           </div>
 
           {/* Bottom right with "SHOW ALL PICTURES" button */}
-          <div className="relative bg-gray-200">
+          <div
+            className="relative bg-gray-200 cursor-pointer"
+            onClick={() => onMobileImageClick?.(4)}
+          >
             <Image
               src={displayImages[4]}
               alt="Cabin view 5"
@@ -147,7 +162,10 @@ const ImageGallery = ({ images, featuredImage, onShowAllClick, onMobileImageClic
             {/* Show all pictures button - always visible in bottom right corner */}
             <div className="absolute bottom-4 right-4 z-10">
               <button
-                onClick={onShowAllClick}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onShowAllClick();
+                }}
                 className="bg-white px-6 py-3 text-sm font-semibold hover:bg-gray-50 transition shadow-lg border border-gray-200"
               >
                 SHOW ALL PICTURES
