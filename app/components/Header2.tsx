@@ -57,39 +57,40 @@ const Header2 = () => {
 
   return (
     <header className="fixed top-0 left-0 w-full z-50 bg-white shadow-md">
-      <div className="container mx-auto px-4">
-        <div className="flex items-center justify-between py-6">
+      <div className="container mx-auto px-4 md:px-8 lg:px-20">
+        <div className="flex items-center justify-between py-6 md:py-8">
           <div className="flex items-center">
             <Link href="/" scroll={true}>
               <Image
                 src="/assets/Group 1 (1).png"
                 alt="Cabaneau Logo"
-                width={150}
-                height={50}
+                width={170}
+                height={57}
+                className="w-[130px] md:w-[170px] h-auto"
               />
             </Link>
           </div>
           <nav className="hidden md:flex items-center space-x-8">
-            <Link href="/cabins" className="text-black font-heading font-medium hover:font-semibold hover:text-orange-300 text-[18px] space-x-0.5 uppercase">
+            <Link href="/cabins" className="text-black font-heading font-medium text-[18px] hover:text-[#F49A4A] transition-colors uppercase">
               {t('link.our_cabins', 'Our Cabins')}
             </Link>
-            <Link href="/activities" className="text-black font-heading font-medium hover:font-semibold hover:text-orange-300 text-[18px] space-x-0.5 uppercase">
+            <Link href="/activities" className="text-black font-heading font-medium text-[18px] hover:text-[#F49A4A] transition-colors uppercase">
               {t('link.activities', 'Activities')}
             </Link>
-            <Link href="/eat-drink" className="text-black font-heading font-medium hover:font-semibold hover:text-orange-300 text-[18px] space-x-0.5 uppercase">
+            <Link href="/eat-drink" className="text-black font-heading font-medium text-[18px] hover:text-[#F49A4A] transition-colors uppercase">
               {t('link.eat_drink', 'Eat & Drink')}
             </Link>
           </nav>
-          <div className="hidden md:flex items-center space-x-4">
+          <div className="hidden md:flex items-center space-x-3 lg:space-x-4">
             <Link
               href="/gift-voucher"
-              className="text-white w-[134px] h-[50px] flex items-center justify-center font-medium text-sm bg-[#939D92] hover:bg-[#7d8d7d] transition uppercase"
+              className="text-white w-[134px] h-[50px] flex items-center justify-center font-heading font-medium text-sm bg-[#939D92] hover:bg-[#7d8d7d] transition uppercase"
             >
               {t('button.gift_voucher', 'Gift Voucher')}
             </Link>
             <Link
               href="/book-now"
-              className="bg-[#495D4D] text-white w-[134px] h-[50px] flex items-center justify-center font-medium text-sm hover:bg-[#3d5a3d] transition uppercase"
+              className="bg-[#495D4D] text-white w-[134px] h-[50px] flex items-center justify-center font-heading font-medium text-sm hover:bg-[#3d5a3d] transition uppercase"
             >
               {t('button.book_now', 'Book Now')}
             </Link>
@@ -125,7 +126,93 @@ const Header2 = () => {
               )}
             </div>
           </div>
-          <div className="md:hidden">
+          <div className="md:hidden flex items-center gap-3">
+            {/* Book Now Button */}
+            <Link
+              href="/book-now"
+              className="bg-[#495D4D] text-white px-3 py-2 flex items-center justify-center font-heading font-medium text-xs hover:bg-[#3d5a3d] transition"
+            >
+              BOOK NOW
+            </Link>
+
+            {/* Language Selector */}
+            <div className="relative">
+              <button
+                onClick={() => setIsLanguageOpen(!isLanguageOpen)}
+                className="text-black flex items-center gap-1 font-heading font-medium text-sm"
+              >
+                {selectedLanguage === 'en' ? (
+                  <>
+                    <svg className="w-5 h-3" viewBox="0 0 60 30" xmlns="http://www.w3.org/2000/svg">
+                      <clipPath id="s-header2"><path d="M0,0 v30 h60 v-30 z"/></clipPath>
+                      <clipPath id="t-header2"><path d="M30,15 h30 v15 z v15 h-30 z h-30 v-15 z v-15 h30 z"/></clipPath>
+                      <g clipPath="url(#s-header2)">
+                        <path d="M0,0 v30 h60 v-30 z" fill="#012169"/>
+                        <path d="M0,0 L60,30 M60,0 L0,30" stroke="#fff" strokeWidth="6"/>
+                        <path d="M0,0 L60,30 M60,0 L0,30" clipPath="url(#t-header2)" stroke="#C8102E" strokeWidth="4"/>
+                        <path d="M30,0 v30 M0,15 h60" stroke="#fff" strokeWidth="10"/>
+                        <path d="M30,0 v30 M0,15 h60" stroke="#C8102E" strokeWidth="6"/>
+                      </g>
+                    </svg>
+                    <span>EN</span>
+                  </>
+                ) : (
+                  <>
+                    <svg className="w-5 h-3" viewBox="0 0 5 3" xmlns="http://www.w3.org/2000/svg">
+                      <rect width="5" height="3" y="0" x="0" fill="#000"/>
+                      <rect width="5" height="2" y="1" x="0" fill="#D00"/>
+                      <rect width="5" height="1" y="2" x="0" fill="#FFCE00"/>
+                    </svg>
+                    <span>DE</span>
+                  </>
+                )}
+                <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                </svg>
+              </button>
+
+              {/* Language Dropdown */}
+              {isLanguageOpen && (
+                <div className="absolute right-0 mt-2 w-32 bg-white rounded-md shadow-lg py-1 z-50 border border-gray-200">
+                  <button
+                    onClick={() => {
+                      setSelectedLanguage('en');
+                      setIsLanguageOpen(false);
+                    }}
+                    className="w-full px-4 py-2 text-left text-gray-700 hover:bg-gray-100 flex items-center gap-2 font-heading text-sm"
+                  >
+                    <svg className="w-5 h-3" viewBox="0 0 60 30" xmlns="http://www.w3.org/2000/svg">
+                      <clipPath id="s-header2-en"><path d="M0,0 v30 h60 v-30 z"/></clipPath>
+                      <clipPath id="t-header2-en"><path d="M30,15 h30 v15 z v15 h-30 z h-30 v-15 z v-15 h30 z"/></clipPath>
+                      <g clipPath="url(#s-header2-en)">
+                        <path d="M0,0 v30 h60 v-30 z" fill="#012169"/>
+                        <path d="M0,0 L60,30 M60,0 L0,30" stroke="#fff" strokeWidth="6"/>
+                        <path d="M0,0 L60,30 M60,0 L0,30" clipPath="url(#t-header2-en)" stroke="#C8102E" strokeWidth="4"/>
+                        <path d="M30,0 v30 M0,15 h60" stroke="#fff" strokeWidth="10"/>
+                        <path d="M30,0 v30 M0,15 h60" stroke="#C8102E" strokeWidth="6"/>
+                      </g>
+                    </svg>
+                    English
+                  </button>
+                  <button
+                    onClick={() => {
+                      setSelectedLanguage('de');
+                      setIsLanguageOpen(false);
+                    }}
+                    className="w-full px-4 py-2 text-left text-gray-700 hover:bg-gray-100 flex items-center gap-2 font-heading text-sm"
+                  >
+                    <svg className="w-5 h-3" viewBox="0 0 5 3" xmlns="http://www.w3.org/2000/svg">
+                      <rect width="5" height="3" y="0" x="0" fill="#000"/>
+                      <rect width="5" height="2" y="1" x="0" fill="#D00"/>
+                      <rect width="5" height="1" y="2" x="0" fill="#FFCE00"/>
+                    </svg>
+                    Deutsch
+                  </button>
+                </div>
+              )}
+            </div>
+
+            {/* Hamburger Button */}
             <button
               className="text-black"
               onClick={() => setIsMenuOpen(!isMenuOpen)}

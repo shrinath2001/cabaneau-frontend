@@ -78,14 +78,14 @@ const AmenitiesModal = ({ isOpen, onClose }: AmenitiesModalProps) => {
       onClick={onClose}
     >
       <div
-        className="bg-white rounded-xl max-w-[780px] w-full max-h-[90vh] overflow-hidden flex flex-col font-heading shadow-2xl"
+        className="bg-white max-w-[780px] w-full max-h-[90vh] overflow-hidden flex flex-col font-heading shadow-2xl"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        <div className="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex items-center">
+        <div className="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-end">
           <button
             onClick={onClose}
-            className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+            className="p-2 hover:bg-gray-100 transition-colors"
             aria-label="Close"
           >
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">

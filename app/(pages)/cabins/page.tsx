@@ -111,7 +111,7 @@ export default async function CabinsPage() {
             <p className="text-gray-600 text-lg">No cabins available at the moment.</p>
           </div>
         ) : (
-          <div className="flex flex-wrap justify-center gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {cabins.map((cabin: any) => (
               <CabinCard key={cabin.id} {...cabin} />
             ))}

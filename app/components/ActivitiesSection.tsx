@@ -46,7 +46,7 @@ const ActivitiesSection = () => {
     <section className="py-6 md:py-5 px-4 md:px-20 bg-white md:mt-12">
       <div className="container mx-auto">
         <div className="max-w-[1390px] mx-auto">
-          <h2 className="font-logga text-[20px] md:text-[40px] font-semibold text-center mb-8 md:mb-16">ACTIVITIES IN THE REGION</h2>
+          <h2 className="font-logga text-[28px] md:text-[42px] font-semibold text-center mb-8 md:mb-16">ACTIVITIES IN THE REGION</h2>
           {loading ? (
             <div className="text-center py-12">
               <p className="text-gray-600">Loading activities...</p>

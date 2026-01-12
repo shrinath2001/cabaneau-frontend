@@ -7,9 +7,10 @@ interface ImageGalleryProps {
   images: string[];
   featuredImage?: string;
   onShowAllClick: () => void;
+  onMobileImageClick?: (index: number) => void;
 }
 
-const ImageGallery = ({ images, featuredImage, onShowAllClick }: ImageGalleryProps) => {
+const ImageGallery = ({ images, featuredImage, onShowAllClick, onMobileImageClick }: ImageGalleryProps) => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
   // Prepare images
@@ -41,7 +42,10 @@ const ImageGallery = ({ images, featuredImage, onShowAllClick }: ImageGalleryPro
     <>
       {/* Mobile View - Single Carousel */}
       <div className="block md:hidden relative mb-6">
-        <div className="relative bg-gray-200 h-[250px] w-full">
+        <div
+          className="relative bg-gray-200 h-[250px] w-full cursor-pointer"
+          onClick={() => onMobileImageClick?.(currentImageIndex)}
+        >
           <Image
             src={allImages[currentImageIndex] || displayImages[0]}
             alt={`Cabin view ${currentImageIndex + 1}`}
@@ -52,7 +56,10 @@ const ImageGallery = ({ images, featuredImage, onShowAllClick }: ImageGalleryPro
 
           {/* Navigation Arrows */}
           <button
-            onClick={prevImage}
+            onClick={(e) => {
+              e.stopPropagation();
+              prevImage();
+            }}
             className="absolute left-3 top-1/2 -translate-y-1/2 w-8 h-8 flex items-center justify-center bg-white/80 hover:bg-white rounded-full transition"
             aria-label="Previous image"
           >
@@ -61,7 +68,10 @@ const ImageGallery = ({ images, featuredImage, onShowAllClick }: ImageGalleryPro
             </svg>
           </button>
           <button
-            onClick={nextImage}
+            onClick={(e) => {
+              e.stopPropagation();
+              nextImage();
+            }}
             className="absolute right-3 top-1/2 -translate-y-1/2 w-8 h-8 flex items-center justify-center bg-white/80 hover:bg-white rounded-full transition"
             aria-label="Next image"
           >

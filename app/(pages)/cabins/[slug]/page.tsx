@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useParams, useSearchParams, notFound } from 'next/navigation';
 import PhotoGalleryModal from './components/PhotoGalleryModal';
+import MobileCarouselModal from './components/MobileCarouselModal';
 import BookingSection from '@/app/components/booking/BookingSection';
 import ImageGallery from './components/ImageGallery';
 import AmenitiesSection from './components/AmenitiesSection';
@@ -45,6 +46,8 @@ const SingleCabinPage = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [showPhotoGallery, setShowPhotoGallery] = useState(false);
+  const [showMobileCarousel, setShowMobileCarousel] = useState(false);
+  const [mobileCarouselIndex, setMobileCarouselIndex] = useState(0);
 
   // Get booking params from URL (passed from search page)
   const arrival = searchParams.get('arrival') || undefined;
@@ -152,10 +155,10 @@ const SingleCabinPage = () => {
   }
 
   return (
-    <div className="bg-white min-h-screen pt-6 md:pt-24 pb-0 md:pb-5 px-0 md:px-8 lg:px-20">
+    <div className="bg-white min-h-screen pt-0 md:pt-8 pb-0 md:pb-5 px-0 md:px-8 lg:px-20">
       <div className="max-w-[1400px] mx-auto px-0 md:px-6 py-0 md:py-8">
-        {/* Back to cabins link */}
-        <div className="mb-0 md:mb-6 px-4 md:px-0 py-3 md:py-0">
+        {/* Back to cabins link - Desktop Only */}
+        <div className="hidden md:block mb-0 md:mb-6 px-4 md:px-0 py-3 md:py-0">
           <Link href="/cabins" className="flex items-center text-gray-700 hover:text-black text-sm font-medium font-jost">
             <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
@@ -169,7 +172,18 @@ const SingleCabinPage = () => {
           images={cabin.images || []}
           featuredImage={cabin.featuredImage}
           onShowAllClick={() => setShowPhotoGallery(true)}
+          onMobileImageClick={(index) => {
+            setMobileCarouselIndex(index);
+            setShowMobileCarousel(true);
+          }}
         />
+
+        {/* Cabin Name - Mobile Only */}
+        <div className="md:hidden px-4 pt-1 pb-2">
+          <h1 className="font-jost font-medium text-[20px] uppercase tracking-wide" style={{ color: '#212121' }}>
+            {cabin.name?.en?.toUpperCase() || 'CABIN'}
+          </h1>
+        </div>
 
         {/* CONTENT SECTION BELOW IMAGES */}
         <div className="grid grid-cols-1 lg:grid-cols-[1fr_464px] gap-4 sm:gap-8 mt-0 md:mt-8 px-4 md:px-0">
@@ -249,12 +263,24 @@ const SingleCabinPage = () => {
         </div>
       </div>
 
-      {/* Photo Gallery Modal Component */}
+      {/* Photo Gallery Modal Component (Desktop) */}
       <PhotoGalleryModal
         isOpen={showPhotoGallery}
         onClose={() => setShowPhotoGallery(false)}
         images={cabin.images || []}
         featuredImage={cabin.featuredImage}
+        onImageClick={(index) => {
+          setMobileCarouselIndex(index);
+          setShowMobileCarousel(true);
+        }}
+      />
+
+      {/* Mobile Carousel Modal Component */}
+      <MobileCarouselModal
+        isOpen={showMobileCarousel}
+        onClose={() => setShowMobileCarousel(false)}
+        images={cabin.images || []}
+        initialIndex={mobileCarouselIndex}
       />
 
       {/* Mobile Booking Section - Fixed sticky bar and bottom sheet */}

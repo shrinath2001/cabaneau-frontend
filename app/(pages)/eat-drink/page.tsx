@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { EatDrinkItem } from '@/app/data/eatdrink';
 import EatDrinkCard from '@/app/components/EatDrinkCard';
 import EatDrinkDetailModal from '@/app/components/EatDrinkDetailModal';
@@ -56,7 +56,10 @@ export default function EatDrinkPage() {
   const [breakfast, setBreakfast] = useState<EatDrinkItem[]>([]);
   const [drinks, setDrinks] = useState<EatDrinkItem[]>([]);
   const [loading, setLoading] = useState(true);
+  const [isTabsSticky, setIsTabsSticky] = useState(true);
+  const discoverSectionRef = useRef<HTMLElement>(null);
 
+  // Fetch services from API
   useEffect(() => {
     const fetchServices = async () => {
       try {
@@ -88,6 +91,32 @@ export default function EatDrinkPage() {
     };
 
     fetchServices();
+  }, []);
+
+  // Sticky tabs scroll handler
+  useEffect(() => {
+    const handleScroll = () => {
+      if (discoverSectionRef.current) {
+        const discoverSectionTop = discoverSectionRef.current.getBoundingClientRect().top;
+        const isMobile = window.innerWidth < 768;
+        const stickyPosition = isMobile ? 70 + 70 : 86 + 70; // Header height + tabs approximate height
+
+        // Unstick tabs as soon as the discover section reaches the sticky tabs position
+        if (discoverSectionTop <= stickyPosition) {
+          setIsTabsSticky(false);
+        } else {
+          setIsTabsSticky(true);
+        }
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    window.addEventListener('resize', handleScroll); // Recalculate on resize
+    handleScroll(); // Initial check
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      window.removeEventListener('resize', handleScroll);
+    };
   }, []);
 
   const handleReadMore = (item: EatDrinkItem) => {
@@ -133,9 +162,9 @@ export default function EatDrinkPage() {
       </section>
 
       {/* Tabs Section */}
-      <section className="bg-white border-b border-gray-200">
+      <section className={`bg-white border-b border-gray-200 ${isTabsSticky ? 'sticky top-[70px] md:top-[86px]' : 'relative'} z-40`}>
         <div className="container mx-auto px-4 max-w-6xl">
-          <div className="flex justify-center gap-4 sm:gap-8 md:gap-12 overflow-x-auto">
+          <div className="flex justify-center gap-4 sm:gap-8 md:gap-12 overflow-x-auto pt-4 pb-4">
             <button
               onClick={() => setActiveTab('dining')}
               className="py-4 px-2 text-[16px] md:text-[24px] font-medium font-heading uppercase tracking-wider transition-colors relative whitespace-nowrap"
@@ -201,22 +230,36 @@ export default function EatDrinkPage() {
       </section>
 
       {/* Discover More Section */}
-      <section className="grid grid-cols-1 md:grid-cols-2">
-        {/* Drinks Section */}
+      <section ref={discoverSectionRef} className="grid grid-cols-1 md:grid-cols-2">
+        {/* First Section */}
         <div className="relative h-[300px] md:h-[400px] flex flex-col items-center justify-center">
           <div
             className="absolute inset-0 bg-cover bg-center"
             style={{
-              backgroundImage: 'url(/assets/dinner.png)',
+              backgroundImage: activeTab === 'dining'
+                ? 'url(/assets/dinner.png)'
+                : activeTab === 'breakfast'
+                ? 'url(/assets/dinner.png)'
+                : 'url(/assets/dinner.png)',
             }}
           >
             <div className="absolute inset-0" style={{ backgroundColor: 'rgba(0, 0, 0, 0.50)' }}></div>
           </div>
           <h2 className="relative z-10 text-white text-2xl md:text-3xl lg:text-4xl font-custom text-center px-4 mb-6">
-            OUR<br />DRINKS OFFERING
+            {activeTab === 'dining' ? (
+              <>OUR<br />DRINKS OFFERING</>
+            ) : activeTab === 'breakfast' ? (
+              <>OUR<br />DINING OFFERING</>
+            ) : (
+              <>OUR<br />DINING OFFERING</>
+            )}
           </h2>
           <button
-            onClick={() => setActiveTab('drinks')}
+            onClick={() => {
+              const newTab = activeTab === 'dining' ? 'drinks' : 'dining';
+              setActiveTab(newTab);
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            }}
             className="relative z-10 px-8 py-3 text-white font-heading tracking-wider transition-all hover:bg-hoverorange"
             style={{ backgroundColor: '#939D92', fontSize: '18px', fontWeight: 500 }}
           >
@@ -224,21 +267,35 @@ export default function EatDrinkPage() {
           </button>
         </div>
 
-        {/* Breakfast Section */}
+        {/* Second Section */}
         <div className="relative h-[300px] md:h-[400px] flex flex-col items-center justify-center">
           <div
             className="absolute inset-0 bg-cover bg-center"
             style={{
-              backgroundImage: 'url(/assets/breakfast.jpg)',
+              backgroundImage: activeTab === 'dining'
+                ? 'url(/assets/breakfast.jpg)'
+                : activeTab === 'breakfast'
+                ? 'url(/assets/dinner.png)'
+                : 'url(/assets/breakfast.jpg)',
             }}
           >
             <div className="absolute inset-0" style={{ backgroundColor: 'rgba(0, 0, 0, 0.50)' }}></div>
           </div>
           <h2 className="relative z-10 text-white text-2xl md:text-3xl lg:text-4xl font-custom text-center px-4 mb-6">
-            OUR<br />BREAKFAST OFFERING
+            {activeTab === 'dining' ? (
+              <>OUR<br />BREAKFAST OFFERING</>
+            ) : activeTab === 'breakfast' ? (
+              <>OUR<br />DRINKS OFFERING</>
+            ) : (
+              <>OUR<br />BREAKFAST OFFERING</>
+            )}
           </h2>
           <button
-            onClick={() => setActiveTab('breakfast')}
+            onClick={() => {
+              const newTab = activeTab === 'dining' ? 'breakfast' : activeTab === 'breakfast' ? 'drinks' : 'breakfast';
+              setActiveTab(newTab);
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            }}
             className="relative z-10 px-8 py-3 text-white font-heading tracking-wider transition-all hover:bg-hoverorange"
             style={{ backgroundColor: '#939D92', fontSize: '18px', fontWeight: 500 }}
           >

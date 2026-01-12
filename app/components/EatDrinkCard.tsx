@@ -49,7 +49,7 @@ const EatDrinkCard: React.FC<EatDrinkCardProps> = ({ item, onReadMore, isReverse
           <div>
             <button
               onClick={() => onReadMore(item)}
-              className="w-full sm:w-auto px-10 py-2.5 bg-[#939D92] text-white text-xs font-semibold uppercase tracking-wider hover:bg-opacity-90 transition-colors text-center"
+              className="w-full sm:w-auto px-10 py-3 sm:py-2.5 bg-[#939D92] text-white text-[13px] sm:text-xs font-semibold uppercase tracking-wider hover:bg-opacity-90 transition-colors text-center"
             >
               READ MORE
             </button>
