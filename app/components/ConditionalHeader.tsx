@@ -4,10 +4,12 @@ import { usePathname } from 'next/navigation';
 import { useState, useEffect } from 'react';
 import Header from './Header';
 import Header2 from './Header2';
+import { locales } from '@/app/lib/i18n';
 
 export default function ConditionalHeader() {
   const pathname = usePathname();
-  const isHomePage = pathname === '/';
+  // Home page is now at /{locale} (e.g., /en, /fr, /de, /nl)
+  const isHomePage = pathname === '/' || locales.some(locale => pathname === `/${locale}`);
   const [showHeader2, setShowHeader2] = useState(false);
 
   useEffect(() => {

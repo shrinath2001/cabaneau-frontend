@@ -3,9 +3,13 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { useTranslations } from '@/app/providers/TranslationsProvider';
+import { localizedPath, type Locale } from '@/app/lib/i18n';
 
 const Footer = () => {
-  const { t } = useTranslations('footer');
+  const { t, locale } = useTranslations('footer');
+
+  // Helper to create localized link
+  const link = (path: string) => localizedPath(locale as Locale, path);
 
   return (
     <footer className="bg-[#1a1a1a] text-white m-2 md:m-5">
@@ -25,10 +29,10 @@ const Footer = () => {
 
           {/* Mobile Buttons */}
           <div className="flex gap-3 mb-6">
-            <Link href="/book" className="bg-[#495D4D] font-heading text-white flex-1 h-[43px] flex items-center justify-center text-sm font-medium tracking-wider hover:bg-[#3d5a3d] transition whitespace-nowrap">
+            <Link href={link('/search')} className="bg-[#495D4D] font-heading text-white flex-1 h-[43px] flex items-center justify-center text-sm font-medium tracking-wider hover:bg-[#3d5a3d] transition whitespace-nowrap">
               {t('button_book_now', 'BOOK NOW')}
             </Link>
-            <Link href="/gift-voucher" className="bg-[#939D92] font-heading text-white flex-1 h-[43px] flex items-center justify-center text-sm font-medium tracking-wider hover:bg-[#7d8d7d] transition whitespace-nowrap">
+            <Link href={link('/gift-voucher')} className="bg-[#939D92] font-heading text-white flex-1 h-[43px] flex items-center justify-center text-sm font-medium tracking-wider hover:bg-[#7d8d7d] transition whitespace-nowrap">
               {t('button_gift_voucher', 'GIFT VOUCHER')}
             </Link>
           </div>
@@ -38,30 +42,30 @@ const Footer = () => {
             <div>
               <h3 className="font-jost font-medium text-[18px] mb-4 text-white">{t('section_our_cabins', 'Our Cabins')}</h3>
               <ul className="space-y-2 font-raleway text-[13px] text-gray-100">
-                <li><Link href="/cabins/1" className="hover:text-white transition">{t('menu_cabin1', 'Cabin1')}</Link></li>
-                <li><Link href="/cabins/2" className="hover:text-white transition">{t('menu_cabin2', 'Cabin2')}</Link></li>
-                <li><Link href="/cabins/3" className="hover:text-white transition">{t('menu_cabin3', 'Cabin3')}</Link></li>
-                <li><Link href="/cabins/4" className="hover:text-white transition">{t('menu_cabin4', 'Cabin4')}</Link></li>
-                <li><Link href="/cabins/5" className="hover:text-white transition">{t('menu_cabin5', 'Cabin5')}</Link></li>
-                <li><Link href="/cabins/6" className="hover:text-white transition">{t('menu_cabin6', 'Cabin6')}</Link></li>
+                <li><Link href={link('/cabins/1')} className="hover:text-white transition">{t('menu_cabin1', 'Cabin1')}</Link></li>
+                <li><Link href={link('/cabins/2')} className="hover:text-white transition">{t('menu_cabin2', 'Cabin2')}</Link></li>
+                <li><Link href={link('/cabins/3')} className="hover:text-white transition">{t('menu_cabin3', 'Cabin3')}</Link></li>
+                <li><Link href={link('/cabins/4')} className="hover:text-white transition">{t('menu_cabin4', 'Cabin4')}</Link></li>
+                <li><Link href={link('/cabins/5')} className="hover:text-white transition">{t('menu_cabin5', 'Cabin5')}</Link></li>
+                <li><Link href={link('/cabins/6')} className="hover:text-white transition">{t('menu_cabin6', 'Cabin6')}</Link></li>
               </ul>
             </div>
 
             <div>
               <h3 className="font-jost font-medium text-[18px] mb-4 text-white">{t('section_region_services', 'Region & Services')}</h3>
               <ul className="space-y-2 font-raleway text-[13px] text-gray-100">
-                <li><Link href="/services/food" className="hover:text-white transition">{t('menu_food_drink_service', 'Food & Drink Service')}</Link></li>
-                <li><Link href="/activities" className="hover:text-white transition">{t('menu_activities', 'Activities')}</Link></li>
-                <li><Link href="/services/massage" className="hover:text-white transition">{t('menu_massage', 'Massage')}</Link></li>
-                <li><Link href="/services/restaurants" className="hover:text-white transition">{t('menu_restaurants', 'Restaurants')}</Link></li>
+                <li><Link href={link('/eat-drink')} className="hover:text-white transition">{t('menu_food_drink_service', 'Food & Drink Service')}</Link></li>
+                <li><Link href={link('/activities')} className="hover:text-white transition">{t('menu_activities', 'Activities')}</Link></li>
+                <li><Link href={link('/services/massage')} className="hover:text-white transition">{t('menu_massage', 'Massage')}</Link></li>
+                <li><Link href={link('/services/restaurants')} className="hover:text-white transition">{t('menu_restaurants', 'Restaurants')}</Link></li>
               </ul>
             </div>
 
             <div>
               <h3 className="font-jost font-medium text-[18px] mb-4 text-white">{t('section_seo_links', 'SEO Links')}</h3>
               <ul className="space-y-2 font-raleway text-[13px] text-gray-100">
-                <li><Link href="/food-drinks" className="hover:text-white transition">{t('menu_food_drinks', 'Food & Drinks')}</Link></li>
-                <li><Link href="/massage" className="hover:text-white transition">{t('menu_massage', 'Massage')}</Link></li>
+                <li><Link href={link('/eat-drink')} className="hover:text-white transition">{t('menu_food_drinks', 'Food & Drinks')}</Link></li>
+                <li><Link href={link('/services/massage')} className="hover:text-white transition">{t('menu_massage', 'Massage')}</Link></li>
               </ul>
             </div>
 
@@ -109,12 +113,12 @@ const Footer = () => {
             <div>
               <h3 className="font-jost font-medium text-[16px] mb-3 text-white">{t('section_our_cabins', 'Our Cabins')}</h3>
               <ul className="space-y-1.5 font-raleway text-[13px] text-gray-100">
-                <li><Link href="/cabins/1" className="hover:text-white transition">{t('menu_cabin1', 'Cabin1')}</Link></li>
-                <li><Link href="/cabins/2" className="hover:text-white transition">{t('menu_cabin2', 'Cabin2')}</Link></li>
-                <li><Link href="/cabins/3" className="hover:text-white transition">{t('menu_cabin3', 'Cabin3')}</Link></li>
-                <li><Link href="/cabins/4" className="hover:text-white transition">{t('menu_cabin4', 'Cabin4')}</Link></li>
-                <li><Link href="/cabins/5" className="hover:text-white transition">{t('menu_cabin5', 'Cabin5')}</Link></li>
-                <li><Link href="/cabins/6" className="hover:text-white transition">{t('menu_cabin6', 'Cabin6')}</Link></li>
+                <li><Link href={link('/cabins/1')} className="hover:text-white transition">{t('menu_cabin1', 'Cabin1')}</Link></li>
+                <li><Link href={link('/cabins/2')} className="hover:text-white transition">{t('menu_cabin2', 'Cabin2')}</Link></li>
+                <li><Link href={link('/cabins/3')} className="hover:text-white transition">{t('menu_cabin3', 'Cabin3')}</Link></li>
+                <li><Link href={link('/cabins/4')} className="hover:text-white transition">{t('menu_cabin4', 'Cabin4')}</Link></li>
+                <li><Link href={link('/cabins/5')} className="hover:text-white transition">{t('menu_cabin5', 'Cabin5')}</Link></li>
+                <li><Link href={link('/cabins/6')} className="hover:text-white transition">{t('menu_cabin6', 'Cabin6')}</Link></li>
               </ul>
             </div>
 
@@ -122,10 +126,10 @@ const Footer = () => {
             <div>
               <h3 className="font-jost font-medium text-[16px] mb-3 text-white">{t('section_region_services', 'Region & Services')}</h3>
               <ul className="space-y-1.5 font-raleway text-[13px] text-gray-100">
-                <li><Link href="/services/food" className="hover:text-white transition">{t('menu_food_drink_service', 'Food & Drink Service')}</Link></li>
-                <li><Link href="/activities" className="hover:text-white transition">{t('menu_activities', 'Activities')}</Link></li>
-                <li><Link href="/services/massage" className="hover:text-white transition">{t('menu_massage', 'Massage')}</Link></li>
-                <li><Link href="/services/restaurants" className="hover:text-white transition">{t('menu_restaurants', 'Restaurants')}</Link></li>
+                <li><Link href={link('/eat-drink')} className="hover:text-white transition">{t('menu_food_drink_service', 'Food & Drink Service')}</Link></li>
+                <li><Link href={link('/activities')} className="hover:text-white transition">{t('menu_activities', 'Activities')}</Link></li>
+                <li><Link href={link('/services/massage')} className="hover:text-white transition">{t('menu_massage', 'Massage')}</Link></li>
+                <li><Link href={link('/services/restaurants')} className="hover:text-white transition">{t('menu_restaurants', 'Restaurants')}</Link></li>
               </ul>
             </div>
 
@@ -133,8 +137,8 @@ const Footer = () => {
             <div>
               <h3 className="font-jost font-medium text-[16px] mb-3 text-white">{t('section_seo_links', 'SEO Links')}</h3>
               <ul className="space-y-1.5 font-raleway text-[13px] text-gray-100">
-                <li><Link href="/food-drinks" className="hover:text-white transition">{t('menu_food_drinks', 'Food & Drinks')}</Link></li>
-                <li><Link href="/massage" className="hover:text-white transition">{t('menu_massage', 'Massage')}</Link></li>
+                <li><Link href={link('/eat-drink')} className="hover:text-white transition">{t('menu_food_drinks', 'Food & Drinks')}</Link></li>
+                <li><Link href={link('/services/massage')} className="hover:text-white transition">{t('menu_massage', 'Massage')}</Link></li>
               </ul>
             </div>
 
@@ -167,10 +171,10 @@ const Footer = () => {
 
           {/* Buttons */}
           <div className="flex flex-col gap-2.5 flex-shrink-0">
-            <Link href="/book" className="bg-[#495D4D] font-heading text-white w-[134px] h-[40px] flex items-center justify-center text-[13px] font-medium tracking-wider hover:bg-[#3d5a3d] transition whitespace-nowrap">
+            <Link href={link('/search')} className="bg-[#495D4D] font-heading text-white w-[134px] h-[40px] flex items-center justify-center text-[13px] font-medium tracking-wider hover:bg-[#3d5a3d] transition whitespace-nowrap">
               {t('button_book_now', 'BOOK NOW')}
             </Link>
-            <Link href="/gift-voucher" className="bg-[#939D92] font-heading text-white w-[134px] h-[40px] flex items-center justify-center text-[13px] font-medium tracking-wider hover:bg-[#7d8d7d] transition whitespace-nowrap">
+            <Link href={link('/gift-voucher')} className="bg-[#939D92] font-heading text-white w-[134px] h-[40px] flex items-center justify-center text-[13px] font-medium tracking-wider hover:bg-[#7d8d7d] transition whitespace-nowrap">
               {t('button_gift_voucher', 'GIFT VOUCHER')}
             </Link>
           </div>
@@ -184,10 +188,10 @@ const Footer = () => {
 
             {/* Links */}
             <div className="flex items-center gap-4 md:gap-6">
-              <Link href="/terms" className="text-[13px] font-raleway text-gray-100 hover:text-white transition">
+              <Link href={link('/terms')} className="text-[13px] font-raleway text-gray-100 hover:text-white transition">
                 {t('link_terms', 'Terms & Conditions')}
               </Link>
-              <Link href="/privacy" className="text-[13px] font-raleway text-gray-100 hover:text-white transition">
+              <Link href={link('/privacy')} className="text-[13px] font-raleway text-gray-100 hover:text-white transition">
                 {t('link_privacy', 'Privacy Policy')}
               </Link>
             </div>

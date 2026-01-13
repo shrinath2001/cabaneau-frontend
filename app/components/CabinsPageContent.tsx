@@ -3,6 +3,14 @@
 import CabinCard from "@/app/components/CabinCard";
 import { useTranslations } from '@/app/providers/TranslationsProvider';
 
+interface AmenityInfo {
+  id: string;
+  name: string;
+  slug: string;
+  icon?: string;
+  category: string;
+}
+
 interface Cabin {
   id: number;
   slug: string;
@@ -13,6 +21,7 @@ interface Cabin {
   capacity: string;
   availability: string;
   price: string;
+  featuredAmenities?: AmenityInfo[];
 }
 
 interface CabinsPageContentProps {

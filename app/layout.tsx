@@ -1,11 +1,5 @@
 import type { Metadata } from 'next';
-import { cookies } from 'next/headers';
 import "./globals.css";
-import ConditionalHeader from './components/ConditionalHeader';
-import { jost, raleway, logga } from './fonts';
-import { TranslationsProvider } from './providers/TranslationsProvider';
-import { getTranslations } from './lib/translations';
-import { getLanguageFromCookie, COOKIE_NAME } from './lib/language';
 
 export const metadata: Metadata = {
   title: 'Cabaneau - Luxury Cabin Rentals with Private Wellness',
@@ -16,7 +10,6 @@ export const metadata: Metadata = {
     title: 'Cabaneau - Luxury Cabin Rentals with Private Wellness',
     description: 'Experience luxury cabins with private wellness facilities, saunas, and stunning natural surroundings.',
     type: 'website',
-    locale: 'en_US',
     siteName: 'Cabaneau',
   },
   twitter: {
@@ -26,28 +19,15 @@ export const metadata: Metadata = {
   },
 };
 
-export default async function RootLayout({
+/**
+ * Root layout - minimal wrapper
+ * The html/body tags and TranslationsProvider are in [locale]/layout.tsx
+ * to support dynamic lang attribute for SEO
+ */
+export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  // Get locale from cookie
-  const cookieStore = await cookies();
-  const locale = cookieStore.get(COOKIE_NAME)?.value || 'en';
-
-  // Fetch translations for the current locale
-  const translations = await getTranslations(locale);
-
-  return (
-    <html lang={locale} className={`${jost.variable} ${raleway.variable} ${logga.variable}`}>
-      <body className="font-raleway antialiased">
-        <TranslationsProvider initialTranslations={translations} locale={locale}>
-          <ConditionalHeader />
-          <main className="pt-20">
-            {children}
-          </main>
-        </TranslationsProvider>
-      </body>
-    </html>
-  );
+  return children;
 }

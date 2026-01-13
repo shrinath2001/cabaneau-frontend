@@ -1,6 +1,70 @@
 'use client';
 
 import { useState } from 'react';
+import { useTranslations } from '@/app/providers/TranslationsProvider';
+
+// Translations for booking card
+const bookingTranslations: Record<string, {
+  arrival: string;
+  departure: string;
+  guests: string;
+  bookYourStay: string;
+  pricePerNight: string;
+  night: string;
+  selectDates: string;
+  invalidDates: string;
+  decreaseGuests: string;
+  increaseGuests: string;
+}> = {
+  en: {
+    arrival: 'Arrival',
+    departure: 'Departure',
+    guests: 'Guests',
+    bookYourStay: 'BOOK YOUR STAY',
+    pricePerNight: 'Price per night',
+    night: 'NIGHT',
+    selectDates: 'Please select arrival and departure dates',
+    invalidDates: 'Departure date must be after arrival date',
+    decreaseGuests: 'Decrease guests',
+    increaseGuests: 'Increase guests',
+  },
+  fr: {
+    arrival: 'Arrivée',
+    departure: 'Départ',
+    guests: 'Invités',
+    bookYourStay: 'RÉSERVER',
+    pricePerNight: 'Prix par nuit',
+    night: 'NUIT',
+    selectDates: 'Veuillez sélectionner les dates d\'arrivée et de départ',
+    invalidDates: 'La date de départ doit être après la date d\'arrivée',
+    decreaseGuests: 'Diminuer les invités',
+    increaseGuests: 'Augmenter les invités',
+  },
+  de: {
+    arrival: 'Anreise',
+    departure: 'Abreise',
+    guests: 'Gäste',
+    bookYourStay: 'JETZT BUCHEN',
+    pricePerNight: 'Preis pro Nacht',
+    night: 'NACHT',
+    selectDates: 'Bitte wählen Sie An- und Abreisedatum',
+    invalidDates: 'Das Abreisedatum muss nach dem Anreisedatum liegen',
+    decreaseGuests: 'Gäste verringern',
+    increaseGuests: 'Gäste erhöhen',
+  },
+  nl: {
+    arrival: 'Aankomst',
+    departure: 'Vertrek',
+    guests: 'Gasten',
+    bookYourStay: 'NU BOEKEN',
+    pricePerNight: 'Prijs per nacht',
+    night: 'NACHT',
+    selectDates: 'Selecteer aankomst- en vertrekdatum',
+    invalidDates: 'Vertrekdatum moet na aankomstdatum zijn',
+    decreaseGuests: 'Gasten verminderen',
+    increaseGuests: 'Gasten vermeerderen',
+  },
+};
 
 interface BookingCardProps {
   cabinName: string;
@@ -12,6 +76,8 @@ const BookingCard = ({ cabinName, basePrice, capacity }: BookingCardProps) => {
   const [arrival, setArrival] = useState('');
   const [departure, setDeparture] = useState('');
   const [guests, setGuests] = useState(1);
+  const { locale } = useTranslations();
+  const t = bookingTranslations[locale] || bookingTranslations.en;
 
   const handleGuestsIncrease = () => {
     if (guests < capacity) {
@@ -27,7 +93,7 @@ const BookingCard = ({ cabinName, basePrice, capacity }: BookingCardProps) => {
 
   const handleBooking = () => {
     if (!arrival || !departure) {
-      alert('Please select arrival and departure dates');
+      alert(t.selectDates);
       return;
     }
 
@@ -35,7 +101,7 @@ const BookingCard = ({ cabinName, basePrice, capacity }: BookingCardProps) => {
     const departureDate = new Date(departure);
 
     if (departureDate <= arrivalDate) {
-      alert('Departure date must be after arrival date');
+      alert(t.invalidDates);
       return;
     }
 
@@ -58,11 +124,11 @@ const BookingCard = ({ cabinName, basePrice, capacity }: BookingCardProps) => {
           {/* Arrival and Departure Row with Guest Counter */}
           <div className="flex items-center gap-2">
             <div className="flex-1 flex items-center gap-2 text-sm uppercase text-gray-600 font-medium">
-              <span>ARRIVAL</span>
+              <span>{t.arrival.toUpperCase()}</span>
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
               </svg>
-              <span>DEPARTURE</span>
+              <span>{t.departure.toUpperCase()}</span>
             </div>
 
             {/* Guest Counter - Right Side */}
@@ -71,7 +137,7 @@ const BookingCard = ({ cabinName, basePrice, capacity }: BookingCardProps) => {
                 onClick={handleGuestsDecrease}
                 className="w-8 h-8 flex items-center justify-center bg-[#939D92] text-white text-lg hover:bg-[#7d8d7d] disabled:opacity-30 disabled:cursor-not-allowed transition"
                 disabled={guests <= 1}
-                aria-label="Decrease guests"
+                aria-label={t.decreaseGuests}
               >
                 −
               </button>
@@ -80,7 +146,7 @@ const BookingCard = ({ cabinName, basePrice, capacity }: BookingCardProps) => {
                 onClick={handleGuestsIncrease}
                 className="w-8 h-8 flex items-center justify-center bg-[#939D92] text-white text-lg hover:bg-[#7d8d7d] disabled:opacity-30 disabled:cursor-not-allowed transition"
                 disabled={guests >= capacity}
-                aria-label="Increase guests"
+                aria-label={t.increaseGuests}
               >
                 +
               </button>
@@ -93,11 +159,11 @@ const BookingCard = ({ cabinName, basePrice, capacity }: BookingCardProps) => {
               onClick={handleBooking}
               className="flex-1 bg-[#495D4D] text-white py-3 px-6 text-sm font-bold tracking-wide hover:bg-[#3d5a3d] transition uppercase font-jost"
             >
-              BOOK YOUR STAY
+              {t.bookYourStay}
             </button>
             <div className="bg-white border-2 border-[#495D4D] px-4 flex items-center justify-center">
               <span className="font-jost font-medium text-sm text-gray-800 whitespace-nowrap">
-                {basePrice}€/NIGHT
+                {basePrice}€/{t.night}
               </span>
             </div>
           </div>
@@ -108,7 +174,7 @@ const BookingCard = ({ cabinName, basePrice, capacity }: BookingCardProps) => {
           {/* Date Inputs */}
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="block text-xs font-medium text-gray-700 mb-1 uppercase">Arrival</label>
+              <label className="block text-xs font-medium text-gray-700 mb-1 uppercase">{t.arrival}</label>
               <input
                 type="date"
                 value={arrival}
@@ -117,7 +183,7 @@ const BookingCard = ({ cabinName, basePrice, capacity }: BookingCardProps) => {
               />
             </div>
             <div>
-              <label className="block text-xs font-medium text-gray-700 mb-1 uppercase">Departure</label>
+              <label className="block text-xs font-medium text-gray-700 mb-1 uppercase">{t.departure}</label>
               <input
                 type="date"
                 value={departure}
@@ -129,13 +195,13 @@ const BookingCard = ({ cabinName, basePrice, capacity }: BookingCardProps) => {
 
           {/* Guest Counter */}
           <div className="flex items-center justify-between">
-            <span className="text-sm font-medium text-gray-700 uppercase">Guests</span>
+            <span className="text-sm font-medium text-gray-700 uppercase">{t.guests}</span>
             <div className="flex items-center gap-3">
               <button
                 onClick={handleGuestsDecrease}
                 className="w-10 h-10 flex items-center justify-center bg-[#939D92] text-white text-lg hover:bg-[#7d8d7d] disabled:opacity-30 disabled:cursor-not-allowed transition"
                 disabled={guests <= 1}
-                aria-label="Decrease guests"
+                aria-label={t.decreaseGuests}
               >
                 −
               </button>
@@ -144,7 +210,7 @@ const BookingCard = ({ cabinName, basePrice, capacity }: BookingCardProps) => {
                 onClick={handleGuestsIncrease}
                 className="w-10 h-10 flex items-center justify-center bg-[#939D92] text-white text-lg hover:bg-[#7d8d7d] disabled:opacity-30 disabled:cursor-not-allowed transition"
                 disabled={guests >= capacity}
-                aria-label="Increase guests"
+                aria-label={t.increaseGuests}
               >
                 +
               </button>
@@ -154,8 +220,8 @@ const BookingCard = ({ cabinName, basePrice, capacity }: BookingCardProps) => {
           {/* Price Display */}
           <div className="border-t border-gray-300 pt-4">
             <div className="flex justify-between items-center mb-4">
-              <span className="font-jost font-medium text-base text-gray-800">Price per night</span>
-              <span className="font-jost font-bold text-lg text-gray-800">{basePrice}€</span>
+              <span className="font-jost font-medium text-base text-gray-800">{t.pricePerNight}</span>
+              <span className="font-jost font-bold text-lg text-gray-800">{basePrice} €</span>
             </div>
           </div>
 
@@ -164,7 +230,7 @@ const BookingCard = ({ cabinName, basePrice, capacity }: BookingCardProps) => {
             onClick={handleBooking}
             className="w-full bg-[#495D4D] text-white py-4 px-6 text-base font-bold tracking-wide hover:bg-[#3d5a3d] transition uppercase font-jost"
           >
-            BOOK YOUR STAY
+            {t.bookYourStay}
           </button>
         </div>
       </div>

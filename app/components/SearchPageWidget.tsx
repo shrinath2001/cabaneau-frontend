@@ -3,6 +3,15 @@
 import { useEffect, useRef, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { getLodgifySearchLocale } from "@/app/lib/language";
+import { useTranslations } from "@/app/providers/TranslationsProvider";
+
+// Translations for Lodgify widget labels
+const widgetTranslations: Record<string, { checkIn: string; checkOut: string; guest: string; guests: string }> = {
+  en: { checkIn: "Check-in", checkOut: "Check-out", guest: "guest", guests: "guests" },
+  fr: { checkIn: "Arrivée", checkOut: "Départ", guest: "invité", guests: "invités" },
+  de: { checkIn: "Anreise", checkOut: "Abreise", guest: "Gast", guests: "Gäste" },
+  nl: { checkIn: "Inchecken", checkOut: "Uitchecken", guest: "gast", guests: "gasten" },
+};
 
 /**
  * Lodgify Search Widget for the Search Results Page
@@ -20,8 +29,12 @@ const SearchPageWidget = () => {
   const widgetRef = useRef<HTMLDivElement>(null);
   // Use state for searchPageUrl to avoid hydration mismatch
   const [searchPageUrl, setSearchPageUrl] = useState("/search");
-  // Get language from user preference
-  const [languageCode, setLanguageCode] = useState("en");
+  // Get language from URL-based locale
+  const { locale } = useTranslations();
+  const languageCode = getLodgifySearchLocale(locale);
+
+  // Get translations for current language
+  const t = widgetTranslations[locale] || widgetTranslations.en;
 
   // Parse URL params (Lodgify format: YYYYMMDD, also support ISO: YYYY-MM-DD)
   const arrival = searchParams.get("arrival") || "";
@@ -37,8 +50,6 @@ const SearchPageWidget = () => {
   useEffect(() => {
     // Set full URL after hydration to avoid mismatch
     setSearchPageUrl(`${window.location.origin}/search`);
-    // Get user's language preference
-    setLanguageCode(getLodgifySearchLocale());
 
     const scriptUrl =
       "https://app.lodgify.com/portable-search-bar/stable/renderPortableSearchBar.js";
@@ -473,12 +484,12 @@ const SearchPageWidget = () => {
           {...(arrival && { "data-arrival": formatForLodgify(arrival) })}
           {...(departure && { "data-departure": formatForLodgify(departure) })}
           {...(adults && adults !== "0" && { "data-adults": adults })}
-          // Labels
-          data-dates-check-in-label="Check-in"
-          data-dates-check-out-label="Check-out"
-          data-guests-counter-label="Guests"
-          data-guests-input-singular-label="{{NumberOfGuests}} guest"
-          data-guests-input-plural-label="{{NumberOfGuests}} guests"
+          // Labels (translated)
+          data-dates-check-in-label={t.checkIn}
+          data-dates-check-out-label={t.checkOut}
+          data-guests-counter-label={t.guests}
+          data-guests-input-singular-label={`{{NumberOfGuests}} ${t.guest}`}
+          data-guests-input-plural-label={`{{NumberOfGuests}} ${t.guests}`}
           data-search-button-label="Search"
           data-dates-input-min-stay-tooltip-text='{"one":"Minimum {minStay} night","other":"Minimum {minStay} nights"}'
         />

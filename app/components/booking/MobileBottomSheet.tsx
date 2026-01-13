@@ -2,6 +2,60 @@
 
 import { useEffect, useRef, useState, useCallback } from "react";
 import { getLodgifyLocale } from "@/app/lib/language";
+import { useTranslations } from "@/app/providers/TranslationsProvider";
+
+// Hardcoded translations for booking sheet
+const sheetTranslations: Record<string, {
+  title: string;
+  checkIn: string;
+  checkOut: string;
+  guests: string;
+  guest: string;
+  save: string;
+  selectDates: string;
+  bookNow: string;
+}> = {
+  en: {
+    title: "Select Dates & Guests",
+    checkIn: "Check-in",
+    checkOut: "Check-out",
+    guests: "Guests",
+    guest: "guest",
+    save: "Save",
+    selectDates: "Select dates to continue",
+    bookNow: "Book Now",
+  },
+  fr: {
+    title: "Sélectionner les dates et invités",
+    checkIn: "Arrivée",
+    checkOut: "Départ",
+    guests: "Invités",
+    guest: "invité",
+    save: "Enregistrer",
+    selectDates: "Sélectionnez les dates",
+    bookNow: "Réserver",
+  },
+  de: {
+    title: "Daten und Gäste auswählen",
+    checkIn: "Anreise",
+    checkOut: "Abreise",
+    guests: "Gäste",
+    guest: "Gast",
+    save: "Speichern",
+    selectDates: "Daten auswählen",
+    bookNow: "Jetzt buchen",
+  },
+  nl: {
+    title: "Selecteer data en gasten",
+    checkIn: "Inchecken",
+    checkOut: "Uitchecken",
+    guests: "Gasten",
+    guest: "gast",
+    save: "Opslaan",
+    selectDates: "Selecteer data",
+    bookNow: "Nu boeken",
+  },
+};
 
 interface CabinInfo {
   slug: string;
@@ -42,14 +96,13 @@ export default function MobileBottomSheet({
   } | null>(null);
   const [canSave, setCanSave] = useState(false);
   const [widgetLoaded, setWidgetLoaded] = useState(false);
-  const [languageCode, setLanguageCode] = useState("en");
+  const { locale } = useTranslations();
+  const languageCode = getLodgifyLocale(locale);
   const widgetContainerRef = useRef<HTMLDivElement>(null);
   const observerRef = useRef<MutationObserver | null>(null);
 
-  // Get user's language preference on mount
-  useEffect(() => {
-    setLanguageCode(getLodgifyLocale());
-  }, []);
+  // Get translations for current locale
+  const t = sheetTranslations[locale] || sheetTranslations.en;
 
   // Extract params from Lodgify widget's checkout URL
   const extractParamsFromWidget = useCallback(() => {
@@ -235,7 +288,7 @@ export default function MobileBottomSheet({
         {/* Header */}
         <div className="px-5 pb-3 border-b border-gray-200">
           <h3 className="text-lg font-semibold text-gray-900">
-            Select Dates & Guests
+            {t.title}
           </h3>
         </div>
 
@@ -466,12 +519,12 @@ export default function MobileBottomSheet({
               data-new-tab="false"
               data-version="stable"
               data-hide-minimum-price
-              data-check-in-label="Check-in"
-              data-check-out-label="Check-out"
-              data-guests-label="Guests"
-              data-guests-singular-label="{{NumberOfGuests}} guest"
-              data-guests-plural-label="{{NumberOfGuests}} guests"
-              data-book-button-label="Book Now"
+              data-check-in-label={t.checkIn}
+              data-check-out-label={t.checkOut}
+              data-guests-label={t.guests}
+              data-guests-singular-label={`{{NumberOfGuests}} ${t.guest}`}
+              data-guests-plural-label={`{{NumberOfGuests}} ${t.guests.toLowerCase()}`}
+              data-book-button-label={t.bookNow}
               style={{
                 opacity: widgetLoaded ? 1 : 0,
                 transition: "opacity 0.2s ease-in-out",
@@ -491,7 +544,7 @@ export default function MobileBottomSheet({
                 : "bg-gray-200 text-gray-500 cursor-not-allowed"
             }`}
           >
-            {canSave ? "Save" : "Select dates to continue"}
+            {canSave ? t.save : t.selectDates}
           </button>
         </div>
       </div>

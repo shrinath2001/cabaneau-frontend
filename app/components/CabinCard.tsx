@@ -2,6 +2,8 @@
 import { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useTranslations } from '@/app/providers/TranslationsProvider';
+import { localizedPath, type Locale } from '@/app/lib/i18n';
 
 interface SearchParams {
   arrival?: string;
@@ -10,6 +12,14 @@ interface SearchParams {
   children?: string;
   infants?: string;
   pets?: string;
+}
+
+interface AmenityInfo {
+  id: string;
+  name: string;
+  slug: string;
+  icon?: string;
+  category: string;
 }
 
 interface CabinCardProps {
@@ -30,7 +40,51 @@ interface CabinCardProps {
   };
   priceLoading?: boolean;
   searchParams?: SearchParams;
+  featuredAmenities?: AmenityInfo[];
 }
+
+// Hardcoded translations for cabin card (fallback when CMS translations not available)
+const cardTranslations: Record<string, {
+  dates: string;
+  nextAvailability: string;
+  night: string;
+  nights: string;
+  bookNow: string;
+}> = {
+  en: { dates: 'Dates:', nextAvailability: 'Next Availability:', night: 'night', nights: 'nights', bookNow: 'BOOK NOW' },
+  fr: { dates: 'Dates :', nextAvailability: 'Disponibilité :', night: 'nuit', nights: 'nuits', bookNow: 'RÉSERVER' },
+  de: { dates: 'Daten:', nextAvailability: 'Verfügbarkeit:', night: 'Nacht', nights: 'Nächte', bookNow: 'JETZT BUCHEN' },
+  nl: { dates: 'Data:', nextAvailability: 'Beschikbaarheid:', night: 'nacht', nights: 'nachten', bookNow: 'NU BOEKEN' },
+};
+
+// Format price to remove decimals and put Euro symbol after amount (€200.00 → 200 €)
+const formatPrice = (price: string): string => {
+  // Match currency symbol (before or after, with optional space) and amount
+  const match = price.match(/^([€$£])?\s*(\d+(?:[.,]\d+)?)\s*([€$£])?(.*)$/);
+  if (!match) return price;
+
+  const [, symbolBefore, amount, symbolAfter, suffix] = match;
+  const symbol = symbolBefore || symbolAfter || '€';
+  const numericValue = parseFloat(amount.replace(',', '.'));
+  // Euro symbol goes after the amount (European format)
+  // Don't duplicate the symbol in suffix
+  const cleanSuffix = suffix?.replace(/^\s*[€$£]\s*/, '') || '';
+  return `${Math.round(numericValue)} ${symbol}${cleanSuffix}`;
+};
+
+// Render amenity icon from CMS using Font Awesome 6
+// Icon stored as full class e.g., "fa-solid fa-bath" or legacy "fa-bath"
+const AmenityIcon = ({ icon }: { icon?: string }) => {
+  if (!icon) return null;
+
+  // If icon already has a style prefix (fa-solid, fa-regular, fa-brands), use as-is
+  // Otherwise, add fa-solid prefix for legacy icons stored as just "fa-bath"
+  const iconClass = icon.includes('fa-solid') || icon.includes('fa-regular') || icon.includes('fa-brands')
+    ? icon
+    : icon.startsWith('fa-') ? `fa-solid ${icon}` : `fa-solid fa-${icon}`;
+
+  return <i className={`${iconClass} text-gray-600 text-lg`} />;
+};
 
 const CabinCard: React.FC<CabinCardProps> = ({
   id,
@@ -47,12 +101,17 @@ const CabinCard: React.FC<CabinCardProps> = ({
   promotion,
   priceLoading,
   searchParams,
+  featuredAmenities,
 }) => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const { locale } = useTranslations('cabins');
+
+  // Get hardcoded translations for current locale
+  const ct = cardTranslations[locale] || cardTranslations.en;
 
   // Build cabin URL with search params for pre-filling booking widget
   const buildCabinUrl = () => {
-    const base = `/cabins/${slug || id}`;
+    const base = localizedPath(locale as Locale, `/cabins/${slug || id}`);
     if (!searchParams) return base;
 
     const params = new URLSearchParams();
@@ -164,24 +223,22 @@ const CabinCard: React.FC<CabinCardProps> = ({
             </div>
           </div>
 
-          {/* Amenity Icons */}
-          <div className="flex gap-2 items-center">
-            <svg className="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
-            </svg>
-            <svg className="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
-            </svg>
-            <svg className="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 9.5L12 4l9 5.5M12 4v17m-7-9l7 4.5 7-4.5" />
-            </svg>
-          </div>
+          {/* Amenity Icons - Dynamic from API */}
+          {featuredAmenities && featuredAmenities.length > 0 && (
+            <div className="flex gap-2 items-center">
+              {featuredAmenities.slice(0, 4).map((amenity) => (
+                <AmenityIcon key={amenity.id} icon={amenity.icon} />
+              ))}
+            </div>
+          )}
         </div>
 
         {/* Availability and Price */}
         <div className="flex justify-between items-center mb-3">
           <span className="font-jost font-medium text-[16px] text-gray-600">
-            {availability.includes(' - ') ? 'Dates: ' : 'Next Availability: '}
+            {availability.includes(' - ')
+              ? ct.dates + ' '
+              : ct.nextAvailability + ' '}
             <span className="text-black font-medium">{availability}</span>
           </span>
           <div className="text-right">
@@ -195,15 +252,15 @@ const CabinCard: React.FC<CabinCardProps> = ({
                 <div className="flex items-baseline justify-end gap-2">
                   {originalPrice && promotion && (
                     <span className="font-jost text-[16px] text-gray-400 line-through">
-                      {originalPrice}
+                      {formatPrice(originalPrice)}
                     </span>
                   )}
-                  <span className="font-jost font-medium text-[24px]">{price}</span>
+                  <span className="font-jost font-medium text-[24px]">{formatPrice(price)}</span>
                 </div>
                 <div className="flex items-center justify-end gap-2 mt-1">
                   {nights && (
                     <span className="font-jost text-[12px] text-gray-500">
-                      {nights} {nights === 1 ? 'night' : 'nights'}
+                      {nights} {nights === 1 ? ct.night : ct.nights}
                     </span>
                   )}
                   {promotion && (
@@ -223,7 +280,7 @@ const CabinCard: React.FC<CabinCardProps> = ({
         {/* Book Now Button */}
         <Link href={buildCabinUrl()} className="w-full">
           <button className="w-full py-2.5 px-4 border border-black text-black text-sm font-medium tracking-wider group-hover:bg-[#F49A4A] group-hover:text-white group-hover:border-[#F49A4A] transition-all duration-300">
-            BOOK NOW
+            {ct.bookNow}
           </button>
         </Link>
       </div>
