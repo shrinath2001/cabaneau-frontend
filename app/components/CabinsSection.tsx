@@ -1,8 +1,17 @@
 'use client';
-import { useRef, useState, useEffect } from 'react';
+import { useRef, useState, useEffect, useCallback } from 'react';
 import CabinCard from './CabinCard';
 import { cabins as staticCabins } from '@/app/data/cabins';
 import { apiFetch } from '@/app/lib/api';
+import { useTranslations } from '@/app/providers/TranslationsProvider';
+
+interface AmenityInfo {
+  id: string;
+  name: string;
+  slug: string;
+  icon?: string;
+  category: string;
+}
 
 interface CabinData {
   id: number;
@@ -14,36 +23,70 @@ interface CabinData {
   capacity: string;
   availability: string;
   price: string;
+  featuredAmenities?: AmenityInfo[];
 }
 
-// Format date string (YYYY-MM-DD) to "Jan 15" format
-const formatAvailabilityDate = (dateStr?: string): string => {
-  if (!dateStr) return 'Available';
-
-  const date = new Date(dateStr);
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
-
-  // If the date is today, show "Available now"
-  if (date <= today) {
-    return 'Available now';
-  }
-
-  // Format as "Jan 15"
-  return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+// Locale map for date formatting
+const localeMap: Record<string, string> = {
+  en: 'en-US',
+  fr: 'fr-FR',
+  de: 'de-DE',
+  nl: 'nl-NL',
 };
 
-// Format nightly rate as "€225/night"
-const formatNightlyRate = (rate?: number, currency = 'EUR'): string => {
-  if (!rate) return '';
-  const symbol = currency === 'EUR' ? '€' : currency;
-  return `${symbol}${Math.round(rate)}/night`;
+// Hardcoded translations for cabin section (fallback when CMS translations not available)
+const sectionTranslations: Record<string, {
+  persons: string;
+  available: string;
+  availableNow: string;
+  perNight: string;
+}> = {
+  en: { persons: 'Persons', available: 'Available', availableNow: 'Available now', perNight: '/night' },
+  fr: { persons: 'Personnes', available: 'Disponible', availableNow: 'Disponible maintenant', perNight: '/nuit' },
+  de: { persons: 'Personen', available: 'Verfügbar', availableNow: 'Jetzt verfügbar', perNight: '/Nacht' },
+  nl: { persons: 'Personen', available: 'Beschikbaar', availableNow: 'Nu beschikbaar', perNight: '/nacht' },
 };
 
 const CabinsSection = () => {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const [cabins, setCabins] = useState<CabinData[]>([]);
   const [loading, setLoading] = useState(true);
+  const { t, locale } = useTranslations('homepage');
+
+  // Get hardcoded translations for current locale
+  const st = sectionTranslations[locale] || sectionTranslations.en;
+
+  // Format nightly rate as "225 €/night" (Euro symbol after amount)
+  const formatNightlyRate = useCallback((rate?: number, currency = 'EUR'): string => {
+    if (!rate) return '';
+    const symbol = currency === 'EUR' ? '€' : currency;
+    return `${Math.round(rate)} ${symbol}${st.perNight}`;
+  }, [st.perNight]);
+
+  // Format date string with locale support
+  const formatAvailabilityDate = useCallback((dateStr?: string): string => {
+    if (!dateStr) return st.available;
+
+    const date = new Date(dateStr);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    // If the date is today or in the past, show "Available now"
+    if (date <= today) {
+      return st.availableNow;
+    }
+
+    // Format as "Jan 15" in the user's locale
+    const dateLocale = localeMap[locale] || 'en-US';
+    return date.toLocaleDateString(dateLocale, { month: 'short', day: 'numeric' });
+  }, [locale, st.available, st.availableNow]);
+
+  // Format capacity with translation
+  const formatCapacity = useCallback((capacity?: number | string): string => {
+    if (!capacity) return `2 ${st.persons}`;
+    const maxCapacity = typeof capacity === 'string' ? parseInt(capacity) : capacity;
+    return `2-${maxCapacity} ${st.persons}`;
+  }, [st.persons]);
 
   useEffect(() => {
     const fetchCabins = async () => {
@@ -65,15 +108,17 @@ const CabinsSection = () => {
             title: cabin.name || cabin.title || cabin.slug?.replace(/-/g, ' ').toUpperCase() || `Cabin ${index + 1}`,
             rating: cabin.rating ?? 5,
             area: cabin.squareMeters ? `${cabin.squareMeters}m²` : cabin.area || '',
-            capacity: cabin.capacity ? `2-${cabin.capacity} Persons` : cabin.capacity || '2 Persons',
+            capacity: formatCapacity(cabin.capacity),
             // Use nextAvailableDate from Lodgify if present
-            availability: formatAvailabilityDate(cabin.nextAvailableDate) || cabin.availability || 'Available',
+            availability: formatAvailabilityDate(cabin.nextAvailableDate) || cabin.availability || st.available,
             // Use nightlyRate from Lodgify if present, fallback to basePrice
             price: cabin.nightlyRate
                    ? formatNightlyRate(cabin.nightlyRate, cabin.currency)
                    : cabin.basePrice
-                     ? `€${Number(cabin.basePrice).toFixed(2)}`
+                     ? `${Math.round(Number(cabin.basePrice))} €`
                      : cabin.price || '',
+            // Include featured amenities from API
+            featuredAmenities: cabin.featuredAmenities,
           }));
           setCabins(transformedCabins);
         }
@@ -97,7 +142,7 @@ const CabinsSection = () => {
     };
 
     fetchCabins();
-  }, []);
+  }, [formatAvailabilityDate, formatCapacity, formatNightlyRate, st.available]);
 
   const scrollLeft = () => {
     if (scrollContainerRef.current) {
@@ -136,7 +181,7 @@ const CabinsSection = () => {
             {/* Header with Title and Navigation */}
             <div className="flex justify-center items-center mb-8 md:mb-16 relative px-4 md:px-0">
               <h2 className="font-logga text-[28px] md:text-[42px] font-semibold text-center">
-                OUR CABINES
+                {t('cabins_section.title', 'OUR CABINES')}
               </h2>
 
               {/* Navigation Arrows - Show on mobile and desktop when more than 1 cabin */}
@@ -168,7 +213,7 @@ const CabinsSection = () => {
             <div className="w-full">
               {loading ? (
                 <div className="text-center py-12">
-                  <p className="text-gray-600">Loading cabins...</p>
+                  <p className="text-gray-600">{t('cabins_section.loading', 'Loading cabins...')}</p>
                 </div>
               ) : cabins.length > 1 ? (
                 // Carousel layout - shows 1 card on mobile (centered), 3.5 cards on desktop
@@ -204,7 +249,7 @@ const CabinsSection = () => {
             {/* Discover All Button */}
             <div className="text-center mt-6 md:mt-10 mb-6 md:mb-8 px-4 md:px-0">
               <button className="px-8 py-3 bg-[#495D4D] text-white text-base md:text-lg font-heading font-medium tracking-widest hover:bg-[#2d4a2d] transition-colors">
-                DISCOVER ALL CABINESS
+                {t('cabins_section.button', 'DISCOVER ALL CABINS')}
               </button>
             </div>
           </div>

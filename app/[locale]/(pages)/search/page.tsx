@@ -1,9 +1,139 @@
 'use client';
-import { useEffect, useState, Suspense } from 'react';
+import { useEffect, useState, Suspense, useCallback } from 'react';
 import { useSearchParams } from 'next/navigation';
 import CabinCard from '@/app/components/CabinCard';
 import SearchPageWidget from '@/app/components/SearchPageWidget';
 import { apiFetch } from '@/app/lib/api';
+import { useTranslations } from '@/app/providers/TranslationsProvider';
+
+// Locale map for date formatting
+const localeMap: Record<string, string> = {
+  en: 'en-US',
+  fr: 'fr-FR',
+  de: 'de-DE',
+  nl: 'nl-NL',
+};
+
+// Hardcoded translations for search page (fallback when CMS translations not available)
+const searchTranslations: Record<string, {
+  title: string;
+  subtitle: string;
+  found: string;
+  cabin: string;
+  cabins: string;
+  available: string;
+  noResults: string;
+  noResultsSubtitle: string;
+  persons: string;
+  perNight: string;
+  adult: string;
+  adults: string;
+  child: string;
+  children: string;
+  infant: string;
+  infants: string;
+  pet: string;
+  pets: string;
+  guest: string;
+  guests: string;
+}> = {
+  en: {
+    title: 'Search Results',
+    subtitle: 'Modify your search below to find available cabins',
+    found: 'Found',
+    cabin: 'cabin',
+    cabins: 'cabins',
+    available: 'available',
+    noResults: 'No cabins found',
+    noResultsSubtitle: 'Try adjusting your search dates or number of guests to see more results.',
+    persons: 'Persons',
+    perNight: '/night',
+    adult: 'Adult',
+    adults: 'Adults',
+    child: 'Child',
+    children: 'Children',
+    infant: 'Infant',
+    infants: 'Infants',
+    pet: 'Pet',
+    pets: 'Pets',
+    guest: 'Guest',
+    guests: 'Guests',
+  },
+  fr: {
+    title: 'Résultats de recherche',
+    subtitle: 'Modifiez votre recherche pour trouver des cabanes disponibles',
+    found: 'Trouvé',
+    cabin: 'cabane',
+    cabins: 'cabanes',
+    available: 'disponible(s)',
+    noResults: 'Aucune cabane trouvée',
+    noResultsSubtitle: 'Essayez d\'ajuster vos dates ou le nombre d\'invités.',
+    persons: 'Personnes',
+    perNight: '/nuit',
+    adult: 'Adulte',
+    adults: 'Adultes',
+    child: 'Enfant',
+    children: 'Enfants',
+    infant: 'Bébé',
+    infants: 'Bébés',
+    pet: 'Animal',
+    pets: 'Animaux',
+    guest: 'Invité',
+    guests: 'Invités',
+  },
+  de: {
+    title: 'Suchergebnisse',
+    subtitle: 'Passen Sie Ihre Suche an, um verfügbare Hütten zu finden',
+    found: 'Gefunden',
+    cabin: 'Hütte',
+    cabins: 'Hütten',
+    available: 'verfügbar',
+    noResults: 'Keine Hütten gefunden',
+    noResultsSubtitle: 'Versuchen Sie, Ihre Daten oder Gästeanzahl anzupassen.',
+    persons: 'Personen',
+    perNight: '/Nacht',
+    adult: 'Erwachsener',
+    adults: 'Erwachsene',
+    child: 'Kind',
+    children: 'Kinder',
+    infant: 'Kleinkind',
+    infants: 'Kleinkinder',
+    pet: 'Haustier',
+    pets: 'Haustiere',
+    guest: 'Gast',
+    guests: 'Gäste',
+  },
+  nl: {
+    title: 'Zoekresultaten',
+    subtitle: 'Pas uw zoekopdracht aan om beschikbare hutten te vinden',
+    found: 'Gevonden',
+    cabin: 'hut',
+    cabins: 'hutten',
+    available: 'beschikbaar',
+    noResults: 'Geen hutten gevonden',
+    noResultsSubtitle: 'Probeer uw data of aantal gasten aan te passen.',
+    persons: 'Personen',
+    perNight: '/nacht',
+    adult: 'Volwassene',
+    adults: 'Volwassenen',
+    child: 'Kind',
+    children: 'Kinderen',
+    infant: 'Baby',
+    infants: 'Baby\'s',
+    pet: 'Huisdier',
+    pets: 'Huisdieren',
+    guest: 'Gast',
+    guests: 'Gasten',
+  },
+};
+
+interface AmenityInfo {
+  id: string;
+  name: string;
+  slug: string;
+  icon?: string;
+  category: string;
+}
 
 interface SearchCabin {
   id: string;
@@ -20,6 +150,7 @@ interface SearchCabin {
   lodgifyId?: string;
   petsAllowed?: boolean;
   adultsOnly?: boolean;
+  featuredAmenities?: AmenityInfo[];
 }
 
 interface SearchResponse {
@@ -136,9 +267,20 @@ function SearchResults() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [total, setTotal] = useState(0);
+  const { locale } = useTranslations('search');
+
+  // Get hardcoded translations for current locale
+  const st = searchTranslations[locale] || searchTranslations.en;
 
   // Parse both Lodgify and legacy parameter formats
   const { checkIn, checkOut, guests } = parseSearchParams(searchParams);
+
+  // Format capacity with translation
+  const formatCapacity = useCallback((capacity?: number | string): string => {
+    if (!capacity) return `2 ${st.persons}`;
+    const maxCapacity = typeof capacity === 'string' ? parseInt(capacity) : capacity;
+    return `2-${maxCapacity} ${st.persons}`;
+  }, [st.persons]);
 
   // Fetch quote for a single cabin
   const fetchQuote = async (cabin: SearchCabin): Promise<QuoteResponse | null> => {
@@ -238,11 +380,20 @@ function SearchResults() {
     fetchCabins();
   }, [checkIn, checkOut, guests.total, guests.pets, guests.adults, guests.children, guests.infants]);
 
-  // Format date for display
+  // Format date for display with locale support
   const formatDate = (dateStr: string | null) => {
     if (!dateStr) return '';
     const date = new Date(dateStr);
-    return date.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
+    const dateLocale = localeMap[locale] || 'en-US';
+    return date.toLocaleDateString(dateLocale, { day: '2-digit', month: 'short', year: 'numeric' });
+  };
+
+  // Format short date (e.g., "Jan 10") with locale support
+  const formatShortDate = (dateStr: string | null) => {
+    if (!dateStr) return '';
+    const date = new Date(dateStr);
+    const dateLocale = localeMap[locale] || 'en-US';
+    return date.toLocaleDateString(dateLocale, { month: 'short', day: 'numeric' });
   };
 
   /**
@@ -252,19 +403,19 @@ function SearchResults() {
     const parts: string[] = [];
 
     if (guests.adults > 0) {
-      parts.push(`${guests.adults} ${guests.adults === 1 ? 'Adult' : 'Adults'}`);
+      parts.push(`${guests.adults} ${guests.adults === 1 ? st.adult : st.adults}`);
     }
     if (guests.children > 0) {
-      parts.push(`${guests.children} ${guests.children === 1 ? 'Child' : 'Children'}`);
+      parts.push(`${guests.children} ${guests.children === 1 ? st.child : st.children}`);
     }
     if (guests.infants > 0) {
-      parts.push(`${guests.infants} ${guests.infants === 1 ? 'Infant' : 'Infants'}`);
+      parts.push(`${guests.infants} ${guests.infants === 1 ? st.infant : st.infants}`);
     }
     if (guests.pets > 0) {
-      parts.push(`${guests.pets} ${guests.pets === 1 ? 'Pet' : 'Pets'}`);
+      parts.push(`${guests.pets} ${guests.pets === 1 ? st.pet : st.pets}`);
     }
 
-    return parts.length > 0 ? parts.join(', ') : `${guests.total} ${guests.total === 1 ? 'Guest' : 'Guests'}`;
+    return parts.length > 0 ? parts.join(', ') : `${guests.total} ${guests.total === 1 ? st.guest : st.guests}`;
   };
 
   return (
@@ -272,9 +423,9 @@ function SearchResults() {
       <div className="container mx-auto px-4 py-16">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-4xl font-bold text-center mb-4">Search Results</h1>
+          <h1 className="text-4xl font-bold text-center mb-4">{st.title}</h1>
           <p className="text-center text-gray-600 font-jost">
-            Modify your search below to find available cabins
+            {st.subtitle}
           </p>
         </div>
 
@@ -306,7 +457,7 @@ function SearchResults() {
             {cabins.length > 0 ? (
               <>
                 <p className="text-center text-gray-600 mb-8 font-jost text-lg">
-                  Found {total} {total === 1 ? 'cabin' : 'cabins'} available
+                  {st.found} {total} {total === 1 ? st.cabin : st.cabins} {st.available}
                 </p>
                 <div className="flex flex-wrap justify-center gap-8">
                   {cabins.map((cabin) => {
@@ -317,33 +468,28 @@ function SearchResults() {
                     let promotion: { name: string; amount: number } | undefined;
 
                     if (cabin.quote?.pricing) {
-                      // Show total price from Lodgify quote
+                      // Show total price from Lodgify quote (no decimals, Euro after amount)
                       const currency = cabin.quote.pricing.currency === 'EUR' ? '€' : cabin.quote.pricing.currency;
-                      displayPrice = `${currency}${cabin.quote.pricing.total.toFixed(2)}`;
+                      displayPrice = `${Math.round(cabin.quote.pricing.total)} ${currency}`;
                       nights = cabin.quote.pricing.nights;
 
                       // Show original price and promotion if discount applies
                       if (cabin.quote.pricing.discount) {
-                        originalPrice = `${currency}${cabin.quote.pricing.subtotal.toFixed(2)}`;
+                        originalPrice = `${Math.round(cabin.quote.pricing.subtotal)} ${currency}`;
                         promotion = {
                           name: cabin.quote.pricing.discount.name,
                           amount: cabin.quote.pricing.discount.amount,
                         };
                       }
                     } else if (cabin.basePrice) {
-                      // Fallback to CMS base price per night
-                      displayPrice = `€${Number(cabin.basePrice).toFixed(2)}/night`;
+                      // Fallback to CMS base price per night (no decimals, Euro after amount)
+                      displayPrice = `${Math.round(Number(cabin.basePrice))} €${st.perNight}`;
                     }
 
                     // Format search dates for display (e.g., "Jan 10 - Jan 11")
-                    const formatShortDate = (dateStr: string | null) => {
-                      if (!dateStr) return '';
-                      const date = new Date(dateStr);
-                      return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-                    };
                     const searchDates = checkIn && checkOut
                       ? `${formatShortDate(checkIn)} - ${formatShortDate(checkOut)}`
-                      : 'Available';
+                      : st.available;
 
                     return (
                       <CabinCard
@@ -353,7 +499,7 @@ function SearchResults() {
                         title={cabin.name}
                         rating={5} // Default rating since API doesn't provide it
                         area={cabin.squareMeters ? `${cabin.squareMeters}m²` : ''}
-                        capacity={`2-${cabin.capacity} Persons`}
+                        capacity={formatCapacity(cabin.capacity)}
                         availability={searchDates}
                         price={displayPrice}
                         originalPrice={originalPrice}
@@ -368,6 +514,7 @@ function SearchResults() {
                           infants: searchParams.get('infants') || undefined,
                           pets: searchParams.get('pets') || undefined,
                         }}
+                        featuredAmenities={cabin.featuredAmenities}
                       />
                     );
                   })}
@@ -390,9 +537,9 @@ function SearchResults() {
                     />
                   </svg>
                 </div>
-                <h3 className="text-2xl font-medium text-gray-900 mb-2">No cabins found</h3>
+                <h3 className="text-2xl font-medium text-gray-900 mb-2">{st.noResults}</h3>
                 <p className="text-gray-600">
-                  Try adjusting your search dates or number of guests to see more results.
+                  {st.noResultsSubtitle}
                 </p>
               </div>
             )}

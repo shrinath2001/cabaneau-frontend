@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState, useCallback } from 'react';
 import { getLodgifyLocale } from '@/app/lib/language';
+import { useTranslations } from '@/app/providers/TranslationsProvider';
 
 interface CabinInfo {
   slug: string;
@@ -17,6 +18,22 @@ interface LodgifyWidgetWrapperProps {
     adults: number;
   }) => void;
 }
+
+// Translations for Lodgify widget labels
+const widgetTranslations: Record<string, {
+  checkIn: string;
+  checkOut: string;
+  guests: string;
+  guest: string;
+  bookNow: string;
+  save: string;
+  selectDates: string;
+}> = {
+  en: { checkIn: "Check-in", checkOut: "Check-out", guests: "Guests", guest: "guest", bookNow: "Book Now", save: "Save", selectDates: "Select dates to continue" },
+  fr: { checkIn: "Arrivée", checkOut: "Départ", guests: "Invités", guest: "invité", bookNow: "Réserver", save: "Enregistrer", selectDates: "Sélectionnez les dates" },
+  de: { checkIn: "Anreise", checkOut: "Abreise", guests: "Gäste", guest: "Gast", bookNow: "Jetzt buchen", save: "Speichern", selectDates: "Daten auswählen" },
+  nl: { checkIn: "Inchecken", checkOut: "Uitchecken", guests: "Gasten", guest: "gast", bookNow: "Nu boeken", save: "Opslaan", selectDates: "Selecteer data" },
+};
 
 /**
  * LodgifyWidgetWrapper - Desktop widget with hidden "Book Now" and custom "Save" button
@@ -34,14 +51,13 @@ export default function LodgifyWidgetWrapper({
     adults: number;
   } | null>(null);
   const [canSave, setCanSave] = useState(false);
-  const [languageCode, setLanguageCode] = useState('en');
+  const { locale } = useTranslations();
+  const languageCode = getLodgifyLocale(locale);
   const widgetRef = useRef<HTMLDivElement>(null);
   const observerRef = useRef<MutationObserver | null>(null);
 
-  // Get user's language preference on mount
-  useEffect(() => {
-    setLanguageCode(getLodgifyLocale());
-  }, []);
+  // Get translations for current language
+  const t = widgetTranslations[locale] || widgetTranslations.en;
 
   // Extract params from Lodgify widget's checkout URL
   const extractParamsFromWidget = useCallback(() => {
@@ -190,12 +206,12 @@ export default function LodgifyWidgetWrapper({
           data-new-tab="false"
           data-version="stable"
           data-hide-minimum-price
-          data-check-in-label="Check-in"
-          data-check-out-label="Check-out"
-          data-guests-label="Guests"
-          data-guests-singular-label="{{NumberOfGuests}} guest"
-          data-guests-plural-label="{{NumberOfGuests}} guests"
-          data-book-button-label="Book Now"
+          data-check-in-label={t.checkIn}
+          data-check-out-label={t.checkOut}
+          data-guests-label={t.guests}
+          data-guests-singular-label={`{{NumberOfGuests}} ${t.guest}`}
+          data-guests-plural-label={`{{NumberOfGuests}} ${t.guests.toLowerCase()}`}
+          data-book-button-label={t.bookNow}
         />
       </div>
 
@@ -210,7 +226,7 @@ export default function LodgifyWidgetWrapper({
               : 'bg-gray-200 text-gray-500 cursor-not-allowed'
           }`}
         >
-          {canSave ? 'Save' : 'Select dates to continue'}
+          {canSave ? t.save : t.selectDates}
         </button>
       </div>
     </div>

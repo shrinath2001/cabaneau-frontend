@@ -1,6 +1,7 @@
 'use client';
 
 import { QuoteResponse, formatCurrency } from './hooks/useQuote';
+import { useTranslations } from '@/app/providers/TranslationsProvider';
 
 interface CabinInfo {
   slug: string;
@@ -40,6 +41,8 @@ export default function DesktopBookingCard({
   error,
   onChangeDates,
 }: DesktopBookingCardProps) {
+  const { t } = useTranslations('booking');
+
   // Format dates for display
   const formatDateForDisplay = (dateStr: string): string => {
     const date = new Date(dateStr);
@@ -76,7 +79,7 @@ export default function DesktopBookingCard({
         <div className="grid grid-cols-2 gap-3">
           <div>
             <label className="block text-xs font-medium text-gray-700 mb-1 uppercase">
-              Arrival
+              {t('arrival', 'Arrival')}
             </label>
             <div className="w-full px-3 py-2 border border-gray-300 text-sm bg-gray-50 flex items-center justify-between">
               <span>{formatDateForDisplay(checkIn)}</span>
@@ -97,7 +100,7 @@ export default function DesktopBookingCard({
           </div>
           <div>
             <label className="block text-xs font-medium text-gray-700 mb-1 uppercase">
-              Departure
+              {t('departure', 'Departure')}
             </label>
             <div className="w-full px-3 py-2 border border-gray-300 text-sm bg-gray-50 flex items-center justify-between">
               <span>{formatDateForDisplay(checkOut)}</span>
@@ -124,17 +127,17 @@ export default function DesktopBookingCard({
             onClick={onChangeDates}
             className="text-sm text-[#495D4D] hover:text-[#3d5a3d] underline font-medium"
           >
-            Change dates
+            {t('change_dates', 'Change dates')}
           </button>
         </div>
 
         {/* Guest Display */}
         <div className="flex items-center justify-between py-2">
           <span className="text-sm font-medium text-gray-700 uppercase">
-            Guests
+            {t('guests_label', 'Guests')}
           </span>
           <span className="font-medium text-gray-800">
-            {totalGuests} {totalGuests === 1 ? 'guest' : 'guests'}
+            {totalGuests} {totalGuests === 1 ? t('guest_singular', 'guest') : t('guest_plural', 'guests')}
           </span>
         </div>
 
@@ -158,14 +161,14 @@ export default function DesktopBookingCard({
           <div className="border-t border-gray-300 pt-4">
             <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-4">
               <p className="text-red-600 font-medium text-sm">
-                {quote?.unavailableReason || error || 'Selected dates are not available'}
+                {quote?.unavailableReason || error || t('dates_not_available', 'Selected dates are not available')}
               </p>
             </div>
             <button
               onClick={onChangeDates}
               className="w-full bg-gray-400 text-white py-4 px-6 text-base font-bold tracking-wide uppercase font-jost"
             >
-              SELECT DIFFERENT DATES
+              {t('select_different_dates', 'SELECT DIFFERENT DATES')}
             </button>
           </div>
         )}
@@ -178,7 +181,7 @@ export default function DesktopBookingCard({
               <div className="flex justify-between items-center">
                 <span className="text-sm text-gray-600">
                   {formatCurrency(quote.pricing.nightlyRate, quote.pricing.currency)} ×{' '}
-                  {quote.pricing.nights} night{quote.pricing.nights !== 1 ? 's' : ''}
+                  {quote.pricing.nights} {quote.pricing.nights !== 1 ? t('nights_plural', 'nights') : t('night_singular', 'night')}
                 </span>
                 <span className="text-sm text-gray-800">
                   {formatCurrency(quote.pricing.subtotal, quote.pricing.currency)}
@@ -218,7 +221,7 @@ export default function DesktopBookingCard({
             {/* Total */}
             <div className="flex justify-between items-center py-3 border-t border-gray-200">
               <span className="font-jost font-semibold text-base text-gray-800">
-                Total
+                {t('total', 'Total')}
               </span>
               <span className="font-jost font-bold text-lg text-gray-800">
                 {formatCurrency(quote.pricing.total, quote.pricing.currency)}
@@ -230,7 +233,7 @@ export default function DesktopBookingCard({
               onClick={handleBooking}
               className="w-full bg-[#495D4D] text-white py-4 px-6 text-base font-bold tracking-wide hover:bg-[#3d5a3d] transition uppercase font-jost mt-4"
             >
-              BOOK YOUR STAY
+              {t('book_your_stay', 'BOOK YOUR STAY')}
             </button>
           </div>
         )}
@@ -242,14 +245,14 @@ export default function DesktopBookingCard({
             <div className="space-y-2 mb-4">
               {quote.minPrice && (
                 <div className="flex justify-between items-center">
-                  <span className="text-sm text-gray-600">Starting from</span>
+                  <span className="text-sm text-gray-600">{t('starting_from', 'Starting from')}</span>
                   <span className="text-sm text-gray-800 font-medium">
-                    {formatCurrency(quote.minPrice, quote.currency || 'EUR')}/night
+                    {formatCurrency(quote.minPrice, quote.currency || 'EUR')}/{t('night_singular', 'night')}
                   </span>
                 </div>
               )}
               <p className="text-xs text-gray-500">
-                Final price will be shown on the booking page
+                {t('final_price_on_booking', 'Final price will be shown on the booking page')}
               </p>
             </div>
 
@@ -258,7 +261,7 @@ export default function DesktopBookingCard({
               onClick={handleBooking}
               className="w-full bg-[#495D4D] text-white py-4 px-6 text-base font-bold tracking-wide hover:bg-[#3d5a3d] transition uppercase font-jost mt-4"
             >
-              VIEW PRICING & BOOK
+              {t('view_pricing_book', 'VIEW PRICING & BOOK')}
             </button>
           </div>
         )}

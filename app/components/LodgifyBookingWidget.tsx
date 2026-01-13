@@ -7,6 +7,14 @@ interface LodgifyBookingWidgetProps {
   languageCode?: string;
 }
 
+// Translations for Lodgify widget labels
+const widgetTranslations: Record<string, { checkIn: string; checkOut: string; guest: string; guests: string }> = {
+  en: { checkIn: "Check-in", checkOut: "Check-out", guest: "guest", guests: "guests" },
+  fr: { checkIn: "Arrivée", checkOut: "Départ", guest: "invité", guests: "invités" },
+  de: { checkIn: "Anreise", checkOut: "Abreise", guest: "Gast", guests: "Gäste" },
+  nl: { checkIn: "Inchecken", checkOut: "Uitchecken", guest: "gast", guests: "gasten" },
+};
+
 /**
  * Lodgify Portable Search Bar Widget
  *
@@ -27,6 +35,9 @@ const LodgifyBookingWidget = ({
   const [searchPageUrl, setSearchPageUrl] = useState("/search");
   // Convert language code to Lodgify-compatible locale (search widget only supports 'en', not 'en-GB')
   const lodgifyLocale = getLodgifySearchLocale(languageCode);
+
+  // Get translations for current language
+  const t = widgetTranslations[languageCode] || widgetTranslations.en;
 
   useEffect(() => {
     // Set the full search page URL using current origin
@@ -579,11 +590,11 @@ const LodgifyBookingWidget = ({
           data-new-tab="false"
           data-version="stable"
           data-hide-location
-          data-dates-check-in-label="Check-in"
-          data-dates-check-out-label="Check-out"
-          data-guests-counter-label="Guests"
-          data-guests-input-singular-label="{{NumberOfGuests}} guest"
-          data-guests-input-plural-label="{{NumberOfGuests}} guests"
+          data-dates-check-in-label={t.checkIn}
+          data-dates-check-out-label={t.checkOut}
+          data-guests-counter-label={t.guests}
+          data-guests-input-singular-label={`{{NumberOfGuests}} ${t.guest}`}
+          data-guests-input-plural-label={`{{NumberOfGuests}} ${t.guests}`}
           data-search-button-label="Search"
           data-dates-input-min-stay-tooltip-text='{"one":"Minimum {minStay} night","other":"Minimum {minStay} nights"}'
         />

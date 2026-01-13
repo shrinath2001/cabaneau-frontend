@@ -12,6 +12,64 @@ interface LodgifyBookNowWidgetProps {
   adults?: string;
 }
 
+// Translations for Lodgify Book Now widget labels
+const widgetTranslations: Record<string, {
+  checkIn: string;
+  checkOut: string;
+  guests: string;
+  guest: string;
+  totalPrice: string;
+  selectDates: string;
+  from: string;
+  perNight: string;
+  bookNow: string;
+}> = {
+  en: {
+    checkIn: "Check-in",
+    checkOut: "Check-out",
+    guests: "Guests",
+    guest: "guest",
+    totalPrice: "Total price:",
+    selectDates: "Select dates to see total price",
+    from: "From",
+    perNight: "per night",
+    bookNow: "Book Now",
+  },
+  fr: {
+    checkIn: "Arrivée",
+    checkOut: "Départ",
+    guests: "Invités",
+    guest: "invité",
+    totalPrice: "Prix total :",
+    selectDates: "Sélectionnez les dates pour voir le prix",
+    from: "À partir de",
+    perNight: "par nuit",
+    bookNow: "Réserver",
+  },
+  de: {
+    checkIn: "Anreise",
+    checkOut: "Abreise",
+    guests: "Gäste",
+    guest: "Gast",
+    totalPrice: "Gesamtpreis:",
+    selectDates: "Daten auswählen für Gesamtpreis",
+    from: "Ab",
+    perNight: "pro Nacht",
+    bookNow: "Jetzt buchen",
+  },
+  nl: {
+    checkIn: "Inchecken",
+    checkOut: "Uitchecken",
+    guests: "Gasten",
+    guest: "gast",
+    totalPrice: "Totaalprijs:",
+    selectDates: "Selecteer data voor totaalprijs",
+    from: "Vanaf",
+    perNight: "per nacht",
+    bookNow: "Nu boeken",
+  },
+};
+
 /**
  * Lodgify Book Now Box Widget for Cabin Detail Pages
  *
@@ -31,6 +89,8 @@ const LodgifyBookNowWidget = ({
   const widgetRef = useRef<HTMLDivElement>(null);
   // Convert language code to Lodgify-compatible locale
   const lodgifyLocale = getLodgifyLocale(languageCode);
+  // Get translations for current language
+  const t = widgetTranslations[languageCode] || widgetTranslations.en;
 
   // Convert ISO date (YYYY-MM-DD) to Lodgify format (YYYYMMDD)
   const formatForLodgify = (date: string | undefined) => {
@@ -121,17 +181,17 @@ const LodgifyBookNowWidget = ({
         {...(arrival && { 'data-arrival': formatForLodgify(arrival) })}
         {...(departure && { 'data-departure': formatForLodgify(departure) })}
         {...(adults && adults !== '0' && { 'data-adults': adults })}
-        // Labels
-        data-check-in-label="Check-in"
-        data-check-out-label="Check-out"
-        data-guests-label="Guests"
-        data-guests-singular-label="{{NumberOfGuests}} guest"
-        data-guests-plural-label="{{NumberOfGuests}} guests"
-        data-total-price-label="Total price:"
-        data-select-dates-to-see-price-label="Select dates to see total price"
-        data-minimum-price-per-night-first-label="From"
-        data-minimum-price-per-night-second-label="per night"
-        data-book-button-label="Book Now"
+        // Labels (translated)
+        data-check-in-label={t.checkIn}
+        data-check-out-label={t.checkOut}
+        data-guests-label={t.guests}
+        data-guests-singular-label={`{{NumberOfGuests}} ${t.guest}`}
+        data-guests-plural-label={`{{NumberOfGuests}} ${t.guests.toLowerCase()}`}
+        data-total-price-label={t.totalPrice}
+        data-select-dates-to-see-price-label={t.selectDates}
+        data-minimum-price-per-night-first-label={t.from}
+        data-minimum-price-per-night-second-label={t.perNight}
+        data-book-button-label={t.bookNow}
       />
     </>
   );

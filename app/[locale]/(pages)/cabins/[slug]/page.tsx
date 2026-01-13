@@ -12,6 +12,15 @@ import ExtraServicesSection from './components/ExtraServicesSection';
 import SleepingAreasSection from './components/SleepingAreasSection';
 import { cabins as staticCabins } from '@/app/data/cabins';
 import { apiFetch } from '@/app/lib/api';
+import { useTranslations } from '@/app/providers/TranslationsProvider';
+
+interface AmenityInfo {
+  id: string;
+  name: string;
+  slug: string;
+  icon?: string;
+  category: string;
+}
 
 interface CabinDetails {
   id: string;
@@ -35,12 +44,15 @@ interface CabinDetails {
   latitude?: number;
   longitude?: number;
   isActive: boolean;
+  featuredAmenities?: AmenityInfo[];
+  additionalAmenities?: AmenityInfo[];
 }
 
 const SingleCabinPage = () => {
   const params = useParams();
   const searchParams = useSearchParams();
   const slug = params.slug as string;
+  const { t } = useTranslations('cabin');
 
   const [cabin, setCabin] = useState<CabinDetails | null>(null);
   const [loading, setLoading] = useState(true);
@@ -145,9 +157,9 @@ const SingleCabinPage = () => {
     return (
       <div className="container mx-auto px-4 py-16">
         <div className="text-center">
-          <p className="text-red-600">Error loading cabin details</p>
+          <p className="text-red-600">{t('detail.error_loading', 'Error loading cabin details')}</p>
           <Link href="/cabins" className="text-blue-600 hover:underline mt-4 inline-block">
-            Back to all cabins
+            {t('detail.back_to_cabins', 'Back to all cabins')}
           </Link>
         </div>
       </div>
@@ -163,7 +175,7 @@ const SingleCabinPage = () => {
             <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
             </svg>
-            BACK TO ALL CABINES
+            {t('detail.back_to_all', 'BACK TO ALL CABINES')}
           </Link>
         </div>
 
@@ -192,36 +204,51 @@ const SingleCabinPage = () => {
             {/* Cabin Details Title */}
             <div className="mb-4 md:mb-6">
               <h1 className="font-jost font-medium text-[14px] md:text-[20px] lg:text-[24px] mb-3 md:mb-4 uppercase tracking-wide" style={{ color: '#212121' }}>
-                {`${cabin.capacity} GUESTS · ${cabin.bedrooms} BEDROOM${cabin.bedrooms > 1 ? 'S' : ''} · ${cabin.bathrooms} BATHROOM${cabin.bathrooms > 1 ? 'S' : ''} · ${cabin.name?.toUpperCase() || 'JACUZZI'} · SAUNA`}
+                {`${cabin.capacity} ${t('detail.guests', 'GUESTS')} · ${cabin.bedrooms} ${cabin.bedrooms > 1 ? t('detail.bedrooms', 'BEDROOMS') : t('detail.bedroom', 'BEDROOM')} · ${cabin.bathrooms} ${cabin.bathrooms > 1 ? t('detail.bathrooms', 'BATHROOMS') : t('detail.bathroom', 'BATHROOM')} · ${cabin.name?.toUpperCase() || t('amenities.jacuzzi', 'JACUZZI')} · ${t('amenities.sauna', 'SAUNA')}`}
               </h1>
 
-              {/* Quick Amenities Icons Row */}
-              <div className="flex flex-wrap items-center gap-4 md:gap-6 mb-4 md:mb-6 text-[11px] md:text-sm text-gray-700">
-                <div className="flex items-center gap-1.5">
-                  <svg className="w-4 h-4 md:w-5 md:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.111 16.404a5.5 5.5 0 017.778 0M12 20h.01m-7.08-7.071c3.904-3.905 10.236-3.905 14.141 0M1.394 9.393c5.857-5.857 15.355-5.857 21.213 0" />
-                  </svg>
-                  <span className="font-medium uppercase">WiFi</span>
+              {/* Quick Amenities Icons Row - Show featured amenities */}
+              {cabin.featuredAmenities && cabin.featuredAmenities.length > 0 && (
+                <div className="flex flex-wrap items-center gap-4 md:gap-6 mb-4 md:mb-6 text-[11px] md:text-sm text-gray-700">
+                  {cabin.featuredAmenities.slice(0, 4).map((amenity) => {
+                    // Support both new format (fa-solid fa-bath) and legacy (fa-bath)
+                    const iconClass = amenity.icon
+                      ? (amenity.icon.includes('fa-solid') || amenity.icon.includes('fa-regular') || amenity.icon.includes('fa-brands')
+                          ? amenity.icon
+                          : amenity.icon.startsWith('fa-') ? `fa-solid ${amenity.icon}` : `fa-solid fa-${amenity.icon}`)
+                      : null;
+                    return (
+                      <div key={amenity.id} className="flex items-center gap-1.5">
+                        {iconClass ? (
+                          <i className={`${iconClass} text-base md:text-lg`}></i>
+                        ) : (
+                          <svg className="w-4 h-4 md:w-5 md:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                          </svg>
+                        )}
+                        <span className="font-medium uppercase">{amenity.name}</span>
+                      </div>
+                    );
+                  })}
                 </div>
-                <div className="flex items-center gap-1.5">
-                  <svg className="w-4 h-4 md:w-5 md:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
-                  </svg>
-                  <span className="font-medium uppercase">Bedroom</span>
+              )}
+              {/* Fallback when no featured amenities from API */}
+              {(!cabin.featuredAmenities || cabin.featuredAmenities.length === 0) && (
+                <div className="flex flex-wrap items-center gap-4 md:gap-6 mb-4 md:mb-6 text-[11px] md:text-sm text-gray-700">
+                  <div className="flex items-center gap-1.5">
+                    <svg className="w-4 h-4 md:w-5 md:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.111 16.404a5.5 5.5 0 017.778 0M12 20h.01m-7.08-7.071c3.904-3.905 10.236-3.905 14.141 0M1.394 9.393c5.857-5.857 15.355-5.857 21.213 0" />
+                    </svg>
+                    <span className="font-medium uppercase">{t('amenities.wifi', 'WiFi')}</span>
+                  </div>
+                  <div className="flex items-center gap-1.5">
+                    <svg className="w-4 h-4 md:w-5 md:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 18.657A8 8 0 016.343 7.343S7 9 9 10c0-2 .5-5 2.986-7C14 5 16.09 5.777 17.656 7.343A7.975 7.975 0 0120 13a7.975 7.975 0 01-2.343 5.657z" />
+                    </svg>
+                    <span className="font-medium uppercase">{t('amenities.private_sauna', 'Private Sauna')}</span>
+                  </div>
                 </div>
-                <div className="flex items-center gap-1.5">
-                  <svg className="w-4 h-4 md:w-5 md:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-                  </svg>
-                  <span className="font-medium uppercase">Washer</span>
-                </div>
-                <div className="flex items-center gap-1.5">
-                  <svg className="w-4 h-4 md:w-5 md:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 18.657A8 8 0 016.343 7.343S7 9 9 10c0-2 .5-5 2.986-7C14 5 16.09 5.777 17.656 7.343A7.975 7.975 0 0120 13a7.975 7.975 0 01-2.343 5.657z" />
-                  </svg>
-                  <span className="font-medium uppercase">Private Sauna</span>
-                </div>
-              </div>
+              )}
 
               {/* Description */}
               <p className="font-raleway font-normal leading-relaxed text-[13px] md:text-[16px] mb-6 md:mb-8 text-gray-700">
@@ -230,7 +257,10 @@ const SingleCabinPage = () => {
             </div>
 
             {/* Amenities Section Component */}
-            <AmenitiesSection />
+            <AmenitiesSection
+              additionalAmenities={cabin.additionalAmenities}
+              featuredAmenities={cabin.featuredAmenities}
+            />
 
             {/* Extra Services Section Component */}
             <ExtraServicesSection />
