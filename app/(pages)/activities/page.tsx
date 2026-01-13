@@ -5,6 +5,7 @@ import { Activity } from "@/app/data/activities";
 import ActivityListCard from "@/app/components/ActivityListCard";
 import ActivityDetailModal from "@/app/components/ActivityDetailModal";
 import { apiFetch } from "@/app/lib/api";
+import { useTranslations } from "@/app/providers/TranslationsProvider";
 
 interface APIActivity {
   id: string;
@@ -40,6 +41,7 @@ function transformActivity(apiActivity: APIActivity, index: number): Activity {
 }
 
 export default function ActivitiesPage() {
+  const { t } = useTranslations("activities");
   const [activeTab, setActiveTab] = useState<"activities" | "restaurants">(
     "activities"
   );
@@ -139,7 +141,7 @@ export default function ActivitiesPage() {
           ></div>
         </div>
         <h1 className="relative z-10 text-white text-4xl md:text-5xl lg:text-6xl font-custom text-center px-4">
-          WHAT TO DO? WHERE TO GO?
+          {t("page.hero_title", "WHAT TO DO? WHERE TO GO?")}
         </h1>
       </section>
 
@@ -158,7 +160,7 @@ export default function ActivitiesPage() {
                 color: activeTab === "activities" ? "#F49A4A" : "#495D4D",
               }}
             >
-              ACTIVITIES
+              {t("tabs.activities", "ACTIVITIES")}
               {activeTab === "activities" && (
                 <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#F49A4A]"></span>
               )}
@@ -170,7 +172,7 @@ export default function ActivitiesPage() {
                 color: activeTab === "restaurants" ? "#F49A4A" : "#495D4D",
               }}
             >
-              RESTAURANTS
+              {t("tabs.restaurants", "RESTAURANTS")}
               {activeTab === "restaurants" && (
                 <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#F49A4A]"></span>
               )}
@@ -184,14 +186,14 @@ export default function ActivitiesPage() {
         <div className="container mx-auto px-4 max-w-6xl">
           {loading ? (
             <div className="text-center py-12">
-              <p className="text-gray-600">Loading activities...</p>
+              <p className="text-gray-600">{t("page.loading", "Loading activities...")}</p>
             </div>
           ) : currentItems.length === 0 ? (
             <div className="text-center py-12">
               <p className="text-gray-600 text-lg">
                 {activeTab === "activities"
-                  ? "Activities not found"
-                  : "Restaurants not found"}
+                  ? t("page.activities_not_found", "Activities not found")
+                  : t("page.restaurants_not_found", "Restaurants not found")}
               </p>
             </div>
           ) : (
@@ -227,15 +229,15 @@ export default function ActivitiesPage() {
         <h2 className="relative z-10 text-white text-3xl md:text-4xl lg:text-5xl font-custom text-center px-4 mb-6">
           {activeTab === "activities" ? (
             <>
-              DISCOVER THE RESTAURANTS
+              {t("discover.restaurants_title", "DISCOVER THE RESTAURANTS")}
               <br />
-              AROUND
+              {t("discover.around", "AROUND")}
             </>
           ) : (
             <>
-              DISCOVER THE ACTIVITIES
+              {t("discover.activities_title", "DISCOVER THE ACTIVITIES")}
               <br />
-              AROUND
+              {t("discover.around", "AROUND")}
             </>
           )}
         </h2>
@@ -253,7 +255,7 @@ export default function ActivitiesPage() {
             fontWeight: 500,
           }}
         >
-          DISCOVER
+          {t("discover.button", "DISCOVER")}
         </button>
       </section>
 

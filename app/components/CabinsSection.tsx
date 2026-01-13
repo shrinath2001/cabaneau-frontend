@@ -3,6 +3,7 @@ import { useRef, useState, useEffect } from 'react';
 import CabinCard from './CabinCard';
 import { cabins as staticCabins } from '@/app/data/cabins';
 import { apiFetch } from '@/app/lib/api';
+import { useTranslations } from '@/app/providers/TranslationsProvider';
 
 interface CabinData {
   id: number;
@@ -44,6 +45,7 @@ const CabinsSection = () => {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const [cabins, setCabins] = useState<CabinData[]>([]);
   const [loading, setLoading] = useState(true);
+  const { t } = useTranslations('homepage');
 
   useEffect(() => {
     const fetchCabins = async () => {
@@ -136,7 +138,7 @@ const CabinsSection = () => {
             {/* Header with Title and Navigation */}
             <div className="flex justify-center items-center mb-8 md:mb-16 relative px-4 md:px-0">
               <h2 className="font-logga text-[28px] md:text-[42px] font-semibold text-center">
-                OUR CABINES
+                {t('cabins_section.title', 'OUR CABINES')}
               </h2>
 
               {/* Navigation Arrows - Show on mobile and desktop when more than 1 cabin */}
@@ -168,7 +170,7 @@ const CabinsSection = () => {
             <div className="w-full">
               {loading ? (
                 <div className="text-center py-12">
-                  <p className="text-gray-600">Loading cabins...</p>
+                  <p className="text-gray-600">{t('cabins_section.loading', 'Loading cabins...')}</p>
                 </div>
               ) : cabins.length > 1 ? (
                 // Carousel layout - shows 1 card on mobile (centered), 3.5 cards on desktop
@@ -204,7 +206,7 @@ const CabinsSection = () => {
             {/* Discover All Button */}
             <div className="text-center mt-6 md:mt-10 mb-6 md:mb-8 px-4 md:px-0">
               <button className="px-8 py-3 bg-[#495D4D] text-white text-base md:text-lg font-heading font-medium tracking-widest hover:bg-[#2d4a2d] transition-colors">
-                DISCOVER ALL CABINESS
+                {t('cabins_section.button', 'DISCOVER ALL CABINS')}
               </button>
             </div>
           </div>

@@ -19,6 +19,7 @@ const Header = () => {
   const [selectedLanguage, setSelectedLanguage] = useState<string>(DEFAULT_LANGUAGE);
   const [languages, setLanguages] = useState<Language[]>([]);
   const { t } = useTranslations('navigation');
+  const { t: tHome } = useTranslations('homepage');
 
   // Scroll to top when homepage loads (fixes SPA navigation scroll issue)
   useEffect(() => {
@@ -149,7 +150,7 @@ const Header = () => {
                 href="/book-now"
                 className="bg-[#495D4D] text-white px-3 py-2 flex items-center justify-center font-heading font-medium text-xs hover:bg-[#3d5a3d] transition"
               >
-                BOOK NOW
+                {t('button.book_now', 'Book Now')}
               </Link>
 
               {/* Language Selector */}
@@ -366,9 +367,9 @@ const Header = () => {
         </div>
       </header>
       <div className="absolute inset-0 flex flex-col items-center justify-center text-white text-center px-4 md:px-4 z-10 pt-12 md:pt-0">
-        <p className="font-jost font-normal text-[12px] uppercase mb-2 md:mb-4" style={{ letterSpacing: '0.15px' }}>Luxury Cabines with Private Wellness</p>
-        <h1 className="font-logga font-normal text-[32px] md:text-[68px] uppercase leading-tight">Sleep, <span className="text-customyellow">Eat & Relax</span></h1>
-        <h2 className="font-logga font-normal text-[32px] md:text-[68px] uppercase mb-4 md:mb-12">Above the Trees</h2>
+        <p className="font-jost font-normal text-[12px] uppercase mb-2 md:mb-4" style={{ letterSpacing: '0.15px' }}>{tHome('hero.subtitle', 'Luxury Cabines with Private Wellness')}</p>
+        <h1 className="font-logga font-normal text-[32px] md:text-[68px] uppercase leading-tight">{tHome('hero.title_sleep', 'Sleep,')} <span className="text-customyellow">{tHome('hero.title_highlight', 'Eat & Relax')}</span></h1>
+        <h2 className="font-logga font-normal text-[32px] md:text-[68px] uppercase mb-4 md:mb-12">{tHome('hero.title_above', 'Above the Trees')}</h2>
 
         {/* Lodgify Search Widget - handles all booking rules */}
         <LodgifyBookingWidget languageCode={selectedLanguage} />

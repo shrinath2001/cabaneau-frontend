@@ -4,12 +4,14 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
+import { useTranslations } from '@/app/providers/TranslationsProvider';
 
 const SearchForm = () => {
   const [checkIn, setCheckIn] = useState<Date | null>(null);
   const [checkOut, setCheckOut] = useState<Date | null>(null);
   const [guests, setGuests] = useState('');
   const router = useRouter();
+  const { t } = useTranslations('search');
 
   const formatDate = (date: Date | null) => {
     if (!date) return '';
@@ -22,14 +24,14 @@ const SearchForm = () => {
   const handleSearch = () => {
     // Validate all required fields are filled
     if (!checkIn || !checkOut || !guests) {
-      alert('Please fill in all fields: Check-in date, Check-out date, and Number of guests');
+      alert(t('validation.fill_all_fields', 'Please fill in all fields: Check-in date, Check-out date, and Number of guests'));
       return;
     }
 
     // Validate guests is a positive number
     const guestsNum = parseInt(guests, 10);
     if (isNaN(guestsNum) || guestsNum < 1) {
-      alert('Please enter a valid number of guests (at least 1)');
+      alert(t('validation.valid_guests', 'Please enter a valid number of guests (at least 1)'));
       return;
     }
 
@@ -53,7 +55,7 @@ const SearchForm = () => {
         <DatePicker
           selected={checkIn}
           onChange={(date) => setCheckIn(date)}
-          placeholderText="Enter Date..."
+          placeholderText={t('placeholder.enter_date', 'Enter Date...')}
           minDate={new Date()}
           className="bg-transparent text-white placeholder-white/90 outline-none font-jost text-[16px] w-full cursor-pointer"
           dateFormat="dd/MM/yyyy"
@@ -70,7 +72,7 @@ const SearchForm = () => {
           type="number"
           value={guests}
           onChange={(e) => setGuests(e.target.value)}
-          placeholder="Total People"
+          placeholder={t('placeholder.total_people', 'Total People')}
           min="1"
           className="bg-transparent text-white placeholder-white/90 outline-none font-jost text-[16px] w-full"
         />
@@ -83,7 +85,7 @@ const SearchForm = () => {
         </svg>
         <input
           type="text"
-          placeholder="Cabins"
+          placeholder={t('placeholder.cabins', 'Cabins')}
           className="bg-transparent text-white placeholder-white/90 outline-none font-jost text-[16px] w-full"
         />
       </div>
@@ -96,7 +98,7 @@ const SearchForm = () => {
         <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
         </svg>
-        <span className="text-white font-jost text-[16px] md:hidden">Search</span>
+        <span className="text-white font-jost text-[16px] md:hidden">{t('button.search', 'Search')}</span>
       </button>
     </div>
   );

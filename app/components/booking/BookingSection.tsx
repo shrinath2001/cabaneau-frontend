@@ -6,6 +6,7 @@ import MobileStickyBar from './MobileStickyBar';
 import MobileBottomSheet from './MobileBottomSheet';
 import DesktopBookingCard from './DesktopBookingCard';
 import DesktopBookingModal from './DesktopBookingModal';
+import { useTranslations } from '@/app/providers/TranslationsProvider';
 
 interface CabinInfo {
   slug: string;
@@ -47,6 +48,7 @@ export default function BookingSection({
   searchParams,
   mode,
 }: BookingSectionProps) {
+  const { t } = useTranslations('booking');
   const [showBottomSheet, setShowBottomSheet] = useState(false);
   const [showDesktopModal, setShowDesktopModal] = useState(false);
 
@@ -165,13 +167,13 @@ export default function BookingSection({
 
         <div className="p-4 md:p-6 space-y-4">
           <p className="text-sm text-gray-600">
-            Select your dates to see availability and pricing
+            {t('select_dates_message', 'Select your dates to see availability and pricing')}
           </p>
           <button
             onClick={() => setShowDesktopModal(true)}
             className="w-full bg-[#F49A4A] hover:bg-[#e08a3a] text-white font-semibold py-3 px-6 transition-colors"
           >
-            Check Availability
+            {t('check_availability', 'Check Availability')}
           </button>
         </div>
       </div>

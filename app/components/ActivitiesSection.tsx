@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import ActivityCard from './ActivityCard';
 import { apiFetch } from '@/app/lib/api';
+import { useTranslations } from '@/app/providers/TranslationsProvider';
 
 interface ActivityData {
   imageSrc: string;
@@ -13,6 +14,7 @@ interface ActivityData {
 const ActivitiesSection = () => {
   const [activities, setActivities] = useState<ActivityData[]>([]);
   const [loading, setLoading] = useState(true);
+  const { t } = useTranslations('homepage');
 
   useEffect(() => {
     const fetchActivities = async () => {
@@ -46,14 +48,14 @@ const ActivitiesSection = () => {
     <section className="py-6 md:py-5 px-4 md:px-20 bg-white md:mt-12">
       <div className="container mx-auto">
         <div className="max-w-[1390px] mx-auto">
-          <h2 className="font-logga text-[28px] md:text-[42px] font-semibold text-center mb-8 md:mb-16">ACTIVITIES IN THE REGION</h2>
+          <h2 className="font-logga text-[28px] md:text-[42px] font-semibold text-center mb-8 md:mb-16">{t('activities_section.title', 'ACTIVITIES IN THE REGION')}</h2>
           {loading ? (
             <div className="text-center py-12">
-              <p className="text-gray-600">Loading activities...</p>
+              <p className="text-gray-600">{t('activities_section.loading', 'Loading activities...')}</p>
             </div>
           ) : activities.length === 0 ? (
             <div className="text-center py-12">
-              <p className="text-gray-600 text-lg">Activities not found</p>
+              <p className="text-gray-600 text-lg">{t('activities_section.not_found', 'Activities not found')}</p>
             </div>
           ) : (
             <div className="flex flex-col md:flex-row gap-[18px] md:gap-3 justify-between">
@@ -65,7 +67,7 @@ const ActivitiesSection = () => {
           <div className="text-center mt-6 md:mt-10 mb-6 md:mb-8">
             <Link href="/activities">
               <button className="py-3 px-6 bg-[#495D4D] text-white text-base md:text-lg font-heading font-medium tracking-widest hover:bg-[#2d4a2d] transition-colors">
-                DISCOVER ALL ACTIVITIES
+                {t('activities_section.button', 'DISCOVER ALL ACTIVITIES')}
               </button>
             </Link>
           </div>

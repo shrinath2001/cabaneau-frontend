@@ -1,6 +1,7 @@
 'use client';
 
 import { QuoteResponse, formatCurrency, formatDateRange } from './hooks/useQuote';
+import { useTranslations } from '@/app/providers/TranslationsProvider';
 
 interface MobileStickyBarProps {
   hasDateParams: boolean;
@@ -26,6 +27,8 @@ export default function MobileStickyBar({
   onCheckAvailability,
   onChangeDates,
 }: MobileStickyBarProps) {
+  const { t } = useTranslations('booking');
+
   // Mode 1: No dates selected - show "Check Availability"
   if (!hasDateParams) {
     return (
@@ -33,14 +36,14 @@ export default function MobileStickyBar({
         <div className="flex items-center justify-between px-5 py-4">
           <div className="flex flex-col">
             <span className="text-base font-medium text-gray-900">
-              Add dates for prices
+              {t('add_dates_for_prices', 'Add dates for prices')}
             </span>
           </div>
           <button
             onClick={onCheckAvailability}
             className="bg-[#F49A4A] hover:bg-[#e08a3a] text-white font-semibold py-3 px-6 transition-colors"
           >
-            Check Availability
+            {t('check_availability', 'Check Availability')}
           </button>
         </div>
       </div>
@@ -76,17 +79,17 @@ export default function MobileStickyBar({
         <div className="flex items-center justify-between px-5 py-4">
           <div className="flex flex-col">
             <span className="text-base font-medium text-red-600">
-              Not Available
+              {t('not_available', 'Not Available')}
             </span>
             <span className="text-sm text-gray-500">
-              {quote?.unavailableReason || error || 'Selected dates are not available'}
+              {quote?.unavailableReason || error || t('dates_not_available', 'Selected dates are not available')}
             </span>
           </div>
           <button
             onClick={onCheckAvailability}
             className="bg-gray-400 text-white font-semibold py-3 px-6"
           >
-            Change Dates
+            {t('change_dates', 'Change Dates')}
           </button>
         </div>
       </div>
@@ -113,14 +116,14 @@ export default function MobileStickyBar({
               )}
             </div>
             <span className="text-sm text-gray-500">
-              For {pricing.nights} night{pricing.nights !== 1 ? 's' : ''} · {formatDateRange(checkIn, checkOut)}
+              {t('for', 'For')} {pricing.nights} {pricing.nights !== 1 ? t('nights_plural', 'nights') : t('night_singular', 'night')} · {formatDateRange(checkIn, checkOut)}
             </span>
             {onChangeDates && (
               <button
                 onClick={onChangeDates}
                 className="text-xs text-[#495D4D] hover:text-[#3d5a3d] underline text-left mt-1"
               >
-                Change dates
+                {t('change_dates', 'Change dates')}
               </button>
             )}
           </div>
@@ -128,7 +131,7 @@ export default function MobileStickyBar({
             onClick={handleReserve}
             className="bg-[#495d4d] hover:bg-[#3a4a3e] text-white font-semibold py-3 px-6 transition-colors"
           >
-            Reserve
+            {t('reserve', 'Reserve')}
           </button>
         </div>
       </div>
@@ -144,15 +147,15 @@ export default function MobileStickyBar({
             {quote.minPrice ? (
               <>
                 <span className="text-lg font-bold text-gray-900">
-                  From {formatCurrency(quote.minPrice, quote.currency || 'EUR')}/night
+                  {t('from', 'From')} {formatCurrency(quote.minPrice, quote.currency || 'EUR')}/{t('night_singular', 'night')}
                 </span>
                 <span className="text-sm text-gray-500">
-                  Final price on booking page
+                  {t('final_price_on_booking', 'Final price on booking page')}
                 </span>
               </>
             ) : (
               <span className="text-base font-medium text-gray-900">
-                View pricing
+                {t('view_pricing', 'View pricing')}
               </span>
             )}
             {onChangeDates && (
@@ -160,7 +163,7 @@ export default function MobileStickyBar({
                 onClick={onChangeDates}
                 className="text-xs text-[#495D4D] hover:text-[#3d5a3d] underline text-left mt-1"
               >
-                Change dates
+                {t('change_dates', 'Change dates')}
               </button>
             )}
           </div>
@@ -168,7 +171,7 @@ export default function MobileStickyBar({
             onClick={handleReserve}
             className="bg-[#F49A4A] hover:bg-[#e08a3a] text-white font-semibold py-3 px-6 transition-colors"
           >
-            Book Now
+            {t('book_now', 'Book Now')}
           </button>
         </div>
       </div>

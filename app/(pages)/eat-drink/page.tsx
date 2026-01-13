@@ -5,6 +5,7 @@ import { EatDrinkItem } from '@/app/data/eatdrink';
 import EatDrinkCard from '@/app/components/EatDrinkCard';
 import EatDrinkDetailModal from '@/app/components/EatDrinkDetailModal';
 import { apiFetch } from '@/app/lib/api';
+import { useTranslations } from '@/app/providers/TranslationsProvider';
 
 interface APIService {
   id: string;
@@ -49,6 +50,7 @@ function transformService(service: APIService, index: number): EatDrinkItem {
 }
 
 export default function EatDrinkPage() {
+  const { t } = useTranslations('services');
   const [activeTab, setActiveTab] = useState<'dining' | 'breakfast' | 'drinks'>('dining');
   const [selectedItem, setSelectedItem] = useState<EatDrinkItem | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -157,7 +159,7 @@ export default function EatDrinkPage() {
           <div className="absolute inset-0 bg-black bg-opacity-40"style={{ backgroundColor: 'rgba(0, 0, 0, 0.50)' }}></div>
         </div>
         <h1 className="relative z-10 text-white text-4xl md:text-5xl lg:text-6xl font-custom text-center px-4">
-          OUR EAT & DRINK SERVICES
+          {t('eat_drink.hero_title', 'OUR EAT & DRINK SERVICES')}
          </h1>
       </section>
 
@@ -170,7 +172,7 @@ export default function EatDrinkPage() {
               className="py-4 px-2 text-[16px] md:text-[24px] font-medium font-heading uppercase tracking-wider transition-colors relative whitespace-nowrap"
               style={{ color: activeTab === 'dining' ? '#F49A4A' : '#495D4D' }}
             >
-              DINING
+              {t('eat_drink.tabs.dining', 'DINING')}
               {activeTab === 'dining' && (
                 <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#F49A4A]"></span>
               )}
@@ -180,7 +182,7 @@ export default function EatDrinkPage() {
               className="py-4 px-2 text-[16px] md:text-[24px] font-medium font-heading uppercase tracking-wider transition-colors relative whitespace-nowrap"
               style={{ color: activeTab === 'breakfast' ? '#F49A4A' : '#495D4D' }}
             >
-              BREAKFAST
+              {t('eat_drink.tabs.breakfast', 'BREAKFAST')}
               {activeTab === 'breakfast' && (
                 <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#F49A4A]"></span>
               )}
@@ -190,7 +192,7 @@ export default function EatDrinkPage() {
               className="py-4 px-2 text-[16px] md:text-[24px] font-medium font-heading uppercase tracking-wider transition-colors relative whitespace-nowrap"
               style={{ color: activeTab === 'drinks' ? '#F49A4A' : '#495D4D' }}
             >
-              DRINKS
+              {t('eat_drink.tabs.drinks', 'DRINKS')}
               {activeTab === 'drinks' && (
                 <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#F49A4A]"></span>
               )}
@@ -204,14 +206,14 @@ export default function EatDrinkPage() {
         <div className="container mx-auto px-4 max-w-6xl">
           {loading ? (
             <div className="text-center py-12">
-              <p className="text-gray-600">Loading...</p>
+              <p className="text-gray-600">{t('eat_drink.loading', 'Loading...')}</p>
             </div>
           ) : currentItems.length === 0 ? (
             <div className="text-center py-12">
               <p className="text-gray-600 text-lg">
-                {activeTab === 'dining' && 'Dining options not found'}
-                {activeTab === 'breakfast' && 'Breakfast options not found'}
-                {activeTab === 'drinks' && 'Drinks options not found'}
+                {activeTab === 'dining' && t('eat_drink.dining_not_found', 'Dining options not found')}
+                {activeTab === 'breakfast' && t('eat_drink.breakfast_not_found', 'Breakfast options not found')}
+                {activeTab === 'drinks' && t('eat_drink.drinks_not_found', 'Drinks options not found')}
               </p>
             </div>
           ) : (
@@ -247,11 +249,11 @@ export default function EatDrinkPage() {
           </div>
           <h2 className="relative z-10 text-white text-2xl md:text-3xl lg:text-4xl font-custom text-center px-4 mb-6">
             {activeTab === 'dining' ? (
-              <>OUR<br />DRINKS OFFERING</>
+              <>{t('eat_drink.discover.our', 'OUR')}<br />{t('eat_drink.discover.drinks_offering', 'DRINKS OFFERING')}</>
             ) : activeTab === 'breakfast' ? (
-              <>OUR<br />DINING OFFERING</>
+              <>{t('eat_drink.discover.our', 'OUR')}<br />{t('eat_drink.discover.dining_offering', 'DINING OFFERING')}</>
             ) : (
-              <>OUR<br />DINING OFFERING</>
+              <>{t('eat_drink.discover.our', 'OUR')}<br />{t('eat_drink.discover.dining_offering', 'DINING OFFERING')}</>
             )}
           </h2>
           <button
@@ -263,7 +265,7 @@ export default function EatDrinkPage() {
             className="relative z-10 px-8 py-3 text-white font-heading tracking-wider transition-all hover:bg-hoverorange"
             style={{ backgroundColor: '#939D92', fontSize: '18px', fontWeight: 500 }}
           >
-            DISCOVER OUR SELECTION
+            {t('eat_drink.discover.button', 'DISCOVER OUR SELECTION')}
           </button>
         </div>
 
@@ -283,11 +285,11 @@ export default function EatDrinkPage() {
           </div>
           <h2 className="relative z-10 text-white text-2xl md:text-3xl lg:text-4xl font-custom text-center px-4 mb-6">
             {activeTab === 'dining' ? (
-              <>OUR<br />BREAKFAST OFFERING</>
+              <>{t('eat_drink.discover.our', 'OUR')}<br />{t('eat_drink.discover.breakfast_offering', 'BREAKFAST OFFERING')}</>
             ) : activeTab === 'breakfast' ? (
-              <>OUR<br />DRINKS OFFERING</>
+              <>{t('eat_drink.discover.our', 'OUR')}<br />{t('eat_drink.discover.drinks_offering', 'DRINKS OFFERING')}</>
             ) : (
-              <>OUR<br />BREAKFAST OFFERING</>
+              <>{t('eat_drink.discover.our', 'OUR')}<br />{t('eat_drink.discover.breakfast_offering', 'BREAKFAST OFFERING')}</>
             )}
           </h2>
           <button
@@ -299,7 +301,7 @@ export default function EatDrinkPage() {
             className="relative z-10 px-8 py-3 text-white font-heading tracking-wider transition-all hover:bg-hoverorange"
             style={{ backgroundColor: '#939D92', fontSize: '18px', fontWeight: 500 }}
           >
-            DISCOVER OUR SELECTION
+            {t('eat_drink.discover.button', 'DISCOVER OUR SELECTION')}
           </button>
         </div>
       </section>
