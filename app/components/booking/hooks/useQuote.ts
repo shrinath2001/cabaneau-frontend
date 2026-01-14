@@ -58,6 +58,7 @@ interface UseQuoteParams {
   children?: number;
   infants?: number;
   pets?: number;
+  locale?: string;
 }
 
 interface UseQuoteResult {
@@ -78,9 +79,10 @@ export function useQuote({
   children = 0,
   infants = 0,
   pets = 0,
+  locale = 'en',
 }: UseQuoteParams): UseQuoteResult {
   // Check cache for initial state (inline to avoid hooks ordering issues)
-  const cacheKey = `${slug}:${checkIn}:${checkOut}:${adults}:${children}:${infants}:${pets}`;
+  const cacheKey = `${slug}:${checkIn}:${checkOut}:${adults}:${children}:${infants}:${pets}:${locale}`;
   const cachedInitial = quoteCache.get(cacheKey);
   const hasRequiredParams = !!(slug && checkIn && checkOut);
   const hasCachedData = cachedInitial?.data && (Date.now() - cachedInitial.timestamp) < CACHE_TTL;
@@ -96,8 +98,8 @@ export function useQuote({
 
   // Generate cache key from params
   const getCacheKey = useCallback(() => {
-    return `${slug}:${checkIn}:${checkOut}:${adults}:${children}:${infants}:${pets}`;
-  }, [slug, checkIn, checkOut, adults, children, infants, pets]);
+    return `${slug}:${checkIn}:${checkOut}:${adults}:${children}:${infants}:${pets}:${locale}`;
+  }, [slug, checkIn, checkOut, adults, children, infants, pets, locale]);
 
   const fetchQuote = useCallback(async (forceRefresh = false) => {
     // Don't fetch if we don't have required params
@@ -151,8 +153,10 @@ export function useQuote({
     });
 
     // Create the fetch promise and store it in cache
-    const fetchPromise = apiFetch(`/api/cabins/slug/${slug}/quote?${params.toString()}`)
-      .then(async (response) => {
+    // Pass locale explicitly to override localStorage-based language detection
+    const fetchPromise = apiFetch(`/api/cabins/slug/${slug}/quote?${params.toString()}`, {
+      headers: { 'x-language': locale },
+    }).then(async (response) => {
         if (!response.ok) {
           const errorData = await response.json().catch(() => ({}));
           throw new Error(errorData.error || `Failed to fetch quote: ${response.status}`);
@@ -183,7 +187,7 @@ export function useQuote({
         setLoading(false);
       }
     }
-  }, [slug, checkIn, checkOut, adults, children, infants, pets, getCacheKey]);
+  }, [slug, checkIn, checkOut, adults, children, infants, pets, locale, getCacheKey]);
 
   // Fetch quote when params change
   useEffect(() => {
