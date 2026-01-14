@@ -2,7 +2,7 @@
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { usePathname, useParams, useRouter } from 'next/navigation';
+import { usePathname, useParams, useRouter, useSearchParams } from 'next/navigation';
 import { FlagIcon, getLanguageDisplayName, getLanguageLabel } from './FlagIcon';
 import { useTranslations } from '@/app/providers/TranslationsProvider';
 import { locales, switchLocale, localizedPath, type Locale } from '@/app/lib/i18n';
@@ -20,6 +20,7 @@ const Header2 = () => {
   const { t, locale } = useTranslations('navigation');
   const pathname = usePathname();
   const router = useRouter();
+  const searchParams = useSearchParams();
 
   // Fetch languages from API
   useEffect(() => {
@@ -45,11 +46,13 @@ const Header2 = () => {
     fetchLanguages();
   }, []);
 
-  // Navigate to same page with different locale
+  // Navigate to same page with different locale (preserving query params)
   const handleLanguageChange = (code: string) => {
     const newPath = switchLocale(pathname, code as Locale);
+    const queryString = searchParams.toString();
+    const fullPath = queryString ? `${newPath}?${queryString}` : newPath;
     setIsLanguageOpen(false);
-    router.push(newPath);
+    router.push(fullPath);
   };
 
   // Helper to create localized link

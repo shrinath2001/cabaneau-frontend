@@ -48,8 +48,8 @@ const SearchPageWidget = () => {
   };
 
   useEffect(() => {
-    // Set full URL after hydration to avoid mismatch
-    setSearchPageUrl(`${window.location.origin}/search`);
+    // Set full URL after hydration to avoid mismatch (include locale)
+    setSearchPageUrl(`${window.location.origin}/${locale}/search`);
 
     const scriptUrl =
       "https://app.lodgify.com/portable-search-bar/stable/renderPortableSearchBar.js";

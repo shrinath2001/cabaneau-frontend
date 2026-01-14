@@ -40,11 +40,11 @@ const LodgifyBookingWidget = ({
   const t = widgetTranslations[languageCode] || widgetTranslations.en;
 
   useEffect(() => {
-    // Set the full search page URL using current origin
+    // Set the full search page URL using current origin (include locale)
     if (typeof window !== "undefined") {
-      setSearchPageUrl(`${window.location.origin}/search`);
+      setSearchPageUrl(`${window.location.origin}/${languageCode}/search`);
     }
-  }, []);
+  }, [languageCode]);
 
   useEffect(() => {
     // Official Lodgify Portable Search Bar script

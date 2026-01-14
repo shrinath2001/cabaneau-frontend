@@ -48,7 +48,7 @@ export default function BookingSection({
   searchParams,
   mode,
 }: BookingSectionProps) {
-  const { t } = useTranslations('booking');
+  const { t, locale } = useTranslations('booking');
   const [showBottomSheet, setShowBottomSheet] = useState(false);
   const [showDesktopModal, setShowDesktopModal] = useState(false);
 
@@ -81,6 +81,7 @@ export default function BookingSection({
     checkIn,
     checkOut,
     adults,
+    locale,
   });
 
   // Handle "Save" from widget - refreshes page with URL params

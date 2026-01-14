@@ -2,7 +2,7 @@
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { usePathname, useRouter } from 'next/navigation';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import LodgifyBookingWidget from './LodgifyBookingWidget';
 import { FlagIcon, getLanguageDisplayName, getLanguageLabel } from './FlagIcon';
 import { useTranslations } from '@/app/providers/TranslationsProvider';
@@ -22,6 +22,7 @@ const Header = () => {
   const { t: tHome } = useTranslations('homepage');
   const pathname = usePathname();
   const router = useRouter();
+  const searchParams = useSearchParams();
 
   // Scroll to top when homepage loads (fixes SPA navigation scroll issue)
   useEffect(() => {
@@ -52,11 +53,13 @@ const Header = () => {
     fetchLanguages();
   }, []);
 
-  // Navigate to same page with different locale
+  // Navigate to same page with different locale (preserving query params)
   const handleLanguageChange = (code: string) => {
     const newPath = switchLocale(pathname, code as Locale);
+    const queryString = searchParams.toString();
+    const fullPath = queryString ? `${newPath}?${queryString}` : newPath;
     setIsLanguageOpen(false);
-    router.push(newPath);
+    router.push(fullPath);
   };
 
   // Helper to create localized link
