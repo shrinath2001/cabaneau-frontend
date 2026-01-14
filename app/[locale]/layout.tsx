@@ -1,3 +1,4 @@
+import { Suspense } from 'react';
 import { notFound } from 'next/navigation';
 import Script from 'next/script';
 import { jost, raleway, logga } from '../fonts';
@@ -48,7 +49,9 @@ export default async function LocaleLayout({
       </head>
       <body className="font-raleway antialiased">
         <TranslationsProvider initialTranslations={translations} locale={locale}>
-          <ConditionalHeader />
+          <Suspense fallback={<div className="h-[70px] md:h-[86px]" />}>
+            <ConditionalHeader />
+          </Suspense>
           <main className="pt-20">
             {children}
           </main>
