@@ -95,6 +95,9 @@ const Header = () => {
               <Link href={link('/eat-drink')} className="font-heading font-medium text-[18px] text-white/60 hover:text-white transition-colors uppercase">
                 {t('link.eat_drink', 'Eat & Drink')}
               </Link>
+              <Link href={link('/blog')} className="font-heading font-medium text-[18px] text-white/60 hover:text-white transition-colors uppercase">
+                {t('link.blog', 'Blog')}
+              </Link>
             </nav>
             <div className="hidden md:flex items-center space-x-3 lg:space-x-4">
               <Link
@@ -294,6 +297,13 @@ const Header = () => {
                   className="text-[#495D4D] font-heading font-medium text-center py-4 text-[16px] tracking-wider uppercase"
                 >
                   {t('link.eat_drink', 'Eat & Drink')}
+                </Link>
+                <Link
+                  href={link('/blog')}
+                  onClick={() => setIsMenuOpen(false)}
+                  className="text-[#495D4D] font-heading font-medium text-center py-4 text-[16px] tracking-wider uppercase"
+                >
+                  {t('link.blog', 'Blog')}
                 </Link>
 
                 {/* Buttons */}

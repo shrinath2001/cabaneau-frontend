@@ -1,4 +1,5 @@
 import { notFound } from 'next/navigation';
+import Script from 'next/script';
 import { jost, raleway, logga } from '../fonts';
 import { TranslationsProvider } from '../providers/TranslationsProvider';
 import { getTranslations } from '../lib/translations';
@@ -38,12 +39,11 @@ export default async function LocaleLayout({
   return (
     <html lang={locale} className={`${jost.variable} ${raleway.variable} ${logga.variable}`}>
       <head>
-        <link
-          rel="stylesheet"
-          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
-          integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA=="
+        {/* Font Awesome Pro Kit */}
+        <Script
+          src="https://kit.fontawesome.com/3c3bb2e437.js"
           crossOrigin="anonymous"
-          referrerPolicy="no-referrer"
+          strategy="beforeInteractive"
         />
       </head>
       <body className="font-raleway antialiased">

@@ -13,12 +13,14 @@ export async function GET(request: Request) {
     const tag = searchParams.get('tag');
     const page = searchParams.get('page');
     const limit = searchParams.get('limit');
+    const search = searchParams.get('search');
 
     const params = new URLSearchParams();
     if (categoryId) params.append('categoryId', categoryId);
     if (tag) params.append('tag', tag);
     if (page) params.append('page', page);
     if (limit) params.append('limit', limit);
+    if (search) params.append('search', search);
 
     const queryString = params.toString();
     const url = `${apiBaseUrl}/blog${queryString ? `?${queryString}` : ''}`;
