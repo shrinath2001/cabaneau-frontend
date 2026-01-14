@@ -4,7 +4,6 @@ import { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
-import { apiFetch } from '@/app/lib/api';
 
 interface BlogPost {
   id: string;
@@ -28,6 +27,7 @@ export default function BlogPostPage() {
   const params = useParams();
   const router = useRouter();
   const slug = params.slug as string;
+  const locale = (params?.locale as string) || 'en';
 
   const [post, setPost] = useState<BlogPost | null>(null);
   const [loading, setLoading] = useState(true);
@@ -38,7 +38,11 @@ export default function BlogPostPage() {
       if (!slug) return;
 
       try {
-        const response = await apiFetch(`/api/blog/slug/${slug}`);
+        const response = await fetch(`/api/blog/slug/${slug}`, {
+          headers: {
+            'x-language': locale,
+          },
+        });
 
         if (!response.ok) {
           if (response.status === 404) {
@@ -60,11 +64,18 @@ export default function BlogPostPage() {
     };
 
     fetchPost();
-  }, [slug]);
+  }, [slug, locale]);
 
+  // Locale-aware date formatting
   const formatDate = (dateString?: string) => {
     if (!dateString) return '';
-    return new Date(dateString).toLocaleDateString('en-GB', {
+    const localeMap: Record<string, string> = {
+      en: 'en-GB',
+      fr: 'fr-FR',
+      de: 'de-DE',
+      nl: 'nl-NL',
+    };
+    return new Date(dateString).toLocaleDateString(localeMap[locale] || 'en-GB', {
       day: 'numeric',
       month: 'long',
       year: 'numeric',
@@ -92,8 +103,8 @@ export default function BlogPostPage() {
               {error || 'Blog post not found'}
             </h1>
             <Link
-              href="/blog"
-              className="inline-block bg-[#F49A4A] text-white px-6 py-3 rounded-lg hover:bg-[#e08c3c] transition-colors"
+              href={`/${locale}/blog`}
+              className="inline-block bg-[#F49A4A] text-white px-6 py-3 hover:bg-[#e08c3c] transition-colors"
             >
               Back to Blog
             </Link>
@@ -119,7 +130,7 @@ export default function BlogPostPage() {
         </div>
         <div className="relative z-10 text-center px-4 max-w-4xl">
           {post.category && (
-            <span className="inline-block bg-[#F49A4A] text-white text-sm px-3 py-1 rounded mb-4">
+            <span className="inline-block bg-[#F49A4A] text-white text-sm px-3 py-1 mb-4">
               {post.category.name}
             </span>
           )}
@@ -137,7 +148,7 @@ export default function BlogPostPage() {
         <div className="container mx-auto px-4 max-w-3xl">
           {/* Back Link */}
           <Link
-            href="/blog"
+            href={`/${locale}/blog`}
             className="inline-flex items-center text-[#495D4D] hover:text-[#F49A4A] mb-8 transition-colors"
           >
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-4 h-4 mr-2">
@@ -147,7 +158,7 @@ export default function BlogPostPage() {
           </Link>
 
           {/* Content */}
-          <article className="prose prose-lg max-w-none prose-headings:text-[#495D4D] prose-p:text-gray-700 prose-a:text-[#F49A4A] prose-a:no-underline hover:prose-a:underline">
+          <article className="blog-content">
             <div dangerouslySetInnerHTML={{ __html: post.content }} />
           </article>
 
@@ -159,7 +170,7 @@ export default function BlogPostPage() {
                 {post.tags.map((tag, index) => (
                   <span
                     key={index}
-                    className="bg-gray-100 text-gray-600 text-sm px-3 py-1 rounded"
+                    className="bg-gray-100 text-gray-600 text-sm px-3 py-1"
                   >
                     {tag}
                   </span>
