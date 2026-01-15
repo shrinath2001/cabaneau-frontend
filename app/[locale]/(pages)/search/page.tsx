@@ -24,6 +24,8 @@ const searchTranslations: Record<string, {
   available: string;
   noResults: string;
   noResultsSubtitle: string;
+  selectDates: string;
+  selectDatesSubtitle: string;
   persons: string;
   perNight: string;
   adult: string;
@@ -46,6 +48,8 @@ const searchTranslations: Record<string, {
     available: 'available',
     noResults: 'No cabins found',
     noResultsSubtitle: 'Try adjusting your search dates or number of guests to see more results.',
+    selectDates: 'Please select check-in and check-out dates',
+    selectDatesSubtitle: 'Use the search widget above to select your travel dates and find available cabins.',
     persons: 'Persons',
     perNight: '/night',
     adult: 'Adult',
@@ -68,6 +72,8 @@ const searchTranslations: Record<string, {
     available: 'disponible(s)',
     noResults: 'Aucune cabane trouvée',
     noResultsSubtitle: 'Essayez d\'ajuster vos dates ou le nombre d\'invités.',
+    selectDates: 'Veuillez sélectionner les dates d\'arrivée et de départ',
+    selectDatesSubtitle: 'Utilisez le widget de recherche ci-dessus pour sélectionner vos dates de voyage.',
     persons: 'Personnes',
     perNight: '/nuit',
     adult: 'Adulte',
@@ -90,6 +96,8 @@ const searchTranslations: Record<string, {
     available: 'verfügbar',
     noResults: 'Keine Hütten gefunden',
     noResultsSubtitle: 'Versuchen Sie, Ihre Daten oder Gästeanzahl anzupassen.',
+    selectDates: 'Bitte wählen Sie An- und Abreisedatum',
+    selectDatesSubtitle: 'Verwenden Sie das Suchwidget oben, um Ihre Reisedaten auszuwählen.',
     persons: 'Personen',
     perNight: '/Nacht',
     adult: 'Erwachsener',
@@ -112,6 +120,8 @@ const searchTranslations: Record<string, {
     available: 'beschikbaar',
     noResults: 'Geen hutten gevonden',
     noResultsSubtitle: 'Probeer uw data of aantal gasten aan te passen.',
+    selectDates: 'Selecteer in- en uitcheckdatums',
+    selectDatesSubtitle: 'Gebruik de zoekwidget hierboven om uw reisdata te selecteren.',
     persons: 'Personen',
     perNight: '/nacht',
     adult: 'Volwassene',
@@ -312,6 +322,15 @@ function SearchResults() {
 
   useEffect(() => {
     const fetchCabins = async () => {
+      // Skip API call if no dates provided - show "select dates" notice instead
+      if (!checkIn || !checkOut) {
+        setLoading(false);
+        setError(null);
+        setCabins([]);
+        setTotal(0);
+        return;
+      }
+
       try {
         setLoading(true);
         setError(null);
@@ -454,7 +473,30 @@ function SearchResults() {
         {/* Results */}
         {!loading && !error && (
           <>
-            {cabins.length > 0 ? (
+            {/* No dates selected - show notice */}
+            {!checkIn || !checkOut ? (
+              <div className="text-center py-16">
+                <div className="mb-4">
+                  <svg
+                    className="mx-auto h-24 w-24 text-gray-400"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={1}
+                      d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+                    />
+                  </svg>
+                </div>
+                <h3 className="text-2xl font-medium text-gray-900 mb-2">{st.selectDates}</h3>
+                <p className="text-gray-600">
+                  {st.selectDatesSubtitle}
+                </p>
+              </div>
+            ) : cabins.length > 0 ? (
               <>
                 <p className="text-center text-gray-600 mb-8 font-jost text-lg">
                   {st.found} {total} {total === 1 ? st.cabin : st.cabins} {st.available}

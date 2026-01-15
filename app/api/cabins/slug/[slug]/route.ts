@@ -55,6 +55,34 @@ export async function GET(
 
     const data = await response.json();
     console.log('✅ Cabin details fetched:', data.slug);
+
+    // Transform relative image URLs to full URLs
+    const mediaBaseUrl = process.env.API_BASE_URL?.replace('/api/v1', '') || 'http://localhost:3000';
+
+    const transformUrl = (url: string | null | undefined): string | null => {
+      if (!url) return null;
+      if (url.startsWith('http')) return url;
+      if (url.startsWith('/uploads')) return `${mediaBaseUrl}${url}`;
+      return url;
+    };
+
+    // Transform image URLs
+    if (data.featuredImage) {
+      data.featuredImage = transformUrl(data.featuredImage);
+    }
+    if (data.images && Array.isArray(data.images)) {
+      data.images = data.images.map((img: string | { url: string; thumbnailUrl?: string; tag: string; order: number }) => {
+        if (typeof img === 'string') {
+          return transformUrl(img);
+        }
+        return {
+          ...img,
+          url: transformUrl(img.url),
+          thumbnailUrl: transformUrl(img.thumbnailUrl),
+        };
+      });
+    }
+
     return NextResponse.json(data);
   } catch (error) {
     console.error('❌ Error fetching cabin:', error);

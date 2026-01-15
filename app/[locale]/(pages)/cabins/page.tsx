@@ -43,9 +43,18 @@ const formatNightlyRate = (rate?: number, currency = 'EUR'): string => {
   return `${symbol}${Math.round(rate)}/night`;
 };
 
+// Transform relative upload paths to full URLs
+const transformImageUrl = (url: string | null | undefined, mediaBaseUrl: string): string | null => {
+  if (!url) return null;
+  if (url.startsWith('http')) return url;
+  if (url.startsWith('/uploads')) return `${mediaBaseUrl}${url}`;
+  return url;
+};
+
 async function getCabins() {
   const apiKey = process.env.API_KEY;
   const apiBaseUrl = process.env.API_BASE_URL || 'http://localhost:3000/api/v1';
+  const mediaBaseUrl = apiBaseUrl.replace('/api/v1', '');
 
   // Get language from headers
   const headersList = await headers();
@@ -69,7 +78,18 @@ async function getCabins() {
     }
 
     const result = await response.json();
-    return result?.data ?? result ?? [];
+    const cabins = result?.data ?? result ?? [];
+
+    // Transform image URLs
+    return cabins.map((cabin: CabinFromAPI) => ({
+      ...cabin,
+      featuredImage: transformImageUrl(cabin.featuredImage, mediaBaseUrl),
+      images: cabin.images?.map((img: string | { url: string; thumbnailUrl?: string }) =>
+        typeof img === 'string'
+          ? transformImageUrl(img, mediaBaseUrl)
+          : { ...img, url: transformImageUrl(img.url, mediaBaseUrl), thumbnailUrl: transformImageUrl(img.thumbnailUrl, mediaBaseUrl) }
+      ),
+    }));
   } catch (error) {
     console.error('Error fetching cabins:', error);
     return [];
@@ -79,12 +99,23 @@ async function getCabins() {
 export default async function CabinsPage() {
   const cabinsData = await getCabins();
 
-  const cabins = cabinsData.map((cabin: CabinFromAPI, index: number) => ({
+  const cabins = cabinsData.map((cabin: CabinFromAPI, index: number) => {
+    // Filter out null/undefined images and get valid URLs
+    const validImages = (cabin.images || [])
+      .map((img: string | { url: string } | null) => typeof img === 'string' ? img : img?.url)
+      .filter((url: string | null | undefined): url is string => !!url);
+
+    // Use valid images, or featured image, or fallback
+    const displayImages = validImages.length > 0
+      ? validImages
+      : cabin.featuredImage
+        ? [cabin.featuredImage]
+        : ['/assets/d206536ef067f64b29cad184324fe360bb763e30.jpg'];
+
+    return {
     id: cabin.id || index + 1,
     slug: cabin.slug || `cabin-${index + 1}`,
-    images: cabin.images?.length > 0 ? cabin.images :
-            cabin.featuredImage ? [cabin.featuredImage] :
-            ['/assets/d206536ef067f64b29cad184324fe360bb763e30.jpg'],
+    images: displayImages,
     title: cabin.name || `Cabin ${index + 1}`,
     rating: 5,
     area: cabin.squareMeters ? `${cabin.squareMeters}m²` : '',
@@ -95,7 +126,8 @@ export default async function CabinsPage() {
            : cabin.basePrice
              ? `€${Number(cabin.basePrice).toFixed(2)}/night`
              : '',
-  }));
+  };
+  });
 
   return (
     <main>

@@ -2,19 +2,35 @@
 
 import { useState } from 'react';
 import Image from 'next/image';
+import { useTranslations } from '@/app/providers/TranslationsProvider';
+
+// Image type that supports both old string[] and new tagged image format
+interface CabinImage {
+  url: string;
+  thumbnailUrl?: string;
+  tag: string;
+  order: number;
+}
 
 interface ImageGalleryProps {
-  images: string[];
+  images: (string | CabinImage)[];
   featuredImage?: string;
   onShowAllClick: () => void;
   onMobileImageClick?: (index: number) => void;
 }
 
+// Helper to extract URL from either string or CabinImage
+const getImageUrl = (img: string | CabinImage): string => {
+  return typeof img === 'string' ? img : img.url;
+};
+
 const ImageGallery = ({ images, featuredImage, onShowAllClick, onMobileImageClick }: ImageGalleryProps) => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const { t } = useTranslations('cabin');
 
-  // Prepare images
-  const allImages = images && images.length > 0 ? [...images] : [];
+  // Prepare images - extract URLs for display
+  const imageUrls = (images || []).map(getImageUrl);
+  const allImages = imageUrls.length > 0 ? [...imageUrls] : [];
   if (featuredImage && !allImages.includes(featuredImage)) {
     allImages.unshift(featuredImage);
   }
@@ -168,7 +184,7 @@ const ImageGallery = ({ images, featuredImage, onShowAllClick, onMobileImageClic
                 }}
                 className="bg-white px-6 py-3 text-sm font-semibold hover:bg-gray-50 transition shadow-lg border border-gray-200"
               >
-                SHOW ALL PICTURES
+                {t('gallery.show_all_pictures', 'SHOW ALL PICTURES')}
               </button>
             </div>
           </div>
