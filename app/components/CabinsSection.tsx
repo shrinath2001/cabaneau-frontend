@@ -212,7 +212,7 @@ const CabinsSection = () => {
             {/* Cabins Carousel or Centered Grid */}
             <div className="w-full">
               {loading ? (
-                <div className="text-center py-12">
+                <div className="text-center py-12 md:-ml-20">
                   <p className="text-gray-600">{t('cabins_section.loading', 'Loading cabins...')}</p>
                 </div>
               ) : cabins.length > 1 ? (
