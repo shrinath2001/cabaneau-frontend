@@ -73,30 +73,33 @@ const Header2 = () => {
 
   return (
     <header className="fixed top-0 left-0 w-full z-50 bg-white shadow-md">
-      <div className="container mx-auto px-4 md:px-8 lg:px-20">
+      {/* Container: wider layout (px-4 only) | Revert to: px-4 md:px-8 lg:px-20 */}
+      <div className="container mx-auto px-4">
         <div className="flex items-center justify-between py-6 md:py-8">
           <div className="flex items-center">
             <Link href={getHomeLink()} scroll={true}>
+              {/* Logo: 150x50 (feat branch) | Revert to: width={170} height={57} className="w-[130px] md:w-[170px] h-auto" */}
               <Image
                 src="/assets/Group 1 (1).png"
                 alt="Cabaneau Logo"
-                width={170}
-                height={57}
-                className="w-[130px] md:w-[170px] h-auto"
+                width={150}
+                height={50}
               />
             </Link>
           </div>
-          <nav className="hidden md:flex items-center space-x-8">
-            <Link href={link('/cabins')} className="text-black font-heading font-medium text-[18px] hover:text-[#F49A4A] transition-colors uppercase">
+          {/* Nav spacing: space-x-10 lg:space-x-12 (PreFinal UI) | Revert to: space-x-8 */}
+          <nav className="hidden md:flex items-center space-x-10 lg:space-x-12">
+            {/* Nav hover: hover:font-semibold hover:text-orange-300 (feat branch) | Revert to: hover:text-[#F49A4A] transition-colors */}
+            <Link href={link('/cabins')} className="text-black font-heading font-medium text-[18px] hover:font-semibold hover:text-orange-300 uppercase">
               {t('link.our_cabins', 'Our Cabins')}
             </Link>
-            <Link href={link('/activities')} className="text-black font-heading font-medium text-[18px] hover:text-[#F49A4A] transition-colors uppercase">
+            <Link href={link('/activities')} className="text-black font-heading font-medium text-[18px] hover:font-semibold hover:text-orange-300 uppercase">
               {t('link.activities', 'Activities')}
             </Link>
-            <Link href={link('/eat-drink')} className="text-black font-heading font-medium text-[18px] hover:text-[#F49A4A] transition-colors uppercase">
+            <Link href={link('/eat-drink')} className="text-black font-heading font-medium text-[18px] hover:font-semibold hover:text-orange-300 uppercase">
               {t('link.eat_drink', 'Eat & Drink')}
             </Link>
-            <Link href={link('/blog')} className="text-black font-heading font-medium text-[18px] hover:text-[#F49A4A] transition-colors uppercase">
+            <Link href={link('/blog')} className="text-black font-heading font-medium text-[18px] hover:font-semibold hover:text-orange-300 uppercase">
               {t('link.blog', 'Blog')}
             </Link>
           </nav>

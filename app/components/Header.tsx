@@ -75,20 +75,22 @@ const Header = () => {
     >
       <div className="absolute inset-0 bg-black opacity-50 z-0"></div>
       <header className="bg-transparent absolute top-0 left-0 w-full z-20">
-        <div className="container mx-auto px-4 md:px-8 lg:px-20">
+        {/* Container: wider layout (no extra padding) | Revert to: px-4 md:px-8 lg:px-20 */}
+        <div className="container mx-auto">
           <div className="flex items-center justify-between py-6 md:py-8">
             <div className="flex items-center">
               <Link href={link('/')}>
+                {/* Logo: 150x50 (feat branch) | Revert to: width={170} height={57} className="w-[130px] md:w-[170px] h-auto" */}
                 <Image
                   src="/assets/Group 1.png"
                   alt="Cabaneau Logo"
-                  width={170}
-                  height={57}
-                  className="w-[130px] md:w-[170px] h-auto"
+                  width={150}
+                  height={50}
                 />
               </Link>
             </div>
-            <nav className="hidden md:flex items-center space-x-8">
+            {/* Nav spacing: space-x-10 lg:space-x-12 (PreFinal UI) | Revert to: space-x-8 */}
+            <nav className="hidden md:flex items-center space-x-10 lg:space-x-12">
               <Link href={link('/cabins')} className="font-heading font-medium text-[18px] text-white/60 hover:text-white transition-colors uppercase">
                 {t('link.our_cabins', 'Our Cabins')}
               </Link>

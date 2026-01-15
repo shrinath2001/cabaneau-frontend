@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
+import BlogSidebarCabin from '@/app/components/BlogSidebarCabin';
 
 interface BlogPost {
   id: string;
@@ -145,39 +146,50 @@ export default function BlogPostPage() {
 
       {/* Article Content */}
       <section className="py-12 bg-white">
-        <div className="container mx-auto px-4 max-w-3xl">
-          {/* Back Link */}
-          <Link
-            href={`/${locale}/blog`}
-            className="inline-flex items-center text-[#495D4D] hover:text-[#F49A4A] mb-8 transition-colors"
-          >
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-4 h-4 mr-2">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18" />
-            </svg>
-            Back to Blog
-          </Link>
+        <div className="container mx-auto px-4 max-w-7xl">
+          <div className="flex flex-col lg:flex-row gap-8">
+            {/* Main Content */}
+            <div className="flex-1 max-w-3xl">
+              {/* Back Link */}
+              <Link
+                href={`/${locale}/blog`}
+                className="inline-flex items-center text-[#495D4D] hover:text-[#F49A4A] mb-8 transition-colors"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-4 h-4 mr-2">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18" />
+                </svg>
+                Back to Blog
+              </Link>
 
-          {/* Content */}
-          <article className="blog-content">
-            <div dangerouslySetInnerHTML={{ __html: post.content }} />
-          </article>
+              {/* Content */}
+              <article className="blog-content">
+                <div dangerouslySetInnerHTML={{ __html: post.content }} />
+              </article>
 
-          {/* Tags */}
-          {post.tags && post.tags.length > 0 && (
-            <div className="mt-8 pt-8 border-t border-gray-200">
-              <h4 className="text-sm font-semibold text-[#495D4D] mb-3">Tags:</h4>
-              <div className="flex flex-wrap gap-2">
-                {post.tags.map((tag, index) => (
-                  <span
-                    key={index}
-                    className="bg-gray-100 text-gray-600 text-sm px-3 py-1"
-                  >
-                    {tag}
-                  </span>
-                ))}
-              </div>
+              {/* Tags */}
+              {post.tags && post.tags.length > 0 && (
+                <div className="mt-8 pt-8 border-t border-gray-200">
+                  <h4 className="text-sm font-semibold text-[#495D4D] mb-3">Tags:</h4>
+                  <div className="flex flex-wrap gap-2">
+                    {post.tags.map((tag, index) => (
+                      <span
+                        key={index}
+                        className="bg-gray-100 text-gray-600 text-sm px-3 py-1"
+                      >
+                        {tag}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
-          )}
+
+            {/* Sidebar - Hidden on mobile */}
+            <aside className="hidden lg:block lg:w-[420px] flex-shrink-0">
+              {/* Featured Cabin */}
+              <BlogSidebarCabin />
+            </aside>
+          </div>
         </div>
       </section>
     </main>

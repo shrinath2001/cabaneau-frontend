@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
+import BlogSidebarCabin from '@/app/components/BlogSidebarCabin';
 interface BlogPost {
   id: string;
   title: string;
@@ -360,7 +361,7 @@ export default function BlogPage() {
             </div>
 
             {/* Sidebar - Hidden on mobile */}
-            <aside className="hidden lg:block lg:w-80 flex-shrink-0">
+            <aside className="hidden lg:block lg:w-[420px] flex-shrink-0">
               {/* Search */}
               <div className="bg-gray-50 p-6 mb-6">
                 <h3 className="text-lg font-semibold text-[#495D4D] mb-4">Search</h3>
@@ -389,42 +390,8 @@ export default function BlogPage() {
                 </div>
               </div>
 
-              {/* Categories */}
-              <div className="bg-gray-50 p-6">
-                <h3 className="text-lg font-semibold text-[#495D4D] mb-4">Categories</h3>
-                <ul className="space-y-2">
-                  <li>
-                    <button
-                      onClick={() => handleCategoryChange(null)}
-                      className={`w-full text-left py-2 px-3 transition-colors flex justify-between items-center ${
-                        selectedCategory === null
-                          ? 'bg-[#495D4D] text-white'
-                          : 'hover:bg-gray-100 text-gray-700'
-                      }`}
-                    >
-                      <span>All Posts</span>
-                      <span className="text-sm opacity-70">({allPosts.length})</span>
-                    </button>
-                  </li>
-                  {categories.map((category) => (
-                    <li key={category.id}>
-                      <button
-                        onClick={() => handleCategoryChange(category.id)}
-                        className={`w-full text-left py-2 px-3 transition-colors flex justify-between items-center ${
-                          selectedCategory === category.id
-                            ? 'bg-[#495D4D] text-white'
-                            : 'hover:bg-gray-100 text-gray-700'
-                        }`}
-                      >
-                        <span>{category.name}</span>
-                        <span className="text-sm opacity-70">
-                          ({getCategoryPostCount(category.id)})
-                        </span>
-                      </button>
-                    </li>
-                  ))}
-                </ul>
-              </div>
+              {/* Featured Cabin */}
+              <BlogSidebarCabin />
             </aside>
           </div>
         </div>
