@@ -2,19 +2,47 @@
 
 import Image from 'next/image';
 
+// Image structure matching backend CabinImage type
+interface CabinImage {
+  url: string;
+  thumbnailUrl?: string;
+  tag: string;
+  order: number;
+}
+
+// Image tag from the API
+interface ImageTag {
+  slug: string;
+  name: string; // Localized name
+  displayOrder: number;
+}
+
 interface PhotoGalleryModalProps {
   isOpen: boolean;
   onClose: () => void;
-  images: string[];
+  images: (CabinImage | string)[];  // Support both new tagged format and legacy string[]
   featuredImage?: string;
+  imageTags?: ImageTag[];  // Dynamic tags from API
   onImageClick?: (imageIndex: number) => void;
 }
 
-// Define masonry layout patterns that eliminate white gaps
-const getMasonryPattern = (imageCount: number, startIndex: number, images: string[]) => {
-  const items = [];
+// Fallback category definitions (used when imageTags not provided)
+const DEFAULT_CATEGORY_CONFIG: { tag: string; name: string }[] = [
+  { tag: 'living-room', name: 'Living room' },
+  { tag: 'bedroom', name: 'Bedroom' },
+  { tag: 'kitchen', name: 'Kitchen' },
+  { tag: 'bathroom', name: 'Bathroom' },
+  { tag: 'wellness', name: 'Wellness' },
+  { tag: 'working-area', name: 'Working area' },
+  { tag: 'dining', name: 'Dining area' },
+  { tag: 'exterior', name: 'Exterior' },
+  { tag: 'other', name: 'Additional photos' },
+];
 
-  // Patterns that ensure no gaps by filling all grid cells
+// Define masonry layout patterns that eliminate white gaps
+const getMasonryPattern = (imageCount: number, images: CabinImage[]) => {
+  const items: { img: CabinImage; className: string }[] = [];
+
   if (imageCount === 1) {
     items.push({ img: images[0], className: 'col-span-2 aspect-[21/9]' });
   } else if (imageCount === 2) {
@@ -70,9 +98,8 @@ const getMasonryPattern = (imageCount: number, startIndex: number, images: strin
     items.push({ img: images[7], className: 'aspect-[4/3]' });
     items.push({ img: images[8], className: 'aspect-[4/3]' });
   } else {
-    // For 10+ images, ensure multiples of 2 to avoid gaps
+    // For 10+ images, add variety with full-width every 6th image
     for (let i = 0; i < imageCount; i++) {
-      // Every 6th image is full-width to add variety
       if ((i + 1) % 6 === 0) {
         items.push({ img: images[i], className: 'col-span-2 aspect-[21/9]' });
       } else {
@@ -84,67 +111,82 @@ const getMasonryPattern = (imageCount: number, startIndex: number, images: strin
   return items;
 };
 
-const PhotoGalleryModal = ({ isOpen, onClose, images, featuredImage, onImageClick }: PhotoGalleryModalProps) => {
+const PhotoGalleryModal = ({ isOpen, onClose, images, featuredImage, imageTags, onImageClick }: PhotoGalleryModalProps) => {
   if (!isOpen) return null;
 
-  // Prepare all images - include featured image first
-  const allImages = images && images.length > 0 ? [...images] : [];
-  if (featuredImage && !allImages.includes(featuredImage)) {
-    allImages.unshift(featuredImage);
-  }
+  // Build category config from dynamic tags or use defaults
+  const CATEGORY_CONFIG = imageTags && imageTags.length > 0
+    ? imageTags
+        .sort((a, b) => a.displayOrder - b.displayOrder)
+        .map(tag => ({
+          tag: tag.slug,
+          name: tag.slug === 'other' ? 'Additional photos' : tag.name,
+        }))
+    : DEFAULT_CATEGORY_CONFIG;
+
+  // Normalize images - handle both string[] and CabinImage[] for backward compatibility
+  // Only include gallery images with explicit tags, not the featured image
+  const normalizedImages: CabinImage[] = (images || []).map((img, index) => {
+    if (typeof img === 'string') {
+      return { url: img, tag: 'other', order: index };
+    }
+    return img as CabinImage;
+  });
+
+  // Note: Featured image is intentionally excluded from Photo Tour
+  // It's already displayed prominently on the cabin detail page
+  // Only explicitly tagged gallery images should appear here
 
   // If no images, don't render
-  if (allImages.length === 0) return null;
+  if (normalizedImages.length === 0) return null;
 
-  // Define categories with specific image counts for client presentation
-  const categories = [
-    { name: 'Living room', id: 'living', imageCount: 3 },
-    { name: 'Bedroom', id: 'bedroom', imageCount: 5 },
-    { name: 'Kitchen', id: 'kitchen', imageCount: 7 },
-    { name: 'Bathroom', id: 'bathroom', imageCount: 8 },
-    { name: 'Wellness', id: 'wellness', imageCount: 9 },
-    { name: 'Working area', id: 'working', imageCount: 7 },
-  ];
+  // Group images by tag
+  const imagesByTag: Record<string, CabinImage[]> = {};
+  normalizedImages.forEach(img => {
+    const tag = img.tag || 'other';
+    if (!imagesByTag[tag]) {
+      imagesByTag[tag] = [];
+    }
+    imagesByTag[tag].push(img);
+  });
+
+  // Sort images within each category by order
+  Object.keys(imagesByTag).forEach(tag => {
+    imagesByTag[tag].sort((a, b) => a.order - b.order);
+  });
+
+  // Get categories that have images
+  const activeCategories = CATEGORY_CONFIG.filter(cat => imagesByTag[cat.tag]?.length > 0);
+
+  // If no active categories, show all images under "Photos"
+  if (activeCategories.length === 0 && normalizedImages.length > 0) {
+    imagesByTag['other'] = normalizedImages;
+    activeCategories.push({ tag: 'other', name: 'Photos' });
+  }
 
   // Scroll to category function
-  const scrollToCategory = (categoryId: string) => {
-    const element = document.getElementById(`category-${categoryId}`);
+  const scrollToCategory = (tag: string) => {
+    const element = document.getElementById(`category-${tag}`);
     if (element) {
       element.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
   };
 
-  // Create placeholder image function
-  const createPlaceholderImages = (count: number) => {
-    const images: string[] = [];
-    const placeholder = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="400" height="300"%3E%3Crect width="400" height="300" fill="%23cccccc"/%3E%3C/svg%3E';
-
-    for (let i = 0; i < count; i++) {
-      // Use real image if available, otherwise use placeholder
-      images.push(allImages[i % allImages.length] || placeholder);
+  // Calculate flat index for image click handler
+  const getFlatIndex = (categoryTag: string, indexInCategory: number): number => {
+    let flatIndex = 0;
+    for (const cat of activeCategories) {
+      if (cat.tag === categoryTag) {
+        return flatIndex + indexInCategory;
+      }
+      flatIndex += imagesByTag[cat.tag]?.length || 0;
     }
-    return images;
+    return 0;
   };
-
-  // Create category image assignments with placeholders for presentation
-  const categoryImages: { [key: string]: string[] } = {};
-
-  categories.forEach((category) => {
-    categoryImages[category.id] = createPlaceholderImages(category.imageCount);
-  });
-
-  // For category thumbnails, use first 5 images or placeholders
-  const displayImages = [
-    allImages[0] || 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="400" height="300"%3E%3Crect width="400" height="300" fill="%23cccccc"/%3E%3C/svg%3E',
-    allImages[1] || 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="400" height="300"%3E%3Crect width="400" height="300" fill="%23cccccc"/%3E%3C/svg%3E',
-    allImages[2] || 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="400" height="300"%3E%3Crect width="400" height="300" fill="%23cccccc"/%3E%3C/svg%3E',
-    allImages[3] || 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="400" height="300"%3E%3Crect width="400" height="300" fill="%23cccccc"/%3E%3C/svg%3E',
-    allImages[4] || 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="400" height="300"%3E%3Crect width="400" height="300" fill="%23cccccc"/%3E%3C/svg%3E',
-  ];
 
   return (
     <div className="fixed inset-0 bg-white z-50 overflow-y-auto">
-      {/* Sticky Header - Airbnb Style */}
+      {/* Sticky Header */}
       <div className="sticky top-0 bg-white z-10 border-b border-gray-200 py-4 px-6 md:px-20">
         <button
           onClick={onClose}
@@ -160,61 +202,48 @@ const PhotoGalleryModal = ({ isOpen, onClose, images, featuredImage, onImageClic
         {/* Photo Tour Title */}
         <h2 className="text-3xl font-semibold mb-8">Photo tour</h2>
 
-        {/* Category Thumbnails Grid */}
-        <div className="flex flex-wrap gap-6 mb-12">
-          {[
-            { name: 'Living room', img: displayImages[0], id: 'living' },
-            { name: 'Full kitchen', img: displayImages[1], id: 'kitchen' },
-            { name: 'Bedroom', img: displayImages[2], id: 'bedroom' },
-            { name: 'Dining area', img: displayImages[3], id: 'living' },
-            { name: 'Bathroom', img: displayImages[4], id: 'bathroom' },
-            { name: 'Wellness', img: displayImages[0], id: 'wellness' },
-            { name: 'Working area', img: displayImages[1], id: 'working' },
-            { name: 'Additional photos', img: displayImages[2], id: 'living' },
-          ].map((category, idx) => (
-            <div
-              key={idx}
-              className="cursor-pointer group"
-              onClick={() => scrollToCategory(category.id)}
-            >
-              <div className="relative w-[185px] h-[90px] bg-gray-200 overflow-hidden mb-2 ">
-                <Image
-                  src={category.img}
-                  alt={category.name}
-                  fill
-                  className="object-cover group-hover:scale-105 transition-transform duration-200"
-                  sizes="185px"
-                />
-              </div>
-              <p className="text-sm font-medium text-gray-800">{category.name}</p>
-            </div>
-          ))}
-        </div>
+        {/* Category Thumbnails Grid - Only show categories with images */}
+        {activeCategories.length > 1 && (
+          <div className="flex flex-wrap gap-6 mb-12">
+            {activeCategories.map((category) => {
+              const catImages = imagesByTag[category.tag];
+              const thumbnailUrl = catImages[0]?.thumbnailUrl || catImages[0]?.url;
+
+              return (
+                <div
+                  key={category.tag}
+                  className="cursor-pointer group"
+                  onClick={() => scrollToCategory(category.tag)}
+                >
+                  <div className="relative w-[185px] h-[90px] bg-gray-200 overflow-hidden mb-2">
+                    <Image
+                      src={thumbnailUrl}
+                      alt={category.name}
+                      fill
+                      className="object-cover group-hover:scale-105 transition-transform duration-200"
+                      sizes="185px"
+                    />
+                  </div>
+                  <p className="text-sm font-medium text-gray-800">{category.name}</p>
+                </div>
+              );
+            })}
+          </div>
+        )}
 
         {/* Photo Categories with Dynamic Masonry Layout */}
         <div className="space-y-16">
-          {categories.map((category, catIdx) => {
-            const catImages = categoryImages[category.id];
+          {activeCategories.map((category) => {
+            const catImages = imagesByTag[category.tag];
 
-            // Skip categories with no images
             if (!catImages || catImages.length === 0) return null;
 
-            // Get masonry pattern for this category
-            const masonryItems = getMasonryPattern(catImages.length, 0, catImages);
-
-            // Calculate starting index for this category
-            let startingIndex = 0;
-            for (let i = 0; i < catIdx; i++) {
-              const prevCatImages = categoryImages[categories[i].id];
-              if (prevCatImages) {
-                startingIndex += prevCatImages.length;
-              }
-            }
+            const masonryItems = getMasonryPattern(catImages.length, catImages);
 
             return (
               <div
-                key={category.id}
-                id={`category-${category.id}`}
+                key={category.tag}
+                id={`category-${category.tag}`}
                 className="grid grid-cols-[200px_1fr] gap-8 scroll-mt-24"
               >
                 <div>
@@ -222,17 +251,16 @@ const PhotoGalleryModal = ({ isOpen, onClose, images, featuredImage, onImageClic
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   {masonryItems.map((item, idx) => {
-                    const globalIndex = startingIndex + idx;
-                    const actualImageIndex = globalIndex % allImages.length;
+                    const flatIndex = getFlatIndex(category.tag, idx);
 
                     return (
                       <div
                         key={idx}
-                        onClick={() => onImageClick?.(actualImageIndex)}
+                        onClick={() => onImageClick?.(flatIndex)}
                         className={`relative ${item.className} bg-gray-200 overflow-hidden cursor-pointer group`}
                       >
                         <Image
-                          src={item.img}
+                          src={item.img.url}
                           alt={category.name}
                           fill
                           className="object-cover group-hover:scale-105 transition-transform duration-200"

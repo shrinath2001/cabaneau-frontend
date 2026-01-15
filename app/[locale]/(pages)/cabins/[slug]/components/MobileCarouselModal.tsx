@@ -3,15 +3,31 @@
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
 
+// Image type that supports both old string[] and new tagged image format
+interface CabinImage {
+  url: string;
+  thumbnailUrl?: string;
+  tag: string;
+  order: number;
+}
+
+// Helper to extract URL from either string or CabinImage
+const getImageUrl = (img: string | CabinImage): string => {
+  return typeof img === 'string' ? img : img.url;
+};
+
 interface MobileCarouselModalProps {
   isOpen: boolean;
   onClose: () => void;
-  images: string[];
+  images: (string | CabinImage)[];
   initialIndex?: number;
 }
 
 const MobileCarouselModal = ({ isOpen, onClose, images, initialIndex = 0 }: MobileCarouselModalProps) => {
   const [currentIndex, setCurrentIndex] = useState(initialIndex);
+
+  // Extract URLs for display
+  const imageUrls = (images || []).map(getImageUrl);
 
   // Update current index when initial index changes
   useEffect(() => {
@@ -30,14 +46,14 @@ const MobileCarouselModal = ({ isOpen, onClose, images, initialIndex = 0 }: Mobi
     };
   }, [isOpen]);
 
-  if (!isOpen || images.length === 0) return null;
+  if (!isOpen || imageUrls.length === 0) return null;
 
   const nextImage = () => {
-    setCurrentIndex((prev) => (prev + 1) % images.length);
+    setCurrentIndex((prev) => (prev + 1) % imageUrls.length);
   };
 
   const prevImage = () => {
-    setCurrentIndex((prev) => (prev - 1 + images.length) % images.length);
+    setCurrentIndex((prev) => (prev - 1 + imageUrls.length) % imageUrls.length);
   };
 
   // Handle swipe gestures
@@ -77,7 +93,7 @@ const MobileCarouselModal = ({ isOpen, onClose, images, initialIndex = 0 }: Mobi
           </svg>
         </button>
         <div className="text-white text-sm md:text-base font-medium">
-          {currentIndex + 1} / {images.length}
+          {currentIndex + 1} / {imageUrls.length}
         </div>
       </div>
 
@@ -88,7 +104,7 @@ const MobileCarouselModal = ({ isOpen, onClose, images, initialIndex = 0 }: Mobi
         onTouchEnd={handleTouchEnd}
       >
         <Image
-          src={images[currentIndex]}
+          src={imageUrls[currentIndex]}
           alt={`Image ${currentIndex + 1}`}
           fill
           className="object-contain"
@@ -97,7 +113,7 @@ const MobileCarouselModal = ({ isOpen, onClose, images, initialIndex = 0 }: Mobi
         />
 
         {/* Navigation Arrows */}
-        {images.length > 1 && (
+        {imageUrls.length > 1 && (
           <>
             <button
               onClick={prevImage}
@@ -122,10 +138,10 @@ const MobileCarouselModal = ({ isOpen, onClose, images, initialIndex = 0 }: Mobi
       </div>
 
       {/* Thumbnail Strip (Optional) */}
-      {images.length > 1 && (
+      {imageUrls.length > 1 && (
         <div className="bg-black/90 p-4 md:p-6 overflow-x-auto">
           <div className="flex gap-2 md:gap-3 justify-center md:justify-start max-w-7xl mx-auto">
-            {images.map((img, idx) => (
+            {imageUrls.map((imgUrl, idx) => (
               <button
                 key={idx}
                 onClick={() => setCurrentIndex(idx)}
@@ -134,7 +150,7 @@ const MobileCarouselModal = ({ isOpen, onClose, images, initialIndex = 0 }: Mobi
                 }`}
               >
                 <Image
-                  src={img}
+                  src={imgUrl}
                   alt={`Thumbnail ${idx + 1}`}
                   fill
                   className="object-cover"
