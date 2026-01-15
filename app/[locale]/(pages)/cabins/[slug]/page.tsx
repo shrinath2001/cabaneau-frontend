@@ -22,6 +22,16 @@ interface AmenityInfo {
   category: string;
 }
 
+interface ServiceInfo {
+  id: string;
+  name: string;
+  slug: string;
+  category: string;
+  price?: number;
+  priceUnit?: string;
+  featuredImage?: string;
+}
+
 interface ImageTag {
   slug: string;
   name: string;
@@ -52,6 +62,7 @@ interface CabinDetails {
   isActive: boolean;
   featuredAmenities?: AmenityInfo[];
   additionalAmenities?: AmenityInfo[];
+  services?: ServiceInfo[];
 }
 
 const SingleCabinPage = () => {
@@ -387,7 +398,7 @@ const SingleCabinPage = () => {
             />
 
             {/* Extra Services Section Component */}
-            <ExtraServicesSection />
+            <ExtraServicesSection services={cabin.services} />
 
             {/* Sleeping Areas Section Component */}
             <SleepingAreasSection />

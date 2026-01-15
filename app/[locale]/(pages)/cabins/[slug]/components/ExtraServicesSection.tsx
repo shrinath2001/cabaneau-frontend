@@ -1,70 +1,97 @@
 'use client';
 
-const ExtraServicesSection = () => {
-  const services = [
+import { useTranslations } from '@/app/providers/TranslationsProvider';
+
+interface ServiceInfo {
+  id: string;
+  name: string;
+  slug: string;
+  category: string;
+  price?: number;
+  priceUnit?: string;
+  featuredImage?: string;
+}
+
+interface ExtraServicesSectionProps {
+  services?: ServiceInfo[];
+}
+
+const ExtraServicesSection = ({ services }: ExtraServicesSectionProps) => {
+  const { t } = useTranslations('cabin');
+
+  // Fallback static services if none provided from API
+  const fallbackServices: ServiceInfo[] = [
     {
+      id: 'breakfast',
       name: 'BREAKFAST',
-      image: '/assets/breakfast.jpg',
+      slug: 'breakfast',
+      category: 'BREAKFAST',
+      featuredImage: '/assets/breakfast.jpg',
     },
     {
+      id: 'dinner',
       name: 'DINNER',
-      subtitle: '3 SERVICE',
-      image: '/assets/dinner.jpg',
+      slug: 'dinner',
+      category: 'DINING',
+      featuredImage: '/assets/dinner.jpg',
     },
     {
-      name: 'BBQ',
-      subtitle: 'PACKAGE',
-      image: '/assets/bbq.jpg',
+      id: 'bbq',
+      name: 'BBQ PACKAGE',
+      slug: 'bbq',
+      category: 'DINING',
+      featuredImage: '/assets/bbq.jpg',
     },
     {
-      name: 'RACLETTE',
-      subtitle: 'PACKAGE',
-      image: '/assets/raclette.jpg',
-    },
-    {
+      id: 'massage',
       name: 'MASSAGE',
-      image: '/assets/massage.jpg',
-    },
-    {
-      name: 'DOGS',
-      image: '/assets/dogs.jpg',
-    },
-    {
-      name: 'BABY BED',
-      image: '/assets/baby-bed.jpg',
-    },
-    {
-      name: 'HIGH CHAIR',
-      image: '/assets/high-chair.jpg',
+      slug: 'massage',
+      category: 'WELLNESS',
+      featuredImage: '/assets/massage.jpg',
     },
   ];
+
+  const displayServices = services && services.length > 0 ? services : fallbackServices;
+
+  // Don't render section if no services
+  if (!displayServices || displayServices.length === 0) {
+    return null;
+  }
+
+  // Get image URL - handle both absolute and relative paths
+  const getImageUrl = (image?: string) => {
+    if (!image) return '/assets/placeholder.jpg';
+    if (image.startsWith('http')) return image;
+    // For relative paths, prepend API URL
+    return `${process.env.NEXT_PUBLIC_API_URL || ''}${image}`;
+  };
 
   return (
     <div className="mb-8 sm:mb-12">
       <h2 className="font-heading font-medium text-[18px] sm:text-[20px] lg:text-[24px] mb-4 sm:mb-6 uppercase tracking-wide" style={{ color: '#212121' }}>
-        AVAILABLE EXTRA SERVICES
+        {t('detail.extra_services', 'AVAILABLE EXTRA SERVICES')}
       </h2>
 
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
-        {services.map((service, idx) => (
-          <div key={idx} className="text-center">
+        {displayServices.map((service) => (
+          <div key={service.id} className="text-center">
             <div
               className="w-[70px] h-[70px] sm:w-[80px] sm:h-[80px] lg:w-[100px] lg:h-[100px] bg-gray-200 overflow-hidden mb-2 sm:mb-3 mx-auto"
               style={{
-                backgroundImage: `url(${service.image})`,
+                backgroundImage: `url(${getImageUrl(service.featuredImage)})`,
                 backgroundSize: 'cover',
                 backgroundPosition: 'center'
               }}
-            >
-              {/* Placeholder for image */}
-            </div>
+            />
             <div className="font-heading font-medium text-[10px] sm:text-[12px] lg:text-[14px] uppercase" style={{ color: '#212121' }}>
               {service.name}
-              {service.subtitle && (
-                <>
-                  <br />
-                  {service.subtitle}
-                </>
+              {service.price && (
+                <div className="text-[9px] sm:text-[10px] text-gray-500 mt-1">
+                  €{Math.floor(Number(service.price))}{service.priceUnit === 'PER_PERSON' && t('price_unit.per_person', '/PERSON')}
+                  {service.priceUnit === 'PER_GROUP' && t('price_unit.per_group', '/GROUP')}
+                  {service.priceUnit === 'PER_HOUR' && t('price_unit.per_hour', '/HOUR')}
+                  {service.priceUnit === 'PER_DAY' && t('price_unit.per_day', '/DAY')}
+                </div>
               )}
             </div>
           </div>

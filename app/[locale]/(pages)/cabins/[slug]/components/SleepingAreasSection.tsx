@@ -1,10 +1,14 @@
 'use client';
 
+import { useTranslations } from '@/app/providers/TranslationsProvider';
+
 const SleepingAreasSection = () => {
+  const { t } = useTranslations('cabin');
+
   return (
     <div className="mb-8 sm:mb-12">
       <h2 className="font-heading font-medium text-[18px] sm:text-[20px] lg:text-[24px] mb-4 sm:mb-6 uppercase tracking-wide" style={{ color: '#212121' }}>
-        WHERE YOU WILL SLEEP
+        {t('detail.where_you_sleep', 'WHERE YOU WILL SLEEP')}
       </h2>
 
       <div className="relative w-full h-[250px] sm:h-[350px] lg:h-[400px] bg-gray-200 overflow-hidden">
