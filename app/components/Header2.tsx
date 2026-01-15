@@ -58,12 +58,25 @@ const Header2 = () => {
   // Helper to create localized link
   const link = (path: string) => localizedPath(locale as Locale, path);
 
+  // Build home link - preserve search params when coming from search or cabin pages
+  const getHomeLink = () => {
+    const basePath = link('/');
+    // If we're on a search or cabin detail page and have search params, preserve them
+    if (pathname.includes('/search') || pathname.includes('/cabins/')) {
+      const queryString = searchParams.toString();
+      if (queryString) {
+        return `${basePath}?${queryString}`;
+      }
+    }
+    return basePath;
+  };
+
   return (
     <header className="fixed top-0 left-0 w-full z-50 bg-white shadow-md">
       <div className="container mx-auto px-4 md:px-8 lg:px-20">
         <div className="flex items-center justify-between py-6 md:py-8">
           <div className="flex items-center">
-            <Link href={link('/')} scroll={true}>
+            <Link href={getHomeLink()} scroll={true}>
               <Image
                 src="/assets/Group 1 (1).png"
                 alt="Cabaneau Logo"

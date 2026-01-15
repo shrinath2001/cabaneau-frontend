@@ -1,6 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useSearchParams } from "next/navigation";
+import { Suspense } from "react";
 import { getLodgifySearchLocale } from "@/app/lib/language";
 
 interface LodgifyBookingWidgetProps {
@@ -32,12 +34,27 @@ const widgetTranslations: Record<string, { checkIn: string; checkOut: string; gu
 const LodgifyBookingWidget = ({
   languageCode = "en",
 }: LodgifyBookingWidgetProps) => {
+  const searchParams = useSearchParams();
   const [searchPageUrl, setSearchPageUrl] = useState("/search");
   // Convert language code to Lodgify-compatible locale (search widget only supports 'en', not 'en-GB')
   const lodgifyLocale = getLodgifySearchLocale(languageCode);
 
   // Get translations for current language
   const t = widgetTranslations[languageCode] || widgetTranslations.en;
+
+  // Convert ISO date (YYYY-MM-DD) to Lodgify format (YYYYMMDD)
+  const formatForLodgify = (date: string) => {
+    if (!date) return "";
+    return date.includes("-") ? date.replace(/-/g, "") : date;
+  };
+
+  // Read search params for pre-filling (passed via URL from search page)
+  const arrival = searchParams.get("arrival") || "";
+  const departure = searchParams.get("departure") || "";
+  const adults = searchParams.get("adults") || "";
+  const children = searchParams.get("children") || "";
+  const infants = searchParams.get("infants") || "";
+  const pets = searchParams.get("pets") || "";
 
   useEffect(() => {
     // Set the full search page URL using current origin (include locale)
@@ -68,7 +85,8 @@ const LodgifyBookingWidget = ({
     return () => {
       clearTimeout(timer);
     };
-  }, []);
+    // Re-initialize when search params change (e.g., navigating back from search page)
+  }, [arrival, departure, adults]);
 
   return (
     <>
@@ -590,6 +608,14 @@ const LodgifyBookingWidget = ({
           data-new-tab="false"
           data-version="stable"
           data-hide-location
+          // Pre-fill with search params (passed via URL from search page)
+          {...(arrival && { "data-arrival": formatForLodgify(arrival) })}
+          {...(departure && { "data-departure": formatForLodgify(departure) })}
+          {...(adults && adults !== "0" && { "data-adults": adults })}
+          {...(children && children !== "0" && { "data-children": children })}
+          {...(infants && infants !== "0" && { "data-infants": infants })}
+          {...(pets && pets !== "0" && { "data-pets": pets })}
+          // Labels (translated)
           data-dates-check-in-label={t.checkIn}
           data-dates-check-out-label={t.checkOut}
           data-guests-counter-label={t.guests}
