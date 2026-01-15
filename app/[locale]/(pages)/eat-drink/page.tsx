@@ -7,6 +7,8 @@ import EatDrinkDetailModal from '@/app/components/EatDrinkDetailModal';
 import { apiFetch } from '@/app/lib/api';
 import { useTranslations } from '@/app/providers/TranslationsProvider';
 
+type TabType = 'breakfast' | 'dining' | 'drinks';
+
 interface APIService {
   id: string;
   name: string;
@@ -51,7 +53,7 @@ function transformService(service: APIService, index: number): EatDrinkItem {
 
 export default function EatDrinkPage() {
   const { t } = useTranslations('services');
-  const [activeTab, setActiveTab] = useState<'dining' | 'breakfast' | 'drinks'>('dining');
+  const [activeTab, setActiveTab] = useState<TabType>('breakfast');
   const [selectedItem, setSelectedItem] = useState<EatDrinkItem | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [dining, setDining] = useState<EatDrinkItem[]>([]);
@@ -60,6 +62,29 @@ export default function EatDrinkPage() {
   const [loading, setLoading] = useState(true);
   const [isTabsSticky, setIsTabsSticky] = useState(true);
   const discoverSectionRef = useRef<HTMLElement>(null);
+
+  // Handle URL hash for tab navigation
+  useEffect(() => {
+    const handleHashChange = () => {
+      const hash = window.location.hash.replace('#', '') as TabType;
+      if (hash && ['breakfast', 'dining', 'drinks'].includes(hash)) {
+        setActiveTab(hash);
+      }
+    };
+
+    // Set initial tab from hash
+    handleHashChange();
+
+    // Listen for hash changes
+    window.addEventListener('hashchange', handleHashChange);
+    return () => window.removeEventListener('hashchange', handleHashChange);
+  }, []);
+
+  // Update URL hash when tab changes
+  const handleTabChange = (tab: TabType) => {
+    setActiveTab(tab);
+    window.history.replaceState(null, '', `#${tab}`);
+  };
 
   // Fetch services from API
   useEffect(() => {
@@ -168,17 +193,7 @@ export default function EatDrinkPage() {
         <div className="container mx-auto px-4 max-w-6xl">
           <div className="flex justify-center gap-4 sm:gap-8 md:gap-12 overflow-x-auto pt-4 pb-4">
             <button
-              onClick={() => setActiveTab('dining')}
-              className="py-4 px-2 text-[16px] md:text-[24px] font-medium font-heading uppercase tracking-wider transition-colors relative whitespace-nowrap"
-              style={{ color: activeTab === 'dining' ? '#F49A4A' : '#495D4D' }}
-            >
-              {t('eat_drink.tabs.dining', 'DINING')}
-              {activeTab === 'dining' && (
-                <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#F49A4A]"></span>
-              )}
-            </button>
-            <button
-              onClick={() => setActiveTab('breakfast')}
+              onClick={() => handleTabChange('breakfast')}
               className="py-4 px-2 text-[16px] md:text-[24px] font-medium font-heading uppercase tracking-wider transition-colors relative whitespace-nowrap"
               style={{ color: activeTab === 'breakfast' ? '#F49A4A' : '#495D4D' }}
             >
@@ -188,7 +203,17 @@ export default function EatDrinkPage() {
               )}
             </button>
             <button
-              onClick={() => setActiveTab('drinks')}
+              onClick={() => handleTabChange('dining')}
+              className="py-4 px-2 text-[16px] md:text-[24px] font-medium font-heading uppercase tracking-wider transition-colors relative whitespace-nowrap"
+              style={{ color: activeTab === 'dining' ? '#F49A4A' : '#495D4D' }}
+            >
+              {t('eat_drink.tabs.dining', 'DINING')}
+              {activeTab === 'dining' && (
+                <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#F49A4A]"></span>
+              )}
+            </button>
+            <button
+              onClick={() => handleTabChange('drinks')}
               className="py-4 px-2 text-[16px] md:text-[24px] font-medium font-heading uppercase tracking-wider transition-colors relative whitespace-nowrap"
               style={{ color: activeTab === 'drinks' ? '#F49A4A' : '#495D4D' }}
             >
@@ -233,33 +258,34 @@ export default function EatDrinkPage() {
 
       {/* Discover More Section */}
       <section ref={discoverSectionRef} className="grid grid-cols-1 md:grid-cols-2">
-        {/* First Section */}
+        {/* First Section - Shows the "other" main category */}
         <div className="relative h-[300px] md:h-[400px] flex flex-col items-center justify-center">
           <div
             className="absolute inset-0 bg-cover bg-center"
             style={{
-              backgroundImage: activeTab === 'dining'
+              backgroundImage: activeTab === 'breakfast'
                 ? 'url(/assets/dinner.png)'
-                : activeTab === 'breakfast'
-                ? 'url(/assets/dinner.png)'
+                : activeTab === 'dining'
+                ? 'url(/assets/breakfast.jpg)'
                 : 'url(/assets/dinner.png)',
             }}
           >
             <div className="absolute inset-0" style={{ backgroundColor: 'rgba(0, 0, 0, 0.50)' }}></div>
           </div>
           <h2 className="relative z-10 text-white text-2xl md:text-3xl lg:text-4xl font-custom text-center px-4 mb-6">
-            {activeTab === 'dining' ? (
-              <>{t('eat_drink.discover.our', 'OUR')}<br />{t('eat_drink.discover.drinks_offering', 'DRINKS OFFERING')}</>
-            ) : activeTab === 'breakfast' ? (
+            {activeTab === 'breakfast' ? (
               <>{t('eat_drink.discover.our', 'OUR')}<br />{t('eat_drink.discover.dining_offering', 'DINING OFFERING')}</>
+            ) : activeTab === 'dining' ? (
+              <>{t('eat_drink.discover.our', 'OUR')}<br />{t('eat_drink.discover.breakfast_offering', 'BREAKFAST OFFERING')}</>
             ) : (
               <>{t('eat_drink.discover.our', 'OUR')}<br />{t('eat_drink.discover.dining_offering', 'DINING OFFERING')}</>
             )}
           </h2>
           <button
             onClick={() => {
-              const newTab = activeTab === 'dining' ? 'drinks' : 'dining';
-              setActiveTab(newTab);
+              // Show dining from breakfast, breakfast from dining, dining from drinks
+              const newTab: TabType = activeTab === 'breakfast' ? 'dining' : activeTab === 'dining' ? 'breakfast' : 'dining';
+              handleTabChange(newTab);
               window.scrollTo({ top: 0, behavior: 'smooth' });
             }}
             className="relative z-10 px-8 py-3 text-white font-heading tracking-wider transition-all hover:bg-hoverorange"
@@ -274,19 +300,19 @@ export default function EatDrinkPage() {
           <div
             className="absolute inset-0 bg-cover bg-center"
             style={{
-              backgroundImage: activeTab === 'dining'
-                ? 'url(/assets/breakfast.jpg)'
-                : activeTab === 'breakfast'
-                ? 'url(/assets/dinner.png)'
+              backgroundImage: activeTab === 'breakfast'
+                ? 'url(/assets/drinks.jpg)'
+                : activeTab === 'dining'
+                ? 'url(/assets/drinks.jpg)'
                 : 'url(/assets/breakfast.jpg)',
             }}
           >
             <div className="absolute inset-0" style={{ backgroundColor: 'rgba(0, 0, 0, 0.50)' }}></div>
           </div>
           <h2 className="relative z-10 text-white text-2xl md:text-3xl lg:text-4xl font-custom text-center px-4 mb-6">
-            {activeTab === 'dining' ? (
-              <>{t('eat_drink.discover.our', 'OUR')}<br />{t('eat_drink.discover.breakfast_offering', 'BREAKFAST OFFERING')}</>
-            ) : activeTab === 'breakfast' ? (
+            {activeTab === 'breakfast' ? (
+              <>{t('eat_drink.discover.our', 'OUR')}<br />{t('eat_drink.discover.drinks_offering', 'DRINKS OFFERING')}</>
+            ) : activeTab === 'dining' ? (
               <>{t('eat_drink.discover.our', 'OUR')}<br />{t('eat_drink.discover.drinks_offering', 'DRINKS OFFERING')}</>
             ) : (
               <>{t('eat_drink.discover.our', 'OUR')}<br />{t('eat_drink.discover.breakfast_offering', 'BREAKFAST OFFERING')}</>
@@ -294,8 +320,9 @@ export default function EatDrinkPage() {
           </h2>
           <button
             onClick={() => {
-              const newTab = activeTab === 'dining' ? 'breakfast' : activeTab === 'breakfast' ? 'drinks' : 'breakfast';
-              setActiveTab(newTab);
+              // Show drinks from breakfast/dining, breakfast from drinks
+              const newTab: TabType = activeTab === 'drinks' ? 'breakfast' : 'drinks';
+              handleTabChange(newTab);
               window.scrollTo({ top: 0, behavior: 'smooth' });
             }}
             className="relative z-10 px-8 py-3 text-white font-heading tracking-wider transition-all hover:bg-hoverorange"
