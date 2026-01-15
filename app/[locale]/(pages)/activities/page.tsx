@@ -41,7 +41,7 @@ function transformActivity(apiActivity: APIActivity, index: number): Activity {
 }
 
 export default function ActivitiesPage() {
-  const { t } = useTranslations("activities");
+  const { t, locale } = useTranslations("activities");
   const [activeTab, setActiveTab] = useState<"activities" | "restaurants">(
     "activities"
   );
@@ -59,7 +59,9 @@ export default function ActivitiesPage() {
   useEffect(() => {
     const fetchActivities = async () => {
       try {
-        const response = await apiFetch("/api/activities");
+        const response = await apiFetch("/api/activities", {
+          headers: { "x-language": locale },
+        });
         const result = await response.json();
         const data = result?.data ?? result ?? [];
 
@@ -83,7 +85,7 @@ export default function ActivitiesPage() {
     };
 
     fetchActivities();
-  }, []);
+  }, [locale]);
 
   // Sticky tabs scroll handler
   useEffect(() => {

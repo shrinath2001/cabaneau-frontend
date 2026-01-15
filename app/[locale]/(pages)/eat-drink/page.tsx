@@ -23,28 +23,21 @@ interface APIService {
   displayOrder: number;
 }
 
-// Format price from API to display format (e.g., "45€/PERSON")
-function formatPrice(price?: number, priceUnit?: string): string {
-  if (!price) return '';
-
-  const unitMap: Record<string, string> = {
-    'PER_PERSON': '/PERSON',
-    'PER_GROUP': '/GROUP',
-    'PER_HOUR': '/HOUR',
-    'PER_DAY': '/DAY',
-  };
-
-  const unit = priceUnit ? unitMap[priceUnit] || '' : '';
-  return `${price}€${unit}`;
+// Extended interface to store raw price data for localized formatting
+interface EatDrinkItemWithPrice extends EatDrinkItem {
+  rawPrice?: number;
+  rawPriceUnit?: string;
 }
 
 // Transform API response to match existing EatDrinkItem interface
-function transformService(service: APIService, index: number): EatDrinkItem {
+function transformService(service: APIService, index: number): EatDrinkItemWithPrice {
   return {
     id: index + 1,
     title: service.name?.toUpperCase() || '',
     subtitle: service.shortDescription || '',
-    price: formatPrice(service.price, service.priceUnit),
+    price: '', // Will be formatted with translations in render
+    rawPrice: service.price ? Number(service.price) : undefined,
+    rawPriceUnit: service.priceUnit,
     description: service.description || '',
     image: service.featuredImage || '/assets/dinner.png',
     detailImage: service.images?.[0],
@@ -52,16 +45,31 @@ function transformService(service: APIService, index: number): EatDrinkItem {
 }
 
 export default function EatDrinkPage() {
-  const { t } = useTranslations('services');
+  const { t, locale } = useTranslations('services');
   const [activeTab, setActiveTab] = useState<TabType>('breakfast');
-  const [selectedItem, setSelectedItem] = useState<EatDrinkItem | null>(null);
+  const [selectedItem, setSelectedItem] = useState<EatDrinkItemWithPrice | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [dining, setDining] = useState<EatDrinkItem[]>([]);
-  const [breakfast, setBreakfast] = useState<EatDrinkItem[]>([]);
-  const [drinks, setDrinks] = useState<EatDrinkItem[]>([]);
+  const [dining, setDining] = useState<EatDrinkItemWithPrice[]>([]);
+  const [breakfast, setBreakfast] = useState<EatDrinkItemWithPrice[]>([]);
+  const [drinks, setDrinks] = useState<EatDrinkItemWithPrice[]>([]);
   const [loading, setLoading] = useState(true);
   const [isTabsSticky, setIsTabsSticky] = useState(true);
   const discoverSectionRef = useRef<HTMLElement>(null);
+
+  // Format price with localized unit
+  const formatPrice = (price?: number, priceUnit?: string): string => {
+    if (!price) return '';
+
+    const unitMap: Record<string, string> = {
+      'PER_PERSON': t('price_unit.per_person', '/PERSON'),
+      'PER_GROUP': t('price_unit.per_group', '/GROUP'),
+      'PER_HOUR': t('price_unit.per_hour', '/HOUR'),
+      'PER_DAY': t('price_unit.per_day', '/DAY'),
+    };
+
+    const unit = priceUnit ? unitMap[priceUnit] || '' : '';
+    return `${Math.floor(price)}€${unit}`;
+  };
 
   // Handle URL hash for tab navigation
   useEffect(() => {
@@ -90,7 +98,9 @@ export default function EatDrinkPage() {
   useEffect(() => {
     const fetchServices = async () => {
       try {
-        const response = await apiFetch('/api/eat-drink');
+        const response = await apiFetch('/api/eat-drink', {
+          headers: { 'x-language': locale },
+        });
         const result = await response.json();
         const data = result?.data ?? result ?? [];
 
@@ -118,7 +128,7 @@ export default function EatDrinkPage() {
     };
 
     fetchServices();
-  }, []);
+  }, [locale]);
 
   // Sticky tabs scroll handler
   useEffect(() => {
@@ -147,7 +157,14 @@ export default function EatDrinkPage() {
   }, []);
 
   const handleReadMore = (item: EatDrinkItem) => {
-    setSelectedItem(item);
+    // Find the original item with raw price data
+    const originalItem = [...dining, ...breakfast, ...drinks].find(i => i.id === item.id);
+    if (originalItem) {
+      setSelectedItem({
+        ...originalItem,
+        price: formatPrice(originalItem.rawPrice, originalItem.rawPriceUnit),
+      });
+    }
     setIsModalOpen(true);
   };
 
@@ -246,7 +263,10 @@ export default function EatDrinkPage() {
               {currentItems.map((item, index) => (
                 <EatDrinkCard
                   key={item.id}
-                  item={item}
+                  item={{
+                    ...item,
+                    price: formatPrice(item.rawPrice, item.rawPriceUnit),
+                  }}
                   onReadMore={handleReadMore}
                   isReversed={index % 2 !== 0}
                 />
