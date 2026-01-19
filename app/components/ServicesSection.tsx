@@ -28,7 +28,7 @@ const ServicesSection = ({
   const { t } = useTranslations('homepage');
 
   // Fallback to default if no CMS data
-  const defaultServices = [
+  const defaultServices: SectionItem[] = [
     {
       image: '/assets/breakfast.jpg',
       title: t('services_section.breakfast', 'BREAKFAST'),
@@ -63,6 +63,7 @@ const ServicesSection = ({
                 key={index}
                 imageSrc={item.image}
                 serviceName={item.title}
+                link={item.link}
               />
             ))}
           </div>

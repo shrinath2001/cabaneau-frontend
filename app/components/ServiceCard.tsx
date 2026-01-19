@@ -1,12 +1,14 @@
 import Image from 'next/image';
+import Link from 'next/link';
 
 interface ServiceCardProps {
   imageSrc: string;
   serviceName: string;
+  link?: string;
 }
 
-const ServiceCard: React.FC<ServiceCardProps> = ({ imageSrc, serviceName }) => {
-  return (
+const ServiceCard: React.FC<ServiceCardProps> = ({ imageSrc, serviceName, link }) => {
+  const cardContent = (
     <div className="relative h-[160px] md:h-[461px] w-full md:w-[410px] overflow-hidden group cursor-pointer">
       <Image src={imageSrc} alt={serviceName} fill style={{ objectFit: 'cover' }} />
       <div className="absolute inset-0 flex items-end justify-center p-6 bg-gradient-to-t from-black/60 to-transparent group-hover:opacity-0 transition-opacity duration-300">
@@ -18,6 +20,12 @@ const ServiceCard: React.FC<ServiceCardProps> = ({ imageSrc, serviceName }) => {
       </div>
     </div>
   );
+
+  if (link) {
+    return <Link href={link}>{cardContent}</Link>;
+  }
+
+  return cardContent;
 };
 
 export default ServiceCard;
