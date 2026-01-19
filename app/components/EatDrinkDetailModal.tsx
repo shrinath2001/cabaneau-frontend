@@ -56,21 +56,21 @@ const EatDrinkDetailModal: React.FC<EatDrinkDetailModalProps> = ({ item, isOpen,
         {/* Content */}
         <div className="p-[17px] md:p-8">
           {/* Title and Subtitle */}
-          <h2 className="text-xl font-bold font-heading mb-2 uppercase tracking-wide">{item.title}</h2>
-          <p className="text-sm text-gray-600 mb-6">{item.subtitle}</p>
+          <h2 className="text-xl font-logga mb-2 uppercase tracking-wide">{item.title}</h2>
+          <p className="text-sm text-gray-600 font-jost font-light mb-6">{item.subtitle}</p>
 
           {/* Price */}
           {item.price && (
             <div className="mb-6">
-              <h3 className="text-xs font-bold uppercase text-gray-900 mb-3 tracking-wide">PRICE</h3>
-              <p className="text-sm text-gray-700 font-medium">{item.price}</p>
+              <h3 className="text-xs font-logga uppercase text-gray-900 mb-3 tracking-wide">PRICE</h3>
+              <p className="text-sm text-gray-700 font-jost font-light">{item.price}</p>
             </div>
           )}
 
           {/* Description Section */}
           <div className="mb-6">
-            <h3 className="text-xs font-bold uppercase text-gray-900 mb-3 tracking-wide">DESCRIPTION</h3>
-            <p className="text-sm text-gray-700 leading-relaxed">{item.description}</p>
+            <h3 className="text-xs font-logga uppercase text-gray-900 mb-3 tracking-wide">DESCRIPTION</h3>
+            <p className="text-sm text-gray-700 font-jost font-light leading-relaxed">{item.description}</p>
           </div>
 
         </div>

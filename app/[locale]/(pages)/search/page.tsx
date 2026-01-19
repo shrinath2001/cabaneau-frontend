@@ -442,8 +442,8 @@ function SearchResults() {
       <div className="container mx-auto px-4 py-16">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-4xl font-bold text-center mb-4">{st.title}</h1>
-          <p className="text-center text-gray-600 font-jost">
+          <h1 className="text-4xl font-logga text-center mb-4">{st.title}</h1>
+          <p className="text-center text-gray-600 font-jost font-light">
             {st.subtitle}
           </p>
         </div>
@@ -491,14 +491,14 @@ function SearchResults() {
                     />
                   </svg>
                 </div>
-                <h3 className="text-2xl font-medium text-gray-900 mb-2">{st.selectDates}</h3>
-                <p className="text-gray-600">
+                <h3 className="text-2xl font-logga text-gray-900 mb-2">{st.selectDates}</h3>
+                <p className="text-gray-600 font-jost font-light">
                   {st.selectDatesSubtitle}
                 </p>
               </div>
             ) : cabins.length > 0 ? (
               <>
-                <p className="text-center text-gray-600 mb-8 font-jost text-lg">
+                <p className="text-center text-gray-600 mb-8 font-jost font-light text-lg">
                   {st.found} {total} {total === 1 ? st.cabin : st.cabins} {st.available}
                 </p>
                 <div className="flex flex-wrap justify-center gap-8">
@@ -579,8 +579,8 @@ function SearchResults() {
                     />
                   </svg>
                 </div>
-                <h3 className="text-2xl font-medium text-gray-900 mb-2">{st.noResults}</h3>
-                <p className="text-gray-600">
+                <h3 className="text-2xl font-logga text-gray-900 mb-2">{st.noResults}</h3>
+                <p className="text-gray-600 font-jost font-light">
                   {st.noResultsSubtitle}
                 </p>
               </div>

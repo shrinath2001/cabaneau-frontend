@@ -25,12 +25,12 @@ const EatDrinkCard: React.FC<EatDrinkCardProps> = ({ item, onReadMore, isReverse
         <div className="flex-1 flex flex-col justify-between">
           <div>
             {/* Title - 24px Jost 500 Medium #212121 */}
-            <h3 className="text-[24px] font-medium font-heading mb-2 uppercase tracking-wide" style={{ color: '#212121' }}>
+            <h3 className="text-[24px] font-logga mb-2 uppercase tracking-wide" style={{ color: '#212121' }}>
               {item.title}
             </h3>
 
-            {/* Subtitle - 17px Raleway 500 Medium #706C6C */}
-            <p className="text-[17px] font-medium font-body mb-4 leading-relaxed" style={{ color: '#706C6C' }}>
+            {/* Subtitle - 17px Jost Light #706C6C */}
+            <p className="text-[17px] font-jost font-light mb-4 leading-relaxed" style={{ color: '#706C6C' }}>
               {item.subtitle}
             </p>
 
@@ -39,8 +39,8 @@ const EatDrinkCard: React.FC<EatDrinkCardProps> = ({ item, onReadMore, isReverse
               {item.price}
             </p>
 
-            {/* Description - 17px Raleway 500 Medium #706C6C */}
-            <p className="text-[17px] font-medium font-body mb-6 leading-relaxed" style={{ color: '#706C6C' }}>
+            {/* Description - 17px Jost Light #706C6C */}
+            <p className="text-[17px] font-jost font-light mb-6 leading-relaxed" style={{ color: '#706C6C' }}>
               {item.description}
             </p>
           </div>

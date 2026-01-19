@@ -14,7 +14,7 @@ export default function GiftVoucherPage() {
               <h1 className="font-logga text-[32px] md:text-[48px] font-semibold mb-6 md:mb-8" style={{ color: '#212121' }}>
                 GIFT VOUCHER
               </h1>
-              <div className="font-raleway text-[16px] md:text-[18px] leading-relaxed text-gray-700 space-y-4">
+              <div className="font-jost font-light text-[16px] md:text-[18px] leading-relaxed text-gray-700 space-y-4">
                 <p>
                   Give the gift of an unforgettable experience at Cabaneau. Our luxury cabins offer the perfect escape for your loved ones to relax, unwind, and reconnect with nature.
                 </p>

@@ -217,7 +217,7 @@ const CabinCard: React.FC<CabinCardProps> = ({
       <div className=" mt-4 flex flex-col justify-between flex-1">
         {/* Title and Rating */}
         <div className="flex justify-between items-center mb-3">
-          <h3 className="font-jost text-2xl font-medium text-black">{title}</h3>
+          <h3 className="font-logga text-2xl text-black">{title}</h3>
           <div className="flex gap-0.5">
             {Array.from({ length: 5 }).map((_, i) => (
               <svg

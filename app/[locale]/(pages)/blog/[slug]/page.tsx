@@ -100,7 +100,7 @@ export default function BlogPostPage() {
       <main>
         <section className="py-20 bg-white">
           <div className="container mx-auto px-4 max-w-4xl text-center">
-            <h1 className="text-2xl font-semibold text-[#495D4D] mb-4">
+            <h1 className="text-2xl font-logga text-[#495D4D] mb-4">
               {error || 'Blog post not found'}
             </h1>
             <Link
@@ -169,7 +169,7 @@ export default function BlogPostPage() {
               {/* Tags */}
               {post.tags && post.tags.length > 0 && (
                 <div className="mt-8 pt-8 border-t border-gray-200">
-                  <h4 className="text-sm font-semibold text-[#495D4D] mb-3">Tags:</h4>
+                  <h4 className="text-sm font-logga text-[#495D4D] mb-3">Tags:</h4>
                   <div className="flex flex-wrap gap-2">
                     {post.tags.map((tag, index) => (
                       <span

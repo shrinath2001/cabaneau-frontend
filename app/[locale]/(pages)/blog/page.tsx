@@ -280,11 +280,11 @@ export default function BlogPage() {
                                   {formatDate(post.publishedAt)}
                                 </span>
                               </div>
-                              <h2 className="text-xl font-semibold text-[#495D4D] mb-2">
+                              <h2 className="text-xl font-logga text-[#495D4D] mb-2">
                                 {post.title}
                               </h2>
                               {post.excerpt && (
-                                <p className="text-gray-600 text-sm mb-4 line-clamp-2">
+                                <p className="text-gray-600 text-sm mb-4 line-clamp-2 font-jost font-light">
                                   {post.excerpt}
                                 </p>
                               )}
@@ -364,7 +364,7 @@ export default function BlogPage() {
             <aside className="hidden lg:block lg:w-[420px] flex-shrink-0">
               {/* Search */}
               <div className="bg-gray-50 p-6 mb-6">
-                <h3 className="text-lg font-semibold text-[#495D4D] mb-4">Search</h3>
+                <h3 className="text-lg font-logga text-[#495D4D] mb-4">Search</h3>
                 <div className="relative">
                   <input
                     type="text"

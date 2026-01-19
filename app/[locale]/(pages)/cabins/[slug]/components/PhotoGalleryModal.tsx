@@ -200,7 +200,7 @@ const PhotoGalleryModal = ({ isOpen, onClose, images, featuredImage, imageTags, 
 
       <div className="max-w-7xl mx-auto px-6 md:px-20 py-8">
         {/* Photo Tour Title */}
-        <h2 className="text-3xl font-semibold mb-8">Photo tour</h2>
+        <h2 className="text-3xl font-logga mb-8">Photo tour</h2>
 
         {/* Category Thumbnails Grid - Only show categories with images */}
         {activeCategories.length > 1 && (
@@ -247,7 +247,7 @@ const PhotoGalleryModal = ({ isOpen, onClose, images, featuredImage, imageTags, 
                 className="grid grid-cols-[200px_1fr] gap-8 scroll-mt-24"
               >
                 <div>
-                  <h3 className="text-xl font-semibold sticky top-24">{category.name}</h3>
+                  <h3 className="text-xl font-logga sticky top-24">{category.name}</h3>
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   {masonryItems.map((item, idx) => {

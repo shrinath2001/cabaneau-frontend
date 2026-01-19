@@ -56,8 +56,8 @@ const ActivityDetailModal: React.FC<ActivityDetailModalProps> = ({ activity, isO
         {/* Content */}
         <div className="p-[17px] md:p-8">
           {/* Title and Subtitle */}
-          <h2 className="text-xl font-bold font-heading mb-2 uppercase tracking-wide">{activity.title}</h2>
-          <p className="text-sm text-gray-600 mb-6">{activity.subtitle}</p>
+          <h2 className="text-xl font-logga mb-2 uppercase tracking-wide">{activity.title}</h2>
+          <p className="text-sm text-gray-600 font-jost font-light mb-6">{activity.subtitle}</p>
 
           {/* Info Row with Icons */}
           {(activity.duration || activity.startLocation || activity.tags) && (
@@ -106,22 +106,22 @@ const ActivityDetailModal: React.FC<ActivityDetailModalProps> = ({ activity, isO
 
           {/* Description Section */}
           <div className="mb-6">
-            <h3 className="text-xs font-bold uppercase text-gray-900 mb-3 tracking-wide">DESCRIPTION</h3>
-            <p className="text-sm text-gray-700 leading-relaxed">{activity.description}</p>
+            <h3 className="text-xs font-logga uppercase text-gray-900 mb-3 tracking-wide">DESCRIPTION</h3>
+            <p className="text-sm text-gray-700 font-jost font-light leading-relaxed">{activity.description}</p>
           </div>
 
           {/* Schedule Availability */}
           {activity.scheduleAvailability && (
             <div className="mb-6">
-              <h3 className="text-xs font-bold uppercase text-gray-900 mb-3 tracking-wide">SCHEDULE AVAILABILITY</h3>
-              <p className="text-sm text-gray-700">{activity.scheduleAvailability}</p>
+              <h3 className="text-xs font-logga uppercase text-gray-900 mb-3 tracking-wide">SCHEDULE AVAILABILITY</h3>
+              <p className="text-sm text-gray-700 font-jost font-light">{activity.scheduleAvailability}</p>
             </div>
           )}
 
           {/* Contact Section */}
           <div className="mb-6">
-            <h3 className="text-xs font-bold uppercase text-gray-900 mb-3 tracking-wide">CONTACT</h3>
-            <div className="space-y-2 text-sm text-gray-700">
+            <h3 className="text-xs font-logga uppercase text-gray-900 mb-3 tracking-wide">CONTACT</h3>
+            <div className="space-y-2 text-sm text-gray-700 font-jost font-light">
               <div className="flex items-center gap-2">
                 <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
                   <path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z" />

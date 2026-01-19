@@ -22,13 +22,13 @@ const ActivityListCard: React.FC<ActivityListCardProps> = ({ activity, onReadMor
 
         {/* Content Section */}
         <div className="flex-1 flex flex-col justify-between">
-          {/* Title - 24px Jost 500 Medium #212121 */}
-          <h3 className="text-[24px] font-medium font-heading mb-2 uppercase tracking-wide" style={{ color: '#212121' }}>
+          {/* Title - 24px Logga #212121 */}
+          <h3 className="text-[24px] font-logga mb-2 uppercase tracking-wide" style={{ color: '#212121' }}>
             {activity.title}
           </h3>
 
-          {/* Subtitle - 17px Raleway 500 Medium #706C6C */}
-          <p className="text-[17px] font-medium font-body mb-5 leading-relaxed" style={{ color: '#706C6C' }}>
+          {/* Subtitle - 17px Jost Light #706C6C */}
+          <p className="text-[17px] font-jost font-light mb-5 leading-relaxed" style={{ color: '#706C6C' }}>
             {activity.subtitle}
           </p>
 
@@ -52,8 +52,8 @@ const ActivityListCard: React.FC<ActivityListCardProps> = ({ activity, onReadMor
             </svg>
           </div>
 
-          {/* Description - 17px Raleway 500 Medium #706C6C */}
-          <p className="text-[17px] font-medium font-body mb-5 leading-relaxed" style={{ color: '#706C6C' }}>
+          {/* Description - 17px Jost Light #706C6C */}
+          <p className="text-[17px] font-jost font-light mb-5 leading-relaxed" style={{ color: '#706C6C' }}>
             {activity.description}
           </p>
 

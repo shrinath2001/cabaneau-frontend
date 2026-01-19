@@ -74,14 +74,14 @@ const AmenitiesSection = ({ additionalAmenities, featuredAmenities }: AmenitiesS
 
   return (
     <div className="mb-8">
-      <h2 className="font-jost font-semibold text-[16px] md:text-[20px] mb-6 uppercase tracking-wide text-gray-800 p-4 md:p-6" style={{ backgroundColor: '#F1FAF7' }}>
+      <h2 className="font-logga text-[16px] md:text-[20px] mb-6 uppercase tracking-wide text-gray-800 p-4 md:p-6" style={{ backgroundColor: '#F1FAF7' }}>
         {t.title}
       </h2>
       <div className="grid grid-cols-2 gap-x-6 md:gap-x-16 gap-y-4">
         {gridAmenities.map((amenity) => (
           <div key={amenity.id} className="flex items-center gap-2 md:gap-3">
             <AmenityIcon icon={amenity.icon} />
-            <span className="font-raleway font-normal text-[15px] text-gray-800 uppercase">
+            <span className="font-jost font-light text-[15px] text-gray-800 uppercase">
               {amenity.name}
             </span>
           </div>
