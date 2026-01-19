@@ -207,15 +207,12 @@ export function useQuote({
 }
 
 /**
- * Format currency amount for display
+ * Format currency amount for display (European style: 700 €)
  */
 export function formatCurrency(amount: number, currency: string = 'EUR'): string {
-  return new Intl.NumberFormat('en-EU', {
-    style: 'currency',
-    currency,
-    minimumFractionDigits: 0,
-    maximumFractionDigits: 2,
-  }).format(amount);
+  const symbol = currency === 'EUR' ? '€' : currency;
+  const formattedAmount = Math.round(amount);
+  return `${formattedAmount} ${symbol}`;
 }
 
 /**

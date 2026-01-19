@@ -46,10 +46,10 @@ const sectionTranslations: Record<string, {
   button: string;
   loading: string;
 }> = {
-  en: { title: 'OUR CABINS', persons: 'Persons', available: 'Available', availableNow: 'Available now', perNight: '/night', button: 'DISCOVER ALL CABINS', loading: 'Loading cabins...' },
-  fr: { title: 'NOS CABANES', persons: 'Personnes', available: 'Disponible', availableNow: 'Disponible maintenant', perNight: '/nuit', button: 'DÉCOUVRIR TOUTES LES CABANES', loading: 'Chargement...' },
-  de: { title: 'UNSERE HÜTTEN', persons: 'Personen', available: 'Verfügbar', availableNow: 'Jetzt verfügbar', perNight: '/Nacht', button: 'ALLE HÜTTEN ENTDECKEN', loading: 'Laden...' },
-  nl: { title: 'ONZE HUTTEN', persons: 'Personen', available: 'Beschikbaar', availableNow: 'Nu beschikbaar', perNight: '/nacht', button: 'ONTDEK ALLE HUTTEN', loading: 'Laden...' },
+  en: { title: 'OUR CABINS', persons: 'Persons', available: 'Available', availableNow: 'Today', perNight: '/night', button: 'DISCOVER ALL CABINS', loading: 'Loading cabins...' },
+  fr: { title: 'NOS CABANES', persons: 'Personnes', available: 'Disponible', availableNow: 'Aujourd\'hui', perNight: '/nuit', button: 'DÉCOUVRIR TOUTES LES CABANES', loading: 'Chargement...' },
+  de: { title: 'UNSERE HÜTTEN', persons: 'Personen', available: 'Verfügbar', availableNow: 'Heute', perNight: '/Nacht', button: 'ALLE HÜTTEN ENTDECKEN', loading: 'Laden...' },
+  nl: { title: 'ONZE HUTTEN', persons: 'Personen', available: 'Beschikbaar', availableNow: 'Vandaag', perNight: '/nacht', button: 'ONTDEK ALLE HUTTEN', loading: 'Laden...' },
 };
 
 const BlogSidebarCabin = () => {

@@ -69,19 +69,22 @@ export default function DesktopBookingCard({
     >
       {/* Cabin Name Header */}
       <div className="px-6 py-4 border-b border-gray-300">
-        <h2 className="font-jost font-medium text-[18px] md:text-[20px] uppercase text-gray-800">
+        <h2 className="font-logga text-[18px] md:text-[20px] uppercase text-gray-800">
           {cabin.name}
         </h2>
       </div>
 
       <div className="p-4 md:p-6 space-y-4">
-        {/* Date Inputs - Read Only with Change Link */}
+        {/* Date Inputs - Clickable to open date picker */}
         <div className="grid grid-cols-2 gap-3">
           <div>
-            <label className="block text-xs font-medium text-gray-700 mb-1 uppercase">
+            <label className="block text-xs font-jost font-light text-gray-700 mb-1 uppercase">
               {t('arrival', 'Arrival')}
             </label>
-            <div className="w-full px-3 py-2 border border-gray-300 text-sm bg-gray-50 flex items-center justify-between">
+            <div
+              onClick={onChangeDates}
+              className="w-full px-3 py-2 border border-gray-300 text-sm font-jost font-light bg-gray-50 flex items-center justify-between cursor-pointer hover:border-[#495D4D] transition-colors"
+            >
               <span>{formatDateForDisplay(checkIn)}</span>
               <svg
                 className="w-4 h-4 text-gray-400"
@@ -99,10 +102,13 @@ export default function DesktopBookingCard({
             </div>
           </div>
           <div>
-            <label className="block text-xs font-medium text-gray-700 mb-1 uppercase">
+            <label className="block text-xs font-jost font-light text-gray-700 mb-1 uppercase">
               {t('departure', 'Departure')}
             </label>
-            <div className="w-full px-3 py-2 border border-gray-300 text-sm bg-gray-50 flex items-center justify-between">
+            <div
+              onClick={onChangeDates}
+              className="w-full px-3 py-2 border border-gray-300 text-sm font-jost font-light bg-gray-50 flex items-center justify-between cursor-pointer hover:border-[#495D4D] transition-colors"
+            >
               <span>{formatDateForDisplay(checkOut)}</span>
               <svg
                 className="w-4 h-4 text-gray-400"
@@ -125,7 +131,7 @@ export default function DesktopBookingCard({
         <div className="text-right">
           <button
             onClick={onChangeDates}
-            className="text-sm text-[#495D4D] hover:text-[#3d5a3d] underline font-medium"
+            className="text-sm font-jost text-[#495D4D] hover:text-[#3d5a3d] underline font-medium"
           >
             {t('change_dates', 'Change dates')}
           </button>
@@ -133,10 +139,10 @@ export default function DesktopBookingCard({
 
         {/* Guest Display */}
         <div className="flex items-center justify-between py-2">
-          <span className="text-sm font-medium text-gray-700 uppercase">
+          <span className="text-sm font-jost font-light text-gray-700 uppercase">
             {t('guests_label', 'Guests')}
           </span>
-          <span className="font-medium text-gray-800">
+          <span className="font-jost font-light text-gray-800">
             {totalGuests} {totalGuests === 1 ? t('guest_singular', 'guest') : t('guest_plural', 'guests')}
           </span>
         </div>
@@ -160,7 +166,7 @@ export default function DesktopBookingCard({
         {!loading && (error || (quote && !quote.available)) && (
           <div className="border-t border-gray-300 pt-4">
             <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-4">
-              <p className="text-red-600 font-medium text-sm">
+              <p className="text-red-600 font-jost font-medium text-sm">
                 {quote?.unavailableReason || error || t('dates_not_available', 'Selected dates are not available')}
               </p>
             </div>
@@ -179,11 +185,11 @@ export default function DesktopBookingCard({
             {/* Price Breakdown */}
             <div className="space-y-2 mb-4">
               <div className="flex justify-between items-center">
-                <span className="text-sm text-gray-600">
+                <span className="text-sm font-jost font-light text-gray-600">
                   {formatCurrency(quote.pricing.nightlyRate, quote.pricing.currency)} ×{' '}
                   {quote.pricing.nights} {quote.pricing.nights !== 1 ? t('nights_plural', 'nights') : t('night_singular', 'night')}
                 </span>
-                <span className="text-sm text-gray-800">
+                <span className="text-sm font-jost font-light text-gray-800">
                   {formatCurrency(quote.pricing.subtotal, quote.pricing.currency)}
                 </span>
               </div>
@@ -193,8 +199,8 @@ export default function DesktopBookingCard({
                 .filter((fee) => fee.amount >= 0)
                 .map((fee, index) => (
                   <div key={index} className="flex justify-between items-center">
-                    <span className="text-sm text-gray-600">{fee.name}</span>
-                    <span className="text-sm text-gray-800">
+                    <span className="text-sm font-jost font-light text-gray-600">{fee.name}</span>
+                    <span className="text-sm font-jost font-light text-gray-800">
                       {formatCurrency(fee.amount, quote.pricing!.currency)}
                     </span>
                   </div>
@@ -203,7 +209,7 @@ export default function DesktopBookingCard({
               {/* Discount (special styling) */}
               {quote.pricing.discount && (
                 <div className="flex justify-between items-center bg-green-50 -mx-4 px-4 py-2 rounded">
-                  <span className="text-sm text-green-700 font-medium">
+                  <span className="text-sm font-jost text-green-700 font-medium">
                     {quote.pricing.discount.name}
                     {quote.pricing.discount.percentage && (
                       <span className="text-green-600 ml-1">
@@ -211,7 +217,7 @@ export default function DesktopBookingCard({
                       </span>
                     )}
                   </span>
-                  <span className="text-sm text-green-700 font-medium">
+                  <span className="text-sm font-jost text-green-700 font-medium">
                     -{formatCurrency(quote.pricing.discount.amount, quote.pricing.currency)}
                   </span>
                 </div>
@@ -245,13 +251,13 @@ export default function DesktopBookingCard({
             <div className="space-y-2 mb-4">
               {quote.minPrice && (
                 <div className="flex justify-between items-center">
-                  <span className="text-sm text-gray-600">{t('starting_from', 'Starting from')}</span>
-                  <span className="text-sm text-gray-800 font-medium">
+                  <span className="text-sm font-jost font-light text-gray-600">{t('starting_from', 'Starting from')}</span>
+                  <span className="text-sm font-jost text-gray-800 font-medium">
                     {formatCurrency(quote.minPrice, quote.currency || 'EUR')}/{t('night_singular', 'night')}
                   </span>
                 </div>
               )}
-              <p className="text-xs text-gray-500">
+              <p className="text-xs font-jost font-light text-gray-500">
                 {t('final_price_on_booking', 'Final price will be shown on the booking page')}
               </p>
             </div>

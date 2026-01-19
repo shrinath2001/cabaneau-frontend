@@ -88,7 +88,7 @@ export default function BlogPostPage() {
       <main>
         <section className="py-20 bg-white">
           <div className="container mx-auto px-4 max-w-4xl text-center">
-            <p className="text-gray-600">Loading...</p>
+            <p className="text-gray-600 font-jost font-light">Loading...</p>
           </div>
         </section>
       </main>
@@ -105,7 +105,7 @@ export default function BlogPostPage() {
             </h1>
             <Link
               href={`/${locale}/blog`}
-              className="inline-block bg-[#F49A4A] text-white px-6 py-3 hover:bg-[#e08c3c] transition-colors"
+              className="inline-block bg-[#F49A4A] text-white px-6 py-3 hover:bg-[#e08c3c] transition-colors font-jost"
             >
               Back to Blog
             </Link>
@@ -131,14 +131,14 @@ export default function BlogPostPage() {
         </div>
         <div className="relative z-10 text-center px-4 max-w-4xl">
           {post.category && (
-            <span className="inline-block bg-[#F49A4A] text-white text-sm px-3 py-1 mb-4">
+            <span className="inline-block bg-[#F49A4A] text-white text-sm px-3 py-1 mb-4 font-jost">
               {post.category.name}
             </span>
           )}
-          <h1 className="text-white text-3xl md:text-4xl lg:text-5xl font-custom mb-4">
+          <h1 className="text-white text-3xl md:text-4xl lg:text-5xl font-logga mb-4">
             {post.title}
           </h1>
-          <p className="text-white/80 text-sm">
+          <p className="text-white/80 text-sm font-jost font-light">
             {formatDate(post.publishedAt)}
           </p>
         </div>
@@ -153,7 +153,7 @@ export default function BlogPostPage() {
               {/* Back Link */}
               <Link
                 href={`/${locale}/blog`}
-                className="inline-flex items-center text-[#495D4D] hover:text-[#F49A4A] mb-8 transition-colors"
+                className="inline-flex items-center text-[#495D4D] hover:text-[#F49A4A] mb-8 transition-colors font-jost font-light"
               >
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-4 h-4 mr-2">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18" />
@@ -174,7 +174,7 @@ export default function BlogPostPage() {
                     {post.tags.map((tag, index) => (
                       <span
                         key={index}
-                        className="bg-gray-100 text-gray-600 text-sm px-3 py-1"
+                        className="bg-gray-100 text-gray-600 text-sm px-3 py-1 font-jost font-light"
                       >
                         {tag}
                       </span>

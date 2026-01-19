@@ -11,7 +11,7 @@ export default function LogoSlider() {
   ];
 
   return (
-    <div className="w-full overflow-hidden bg-white py-4 -mt-20 shadow-md">
+    <div className="w-full overflow-hidden bg-white py-4 -mt-20 shadow-md relative z-10">
       <style jsx>{`
         @keyframes scroll {
           0% {

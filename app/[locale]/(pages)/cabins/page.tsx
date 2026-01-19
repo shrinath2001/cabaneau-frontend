@@ -30,7 +30,7 @@ const formatAvailabilityDate = (dateStr?: string): string => {
   today.setHours(0, 0, 0, 0);
 
   if (date <= today) {
-    return 'Available now';
+    return 'Today';
   }
 
   return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
