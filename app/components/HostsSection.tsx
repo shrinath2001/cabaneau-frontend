@@ -1,24 +1,56 @@
 'use client';
 
 import Image from 'next/image';
+import Link from 'next/link';
 import { useTranslations } from '@/app/providers/TranslationsProvider';
 
-const HostsSection = () => {
+interface HostsConfig {
+  names?: string;
+  image?: string;
+  description?: string;
+}
+
+interface HostsSectionProps {
+  title?: string;
+  config?: HostsConfig;
+  buttonText?: string;
+  buttonLink?: string;
+  backgroundColor?: string;
+}
+
+const HostsSection = ({
+  title,
+  config,
+  buttonText,
+  buttonLink,
+  backgroundColor,
+}: HostsSectionProps) => {
   const { t } = useTranslations('homepage');
 
+  const displayTitle = title || t('hosts_section.title', 'THE HOSTS');
+  const displayNames = config?.names || t('hosts_section.names', 'DANIEL & YANNICK');
+  const displayImage = config?.image || '/assets/d206536ef067f64b29cad184324fe360bb763e30.jpg';
+  const displayDescription = config?.description || t('hosts_section.description', 'Welcome to our treehouse retreat. We look forward to hosting you in our unique accommodations.');
+  const displayButtonText = buttonText || t('hosts_section.button', 'ABOUT US');
+  const displayButtonLink = buttonLink || '/about';
+
+  const bgStyle = backgroundColor ? { backgroundColor } : {};
+
   return (
-    <section className="py-6 md:py-5 px-4 md:px-20 bg-white md:mt-12">
+    <section className="py-6 md:py-5 px-4 md:px-20 bg-white md:mt-12" style={bgStyle}>
       <div className="container mx-auto">
         <div className="max-w-[1390px] mx-auto">
-          <h2 className="font-logga text-[28px] md:text-[42px] font-semibold text-left mb-8 md:mb-12">{t('hosts_section.title', 'THE HOSTS')}</h2>
+          <h2 className="font-logga text-[28px] md:text-[42px] font-semibold text-left mb-8 md:mb-12">
+            {displayTitle}
+          </h2>
 
           <div className="flex flex-col md:flex-row gap-8 md:gap-12">
             {/* Image Section */}
             <div className="flex-shrink-0">
               <div className="relative w-full md:w-[501px] h-[400px] md:h-[569px]">
                 <Image
-                  src="/assets/d206536ef067f64b29cad184324fe360bb763e30.jpg"
-                  alt={t('hosts_section.image_alt', 'Daniel & Yannick - Hosts')}
+                  src={displayImage}
+                  alt={`${displayNames} - Hosts`}
                   fill
                   style={{ objectFit: 'cover' }}
                   className="object-top"
@@ -29,11 +61,21 @@ const HostsSection = () => {
             {/* Text Section */}
             <div className="flex-1 flex flex-col justify-start">
               <h3 className="font-jost text-[24px] md:text-[40px] font-medium mb-4 md:mb-6 tracking-wide">
-                {t('hosts_section.names', 'DANIEL & YANNICK')}
+                {displayNames}
               </h3>
-              <p className="font-raleway text-[15px] md:text-[17px] font-medium leading-[28px] md:leading-[32px] text-gray-600">
-                {t('hosts_section.description', 'Loremp ipsum asdas as sds sds sdasjdasd. asdasdaasd d nasdjasd jasdd asdasda asdnja sd ka sdk asd mk asdAssdasdasdasd sd sd bf skdaskndakmnsdakmsd d da sdo kasd as doasdnoa da osdnas dtiqeote fvoqe f Loremp ipsum asdas as sds sds sdasjdasd. asdasdaasd d nasdjasd jasdd asdasda asdnja sd ka sdk asd mk asdAssdasdasdasd sd sd bf skdaskndakmnsdakmsd d da sdo kasd as doasdnoa da osdnas dtiqeote fvoqe f Loremp ipsum asdas as sds sds sdasjdasd. asdasdaasd d nasdjasd jasdd asdasda asdnja sd ka sdk asd mk asdAssdasdasdasd sd sd bf skdaskndakmnsdakmsd d da sdo kasd as doasdnoa da osdnas dtiqeote fvoqe f')}
-              </p>
+              <div
+                className="font-raleway text-[15px] md:text-[17px] font-medium leading-[28px] md:leading-[32px] text-gray-600"
+                dangerouslySetInnerHTML={{ __html: displayDescription }}
+              />
+              {displayButtonLink && (
+                <div className="mt-6 md:mt-8">
+                  <Link href={displayButtonLink}>
+                    <button className="py-3 px-6 bg-[#495D4D] text-white text-base md:text-lg font-heading font-medium tracking-widest hover:bg-[#2d4a2d] transition-colors">
+                      {displayButtonText}
+                    </button>
+                  </Link>
+                </div>
+              )}
             </div>
           </div>
         </div>

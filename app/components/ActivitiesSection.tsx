@@ -6,17 +6,46 @@ import ActivityCard from './ActivityCard';
 import { apiFetch } from '@/app/lib/api';
 import { useTranslations } from '@/app/providers/TranslationsProvider';
 
+interface SectionItem {
+  image: string;
+  title: string;
+  link?: string;
+}
+
+interface ActivitiesSectionProps {
+  title?: string;
+  items?: SectionItem[];
+  buttonText?: string;
+  buttonLink?: string;
+  backgroundColor?: string;
+  useCmsData?: boolean;
+}
+
 interface ActivityData {
   imageSrc: string;
   activityName: string;
 }
 
-const ActivitiesSection = () => {
+const ActivitiesSection = ({
+  title,
+  items,
+  buttonText,
+  buttonLink,
+  backgroundColor,
+  useCmsData = false,
+}: ActivitiesSectionProps) => {
   const [activities, setActivities] = useState<ActivityData[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(!useCmsData);
   const { t } = useTranslations('homepage');
 
   useEffect(() => {
+    // If CMS data is provided, don't fetch from activities API
+    if (useCmsData && items && items.length > 0) {
+      setLoading(false);
+      return;
+    }
+
+    // Fetch from activities API if no CMS data
     const fetchActivities = async () => {
       try {
         const response = await apiFetch('/api/activities');
@@ -24,7 +53,6 @@ const ActivitiesSection = () => {
         const data = result?.data ?? result ?? [];
 
         if (Array.isArray(data)) {
-          // Filter out DINING category and take first 3
           const nonDiningActivities = data
             .filter((a: any) => a.category !== 'DINING')
             .slice(0, 3);
@@ -42,32 +70,45 @@ const ActivitiesSection = () => {
     };
 
     fetchActivities();
-  }, []);
+  }, [useCmsData, items]);
+
+  // Use CMS items if provided
+  const displayItems = useCmsData && items && items.length > 0
+    ? items.map(item => ({ imageSrc: item.image, activityName: item.title }))
+    : activities;
+
+  const displayTitle = title || t('activities_section.title', 'ACTIVITIES IN THE REGION');
+  const displayButtonText = buttonText || t('activities_section.button', 'DISCOVER ALL ACTIVITIES');
+  const displayButtonLink = buttonLink || '/activities';
+
+  const bgStyle = backgroundColor ? { backgroundColor } : {};
 
   return (
-    <section className="py-6 md:py-5 px-4 md:px-20 bg-white md:mt-12">
+    <section className="py-6 md:py-5 px-4 md:px-20 bg-white md:mt-12" style={bgStyle}>
       <div className="container mx-auto">
         <div className="max-w-[1390px] mx-auto">
-          <h2 className="font-logga text-[28px] md:text-[42px] font-semibold text-center mb-8 md:mb-16">{t('activities_section.title', 'ACTIVITIES IN THE REGION')}</h2>
+          <h2 className="font-logga text-[28px] md:text-[42px] font-semibold text-center mb-8 md:mb-16">
+            {displayTitle}
+          </h2>
           {loading ? (
             <div className="text-center py-12">
               <p className="text-gray-600">{t('activities_section.loading', 'Loading activities...')}</p>
             </div>
-          ) : activities.length === 0 ? (
+          ) : displayItems.length === 0 ? (
             <div className="text-center py-12">
               <p className="text-gray-600 text-lg">{t('activities_section.not_found', 'Activities not found')}</p>
             </div>
           ) : (
             <div className="flex flex-col md:flex-row gap-[18px] md:gap-3 justify-between">
-              {activities.map((activity, index) => (
+              {displayItems.map((activity, index) => (
                 <ActivityCard key={index} {...activity} />
               ))}
             </div>
           )}
           <div className="text-center mt-6 md:mt-10 mb-6 md:mb-8">
-            <Link href="/activities">
+            <Link href={displayButtonLink}>
               <button className="py-3 px-6 bg-[#495D4D] text-white text-base md:text-lg font-heading font-medium tracking-widest hover:bg-[#2d4a2d] transition-colors">
-                {t('activities_section.button', 'DISCOVER ALL ACTIVITIES')}
+                {displayButtonText}
               </button>
             </Link>
           </div>

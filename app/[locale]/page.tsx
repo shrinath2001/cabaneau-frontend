@@ -1,21 +1,140 @@
+import { headers } from 'next/headers';
 import Footer from "../components/Footer";
 import CabinsSection from "../components/CabinsSection";
 import ServicesSection from "../components/ServicesSection";
 import ActivitiesSection from "../components/ActivitiesSection";
 import HostsSection from "../components/HostsSection";
 import LocationSection from "../components/LocationSection";
+import CustomCardsSection from "../components/CustomCardsSection";
 import LogoSlider from "../components/LogoSlider";
 
-export default function Home() {
+interface HomepageSection {
+  id: string;
+  identifier: string;
+  sectionType: 'SERVICES' | 'ACTIVITIES' | 'HOSTS' | 'LOCATION' | 'CUSTOM_CARDS';
+  title?: string;
+  subtitle?: string;
+  config?: Record<string, unknown>;
+  buttonText?: string;
+  buttonLink?: string;
+  displayOrder: number;
+  isActive: boolean;
+  backgroundColor?: string;
+}
+
+async function getHomepageSections(): Promise<HomepageSection[]> {
+  const apiKey = process.env.API_KEY;
+  const apiBaseUrl = process.env.API_BASE_URL || 'http://localhost:3000/api/v1';
+
+  // Get language from headers
+  const headersList = await headers();
+  const acceptLanguage = headersList.get('accept-language') || 'en';
+  const language = acceptLanguage.split(',')[0].split('-')[0];
+
+  try {
+    const response = await fetch(`${apiBaseUrl}/homepage-sections`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': apiKey || '',
+        'Accept-Language': language,
+      },
+      next: { revalidate: 60 }, // Cache for 60 seconds
+    });
+
+    if (!response.ok) {
+      console.error('Failed to fetch homepage sections:', response.status);
+      return [];
+    }
+
+    const result = await response.json();
+    return result?.data ?? result ?? [];
+  } catch (error) {
+    console.error('Error fetching homepage sections:', error);
+    return [];
+  }
+}
+
+function renderSection(section: HomepageSection) {
+  const { sectionType, title, subtitle, config, buttonText, buttonLink, backgroundColor } = section;
+
+  switch (sectionType) {
+    case 'SERVICES':
+      return (
+        <ServicesSection
+          key={section.id}
+          title={title}
+          items={(config?.items as Array<{ image: string; title: string; link?: string }>) || undefined}
+          buttonText={buttonText}
+          buttonLink={buttonLink}
+          backgroundColor={backgroundColor}
+        />
+      );
+
+    case 'ACTIVITIES':
+      return (
+        <ActivitiesSection
+          key={section.id}
+          title={title}
+          items={(config?.items as Array<{ image: string; title: string; link?: string }>) || undefined}
+          buttonText={buttonText}
+          buttonLink={buttonLink}
+          backgroundColor={backgroundColor}
+          useCmsData={Boolean(config?.items && (config.items as Array<unknown>).length > 0)}
+        />
+      );
+
+    case 'HOSTS':
+      return (
+        <HostsSection
+          key={section.id}
+          title={title}
+          config={config as { names?: string; image?: string; description?: string }}
+          buttonText={buttonText}
+          buttonLink={buttonLink}
+          backgroundColor={backgroundColor}
+        />
+      );
+
+    case 'LOCATION':
+      return (
+        <LocationSection
+          key={section.id}
+          title={title}
+          config={config as { mapEmbedUrl?: string; address?: string }}
+          buttonText={buttonText}
+          buttonLink={buttonLink}
+          backgroundColor={backgroundColor}
+        />
+      );
+
+    case 'CUSTOM_CARDS':
+      return (
+        <CustomCardsSection
+          key={section.id}
+          title={title}
+          subtitle={subtitle}
+          items={(config?.items as Array<{ image: string; title: string; link?: string }>) || undefined}
+          buttonText={buttonText}
+          buttonLink={buttonLink}
+          backgroundColor={backgroundColor}
+        />
+      );
+
+    default:
+      return null;
+  }
+}
+
+export default async function Home() {
+  const sections = await getHomepageSections();
+
   return (
     <div>
       <main>
         <LogoSlider />
         <CabinsSection />
-        <ServicesSection />
-        <ActivitiesSection />
-        <HostsSection />
-        <LocationSection />
+        {sections.map((section) => renderSection(section))}
       </main>
       <Footer />
     </div>
