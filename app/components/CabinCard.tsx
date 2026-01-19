@@ -165,7 +165,7 @@ const CabinCard: React.FC<CabinCardProps> = ({
   };
 
   return (
-    <div className="group bg-white border p-[15px] border-black w-[380px] h-[491px] shrink-0 flex flex-col transition-all duration-300 hover:shadow-2xl hover:-translate-y-2">
+    <div className="group bg-white border p-[15px] border-black w-[380px] h-[491px] shrink-0 flex flex-col transition-all duration-300 hover:-translate-y-2 hover:shadow-[0_4px_6px_-1px_rgba(0,0,0,0.1),0_10px_15px_-3px_rgba(0,0,0,0.1),0_20px_25px_-5px_rgba(0,0,0,0.1)]">
       {/* Image Section */}
       <div className="relative w-[350px] h-[232.9px] bg-gray-100">
         <Image

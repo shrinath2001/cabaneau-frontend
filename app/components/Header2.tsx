@@ -90,16 +90,16 @@ const Header2 = () => {
           {/* Nav spacing: space-x-10 lg:space-x-12 (PreFinal UI) | Revert to: space-x-8 */}
           <nav className="hidden md:flex items-center space-x-10 lg:space-x-12">
             {/* Nav hover: hover:font-semibold hover:text-orange-300 (feat branch) | Revert to: hover:text-[#F49A4A] transition-colors */}
-            <Link href={link('/cabins')} className="text-black font-heading font-medium text-[18px] hover:font-semibold hover:text-orange-300 uppercase">
+            <Link href={link('/cabins')} className="text-[#495D4D] font-heading font-medium text-[18px] hover:font-semibold hover:text-orange-300 uppercase">
               {t('link.our_cabins', 'Our Cabins')}
             </Link>
-            <Link href={link('/activities')} className="text-black font-heading font-medium text-[18px] hover:font-semibold hover:text-orange-300 uppercase">
+            <Link href={link('/activities')} className="text-[#495D4D] font-heading font-medium text-[18px] hover:font-semibold hover:text-orange-300 uppercase">
               {t('link.activities', 'Activities')}
             </Link>
-            <Link href={link('/eat-drink')} className="text-black font-heading font-medium text-[18px] hover:font-semibold hover:text-orange-300 uppercase">
+            <Link href={link('/eat-drink')} className="text-[#495D4D] font-heading font-medium text-[18px] hover:font-semibold hover:text-orange-300 uppercase">
               {t('link.eat_drink', 'Eat & Drink')}
             </Link>
-            <Link href={link('/blog')} className="text-black font-heading font-medium text-[18px] hover:font-semibold hover:text-orange-300 uppercase">
+            <Link href={link('/blog')} className="text-[#495D4D] font-heading font-medium text-[18px] hover:font-semibold hover:text-orange-300 uppercase">
               {t('link.blog', 'Blog')}
             </Link>
           </nav>
@@ -120,7 +120,7 @@ const Header2 = () => {
             <div className="relative">
               <button
                 onClick={() => setIsLanguageOpen(!isLanguageOpen)}
-                className="text-black flex items-center gap-2 font-heading font-medium text-sm hover:opacity-80 transition"
+                className="text-[#495D4D] flex items-center gap-2 font-heading font-medium text-sm hover:opacity-80 transition"
               >
                 <FlagIcon code={locale} className="w-6 h-4" idSuffix="-h2-desktop" />
                 <span>{getLanguageLabel(locale)}</span>

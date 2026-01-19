@@ -79,6 +79,18 @@ const SearchPageWidget = () => {
         /* Search Page Widget - Light Theme */
         :root {
           --ldg-component-modal-z-index: 9999;
+
+          /* Brand Colors - Cabaneau Green (for calendar date selection) */
+          --ldg-psb-color-primary: #495d4d;
+          --ldg-psb-color-primary-lighter: #a4aea6;
+          --ldg-psb-color-primary-darker: #252f27;
+          --ldg-psb-color-primary-contrast: #ffffff;
+
+          /* Semantic Colors (required for calendar popup) */
+          --ldg-semantic-color-primary: #495d4d;
+          --ldg-semantic-color-primary-lighter: #a4aea6;
+          --ldg-semantic-color-primary-darker: #252f27;
+          --ldg-semantic-color-primary-contrast: #ffffff;
         }
 
         #lodgify-search-bar {

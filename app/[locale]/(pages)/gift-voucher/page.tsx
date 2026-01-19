@@ -5,6 +5,25 @@ import Script from 'next/script';
 export default function GiftVoucherPage() {
   return (
     <div className="min-h-screen bg-white">
+      {/* Hide GiftUp branding/logo */}
+      <style jsx global>{`
+        .gift-up-target [class*="powered-by"],
+        .gift-up-target a[href*="giftup"],
+        .gift-up-target img[src*="giftup"],
+        .gift-up-target img[alt*="Gift Up"],
+        .gift-up-target img[alt*="GiftUp"],
+        .gift-up-target .giftup-branding,
+        .gift-up-target .giftup-logo,
+        .gift-up-target footer,
+        .gift-up-target [class*="footer"],
+        .gift-up-target [class*="brand"] {
+          display: none !important;
+          visibility: hidden !important;
+          opacity: 0 !important;
+          height: 0 !important;
+          overflow: hidden !important;
+        }
+      `}</style>
       <div className="container mx-auto px-4 md:px-8 lg:px-20 py-12 md:py-20">
         <div className="max-w-[1400px] mx-auto">
           {/* Two Column Layout */}
