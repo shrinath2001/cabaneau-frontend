@@ -19,9 +19,9 @@ const Footer = () => {
           {/* Logo and Description */}
           <div className="mb-6">
             <div className="flex items-center gap-2 mb-4">
-              <Image src="/assets/Group 1.png" alt="Cabanéau Logo" width={220} height={37} className="max-w-full" />
+              <Image src="/assets/Group 1.png" alt="Cabanéau Logo" width={150} height={50} className="max-w-full" />
             </div>
-            <p className="text-[16px] font-raleway leading-relaxed text-gray-100 max-w-[354px]">
+            <p className="text-[16px] font-jost font-light leading-relaxed text-gray-100 max-w-[354px]">
               {t('description_line1', 'Luxury Cabines with private wellness.')}<br/>
               {t('description_line2', 'Eat, sleep & relax above the trees in Eupen, Belgium.')}
             </p>
@@ -40,8 +40,8 @@ const Footer = () => {
           {/* Mobile Links Grid */}
           <div className="grid grid-cols-2 gap-6 mb-8">
             <div>
-              <h3 className="font-jost font-medium text-[18px] mb-4 text-white">{t('section_our_cabins', 'Our Cabins')}</h3>
-              <ul className="space-y-2 font-raleway text-[13px] text-gray-100">
+              <h3 className="font-logga text-[18px] mb-4 text-white">{t('section_our_cabins', 'Our Cabins')}</h3>
+              <ul className="space-y-2 font-jost font-light text-[13px] text-gray-100">
                 <li><Link href={link('/cabins/1')} className="hover:text-white transition">{t('menu_cabin1', 'Cabin1')}</Link></li>
                 <li><Link href={link('/cabins/2')} className="hover:text-white transition">{t('menu_cabin2', 'Cabin2')}</Link></li>
                 <li><Link href={link('/cabins/3')} className="hover:text-white transition">{t('menu_cabin3', 'Cabin3')}</Link></li>
@@ -52,8 +52,8 @@ const Footer = () => {
             </div>
 
             <div>
-              <h3 className="font-jost font-medium text-[18px] mb-4 text-white">{t('section_region_services', 'Region & Services')}</h3>
-              <ul className="space-y-2 font-raleway text-[13px] text-gray-100">
+              <h3 className="font-logga text-[18px] mb-4 text-white">{t('section_region_services', 'Region & Services')}</h3>
+              <ul className="space-y-2 font-jost font-light text-[13px] text-gray-100">
                 <li><Link href={link('/eat-drink')} className="hover:text-white transition">{t('menu_food_drink_service', 'Food & Drink Service')}</Link></li>
                 <li><Link href={link('/activities')} className="hover:text-white transition">{t('menu_activities', 'Activities')}</Link></li>
                 <li><Link href={link('/services/massage')} className="hover:text-white transition">{t('menu_massage', 'Massage')}</Link></li>
@@ -62,15 +62,15 @@ const Footer = () => {
             </div>
 
             <div>
-              <h3 className="font-jost font-medium text-[18px] mb-4 text-white">{t('section_seo_links', 'SEO Links')}</h3>
-              <ul className="space-y-2 font-raleway text-[13px] text-gray-100">
+              <h3 className="font-logga text-[18px] mb-4 text-white">{t('section_seo_links', 'SEO Links')}</h3>
+              <ul className="space-y-2 font-jost font-light text-[13px] text-gray-100">
                 <li><Link href={link('/eat-drink')} className="hover:text-white transition">{t('menu_food_drinks', 'Food & Drinks')}</Link></li>
                 <li><Link href={link('/services/massage')} className="hover:text-white transition">{t('menu_massage', 'Massage')}</Link></li>
               </ul>
             </div>
 
             <div>
-              <h3 className="font-jost font-medium text-[18px] mb-4 text-white">{t('section_contact_us', 'Contact Us')}</h3>
+              <h3 className="font-logga text-[18px] mb-4 text-white">{t('section_contact_us', 'Contact Us')}</h3>
               <ul className="space-y-3 font-ralaway text-[13px] text-gray-100">
                 <li className="flex items-start gap-2">
                   <svg className="w-4 h-4 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
@@ -100,8 +100,8 @@ const Footer = () => {
         <div className="hidden md:flex justify-between items-start mb-12">
           {/* Logo and Description */}
           <div className="w-[240px] flex-shrink-0">
-            <Image src="/assets/Group 1.png" alt="Cabanéau Logo" width={180} height={30} className="mb-3" />
-            <p className="text-[13px] font-raleway leading-[1.4] text-white">
+            <Image src="/assets/Group 1.png" alt="Cabanéau Logo" width={150} height={50} className="mb-3" />
+            <p className="text-[13px] font-jost font-light leading-[1.4] text-white">
               {t('description_line1', 'Luxury Cabines with private wellness.')}<br/>
               {t('description_line2', 'Eat, sleep & relax above the trees in Eupen, Belgium.')}
             </p>
@@ -111,8 +111,8 @@ const Footer = () => {
           <div className="flex gap-12 lg:gap-16 xl:gap-20">
             {/* Column 1: Our Cabins */}
             <div>
-              <h3 className="font-jost font-medium text-[16px] mb-3 text-white">{t('section_our_cabins', 'Our Cabins')}</h3>
-              <ul className="space-y-1.5 font-raleway text-[13px] text-gray-100">
+              <h3 className="font-logga text-[16px] mb-3 text-white">{t('section_our_cabins', 'Our Cabins')}</h3>
+              <ul className="space-y-1.5 font-jost font-light text-[13px] text-gray-100">
                 <li><Link href={link('/cabins/1')} className="hover:text-white transition">{t('menu_cabin1', 'Cabin1')}</Link></li>
                 <li><Link href={link('/cabins/2')} className="hover:text-white transition">{t('menu_cabin2', 'Cabin2')}</Link></li>
                 <li><Link href={link('/cabins/3')} className="hover:text-white transition">{t('menu_cabin3', 'Cabin3')}</Link></li>
@@ -124,8 +124,8 @@ const Footer = () => {
 
             {/* Column 2: Region & Services */}
             <div>
-              <h3 className="font-jost font-medium text-[16px] mb-3 text-white">{t('section_region_services', 'Region & Services')}</h3>
-              <ul className="space-y-1.5 font-raleway text-[13px] text-gray-100">
+              <h3 className="font-logga text-[16px] mb-3 text-white">{t('section_region_services', 'Region & Services')}</h3>
+              <ul className="space-y-1.5 font-jost font-light text-[13px] text-gray-100">
                 <li><Link href={link('/eat-drink')} className="hover:text-white transition">{t('menu_food_drink_service', 'Food & Drink Service')}</Link></li>
                 <li><Link href={link('/activities')} className="hover:text-white transition">{t('menu_activities', 'Activities')}</Link></li>
                 <li><Link href={link('/services/massage')} className="hover:text-white transition">{t('menu_massage', 'Massage')}</Link></li>
@@ -135,8 +135,8 @@ const Footer = () => {
 
             {/* Column 3: SEO Links */}
             <div>
-              <h3 className="font-jost font-medium text-[16px] mb-3 text-white">{t('section_seo_links', 'SEO Links')}</h3>
-              <ul className="space-y-1.5 font-raleway text-[13px] text-gray-100">
+              <h3 className="font-logga text-[16px] mb-3 text-white">{t('section_seo_links', 'SEO Links')}</h3>
+              <ul className="space-y-1.5 font-jost font-light text-[13px] text-gray-100">
                 <li><Link href={link('/eat-drink')} className="hover:text-white transition">{t('menu_food_drinks', 'Food & Drinks')}</Link></li>
                 <li><Link href={link('/services/massage')} className="hover:text-white transition">{t('menu_massage', 'Massage')}</Link></li>
               </ul>
@@ -144,8 +144,8 @@ const Footer = () => {
 
             {/* Column 4: Contact Us */}
             <div>
-              <h3 className="font-jost font-medium text-[16px] mb-3 text-white">{t('section_contact_us', 'Contact Us')}</h3>
-              <ul className="space-y-2 font-raleway text-[13px] text-gray-100">
+              <h3 className="font-logga text-[16px] mb-3 text-white">{t('section_contact_us', 'Contact Us')}</h3>
+              <ul className="space-y-2 font-jost font-light text-[13px] text-gray-100">
                 <li className="flex items-start gap-2">
                   <svg className="w-3.5 h-3.5 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
                     <path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z" />
@@ -184,14 +184,14 @@ const Footer = () => {
         <div className="pt-6 border-t border-gray-700">
           <div className="flex flex-col md:flex-row justify-between items-center gap-4">
             {/* Copyright */}
-            <p className="text-[13px] font-raleway text-gray-100">{t('copyright', 'Copyright 2025')}</p>
+            <p className="text-[13px] font-jost font-light text-gray-100">{t('copyright', 'Copyright 2025')}</p>
 
             {/* Links */}
             <div className="flex items-center gap-4 md:gap-6">
-              <Link href={link('/terms')} className="text-[13px] font-raleway text-gray-100 hover:text-white transition">
+              <Link href={link('/terms')} className="text-[13px] font-jost font-light text-gray-100 hover:text-white transition">
                 {t('link_terms', 'Terms & Conditions')}
               </Link>
-              <Link href={link('/privacy')} className="text-[13px] font-raleway text-gray-100 hover:text-white transition">
+              <Link href={link('/privacy')} className="text-[13px] font-jost font-light text-gray-100 hover:text-white transition">
                 {t('link_privacy', 'Privacy Policy')}
               </Link>
             </div>

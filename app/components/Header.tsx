@@ -75,8 +75,8 @@ const Header = () => {
     >
       <div className="absolute inset-0 bg-black opacity-50 z-0"></div>
       <header className="bg-transparent absolute top-0 left-0 w-full z-20">
-        {/* Container: wider layout (no extra padding) | Revert to: px-4 md:px-8 lg:px-20 */}
-        <div className="container mx-auto">
+        {/* Container: match Header2 padding (px-4) */}
+        <div className="container mx-auto px-4">
           <div className="flex items-center justify-between py-6 md:py-8">
             <div className="flex items-center">
               <Link href={link('/')}>
@@ -153,7 +153,7 @@ const Header = () => {
               {/* Book Now Button */}
               <Link
                 href={link('/search')}
-                className="bg-[#495D4D] text-white px-3 py-2 flex items-center justify-center font-heading font-medium text-xs hover:bg-[#3d5a3d] transition"
+                className="bg-[#495D4D] text-white px-3 py-2 flex items-center justify-center font-heading font-medium text-xs hover:bg-[#3d5a3d] transition uppercase"
               >
                 {t('button.book_now', 'Book Now')}
               </Link>
@@ -228,7 +228,7 @@ const Header = () => {
               <div className="flex items-center justify-between px-4 py-6 border-b border-gray-200">
                 <Link href={link('/')} onClick={() => setIsMenuOpen(false)}>
                   <Image
-                    src="/assets/Group 1 (1).png"
+                    src="/assets/cabaneau-logo-dark.svg"
                     alt="Cabaneau Logo"
                     width={120}
                     height={40}
@@ -285,7 +285,7 @@ const Header = () => {
                 <Link
                   href={link('/cabins')}
                   onClick={() => setIsMenuOpen(false)}
-                  className="text-[#F49A4A] font-heading font-medium text-center py-4 border-b border-gray-200 text-[16px] tracking-wider uppercase"
+                  className="text-[#F49A4A] font-heading font-medium text-center py-4 text-[16px] tracking-wider uppercase"
                 >
                   {t('link.our_cabins', 'Our Cabins')}
                 </Link>
@@ -333,10 +333,10 @@ const Header = () => {
           )}
         </div>
       </header>
-      <div className="absolute inset-0 flex flex-col items-center justify-center text-white text-center px-4 md:px-4 z-10 pt-12 md:pt-0">
-        <p className="font-jost font-normal text-[12px] uppercase mb-2 md:mb-4" style={{ letterSpacing: '0.15px' }}>{tHome('hero.subtitle', 'Luxury Cabines with Private Wellness')}</p>
+      <div className="absolute inset-0 flex flex-col items-center justify-center text-white text-center px-6 md:px-4 z-10 pt-6 md:pt-0">
+        <p className="font-jost font-normal text-[14px] uppercase mb-0 md:mb-4" style={{ letterSpacing: '0.15px' }}>{tHome('hero.subtitle', 'Luxury Cabines with Private Wellness')}</p>
         <h1 className="font-logga font-normal text-[32px] md:text-[68px] uppercase leading-tight">{tHome('hero.title_sleep', 'Sleep,')} <span className="text-customyellow">{tHome('hero.title_highlight', 'Eat & Relax')}</span></h1>
-        <h2 className="font-logga font-normal text-[32px] md:text-[68px] uppercase mb-4 md:mb-12">{tHome('hero.title_above', 'Above the Trees')}</h2>
+        <h2 className="font-logga font-normal text-[32px] md:text-[68px] uppercase mb-2 md:mb-12">{tHome('hero.title_above', 'Above the Trees')}</h2>
 
         {/* Lodgify Search Widget - handles all booking rules */}
         <LodgifyBookingWidget languageCode={locale} />

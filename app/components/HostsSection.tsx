@@ -37,10 +37,10 @@ const HostsSection = ({
   const bgStyle = backgroundColor ? { backgroundColor } : {};
 
   return (
-    <section className="py-6 md:py-5 px-4 md:px-20 bg-white md:mt-12" style={bgStyle}>
+    <section className="py-6 md:py-5 px-4 md:px-20 bg-tint md:mt-12" style={bgStyle}>
       <div className="container mx-auto">
         <div className="max-w-[1390px] mx-auto">
-          <h2 className="font-logga text-[28px] md:text-[42px] font-semibold text-left mb-8 md:mb-12">
+          <h2 className="font-logga text-[28px] md:text-[42px] font-semibold text-left pt-6 md:pt-10 mb-10 md:mb-16">
             {displayTitle}
           </h2>
 
@@ -64,7 +64,7 @@ const HostsSection = ({
                 {displayNames}
               </h3>
               <div
-                className="font-raleway text-[15px] md:text-[17px] font-medium leading-[28px] md:leading-[32px] text-gray-600"
+                className="font-jost font-light text-[15px] md:text-[17px] leading-[28px] md:leading-[32px] text-gray-600"
                 dangerouslySetInnerHTML={{ __html: displayDescription }}
               />
               {displayButtonLink && (

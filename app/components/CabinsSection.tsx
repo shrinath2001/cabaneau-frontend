@@ -23,6 +23,7 @@ interface CabinData {
   capacity: string;
   availability: string;
   price: string;
+  nights?: number;
   featuredAmenities?: AmenityInfo[];
 }
 
@@ -119,6 +120,8 @@ const CabinsSection = () => {
                      : cabin.price || '',
             // Include featured amenities from API
             featuredAmenities: cabin.featuredAmenities,
+            // Default to 2 nights for homepage display (minimum stay)
+            nights: cabin.nights || 2,
           }));
           setCabins(transformedCabins);
         }
@@ -134,7 +137,8 @@ const CabinsSection = () => {
           area: cabin.area,
           capacity: cabin.capacity,
           availability: cabin.availability,
-          price: cabin.price
+          price: cabin.price,
+          nights: 2,
         })));
       } finally {
         setLoading(false);
@@ -179,7 +183,7 @@ const CabinsSection = () => {
         <div className="w-full">
           <div className="max-w-full mx-auto md:pl-20">
             {/* Header with Title and Navigation */}
-            <div className="flex justify-center items-center mb-8 md:mb-16 relative px-4 md:px-0 md:-ml-20">
+            <div className="flex justify-center items-center pt-6 md:pt-10 mb-10 md:mb-20 relative px-4 md:px-0 md:-ml-20">
               <h2 className="font-logga text-[28px] md:text-[42px] font-semibold text-center">
                 {t('cabins_section.title', 'OUR CABINES')}
               </h2>

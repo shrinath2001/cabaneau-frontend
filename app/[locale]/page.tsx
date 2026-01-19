@@ -1,4 +1,3 @@
-import { headers } from 'next/headers';
 import Footer from "../components/Footer";
 import CabinsSection from "../components/CabinsSection";
 import ServicesSection from "../components/ServicesSection";
@@ -22,14 +21,12 @@ interface HomepageSection {
   backgroundColor?: string;
 }
 
-async function getHomepageSections(): Promise<HomepageSection[]> {
+async function getHomepageSections(locale: string): Promise<HomepageSection[]> {
   const apiKey = process.env.API_KEY;
   const apiBaseUrl = process.env.API_BASE_URL || 'http://localhost:3000/api/v1';
 
-  // Get language from headers
-  const headersList = await headers();
-  const acceptLanguage = headersList.get('accept-language') || 'en';
-  const language = acceptLanguage.split(',')[0].split('-')[0];
+  // Use the URL locale for API requests
+  const language = locale || 'en';
 
   try {
     const response = await fetch(`${apiBaseUrl}/homepage-sections`, {
@@ -126,8 +123,13 @@ function renderSection(section: HomepageSection) {
   }
 }
 
-export default async function Home() {
-  const sections = await getHomepageSections();
+interface PageProps {
+  params: Promise<{ locale: string }>;
+}
+
+export default async function Home({ params }: PageProps) {
+  const { locale } = await params;
+  const sections = await getHomepageSections(locale);
 
   return (
     <div>

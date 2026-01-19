@@ -12,8 +12,10 @@
     --text-customyellow: #F0E8C6;
   }
 
+  /* Brand Guidelines: Body text = Jost Light */
   html {
-    font-family: var(--font-raleway);
+    font-family: var(--font-jost);
+    font-weight: 300;
   }
 }
 
@@ -24,8 +26,9 @@
   .font-logga { font-family: var(--font-logga); }
 
   /* Legacy aliases for backward compatibility */
+  /* Brand Guidelines: Navigation/Buttons = Jost, Titles = Logga, Body = Jost Light */
   .font-heading { font-family: var(--font-jost); }
-  .font-body { font-family: var(--font-raleway); }
+  .font-body { font-family: var(--font-jost); font-weight: 300; }
   .font-custom { font-family: var(--font-logga); }
 
   /* Custom Color Utilities */

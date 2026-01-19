@@ -50,11 +50,37 @@ const cardTranslations: Record<string, {
   night: string;
   nights: string;
   bookNow: string;
+  from: string;
+  forNights: string;
 }> = {
-  en: { dates: 'Dates:', nextAvailability: 'Next Availability:', night: 'night', nights: 'nights', bookNow: 'BOOK NOW' },
-  fr: { dates: 'Dates :', nextAvailability: 'Disponibilité :', night: 'nuit', nights: 'nuits', bookNow: 'RÉSERVER' },
-  de: { dates: 'Daten:', nextAvailability: 'Verfügbarkeit:', night: 'Nacht', nights: 'Nächte', bookNow: 'JETZT BUCHEN' },
-  nl: { dates: 'Data:', nextAvailability: 'Beschikbaarheid:', night: 'nacht', nights: 'nachten', bookNow: 'NU BOEKEN' },
+  en: { dates: 'Dates:', nextAvailability: 'Next Availability:', night: 'night', nights: 'nights', bookNow: 'BOOK NOW', from: 'from', forNights: 'for' },
+  fr: { dates: 'Dates :', nextAvailability: 'Disponibilité :', night: 'nuit', nights: 'nuits', bookNow: 'RÉSERVER', from: 'à partir de', forNights: 'pour' },
+  de: { dates: 'Daten:', nextAvailability: 'Verfügbarkeit:', night: 'Nacht', nights: 'Nächte', bookNow: 'JETZT BUCHEN', from: 'ab', forNights: 'für' },
+  nl: { dates: 'Data:', nextAvailability: 'Beschikbaarheid:', night: 'nacht', nights: 'nachten', bookNow: 'NU BOEKEN', from: 'vanaf', forNights: 'voor' },
+};
+
+// Format area to remove decimals (30.00m² → 30m²)
+const formatArea = (area: string): string => {
+  // Match number with optional decimals followed by unit
+  const match = area.match(/^(\d+)(?:[.,]\d+)?\s*(m²|sqm|sq\.?\s*m\.?|m2)$/i);
+  if (match) {
+    return `${match[1]}m²`;
+  }
+  // If no match, try to just remove decimals from any number
+  return area.replace(/(\d+)[.,]\d+/g, '$1');
+};
+
+// Format capacity to show single number when min=max (2-4 Personen → 2-4 Personen, but 2-2 Personen → 2 Personen)
+const formatCapacity = (capacity: string): string => {
+  // Match pattern like "2-2 Personen" or "2-4 Personen" or "2-2p"
+  const match = capacity.match(/^(\d+)\s*-\s*(\d+)\s*(.*)$/);
+  if (match) {
+    const [, min, max, suffix] = match;
+    if (min === max) {
+      return `${min} ${suffix}`.trim();
+    }
+  }
+  return capacity;
 };
 
 // Format price to remove decimals and put Euro symbol after amount (€200.00 → 200 €)
@@ -213,13 +239,13 @@ const CabinCard: React.FC<CabinCardProps> = ({
               <svg className="w-3 h-3" viewBox="0 0 20 20" fill="currentColor">
                 <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
               </svg>
-              <span>{area}</span>
+              <span>{formatArea(area)}</span>
             </div>
             <div className="flex items-center gap-1.5">
               <svg className="w-3 h-3" viewBox="0 0 20 20" fill="currentColor">
                 <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
               </svg>
-              <span>{capacity}</span>
+              <span>{formatCapacity(capacity)}</span>
             </div>
           </div>
 
@@ -249,6 +275,8 @@ const CabinCard: React.FC<CabinCardProps> = ({
               </div>
             ) : (
               <>
+                {/* "from" text above price */}
+                <span className="font-jost text-[12px] text-gray-500 block">{ct.from}</span>
                 <div className="flex items-baseline justify-end gap-2">
                   {originalPrice && promotion && (
                     <span className="font-jost text-[16px] text-gray-400 line-through">
@@ -260,7 +288,7 @@ const CabinCard: React.FC<CabinCardProps> = ({
                 <div className="flex items-center justify-end gap-2 mt-1">
                   {nights && (
                     <span className="font-jost text-[12px] text-gray-500">
-                      {nights} {nights === 1 ? ct.night : ct.nights}
+                      {ct.forNights} {nights} {nights === 1 ? ct.night : ct.nights}
                     </span>
                   )}
                   {promotion && (

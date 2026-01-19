@@ -80,7 +80,7 @@ const Header2 = () => {
             <Link href={getHomeLink()} scroll={true}>
               {/* Logo: 150x50 (feat branch) | Revert to: width={170} height={57} className="w-[130px] md:w-[170px] h-auto" */}
               <Image
-                src="/assets/Group 1 (1).png"
+                src="/assets/cabaneau-logo-dark.svg"
                 alt="Cabaneau Logo"
                 width={150}
                 height={50}
@@ -152,9 +152,9 @@ const Header2 = () => {
             {/* Book Now Button */}
             <Link
               href={link('/search')}
-              className="bg-[#495D4D] text-white px-3 py-2 flex items-center justify-center font-heading font-medium text-xs hover:bg-[#3d5a3d] transition"
+              className="bg-[#495D4D] text-white px-3 py-2 flex items-center justify-center font-heading font-medium text-xs hover:bg-[#3d5a3d] transition uppercase"
             >
-              BOOK NOW
+              {t('button.book_now', 'Book Now')}
             </Link>
 
             {/* Language Selector */}
@@ -221,7 +221,7 @@ const Header2 = () => {
             <div className="flex items-center justify-between px-4 py-6 border-b border-gray-200">
               <Link href={link('/')} scroll={true} onClick={() => setIsMenuOpen(false)}>
                 <Image
-                  src="/assets/Group 1 (1).png"
+                  src="/assets/cabaneau-logo-dark.svg"
                   alt="Cabaneau Logo"
                   width={120}
                   height={40}
@@ -278,7 +278,7 @@ const Header2 = () => {
               <Link
                 href={link('/cabins')}
                 onClick={() => setIsMenuOpen(false)}
-                className="text-[#F49A4A] font-heading font-medium text-center py-4 border-b border-gray-200 text-[16px] tracking-wider uppercase"
+                className="text-[#F49A4A] font-heading font-medium text-center py-4 text-[16px] tracking-wider uppercase"
               >
                 {t('link.our_cabins', 'Our Cabins')}
               </Link>
