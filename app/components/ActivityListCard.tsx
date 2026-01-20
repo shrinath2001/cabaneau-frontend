@@ -21,14 +21,14 @@ const ActivityListCard: React.FC<ActivityListCardProps> = ({ activity, onReadMor
         </div>
 
         {/* Content Section */}
-        <div className="flex-1 flex flex-col justify-between">
-          {/* Title - 24px Logga #212121 */}
-          <h3 className="text-[24px] font-logga mb-2 uppercase tracking-wide" style={{ color: '#212121' }}>
+        <div className="flex-1 flex flex-col">
+          {/* Title - 22px Logga #212121 */}
+          <h3 className="text-[22px] font-logga mb-2 uppercase tracking-wide" style={{ color: '#212121' }}>
             {activity.title}
           </h3>
 
-          {/* Subtitle - 17px Jost Light #706C6C */}
-          <p className="text-[17px] font-jost font-light mb-5 leading-relaxed" style={{ color: '#706C6C' }}>
+          {/* Subtitle - 18px Jost Light #706C6C */}
+          <p className="text-[18px] font-jost font-light mb-4 leading-relaxed" style={{ color: '#706C6C' }}>
             {activity.subtitle}
           </p>
 
@@ -52,28 +52,28 @@ const ActivityListCard: React.FC<ActivityListCardProps> = ({ activity, onReadMor
             </svg>
           </div>
 
-          {/* Description - 17px Jost Light #706C6C */}
-          <p className="text-[17px] font-jost font-light mb-5 leading-relaxed" style={{ color: '#706C6C' }}>
+          {/* Description - 18px Jost Light #706C6C */}
+          <p className="text-[18px] font-jost font-light mb-4 leading-relaxed" style={{ color: '#706C6C' }}>
             {activity.description}
           </p>
 
           {/* Contact Info */}
-          <div className="flex flex-wrap gap-x-4 gap-y-2 text-xs text-gray-600 mb-6">
-            <div className="flex items-center gap-1.5">
-              <svg className="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20">
+          <div className="flex flex-wrap gap-x-6 gap-y-2 text-[18px] font-jost font-light mb-6" style={{ color: '#706C6C' }}>
+            <div className="flex items-center gap-2">
+              <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
                 <path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z" />
               </svg>
               <span>{activity.phone}</span>
             </div>
-            <div className="flex items-center gap-1.5">
-              <svg className="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20">
+            <div className="flex items-center gap-2">
+              <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
                 <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z" />
                 <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z" />
               </svg>
               <span>{activity.email}</span>
             </div>
-            <div className="flex items-center gap-1.5">
-              <svg className="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20">
+            <div className="flex items-center gap-2">
+              <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
                 <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM4.332 8.027a6.012 6.012 0 011.912-2.706C6.512 5.73 6.974 6 7.5 6A1.5 1.5 0 019 7.5V8a2 2 0 004 0 2 2 0 011.523-1.943A5.977 5.977 0 0116 10c0 .34-.028.675-.083 1H15a2 2 0 00-2 2v2.197A5.973 5.973 0 0110 16v-2a2 2 0 00-2-2 2 2 0 01-2-2 2 2 0 00-1.668-1.973z" clipRule="evenodd" />
               </svg>
               <span>{activity.website}</span>
@@ -84,11 +84,11 @@ const ActivityListCard: React.FC<ActivityListCardProps> = ({ activity, onReadMor
           <div className="flex flex-col sm:flex-row gap-3">
             <button
               onClick={() => onReadMore(activity)}
-              className="px-10 py-3 sm:py-2.5 bg-[#939D92] text-white text-[13px] sm:text-xs font-heading font-medium uppercase tracking-wider hover:bg-opacity-90 transition-colors text-center"
+              className="px-8 py-2 bg-[#939D92] text-white text-[16px] font-heading font-medium uppercase tracking-wider hover:bg-opacity-90 transition-colors text-center"
             >
               READ MORE
             </button>
-            <button className="px-10 py-3 sm:py-2.5 bg-[#495D4D] text-white text-[13px] sm:text-xs font-heading font-medium uppercase tracking-wider hover:bg-opacity-90 transition-colors text-center">
+            <button className="px-8 py-2 bg-[#495D4D] text-white text-[16px] font-heading font-medium uppercase tracking-wider hover:bg-opacity-90 transition-colors text-center">
               BOOK NOW
             </button>
           </div>

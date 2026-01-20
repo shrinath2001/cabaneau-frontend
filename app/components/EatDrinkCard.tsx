@@ -22,25 +22,25 @@ const EatDrinkCard: React.FC<EatDrinkCardProps> = ({ item, onReadMore, isReverse
         </div>
 
         {/* Content Section */}
-        <div className="flex-1 flex flex-col justify-between">
+        <div className="flex-1 flex flex-col">
           <div>
-            {/* Title - 24px Jost 500 Medium #212121 */}
-            <h3 className="text-[24px] font-logga mb-2 uppercase tracking-wide" style={{ color: '#212121' }}>
+            {/* Title - 22px Logga #212121 */}
+            <h3 className="text-[22px] font-logga mb-2 uppercase tracking-wide" style={{ color: '#212121' }}>
               {item.title}
             </h3>
 
-            {/* Subtitle - 17px Jost Light #706C6C */}
-            <p className="text-[17px] font-jost font-light mb-4 leading-relaxed" style={{ color: '#706C6C' }}>
+            {/* Subtitle - 18px Jost Light #706C6C */}
+            <p className="text-[18px] font-jost font-light mb-3 leading-relaxed" style={{ color: '#706C6C' }}>
               {item.subtitle}
             </p>
 
-            {/* Price - 24px Jost 500 Medium #212121 */}
-            <p className="text-[24px] font-medium font-heading mb-5" style={{ color: '#212121' }}>
+            {/* Price - 22px Jost 500 Medium #212121 */}
+            <p className="text-[22px] font-medium font-heading mb-4" style={{ color: '#212121' }}>
               {item.price}
             </p>
 
-            {/* Description - 17px Jost Light #706C6C */}
-            <p className="text-[17px] font-jost font-light mb-6 leading-relaxed" style={{ color: '#706C6C' }}>
+            {/* Description - 18px Jost Light #706C6C */}
+            <p className="text-[18px] font-jost font-light mb-5 leading-relaxed" style={{ color: '#706C6C' }}>
               {item.description}
             </p>
           </div>
@@ -49,7 +49,7 @@ const EatDrinkCard: React.FC<EatDrinkCardProps> = ({ item, onReadMore, isReverse
           <div>
             <button
               onClick={() => onReadMore(item)}
-              className="w-full sm:w-auto px-10 py-3 sm:py-2.5 bg-[#939D92] text-white text-[13px] sm:text-xs font-semibold uppercase tracking-wider hover:bg-opacity-90 transition-colors text-center"
+              className="w-full sm:w-auto px-8 py-2 bg-[#939D92] text-white text-[16px] font-heading font-medium uppercase tracking-wider hover:bg-opacity-90 transition-colors text-center"
             >
               READ MORE
             </button>

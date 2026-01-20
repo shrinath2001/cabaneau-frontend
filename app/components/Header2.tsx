@@ -75,7 +75,7 @@ const Header2 = () => {
     <header className="fixed top-0 left-0 w-full z-50 bg-white shadow-md">
       {/* Container: wider layout (px-4 only) | Revert to: px-4 md:px-8 lg:px-20 */}
       <div className="container mx-auto px-4">
-        <div className="flex items-center justify-between py-6 md:py-8">
+        <div className="flex items-center justify-between py-4">
           <div className="flex items-center">
             <Link href={getHomeLink()} scroll={true}>
               {/* Logo: 150x50 (feat branch) | Revert to: width={170} height={57} className="w-[130px] md:w-[170px] h-auto" */}

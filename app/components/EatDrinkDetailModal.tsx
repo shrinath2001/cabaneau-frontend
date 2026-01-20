@@ -56,21 +56,21 @@ const EatDrinkDetailModal: React.FC<EatDrinkDetailModalProps> = ({ item, isOpen,
         {/* Content */}
         <div className="p-[17px] md:p-8">
           {/* Title and Subtitle */}
-          <h2 className="text-xl font-logga mb-2 uppercase tracking-wide">{item.title}</h2>
-          <p className="text-sm text-gray-600 font-jost font-light mb-6">{item.subtitle}</p>
+          <h2 className="text-[22px] font-logga mb-2 uppercase tracking-wide" style={{ color: '#212121' }}>{item.title}</h2>
+          <p className="text-[18px] font-jost font-light mb-6" style={{ color: '#706C6C' }}>{item.subtitle}</p>
 
           {/* Price */}
           {item.price && (
             <div className="mb-6">
               <h3 className="text-xs font-logga uppercase text-gray-900 mb-3 tracking-wide">PRICE</h3>
-              <p className="text-sm text-gray-700 font-jost font-light">{item.price}</p>
+              <p className="text-[22px] font-medium font-heading" style={{ color: '#212121' }}>{item.price}</p>
             </div>
           )}
 
           {/* Description Section */}
           <div className="mb-6">
             <h3 className="text-xs font-logga uppercase text-gray-900 mb-3 tracking-wide">DESCRIPTION</h3>
-            <p className="text-sm text-gray-700 font-jost font-light leading-relaxed">{item.description}</p>
+            <p className="text-[18px] font-jost font-light leading-relaxed" style={{ color: '#706C6C' }}>{item.description}</p>
           </div>
 
         </div>

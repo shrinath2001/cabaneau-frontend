@@ -56,8 +56,8 @@ const ActivityDetailModal: React.FC<ActivityDetailModalProps> = ({ activity, isO
         {/* Content */}
         <div className="p-[17px] md:p-8">
           {/* Title and Subtitle */}
-          <h2 className="text-xl font-logga mb-2 uppercase tracking-wide">{activity.title}</h2>
-          <p className="text-sm text-gray-600 font-jost font-light mb-6">{activity.subtitle}</p>
+          <h2 className="text-[22px] font-logga mb-2 uppercase tracking-wide" style={{ color: '#212121' }}>{activity.title}</h2>
+          <p className="text-[18px] font-jost font-light mb-6" style={{ color: '#706C6C' }}>{activity.subtitle}</p>
 
           {/* Info Row with Icons */}
           {(activity.duration || activity.startLocation || activity.tags) && (
@@ -107,36 +107,36 @@ const ActivityDetailModal: React.FC<ActivityDetailModalProps> = ({ activity, isO
           {/* Description Section */}
           <div className="mb-6">
             <h3 className="text-xs font-logga uppercase text-gray-900 mb-3 tracking-wide">DESCRIPTION</h3>
-            <p className="text-sm text-gray-700 font-jost font-light leading-relaxed">{activity.description}</p>
+            <p className="text-[18px] font-jost font-light leading-relaxed" style={{ color: '#706C6C' }}>{activity.description}</p>
           </div>
 
           {/* Schedule Availability */}
           {activity.scheduleAvailability && (
             <div className="mb-6">
               <h3 className="text-xs font-logga uppercase text-gray-900 mb-3 tracking-wide">SCHEDULE AVAILABILITY</h3>
-              <p className="text-sm text-gray-700 font-jost font-light">{activity.scheduleAvailability}</p>
+              <p className="text-[18px] font-jost font-light" style={{ color: '#706C6C' }}>{activity.scheduleAvailability}</p>
             </div>
           )}
 
           {/* Contact Section */}
           <div className="mb-6">
             <h3 className="text-xs font-logga uppercase text-gray-900 mb-3 tracking-wide">CONTACT</h3>
-            <div className="space-y-2 text-sm text-gray-700 font-jost font-light">
+            <div className="space-y-2 text-[18px] font-jost font-light" style={{ color: '#706C6C' }}>
               <div className="flex items-center gap-2">
-                <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
                   <path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z" />
                 </svg>
                 <span>{activity.phone}</span>
               </div>
               <div className="flex items-center gap-2">
-                <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
                   <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z" />
                   <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z" />
                 </svg>
                 <span>{activity.email}</span>
               </div>
               <div className="flex items-center gap-2">
-                <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
                   <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM4.332 8.027a6.012 6.012 0 011.912-2.706C6.512 5.73 6.974 6 7.5 6A1.5 1.5 0 019 7.5V8a2 2 0 004 0 2 2 0 011.523-1.943A5.977 5.977 0 0116 10c0 .34-.028.675-.083 1H15a2 2 0 00-2 2v2.197A5.973 5.973 0 0110 16v-2a2 2 0 00-2-2 2 2 0 01-2-2 2 2 0 00-1.668-1.973z" clipRule="evenodd" />
                 </svg>
                 <span>{activity.website}</span>

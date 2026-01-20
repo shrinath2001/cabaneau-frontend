@@ -206,12 +206,12 @@ export default function EatDrinkPage() {
       </section>
 
       {/* Tabs Section */}
-      <section className={`bg-white border-b border-gray-200 ${isTabsSticky ? 'sticky top-[70px] md:top-[86px]' : 'relative'} z-40`}>
+      <section className={`bg-white border-b border-gray-200 ${isTabsSticky ? 'sticky top-[82px]' : 'relative'} z-40`}>
         <div className="container mx-auto px-4 max-w-6xl">
-          <div className="flex justify-center gap-4 sm:gap-8 md:gap-12 overflow-x-auto pt-4 pb-4">
+          <div className="flex justify-center gap-4 sm:gap-8 md:gap-12 overflow-x-auto py-2">
             <button
               onClick={() => handleTabChange('breakfast')}
-              className="py-4 px-2 text-[16px] md:text-[24px] font-medium font-heading uppercase tracking-wider transition-colors relative whitespace-nowrap"
+              className="py-2 px-2 text-[16px] md:text-[18px] font-medium font-heading uppercase tracking-wider transition-colors relative whitespace-nowrap"
               style={{ color: activeTab === 'breakfast' ? '#F49A4A' : '#495D4D' }}
             >
               {t('eat_drink.tabs.breakfast', 'BREAKFAST')}
@@ -221,7 +221,7 @@ export default function EatDrinkPage() {
             </button>
             <button
               onClick={() => handleTabChange('dining')}
-              className="py-4 px-2 text-[16px] md:text-[24px] font-medium font-heading uppercase tracking-wider transition-colors relative whitespace-nowrap"
+              className="py-2 px-2 text-[16px] md:text-[18px] font-medium font-heading uppercase tracking-wider transition-colors relative whitespace-nowrap"
               style={{ color: activeTab === 'dining' ? '#F49A4A' : '#495D4D' }}
             >
               {t('eat_drink.tabs.dining', 'DINING')}
@@ -231,7 +231,7 @@ export default function EatDrinkPage() {
             </button>
             <button
               onClick={() => handleTabChange('drinks')}
-              className="py-4 px-2 text-[16px] md:text-[24px] font-medium font-heading uppercase tracking-wider transition-colors relative whitespace-nowrap"
+              className="py-2 px-2 text-[16px] md:text-[18px] font-medium font-heading uppercase tracking-wider transition-colors relative whitespace-nowrap"
               style={{ color: activeTab === 'drinks' ? '#F49A4A' : '#495D4D' }}
             >
               {t('eat_drink.tabs.drinks', 'DRINKS')}
@@ -244,7 +244,7 @@ export default function EatDrinkPage() {
       </section>
 
       {/* Items List */}
-      <section className="py-12 bg-white">
+      <section className="py-6 bg-white">
         <div className="container mx-auto px-4 max-w-6xl">
           {loading ? (
             <div className="text-center py-12">
@@ -292,7 +292,7 @@ export default function EatDrinkPage() {
           >
             <div className="absolute inset-0" style={{ backgroundColor: 'rgba(0, 0, 0, 0.50)' }}></div>
           </div>
-          <h2 className="relative z-10 text-white text-2xl md:text-3xl lg:text-4xl font-custom text-center px-4 mb-6">
+          <h2 className="relative z-10 text-white text-4xl md:text-5xl lg:text-6xl font-custom text-center px-4 mb-6">
             {activeTab === 'breakfast' ? (
               <>{t('eat_drink.discover.our', 'OUR')}<br />{t('eat_drink.discover.dining_offering', 'DINING OFFERING')}</>
             ) : activeTab === 'dining' ? (
@@ -329,7 +329,7 @@ export default function EatDrinkPage() {
           >
             <div className="absolute inset-0" style={{ backgroundColor: 'rgba(0, 0, 0, 0.50)' }}></div>
           </div>
-          <h2 className="relative z-10 text-white text-2xl md:text-3xl lg:text-4xl font-custom text-center px-4 mb-6">
+          <h2 className="relative z-10 text-white text-4xl md:text-5xl lg:text-6xl font-custom text-center px-4 mb-6">
             {activeTab === 'breakfast' ? (
               <>{t('eat_drink.discover.our', 'OUR')}<br />{t('eat_drink.discover.drinks_offering', 'DRINKS OFFERING')}</>
             ) : activeTab === 'dining' ? (
