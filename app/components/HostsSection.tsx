@@ -64,7 +64,8 @@ const HostsSection = ({
                 {displayNames}
               </h3>
               <div
-                className="font-jost font-light text-[15px] md:text-[17px] leading-[28px] md:leading-[32px] text-gray-600"
+                className="font-jost font-light text-[16px] md:text-[18px] leading-relaxed"
+                style={{ color: '#706C6C' }}
                 dangerouslySetInnerHTML={{ __html: displayDescription }}
               />
               {displayButtonLink && (

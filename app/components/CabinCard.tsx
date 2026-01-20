@@ -275,8 +275,6 @@ const CabinCard: React.FC<CabinCardProps> = ({
               </div>
             ) : (
               <>
-                {/* "from" text above price */}
-                <span className="font-jost text-[12px] text-gray-500 block">{ct.from}</span>
                 <div className="flex items-baseline justify-end gap-2">
                   {originalPrice && promotion && (
                     <span className="font-jost text-[16px] text-gray-400 line-through">
@@ -285,21 +283,16 @@ const CabinCard: React.FC<CabinCardProps> = ({
                   )}
                   <span className="font-jost font-medium text-[24px]">{formatPrice(price)}</span>
                 </div>
-                <div className="flex items-center justify-end gap-2 mt-1">
-                  {nights && (
-                    <span className="font-jost text-[12px] text-gray-500">
-                      {ct.forNights} {nights} {nights === 1 ? ct.night : ct.nights}
-                    </span>
-                  )}
-                  {promotion && (
+                {promotion && (
+                  <div className="flex items-center justify-end mt-1">
                     <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-emerald-50 text-emerald-700 text-[11px] font-medium rounded-full border border-emerald-200">
                       <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
                         <path fillRule="evenodd" d="M5 2a2 2 0 00-2 2v14l3.5-2 3.5 2 3.5-2 3.5 2V4a2 2 0 00-2-2H5zm2.5 3a1.5 1.5 0 100 3 1.5 1.5 0 000-3zm6.207.293a1 1 0 00-1.414 0l-6 6a1 1 0 101.414 1.414l6-6a1 1 0 000-1.414zM12.5 10a1.5 1.5 0 100 3 1.5 1.5 0 000-3z" clipRule="evenodd" />
                       </svg>
                       {promotion.name}
                     </span>
-                  )}
-                </div>
+                  </div>
+                )}
               </>
             )}
           </div>

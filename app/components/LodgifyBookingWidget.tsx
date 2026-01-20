@@ -51,7 +51,7 @@ const LodgifyBookingWidget = ({
   // Read search params for pre-filling (passed via URL from search page)
   const arrival = searchParams.get("arrival") || "";
   const departure = searchParams.get("departure") || "";
-  const adults = searchParams.get("adults") || "";
+  const adults = searchParams.get("adults") || "2"; // Default to 2 guests
   const children = searchParams.get("children") || "";
   const infants = searchParams.get("infants") || "";
   const pets = searchParams.get("pets") || "";
@@ -88,49 +88,56 @@ const LodgifyBookingWidget = ({
     // Re-initialize when search params change (e.g., navigating back from search page)
   }, [arrival, departure, adults]);
 
-  // Set default 2 guests after widget loads (if not already set via URL params)
+  // Set default guests after widget loads (only if no URL params)
   useEffect(() => {
-    if (adults && adults !== "0") return; // Already have guests from URL
+    if (searchParams.get("adults")) return; // Already have adults from URL, don't override
 
-    const setDefaultGuests = () => {
-      const container = document.getElementById("portable-search-bar");
-      if (!container) return false;
+    let attempts = 0;
+    const maxAttempts = 15;
+    let done = false;
 
-      // Find the guest input field
-      const guestInput = container.querySelector('input[type="number"]') as HTMLInputElement;
-      if (guestInput && guestInput.value === "1") {
-        // Set to 2 guests
-        guestInput.value = "2";
-        guestInput.dispatchEvent(new Event("input", { bubbles: true }));
-        guestInput.dispatchEvent(new Event("change", { bubbles: true }));
-        return true;
+    const trySetDefaultGuests = () => {
+      if (done) return;
+      attempts++;
+
+      const widget = document.getElementById("portable-search-bar");
+      if (!widget) {
+        if (attempts < maxAttempts) {
+          setTimeout(trySetDefaultGuests, 400);
+        }
+        return;
       }
 
-      // Alternative: find and click the + button
-      const plusButton = container.querySelector('button[aria-label*="increase"], button[aria-label*="add"], button:has(svg)');
-      if (plusButton && plusButton.textContent?.includes('+')) {
-        (plusButton as HTMLButtonElement).click();
-        return true;
+      // Lodgify widget uses input#counter for guest count
+      const guestsInput = widget.querySelector('input#counter') as HTMLInputElement;
+
+      if (guestsInput && guestsInput.value === "1") {
+        // The + button has class "secondary lg right"
+        const plusBtn = widget.querySelector('button.secondary.right') as HTMLButtonElement;
+        if (plusBtn) {
+          plusBtn.click();
+          done = true;
+          return;
+        }
+      } else if (guestsInput && guestsInput.value === "2") {
+        // Already at 2, we're done
+        done = true;
+        return;
       }
 
-      return false;
+      // Widget exists but not fully ready, retry
+      if (attempts < maxAttempts) {
+        setTimeout(trySetDefaultGuests, 400);
+      }
     };
 
-    // Try multiple times as widget loads asynchronously
-    const attempts = [500, 1000, 1500, 2000, 3000];
-    const timers: NodeJS.Timeout[] = [];
-
-    attempts.forEach((delay) => {
-      const timer = setTimeout(() => {
-        setDefaultGuests();
-      }, delay);
-      timers.push(timer);
-    });
-
+    // Start trying after initial delay for script to load
+    const timer = setTimeout(trySetDefaultGuests, 600);
     return () => {
-      timers.forEach(clearTimeout);
+      done = true;
+      clearTimeout(timer);
     };
-  }, [adults]);
+  }, [searchParams]);
 
   return (
     <>
@@ -361,14 +368,17 @@ const LodgifyBookingWidget = ({
           gap: 8px !important;
         }
 
-        /* Guest label styling */
-        #portable-search-bar > div:not(:first-child) label,
-        #lodgify-search-bar .styled-override label {
+        /* Desktop font sizes - 14px consistent for all text */
+        #portable-search-bar label,
+        #portable-search-bar button label,
+        #portable-search-bar button > div label,
+        #lodgify-search-bar label,
+        #lodgify-search-bar button label {
           font-size: 14px !important;
+          font-weight: 400 !important;
           opacity: 1 !important;
         }
 
-        /* Desktop font sizes - 14px */
         #portable-search-bar button > div > div:last-child,
         #lodgify-search-bar button[aria-haspopup="dialog"] > div > div:last-child {
           font-size: 14px !important;
@@ -444,7 +454,7 @@ const LodgifyBookingWidget = ({
             border: none !important;
           }
 
-          /* Date labels (Check-in/Check-out placeholder text) */
+          /* Mobile font sizes - 14px consistent for all text */
           #portable-search-bar label,
           #portable-search-bar button label,
           #portable-search-bar button > div label,
@@ -455,7 +465,7 @@ const LodgifyBookingWidget = ({
           #lodgify-search-bar button label,
           #lodgify-search-bar button[aria-haspopup="dialog"] label,
           #lodgify-search-bar button[aria-haspopup="dialog"] > div > label {
-            font-size: 16px !important;
+            font-size: 14px !important;
             line-height: 1.2 !important;
             font-weight: 400 !important;
             text-transform: none !important;
@@ -469,7 +479,7 @@ const LodgifyBookingWidget = ({
             button[aria-haspopup="dialog"]
             > div
             > div:last-child {
-            font-size: 16px !important;
+            font-size: 14px !important;
             line-height: 1.3 !important;
             font-weight: 400 !important;
           }
@@ -520,14 +530,14 @@ const LodgifyBookingWidget = ({
             min-width: 20px !important;
             padding: 0 !important;
             text-align: center !important;
-            font-size: 16px !important;
+            font-size: 14px !important;
             font-weight: 400 !important;
           }
 
           /* Guest label text */
           #portable-search-bar > div:nth-child(3) span,
           #portable-search-bar .styled-override span {
-            font-size: 16px !important;
+            font-size: 14px !important;
             margin-left: 2px !important;
           }
 
@@ -667,10 +677,9 @@ const LodgifyBookingWidget = ({
           data-version="stable"
           data-hide-location
           // Pre-fill with search params (passed via URL from search page)
-          // Default to 2 guests if not specified
           {...(arrival && { "data-arrival": formatForLodgify(arrival) })}
           {...(departure && { "data-departure": formatForLodgify(departure) })}
-          data-adults={adults && adults !== "0" ? adults : "2"}
+          data-adults={adults}
           {...(children && children !== "0" && { "data-children": children })}
           {...(infants && infants !== "0" && { "data-infants": infants })}
           {...(pets && pets !== "0" && { "data-pets": pets })}

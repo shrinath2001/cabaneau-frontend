@@ -39,7 +39,7 @@ const SearchPageWidget = () => {
   // Parse URL params (Lodgify format: YYYYMMDD, also support ISO: YYYY-MM-DD)
   const arrival = searchParams.get("arrival") || "";
   const departure = searchParams.get("departure") || "";
-  const adults = searchParams.get("adults") || "1";
+  const adults = searchParams.get("adults") || "2";
 
   // Convert ISO date (YYYY-MM-DD) to Lodgify format (YYYYMMDD)
   const formatForLodgify = (date: string) => {
@@ -71,7 +71,58 @@ const SearchPageWidget = () => {
     return () => {
       clearTimeout(timer);
     };
-  }, []);
+  }, [locale]);
+
+  // Set default guests after widget loads (only if no URL params)
+  useEffect(() => {
+    if (searchParams.get("adults")) return; // Already have adults from URL, don't override
+
+    let attempts = 0;
+    const maxAttempts = 15;
+    let done = false;
+
+    const trySetDefaultGuests = () => {
+      if (done) return;
+      attempts++;
+
+      const widget = document.getElementById("portable-search-bar");
+      if (!widget) {
+        if (attempts < maxAttempts) {
+          setTimeout(trySetDefaultGuests, 400);
+        }
+        return;
+      }
+
+      // Lodgify widget uses input#counter for guest count
+      const guestsInput = widget.querySelector('input#counter') as HTMLInputElement;
+
+      if (guestsInput && guestsInput.value === "1") {
+        // The + button has class "secondary lg right"
+        const plusBtn = widget.querySelector('button.secondary.right') as HTMLButtonElement;
+        if (plusBtn) {
+          plusBtn.click();
+          done = true;
+          return;
+        }
+      } else if (guestsInput && guestsInput.value === "2") {
+        // Already at 2, we're done
+        done = true;
+        return;
+      }
+
+      // Widget exists but not fully ready, retry
+      if (attempts < maxAttempts) {
+        setTimeout(trySetDefaultGuests, 400);
+      }
+    };
+
+    // Start trying after initial delay for script to load
+    const timer = setTimeout(trySetDefaultGuests, 600);
+    return () => {
+      done = true;
+      clearTimeout(timer);
+    };
+  }, [searchParams]);
 
   return (
     <>
@@ -170,7 +221,17 @@ const SearchPageWidget = () => {
           padding: 12px 20px !important;
         }
 
-        /* Desktop font sizes - 14px */
+        /* Desktop font sizes - 14px consistent for all text */
+        #portable-search-bar label,
+        #portable-search-bar button label,
+        #portable-search-bar button > div label,
+        #lodgify-search-bar label,
+        #lodgify-search-bar button label {
+          font-size: 14px !important;
+          font-weight: 400 !important;
+          opacity: 1 !important;
+        }
+
         #portable-search-bar button > div > div:last-child,
         #lodgify-search-bar
           button[aria-haspopup="dialog"]
@@ -287,10 +348,10 @@ const SearchPageWidget = () => {
             white-space: nowrap !important;
           }
 
-          /* Date labels (Check-in/Check-out placeholder text) */
+          /* Mobile font sizes - 14px consistent for all text */
           #portable-search-bar label,
           #lodgify-search-bar label {
-            font-size: 16px !important;
+            font-size: 14px !important;
             line-height: 1.2 !important;
             font-weight: 400 !important;
             text-transform: none !important;
@@ -304,7 +365,7 @@ const SearchPageWidget = () => {
             button[aria-haspopup="dialog"]
             > div
             > div:last-child {
-            font-size: 16px !important;
+            font-size: 14px !important;
             line-height: 1.3 !important;
             font-weight: 400 !important;
           }
@@ -358,14 +419,14 @@ const SearchPageWidget = () => {
             min-width: 20px !important;
             padding: 0 !important;
             text-align: center !important;
-            font-size: 16px !important;
+            font-size: 14px !important;
             font-weight: 400 !important;
           }
 
           /* Guest label text */
           #portable-search-bar > div:nth-child(3) span,
           #portable-search-bar .styled-override span {
-            font-size: 16px !important;
+            font-size: 14px !important;
             margin-left: 2px !important;
           }
 
@@ -495,7 +556,7 @@ const SearchPageWidget = () => {
           // Pre-fill with current search params (guests go as adults)
           {...(arrival && { "data-arrival": formatForLodgify(arrival) })}
           {...(departure && { "data-departure": formatForLodgify(departure) })}
-          {...(adults && adults !== "0" && { "data-adults": adults })}
+          data-adults={adults}
           // Labels (translated)
           data-dates-check-in-label={t.checkIn}
           data-dates-check-out-label={t.checkOut}
