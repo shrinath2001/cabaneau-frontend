@@ -41,6 +41,8 @@ interface CabinCardProps {
   priceLoading?: boolean;
   searchParams?: SearchParams;
   featuredAmenities?: AmenityInfo[];
+  /** Price display mode: 'perNight' shows "from X €/night", 'total' shows just the price */
+  priceType?: 'perNight' | 'total';
 }
 
 // Hardcoded translations for cabin card (fallback when CMS translations not available)
@@ -52,11 +54,12 @@ const cardTranslations: Record<string, {
   bookNow: string;
   from: string;
   forNights: string;
+  perNight: string;
 }> = {
-  en: { dates: 'Dates:', nextAvailability: 'Next Availability:', night: 'night', nights: 'nights', bookNow: 'BOOK NOW', from: 'from', forNights: 'for' },
-  fr: { dates: 'Dates :', nextAvailability: 'Disponibilité :', night: 'nuit', nights: 'nuits', bookNow: 'RÉSERVER', from: 'à partir de', forNights: 'pour' },
-  de: { dates: 'Daten:', nextAvailability: 'Verfügbarkeit:', night: 'Nacht', nights: 'Nächte', bookNow: 'JETZT BUCHEN', from: 'ab', forNights: 'für' },
-  nl: { dates: 'Data:', nextAvailability: 'Beschikbaarheid:', night: 'nacht', nights: 'nachten', bookNow: 'NU BOEKEN', from: 'vanaf', forNights: 'voor' },
+  en: { dates: 'Dates:', nextAvailability: 'Next Availability:', night: 'night', nights: 'nights', bookNow: 'BOOK NOW', from: 'from', forNights: 'for', perNight: 'per night' },
+  fr: { dates: 'Dates :', nextAvailability: 'Disponibilité :', night: 'nuit', nights: 'nuits', bookNow: 'RÉSERVER', from: 'à partir de', forNights: 'pour', perNight: 'par nuit' },
+  de: { dates: 'Daten:', nextAvailability: 'Verfügbarkeit:', night: 'Nacht', nights: 'Nächte', bookNow: 'JETZT BUCHEN', from: 'ab', forNights: 'für', perNight: 'pro Nacht' },
+  nl: { dates: 'Data:', nextAvailability: 'Beschikbaarheid:', night: 'nacht', nights: 'nachten', bookNow: 'NU BOEKEN', from: 'vanaf', forNights: 'voor', perNight: 'per nacht' },
 };
 
 // Format area to remove decimals (30.00m² → 30m²)
@@ -128,6 +131,7 @@ const CabinCard: React.FC<CabinCardProps> = ({
   priceLoading,
   searchParams,
   featuredAmenities,
+  priceType = 'perNight',
 }) => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const { locale } = useTranslations('cabins');
@@ -275,22 +279,41 @@ const CabinCard: React.FC<CabinCardProps> = ({
               </div>
             ) : (
               <>
-                <div className="flex items-baseline justify-end gap-2">
-                  {originalPrice && promotion && (
-                    <span className="font-jost text-[16px] text-gray-400 line-through">
-                      {formatPrice(originalPrice)}
-                    </span>
-                  )}
-                  <span className="font-jost font-medium text-[24px]">{formatPrice(price)}</span>
-                </div>
-                {promotion && (
-                  <div className="flex items-center justify-end mt-1">
-                    <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-emerald-50 text-emerald-700 text-[11px] font-medium rounded-full border border-emerald-200">
-                      <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
-                        <path fillRule="evenodd" d="M5 2a2 2 0 00-2 2v14l3.5-2 3.5 2 3.5-2 3.5 2V4a2 2 0 00-2-2H5zm2.5 3a1.5 1.5 0 100 3 1.5 1.5 0 000-3zm6.207.293a1 1 0 00-1.414 0l-6 6a1 1 0 101.414 1.414l6-6a1 1 0 000-1.414zM12.5 10a1.5 1.5 0 100 3 1.5 1.5 0 000-3z" clipRule="evenodd" />
-                      </svg>
-                      {promotion.name}
-                    </span>
+                {priceType === 'perNight' ? (
+                  /* Homepage style: stacked "from / 300 € / per night" */
+                  <div className="text-right flex flex-col items-end">
+                    <span className="font-jost text-[12px] text-gray-500">{ct.from}</span>
+                    <span className="font-jost font-medium text-[24px] leading-tight">{formatPrice(price)}</span>
+                    <span className="font-jost text-[12px] text-gray-500">{ct.perNight}</span>
+                  </div>
+                ) : (
+                  /* Search style: total price with nights + deal badge on same line */
+                  <div className="text-right flex flex-col items-end">
+                    <div className="flex items-baseline justify-end gap-2">
+                      {originalPrice && promotion && (
+                        <span className="font-jost text-[16px] text-gray-400 line-through">
+                          {formatPrice(originalPrice)}
+                        </span>
+                      )}
+                      <span className="font-jost font-medium text-[24px]">{formatPrice(price)}</span>
+                    </div>
+                    {(nights && nights > 0) || promotion ? (
+                      <div className="flex items-center justify-end gap-2 mt-1">
+                        {nights && nights > 0 && (
+                          <span className="font-jost text-[12px] text-gray-500">
+                            {ct.forNights} {nights} {nights === 1 ? ct.night : ct.nights}
+                          </span>
+                        )}
+                        {promotion && (
+                          <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-emerald-50 text-emerald-700 text-[11px] font-medium rounded-full border border-emerald-200">
+                            <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                              <path fillRule="evenodd" d="M5 2a2 2 0 00-2 2v14l3.5-2 3.5 2 3.5-2 3.5 2V4a2 2 0 00-2-2H5zm2.5 3a1.5 1.5 0 100 3 1.5 1.5 0 000-3zm6.207.293a1 1 0 00-1.414 0l-6 6a1 1 0 101.414 1.414l6-6a1 1 0 000-1.414zM12.5 10a1.5 1.5 0 100 3 1.5 1.5 0 000-3z" clipRule="evenodd" />
+                            </svg>
+                            {promotion.name}
+                          </span>
+                        )}
+                      </div>
+                    ) : null}
                   </div>
                 )}
               </>

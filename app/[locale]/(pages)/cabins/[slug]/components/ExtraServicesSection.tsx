@@ -68,7 +68,7 @@ const ExtraServicesSection = ({ services }: ExtraServicesSectionProps) => {
 
   return (
     <div className="mb-8 sm:mb-12">
-      <h2 className="font-heading font-medium text-[18px] sm:text-[20px] lg:text-[24px] mb-4 sm:mb-6 uppercase tracking-wide" style={{ color: '#212121' }}>
+      <h2 className="font-logga text-[16px] md:text-[20px] mb-6 uppercase tracking-wide text-gray-800 p-4 md:p-6" style={{ backgroundColor: '#F1FAF7' }}>
         {t('detail.extra_services', 'AVAILABLE EXTRA SERVICES')}
       </h2>
 

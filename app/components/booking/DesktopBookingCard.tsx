@@ -69,7 +69,7 @@ export default function DesktopBookingCard({
     >
       {/* Cabin Name Header */}
       <div className="px-6 py-4 border-b border-gray-300">
-        <h2 className="font-logga text-[18px] md:text-[20px] uppercase text-gray-800">
+        <h2 className="font-logga font-medium text-[18px] md:text-[20px] uppercase text-gray-800">
           {cabin.name}
         </h2>
       </div>

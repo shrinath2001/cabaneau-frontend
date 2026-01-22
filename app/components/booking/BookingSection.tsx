@@ -161,18 +161,18 @@ export default function BookingSection({
       >
         {/* Cabin Name Header */}
         <div className="px-6 py-4 border-b border-gray-300">
-          <h2 className="font-jost font-medium text-[18px] md:text-[20px] uppercase text-gray-800">
+          <h2 className="font-logga font-medium text-[18px] md:text-[20px] uppercase text-gray-800">
             {cabin.name}
           </h2>
         </div>
 
         <div className="p-4 md:p-6 space-y-4">
-          <p className="text-sm text-gray-600">
+          <p className="text-sm font-jost font-light text-gray-600">
             {t('select_dates_message', 'Select your dates to see availability and pricing')}
           </p>
           <button
             onClick={() => setShowDesktopModal(true)}
-            className="w-full bg-[#F49A4A] hover:bg-[#e08a3a] text-white font-semibold py-3 px-6 transition-colors"
+            className="w-full bg-[#495D4D] text-white py-4 px-6 text-base font-bold tracking-wide hover:bg-[#3d5a3d] transition uppercase font-jost"
           >
             {t('check_availability', 'Check Availability')}
           </button>

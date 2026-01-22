@@ -286,8 +286,8 @@ export default function MobileBottomSheet({
         </div>
 
         {/* Header */}
-        <div className="px-5 pb-3 border-b border-gray-200">
-          <h3 className="text-lg font-semibold text-gray-900">
+        <div className="px-5 pb-3 border-b border-gray-300">
+          <h3 className="font-logga text-[18px] uppercase text-gray-800">
             {t.title}
           </h3>
         </div>
@@ -534,13 +534,13 @@ export default function MobileBottomSheet({
         </div>
 
         {/* Save Button */}
-        <div className="px-5 py-4 border-t border-gray-200 bg-white">
+        <div className="px-5 py-4 border-t border-gray-300 bg-white">
           <button
             onClick={handleSave}
             disabled={!canSave}
-            className={`w-full py-3 px-6 font-semibold transition-colors ${
+            className={`w-full py-4 px-6 text-base font-jost font-bold tracking-wide uppercase transition ${
               canSave
-                ? "bg-[#495d4d] hover:bg-[#3a4a3e] text-white"
+                ? "bg-[#495D4D] hover:bg-[#3d5a3d] text-white"
                 : "bg-gray-200 text-gray-500 cursor-not-allowed"
             }`}
           >

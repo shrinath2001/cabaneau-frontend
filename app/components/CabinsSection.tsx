@@ -48,6 +48,36 @@ const sectionTranslations: Record<string, {
   nl: { persons: 'Personen', available: 'Beschikbaar', availableNow: 'Vandaag', perNight: '/nacht' },
 };
 
+/**
+ * Extract image URLs from cabin, ensuring featured image is first
+ */
+function getCabinImageUrls(cabin: any): string[] {
+  const imageUrls: string[] = [];
+
+  // Add featured image first if it exists
+  if (cabin.featuredImage) {
+    imageUrls.push(cabin.featuredImage);
+  }
+
+  // Add other images, extracting URL from objects if needed
+  if (cabin.images && cabin.images.length > 0) {
+    for (const img of cabin.images) {
+      const url = typeof img === 'string' ? img : img?.url;
+      // Don't duplicate featured image
+      if (url && !imageUrls.includes(url)) {
+        imageUrls.push(url);
+      }
+    }
+  }
+
+  // Fallback to placeholder if no images
+  if (imageUrls.length === 0) {
+    imageUrls.push('/assets/placeholder.jpg');
+  }
+
+  return imageUrls;
+}
+
 const CabinsSection = () => {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const [cabins, setCabins] = useState<CabinData[]>([]);
@@ -103,9 +133,7 @@ const CabinsSection = () => {
           const transformedCabins: CabinData[] = cabinArray.map((cabin: any, index: number) => ({
             id: cabin.lodgifyId ? parseInt(cabin.lodgifyId) : index + 1,
             slug: cabin.slug || `cabin-${index + 1}`,
-            images: cabin.images?.length > 0 ? cabin.images :
-                    cabin.featuredImage ? [cabin.featuredImage] :
-                    ['/assets/d206536ef067f64b29cad184324fe360bb763e30.jpg'],
+            images: getCabinImageUrls(cabin),
             title: cabin.name || cabin.title || cabin.slug?.replace(/-/g, ' ').toUpperCase() || `Cabin ${index + 1}`,
             rating: cabin.rating ?? 5,
             area: cabin.squareMeters ? `${cabin.squareMeters}m²` : cabin.area || '',
@@ -113,8 +141,9 @@ const CabinsSection = () => {
             // Use nextAvailableDate from Lodgify if present
             availability: formatAvailabilityDate(cabin.nextAvailableDate) || cabin.availability || st.available,
             // Use nightlyRate from Lodgify if present, fallback to basePrice
+            // Note: CabinCard handles "from X €/night" formatting with priceType="perNight" (default)
             price: cabin.nightlyRate
-                   ? formatNightlyRate(cabin.nightlyRate, cabin.currency)
+                   ? `${Math.round(cabin.nightlyRate)} €`
                    : cabin.basePrice
                      ? `${Math.round(Number(cabin.basePrice))} €`
                      : cabin.price || '',
@@ -183,7 +212,7 @@ const CabinsSection = () => {
         <div className="w-full">
           <div className="max-w-full mx-auto md:pl-20">
             {/* Header with Title */}
-            <div className="flex justify-center items-center pt-6 md:pt-10 mb-10 md:mb-20 px-4 md:px-0 md:-ml-20">
+            <div className="flex justify-center items-center pt-6 md:pt-10 mb-10 md:mb-10 px-4 md:px-0 md:-ml-20">
               <h2 className="font-logga text-[28px] md:text-[42px] font-semibold text-center">
                 {t('cabins_section.title', 'OUR CABINES')}
               </h2>
