@@ -7,6 +7,14 @@ export const metadata: Metadata = {
   description: 'Browse our collection of luxury cabins with private wellness facilities. Find your perfect retreat.',
 };
 
+interface AmenityInfo {
+  id: string;
+  name: string;
+  slug: string;
+  icon?: string;
+  category: string;
+}
+
 interface CabinFromAPI {
   id: number;
   slug: string;
@@ -19,6 +27,7 @@ interface CabinFromAPI {
   nextAvailableDate?: string;
   nightlyRate?: number;
   currency?: string;
+  featuredAmenities?: AmenityInfo[];
 }
 
 // Format date string (YYYY-MM-DD) to "Jan 15" format
@@ -126,6 +135,7 @@ export default async function CabinsPage() {
            : cabin.basePrice
              ? `€${Number(cabin.basePrice).toFixed(2)}/night`
              : '',
+    featuredAmenities: cabin.featuredAmenities,
   };
   });
 

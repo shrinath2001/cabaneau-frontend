@@ -52,7 +52,7 @@ export default async function LocaleLayout({
           <Suspense fallback={<div className="h-[70px] md:h-[86px]" />}>
             <ConditionalHeader />
           </Suspense>
-          <main className="pt-20">
+          <main>
             {children}
           </main>
         </TranslationsProvider>

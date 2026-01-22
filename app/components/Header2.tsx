@@ -58,6 +58,13 @@ const Header2 = () => {
   // Helper to create localized link
   const link = (path: string) => localizedPath(locale as Locale, path);
 
+  // Check if a nav link is active (current page)
+  const isActive = (path: string) => {
+    const localizedHref = link(path);
+    // Check if pathname starts with the link path (handles sub-pages like /cabins/slug)
+    return pathname === localizedHref || pathname.startsWith(localizedHref + '/');
+  };
+
   // Build home link - preserve search params when coming from search or cabin pages
   const getHomeLink = () => {
     const basePath = link('/');
@@ -90,16 +97,16 @@ const Header2 = () => {
           {/* Nav spacing: space-x-10 lg:space-x-12 (PreFinal UI) | Revert to: space-x-8 */}
           <nav className="hidden md:flex items-center space-x-10 lg:space-x-12">
             {/* Nav hover: hover:font-semibold hover:text-orange-300 (feat branch) | Revert to: hover:text-[#F49A4A] transition-colors */}
-            <Link href={link('/cabins')} className="text-[#495D4D] font-heading font-medium text-[18px] hover:font-semibold hover:text-orange-300 uppercase">
+            <Link href={link('/cabins')} className={`font-heading font-medium text-[18px] hover:text-[#F49A4A] transition-colors uppercase ${isActive('/cabins') ? 'text-[#F49A4A]' : 'text-[#495D4D]'}`}>
               {t('link.our_cabins', 'Our Cabins')}
             </Link>
-            <Link href={link('/activities')} className="text-[#495D4D] font-heading font-medium text-[18px] hover:font-semibold hover:text-orange-300 uppercase">
+            <Link href={link('/activities')} className={`font-heading font-medium text-[18px] hover:text-[#F49A4A] transition-colors uppercase ${isActive('/activities') ? 'text-[#F49A4A]' : 'text-[#495D4D]'}`}>
               {t('link.activities', 'Activities')}
             </Link>
-            <Link href={link('/eat-drink')} className="text-[#495D4D] font-heading font-medium text-[18px] hover:font-semibold hover:text-orange-300 uppercase">
+            <Link href={link('/eat-drink')} className={`font-heading font-medium text-[18px] hover:text-[#F49A4A] transition-colors uppercase ${isActive('/eat-drink') ? 'text-[#F49A4A]' : 'text-[#495D4D]'}`}>
               {t('link.eat_drink', 'Eat & Drink')}
             </Link>
-            <Link href={link('/blog')} className="text-[#495D4D] font-heading font-medium text-[18px] hover:font-semibold hover:text-orange-300 uppercase">
+            <Link href={link('/blog')} className={`font-heading font-medium text-[18px] hover:text-[#F49A4A] transition-colors uppercase ${isActive('/blog') ? 'text-[#F49A4A]' : 'text-[#495D4D]'}`}>
               {t('link.blog', 'Blog')}
             </Link>
           </nav>
@@ -278,28 +285,28 @@ const Header2 = () => {
               <Link
                 href={link('/cabins')}
                 onClick={() => setIsMenuOpen(false)}
-                className="text-[#F49A4A] font-heading font-medium text-center py-4 text-[16px] tracking-wider uppercase"
+                className={`font-heading font-medium text-center py-4 text-[16px] tracking-wider uppercase ${isActive('/cabins') ? 'text-[#F49A4A]' : 'text-[#495D4D]'}`}
               >
                 {t('link.our_cabins', 'Our Cabins')}
               </Link>
               <Link
                 href={link('/activities')}
                 onClick={() => setIsMenuOpen(false)}
-                className="text-[#495D4D] font-heading font-medium text-center py-4 text-[16px] tracking-wider uppercase"
+                className={`font-heading font-medium text-center py-4 text-[16px] tracking-wider uppercase ${isActive('/activities') ? 'text-[#F49A4A]' : 'text-[#495D4D]'}`}
               >
                 {t('link.activities', 'Activities')}
               </Link>
               <Link
                 href={link('/eat-drink')}
                 onClick={() => setIsMenuOpen(false)}
-                className="text-[#495D4D] font-heading font-medium text-center py-4 text-[16px] tracking-wider uppercase"
+                className={`font-heading font-medium text-center py-4 text-[16px] tracking-wider uppercase ${isActive('/eat-drink') ? 'text-[#F49A4A]' : 'text-[#495D4D]'}`}
               >
                 {t('link.eat_drink', 'Eat & Drink')}
               </Link>
               <Link
                 href={link('/blog')}
                 onClick={() => setIsMenuOpen(false)}
-                className="text-[#495D4D] font-heading font-medium text-center py-4 text-[16px] tracking-wider uppercase"
+                className={`font-heading font-medium text-center py-4 text-[16px] tracking-wider uppercase ${isActive('/blog') ? 'text-[#F49A4A]' : 'text-[#495D4D]'}`}
               >
                 {t('link.blog', 'Blog')}
               </Link>

@@ -91,16 +91,16 @@ const Header = () => {
             </div>
             {/* Nav spacing: space-x-10 lg:space-x-12 (PreFinal UI) | Revert to: space-x-8 */}
             <nav className="hidden md:flex items-center space-x-10 lg:space-x-12">
-              <Link href={link('/cabins')} className="font-heading font-medium text-[18px] text-white/60 hover:text-white transition-colors uppercase">
+              <Link href={link('/cabins')} className="font-heading font-medium text-[18px] text-white hover:text-[#F49A4A] transition-colors uppercase">
                 {t('link.our_cabins', 'Our Cabins')}
               </Link>
-              <Link href={link('/activities')} className="font-heading font-medium text-[18px] text-white/60 hover:text-white transition-colors uppercase">
+              <Link href={link('/activities')} className="font-heading font-medium text-[18px] text-white hover:text-[#F49A4A] transition-colors uppercase">
                 {t('link.activities', 'Activities')}
               </Link>
-              <Link href={link('/eat-drink')} className="font-heading font-medium text-[18px] text-white/60 hover:text-white transition-colors uppercase">
+              <Link href={link('/eat-drink')} className="font-heading font-medium text-[18px] text-white hover:text-[#F49A4A] transition-colors uppercase">
                 {t('link.eat_drink', 'Eat & Drink')}
               </Link>
-              <Link href={link('/blog')} className="font-heading font-medium text-[18px] text-white/60 hover:text-white transition-colors uppercase">
+              <Link href={link('/blog')} className="font-heading font-medium text-[18px] text-white hover:text-[#F49A4A] transition-colors uppercase">
                 {t('link.blog', 'Blog')}
               </Link>
             </nav>
@@ -153,7 +153,7 @@ const Header = () => {
               {/* Book Now Button */}
               <Link
                 href={link('/search')}
-                className="bg-[#495D4D] text-white px-3 py-2 flex items-center justify-center font-heading font-medium text-xs hover:bg-[#3d5a3d] transition uppercase"
+                className="bg-white text-[#495D4D] px-3 py-2 flex items-center justify-center font-heading font-medium text-xs hover:bg-gray-100 transition uppercase"
               >
                 {t('button.book_now', 'Book Now')}
               </Link>

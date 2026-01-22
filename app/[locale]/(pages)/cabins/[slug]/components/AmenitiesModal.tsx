@@ -1,6 +1,8 @@
 'use client';
 
+import { useEffect, useState } from 'react';
 import { useTranslations } from '@/app/providers/TranslationsProvider';
+import { apiFetch } from '@/app/lib/api';
 
 interface AmenityInfo {
   id: string;
@@ -8,6 +10,12 @@ interface AmenityInfo {
   slug: string;
   icon?: string;
   category: string;
+}
+
+interface AmenityCategory {
+  slug: string;
+  name: string;
+  displayOrder: number;
 }
 
 interface AmenitiesModalProps {
@@ -38,6 +46,33 @@ const AmenityIcon = ({ icon }: { icon?: string }) => {
 const AmenitiesModal = ({ isOpen, onClose, amenities }: AmenitiesModalProps) => {
   const { locale } = useTranslations();
   const t = modalTranslations[locale] || modalTranslations.en;
+  const [categories, setCategories] = useState<AmenityCategory[]>([]);
+  const [categoryMap, setCategoryMap] = useState<Record<string, string>>({});
+
+  // Fetch amenity categories for translated names
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const response = await apiFetch('/api/amenity-categories');
+        if (response.ok) {
+          const data: AmenityCategory[] = await response.json();
+          setCategories(data);
+          // Create slug -> name mapping
+          const map: Record<string, string> = {};
+          data.forEach((cat) => {
+            map[cat.slug] = cat.name;
+          });
+          setCategoryMap(map);
+        }
+      } catch (error) {
+        console.error('Failed to fetch amenity categories:', error);
+      }
+    };
+
+    if (isOpen) {
+      fetchCategories();
+    }
+  }, [isOpen, locale]);
 
   if (!isOpen) return null;
 
@@ -46,19 +81,38 @@ const AmenitiesModal = ({ isOpen, onClose, amenities }: AmenitiesModalProps) => 
     return null;
   }
 
-  // Group amenities by category
+  // Get category display name (translated name or fallback to slug with formatting)
+  const getCategoryName = (slug: string): string => {
+    if (categoryMap[slug]) {
+      return categoryMap[slug];
+    }
+    // Fallback: convert slug to readable format (bedroom-and-laundry -> Bedroom And Laundry)
+    return slug
+      .split('-')
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(' ');
+  };
+
+  // Group amenities by category, sorted by category display order
   const groupedAmenities: Record<string, AmenityInfo[]> = {};
   amenities.forEach((amenity) => {
-    const category = amenity.category || 'Other';
+    const category = amenity.category || 'other';
     if (!groupedAmenities[category]) {
       groupedAmenities[category] = [];
     }
     groupedAmenities[category].push(amenity);
   });
 
+  // Sort categories by display order from API
+  const sortedCategories = Object.keys(groupedAmenities).sort((a, b) => {
+    const orderA = categories.find((c) => c.slug === a)?.displayOrder ?? 999;
+    const orderB = categories.find((c) => c.slug === b)?.displayOrder ?? 999;
+    return orderA - orderB;
+  });
+
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-4"
+      className="fixed inset-0 z-[60] flex items-center justify-center p-4"
       style={{ backgroundColor: 'rgba(0, 0, 0, 0.15)' }}
       onClick={onClose}
     >
@@ -85,11 +139,11 @@ const AmenitiesModal = ({ isOpen, onClose, amenities }: AmenitiesModalProps) => 
 
           {/* Amenities by Category */}
           <div className="space-y-6">
-            {Object.entries(groupedAmenities).map(([category, categoryAmenities]) => (
-              <div key={category} className="pb-6 border-b border-gray-200 last:border-b-0">
-                <h3 className="text-[16px] font-logga mb-4 capitalize">{category}</h3>
+            {sortedCategories.map((categorySlug) => (
+              <div key={categorySlug} className="pb-6 border-b border-gray-200 last:border-b-0">
+                <h3 className="text-[16px] font-logga mb-4">{getCategoryName(categorySlug)}</h3>
                 <div className="space-y-4">
-                  {categoryAmenities.map((amenity) => (
+                  {groupedAmenities[categorySlug].map((amenity) => (
                     <div key={amenity.id} className="flex items-center gap-4">
                       <AmenityIcon icon={amenity.icon} />
                       <span className="text-[16px] font-jost font-light uppercase">{amenity.name}</span>

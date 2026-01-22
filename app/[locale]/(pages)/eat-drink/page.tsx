@@ -206,7 +206,7 @@ export default function EatDrinkPage() {
       </section>
 
       {/* Tabs Section */}
-      <section className={`bg-white border-b border-gray-200 ${isTabsSticky ? 'sticky top-[82px]' : 'relative'} z-40`}>
+      <section className={`bg-white border-b border-gray-200 ${isTabsSticky ? 'sticky top-[58px] md:top-[82px]' : 'relative'} z-40`}>
         <div className="container mx-auto px-4 max-w-6xl">
           <div className="flex justify-center gap-4 sm:gap-8 md:gap-12 overflow-x-auto py-2">
             <button

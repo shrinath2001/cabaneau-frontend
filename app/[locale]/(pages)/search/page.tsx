@@ -18,7 +18,6 @@ const localeMap: Record<string, string> = {
 const searchTranslations: Record<string, {
   title: string;
   subtitle: string;
-  found: string;
   cabin: string;
   cabins: string;
   available: string;
@@ -42,7 +41,6 @@ const searchTranslations: Record<string, {
   en: {
     title: 'Search Results',
     subtitle: 'Modify your search below to find available cabins',
-    found: 'Found',
     cabin: 'cabin',
     cabins: 'cabins',
     available: 'available',
@@ -66,7 +64,6 @@ const searchTranslations: Record<string, {
   fr: {
     title: 'Résultats de recherche',
     subtitle: 'Modifiez votre recherche pour trouver des cabanes disponibles',
-    found: 'Trouvé',
     cabin: 'cabane',
     cabins: 'cabanes',
     available: 'disponible(s)',
@@ -90,7 +87,6 @@ const searchTranslations: Record<string, {
   de: {
     title: 'Suchergebnisse',
     subtitle: 'Passen Sie Ihre Suche an, um verfügbare Hütten zu finden',
-    found: 'Gefunden',
     cabin: 'Hütte',
     cabins: 'Hütten',
     available: 'verfügbar',
@@ -114,7 +110,6 @@ const searchTranslations: Record<string, {
   nl: {
     title: 'Zoekresultaten',
     subtitle: 'Pas uw zoekopdracht aan om beschikbare hutten te vinden',
-    found: 'Gevonden',
     cabin: 'hut',
     cabins: 'hutten',
     available: 'beschikbaar',
@@ -145,6 +140,12 @@ interface AmenityInfo {
   category: string;
 }
 
+interface CabinImage {
+  url: string;
+  tag?: string;
+  order?: number;
+}
+
 interface SearchCabin {
   id: string;
   slug: string;
@@ -156,7 +157,7 @@ interface SearchCabin {
   bathrooms: number;
   basePrice: number;
   featuredImage: string;
-  images: string[];
+  images: (string | CabinImage)[];
   lodgifyId?: string;
   petsAllowed?: boolean;
   adultsOnly?: boolean;
@@ -201,6 +202,36 @@ interface GuestBreakdown {
   infants: number;
   pets: number;
   total: number;
+}
+
+/**
+ * Extract image URLs from cabin, ensuring featured image is first
+ */
+function getCabinImageUrls(cabin: SearchCabin): string[] {
+  const imageUrls: string[] = [];
+
+  // Add featured image first if it exists
+  if (cabin.featuredImage) {
+    imageUrls.push(cabin.featuredImage);
+  }
+
+  // Add other images, extracting URL from objects if needed
+  if (cabin.images && cabin.images.length > 0) {
+    for (const img of cabin.images) {
+      const url = typeof img === 'string' ? img : img.url;
+      // Don't duplicate featured image
+      if (url && !imageUrls.includes(url)) {
+        imageUrls.push(url);
+      }
+    }
+  }
+
+  // Fallback to placeholder if no images
+  if (imageUrls.length === 0) {
+    imageUrls.push('/assets/placeholder.jpg');
+  }
+
+  return imageUrls;
 }
 
 /**
@@ -499,7 +530,7 @@ function SearchResults() {
             ) : cabins.length > 0 ? (
               <>
                 <p className="text-center text-gray-600 mb-8 font-jost font-light text-lg">
-                  {st.found} {total} {total === 1 ? st.cabin : st.cabins} {st.available}
+                  {total} {total === 1 ? st.cabin : st.cabins} {st.available}
                 </p>
                 <div className="flex flex-wrap justify-center gap-8">
                   {cabins.map((cabin) => {
@@ -537,7 +568,7 @@ function SearchResults() {
                       <CabinCard
                         key={cabin.id}
                         slug={cabin.slug}
-                        images={cabin.images.length > 0 ? cabin.images : [cabin.featuredImage]}
+                        images={getCabinImageUrls(cabin)}
                         title={cabin.name}
                         rating={5} // Default rating since API doesn't provide it
                         area={cabin.squareMeters ? `${cabin.squareMeters}m²` : ''}
@@ -548,6 +579,7 @@ function SearchResults() {
                         nights={nights}
                         promotion={promotion}
                         priceLoading={cabin.quoteLoading}
+                        priceType="total"
                         searchParams={{
                           arrival: searchParams.get('arrival') || undefined,
                           departure: searchParams.get('departure') || undefined,
