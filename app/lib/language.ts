@@ -83,6 +83,7 @@ export function getLodgifyLocale(languageCode?: string): string {
 /**
  * Convert language code to Lodgify-compatible locale code for Search widgets.
  * The portable search bar only supports simple language codes like 'en', not 'en-GB'.
+ * Unfortunately this means English locale will show US date format (MM/DD/YYYY).
  *
  * @example
  * getLodgifySearchLocale('en') // 'en'
@@ -91,7 +92,7 @@ export function getLodgifyLocale(languageCode?: string): string {
 export function getLodgifySearchLocale(languageCode?: string): string {
   const code = languageCode || getLanguage();
 
-  // Search widget only supports simple language codes
+  // Search widget only supports simple language codes (not 'en-GB')
   const localeMap: Record<string, string> = {
     en: 'en',
     fr: 'fr',

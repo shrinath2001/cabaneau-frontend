@@ -53,6 +53,7 @@ interface CabinDetails {
   featuredImage: string;
   images: string[];
   floorPlan?: string;
+  locationImage?: string;
   virtualTour?: string;
   address?: string;
   city?: string;
@@ -401,7 +402,10 @@ const SingleCabinPage = () => {
             <ExtraServicesSection services={cabin.services} />
 
             {/* Sleeping Areas Section Component */}
-            <SleepingAreasSection />
+            <SleepingAreasSection
+              locationImage={cabin.locationImage}
+              cabinName={cabin.name || cabin.slug}
+            />
           </div>
 
           {/* Booking Section - Desktop: right sidebar */}

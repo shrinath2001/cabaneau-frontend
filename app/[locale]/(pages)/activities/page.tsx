@@ -7,6 +7,11 @@ import ActivityDetailModal from "@/app/components/ActivityDetailModal";
 import { apiFetch } from "@/app/lib/api";
 import { useTranslations } from "@/app/providers/TranslationsProvider";
 
+interface PageData {
+  heroImage?: string;
+  heroText?: string;
+}
+
 interface APIActivity {
   id: string;
   name: string;
@@ -53,17 +58,25 @@ export default function ActivitiesPage() {
   const [restaurants, setRestaurants] = useState<Activity[]>([]);
   const [loading, setLoading] = useState(true);
   const [isTabsSticky, setIsTabsSticky] = useState(true);
+  const [pageData, setPageData] = useState<PageData>({});
   const discoverSectionRef = useRef<HTMLElement>(null);
 
-  // Fetch activities from API
+  // Fetch activities and page data from API
   useEffect(() => {
-    const fetchActivities = async () => {
+    const fetchData = async () => {
       try {
-        const response = await apiFetch("/api/activities", {
-          headers: { "x-language": locale },
-        });
-        const result = await response.json();
-        const data = result?.data ?? result ?? [];
+        // Fetch activities and page data in parallel
+        const [activitiesResponse, pageResponse] = await Promise.all([
+          apiFetch("/api/activities", {
+            headers: { "x-language": locale },
+          }),
+          apiFetch("/api/pages/slug/activities", {
+            headers: { "x-language": locale },
+          }),
+        ]);
+
+        const activitiesResult = await activitiesResponse.json();
+        const data = activitiesResult?.data ?? activitiesResult ?? [];
 
         if (Array.isArray(data)) {
           // Split by category - DINING goes to restaurants, rest to activities
@@ -77,14 +90,23 @@ export default function ActivitiesPage() {
           setActivities(apiActivities.map(transformActivity));
           setRestaurants(apiRestaurants.map(transformActivity));
         }
+
+        // Set page data for hero section
+        if (pageResponse.ok) {
+          const pageResult = await pageResponse.json();
+          setPageData({
+            heroImage: pageResult.heroImage,
+            heroText: pageResult.heroText,
+          });
+        }
       } catch (error) {
-        console.error("Error fetching activities:", error);
+        console.error("Error fetching data:", error);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchActivities();
+    fetchData();
   }, [locale]);
 
   // Sticky tabs scroll handler
@@ -133,8 +155,7 @@ export default function ActivitiesPage() {
         <div
           className="absolute inset-0 bg-cover bg-center"
           style={{
-            backgroundImage:
-              "url(/assets/d206536ef067f64b29cad184324fe360bb763e30.jpg)",
+            backgroundImage: `url(${pageData.heroImage || "/assets/d206536ef067f64b29cad184324fe360bb763e30.jpg"})`,
           }}
         >
           <div
@@ -143,7 +164,7 @@ export default function ActivitiesPage() {
           ></div>
         </div>
         <h1 className="relative z-10 text-white text-4xl md:text-5xl lg:text-6xl font-custom text-center px-4">
-          {t("page.hero_title", "WHAT TO DO? WHERE TO GO?")}
+          {pageData.heroText || t("page.hero_title", "WHAT TO DO? WHERE TO GO?")}
         </h1>
       </section>
 

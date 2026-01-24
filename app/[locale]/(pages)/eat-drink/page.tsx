@@ -7,6 +7,11 @@ import EatDrinkDetailModal from '@/app/components/EatDrinkDetailModal';
 import { apiFetch } from '@/app/lib/api';
 import { useTranslations } from '@/app/providers/TranslationsProvider';
 
+interface PageData {
+  heroImage?: string;
+  heroText?: string;
+}
+
 type TabType = 'breakfast' | 'dining' | 'drinks';
 
 interface APIService {
@@ -54,6 +59,7 @@ export default function EatDrinkPage() {
   const [drinks, setDrinks] = useState<EatDrinkItemWithPrice[]>([]);
   const [loading, setLoading] = useState(true);
   const [isTabsSticky, setIsTabsSticky] = useState(true);
+  const [pageData, setPageData] = useState<PageData>({});
   const discoverSectionRef = useRef<HTMLElement>(null);
 
   // Format price with localized unit
@@ -94,14 +100,21 @@ export default function EatDrinkPage() {
     window.history.replaceState(null, '', `#${tab}`);
   };
 
-  // Fetch services from API
+  // Fetch services and page data from API
   useEffect(() => {
-    const fetchServices = async () => {
+    const fetchData = async () => {
       try {
-        const response = await apiFetch('/api/eat-drink', {
-          headers: { 'x-language': locale },
-        });
-        const result = await response.json();
+        // Fetch services and page data in parallel
+        const [servicesResponse, pageResponse] = await Promise.all([
+          apiFetch('/api/eat-drink', {
+            headers: { 'x-language': locale },
+          }),
+          apiFetch('/api/pages/slug/eat-drink', {
+            headers: { 'x-language': locale },
+          }),
+        ]);
+
+        const result = await servicesResponse.json();
         const data = result?.data ?? result ?? [];
 
         if (Array.isArray(data)) {
@@ -120,14 +133,23 @@ export default function EatDrinkPage() {
           setBreakfast(breakfastItems);
           setDrinks(drinksItems);
         }
+
+        // Set page data for hero section
+        if (pageResponse.ok) {
+          const pageResult = await pageResponse.json();
+          setPageData({
+            heroImage: pageResult.heroImage,
+            heroText: pageResult.heroText,
+          });
+        }
       } catch (error) {
-        console.error('Error fetching eat-drink services:', error);
+        console.error('Error fetching data:', error);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchServices();
+    fetchData();
   }, [locale]);
 
   // Sticky tabs scroll handler
@@ -195,13 +217,13 @@ export default function EatDrinkPage() {
         <div
           className="absolute inset-0 bg-cover bg-center"
           style={{
-            backgroundImage: 'url(/assets/d206536ef067f64b29cad184324fe360bb763e30.jpg)',
+            backgroundImage: `url(${pageData.heroImage || '/assets/d206536ef067f64b29cad184324fe360bb763e30.jpg'})`,
           }}
         >
           <div className="absolute inset-0 bg-black bg-opacity-40"style={{ backgroundColor: 'rgba(0, 0, 0, 0.50)' }}></div>
         </div>
         <h1 className="relative z-10 text-white text-4xl md:text-5xl lg:text-6xl font-custom text-center px-4">
-          {t('eat_drink.hero_title', 'OUR EAT & DRINK SERVICES')}
+          {pageData.heroText || t('eat_drink.hero_title', 'OUR EAT & DRINK SERVICES')}
          </h1>
       </section>
 
