@@ -10,12 +10,24 @@ const WhatsAppWidget = () => {
   const pathname = usePathname();
   const [isVisible, setIsVisible] = useState(false);
 
-  // Check if current page should show widget
+  // Check if current page should show widget (same logic as footer)
   useEffect(() => {
     const isExcluded = (() => {
-      // Exclude from /search page
-      const regex = new RegExp(`^(/[a-z]{2})?/search$`);
-      return regex.test(pathname);
+      // Exact matches: /cabins, /search (with optional locale prefix)
+      const exactPatterns = ['/cabins', '/search'];
+      const isExactMatch = exactPatterns.some(pattern => {
+        const regex = new RegExp(`^(/[a-z]{2})?${pattern}$`);
+        return regex.test(pathname);
+      });
+
+      // Prefix matches: /cabins/* (cabin detail pages)
+      const prefixPatterns = ['/cabins/'];
+      const isPrefixMatch = prefixPatterns.some(pattern => {
+        const regex = new RegExp(`^(/[a-z]{2})?${pattern}`);
+        return regex.test(pathname);
+      });
+
+      return isExactMatch || isPrefixMatch;
     })();
     setIsVisible(!isExcluded);
   }, [pathname]);
