@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
+import { usePathname } from 'next/navigation';
 import { useTranslations } from '@/app/providers/TranslationsProvider';
 import { localizedPath, type Locale } from '@/app/lib/i18n';
 
@@ -71,6 +72,7 @@ const SocialIcon = ({ platform }: { platform: string }) => {
 };
 
 const Footer = () => {
+  const pathname = usePathname();
   const { t, locale } = useTranslations('footer');
   const [sections, setSections] = useState<FooterSection[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -78,7 +80,15 @@ const Footer = () => {
   // Helper to create localized link
   const link = (path: string) => localizedPath(locale as Locale, path);
 
-  // Fetch footer sections
+  // Hide footer on specific pages
+  const hideFooterPatterns = ['/cabins', '/search'];
+  const shouldHideFooter = hideFooterPatterns.some(pattern => {
+    // Match /en/cabins, /fr/cabins, /cabins etc but not /en/cabins/slug
+    const regex = new RegExp(`^(/[a-z]{2})?${pattern}$`);
+    return regex.test(pathname);
+  });
+
+  // Fetch footer sections - MUST be before any conditional returns
   useEffect(() => {
     const fetchSections = async () => {
       try {
@@ -99,6 +109,11 @@ const Footer = () => {
     };
     fetchSections();
   }, [locale]);
+
+  // Early return for pages that don't show footer - AFTER all hooks
+  if (shouldHideFooter) {
+    return null;
+  }
 
   // Get section by type
   const getSection = (type: string) => sections.find(s => s.sectionType === type);

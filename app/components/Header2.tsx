@@ -79,7 +79,10 @@ const Header2 = () => {
   };
 
   return (
-    <header className="fixed top-0 left-0 w-full z-50 bg-white shadow-md">
+    <header
+      className="fixed left-0 w-full z-50 bg-white shadow-md"
+      style={{ top: 'var(--promo-banner-height, 0px)' }}
+    >
       {/* Container: wider layout (px-4 only) | Revert to: px-4 md:px-8 lg:px-20 */}
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between py-4">

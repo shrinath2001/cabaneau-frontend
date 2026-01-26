@@ -10,6 +10,7 @@ import ImageGallery from "./components/ImageGallery";
 import AmenitiesSection from "./components/AmenitiesSection";
 import ExtraServicesSection from "./components/ExtraServicesSection";
 import SleepingAreasSection from "./components/SleepingAreasSection";
+import ThingsToKnow from "./components/ThingsToKnow";
 import { cabins as staticCabins } from "@/app/data/cabins";
 import { apiFetch } from "@/app/lib/api";
 import { useTranslations } from "@/app/providers/TranslationsProvider";
@@ -38,6 +39,12 @@ interface ImageTag {
   displayOrder: number;
 }
 
+interface ThingsToKnowItem {
+  icon: string;
+  title: string;
+  content: string;
+}
+
 interface CabinDetails {
   id: string;
   lodgifyId: string;
@@ -64,6 +71,7 @@ interface CabinDetails {
   featuredAmenities?: AmenityInfo[];
   additionalAmenities?: AmenityInfo[];
   services?: ServiceInfo[];
+  thingsToKnow?: ThingsToKnowItem[];
 }
 
 const SingleCabinPage = () => {
@@ -406,6 +414,9 @@ const SingleCabinPage = () => {
               locationImage={cabin.locationImage}
               cabinName={cabin.name || cabin.slug}
             />
+
+            {/* Things to Know Section */}
+            <ThingsToKnow items={cabin.thingsToKnow} />
           </div>
 
           {/* Booking Section - Desktop: right sidebar */}

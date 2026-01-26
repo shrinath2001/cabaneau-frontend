@@ -6,6 +6,7 @@ import { TranslationsProvider } from '../providers/TranslationsProvider';
 import { getTranslations } from '../lib/translations';
 import { isValidLocale, locales, type Locale } from '../lib/i18n';
 import ConditionalHeader from '../components/ConditionalHeader';
+import PromoBanner from '../components/PromoBanner';
 
 interface LocaleLayoutProps {
   children: React.ReactNode;
@@ -49,7 +50,10 @@ export default async function LocaleLayout({
       </head>
       <body className="font-raleway antialiased">
         <TranslationsProvider initialTranslations={translations} locale={locale}>
-          <Suspense fallback={<div className="h-[70px] md:h-[86px]" />}>
+          <Suspense fallback={null}>
+            <PromoBanner />
+          </Suspense>
+          <Suspense fallback={null}>
             <ConditionalHeader />
           </Suspense>
           <main>

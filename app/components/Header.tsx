@@ -74,7 +74,7 @@ const Header = () => {
       }}
     >
       <div className="absolute inset-0 bg-black opacity-50 z-0"></div>
-      <header className="bg-transparent absolute top-0 left-0 w-full z-20">
+      <header className="bg-transparent absolute left-0 w-full z-20" style={{ top: 'var(--promo-banner-height, 0px)' }}>
         {/* Container: match Header2 padding (px-4) */}
         <div className="container mx-auto px-4">
           <div className="flex items-center justify-between py-6 md:py-8">
