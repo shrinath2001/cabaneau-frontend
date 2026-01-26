@@ -7,8 +7,8 @@ export default function PagesLayout({
 }) {
   return (
     <>
-      {/* Header2 height: mobile ~58px, desktop ~82px - handled by ConditionalHeader in root layout */}
-      <div className="mt-[58px] md:mt-[82px]">{children}</div>
+      {/* Header2 height + promo banner - uses CSS class from globals.css */}
+      <div className="pages-content-offset">{children}</div>
       <Footer />
     </>
   );

@@ -46,6 +46,17 @@
   --promo-banner-height: 0px;
 }
 
+/* Page content offset for fixed header + promo banner */
+.pages-content-offset {
+  margin-top: calc(58px + var(--promo-banner-height, 0px));
+}
+
+@media (min-width: 768px) {
+  .pages-content-offset {
+    margin-top: calc(82px + var(--promo-banner-height, 0px));
+  }
+}
+
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);

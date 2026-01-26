@@ -77,7 +77,7 @@ const Header = () => {
       <header className="bg-transparent absolute left-0 w-full z-20" style={{ top: 'var(--promo-banner-height, 0px)' }}>
         {/* Container: match Header2 padding (px-4) */}
         <div className="container mx-auto px-4">
-          <div className="flex items-center justify-between py-6 md:py-8">
+          <div className="flex items-center justify-between py-4">
             <div className="flex items-center">
               <Link href={link('/')}>
                 {/* Logo: 150x50 (feat branch) | Revert to: width={170} height={57} className="w-[130px] md:w-[170px] h-auto" */}

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useLayoutEffect, useRef } from 'react';
 import Link from 'next/link';
 import { useTranslations } from '@/app/providers/TranslationsProvider';
 
@@ -51,7 +51,8 @@ const PromoBanner = () => {
   }, [locale, mounted]);
 
   // Update CSS variable when banner is shown/hidden
-  useEffect(() => {
+  // Use useLayoutEffect to update before paint, preventing visual jump
+  useLayoutEffect(() => {
     if (!mounted) return;
 
     if (banner && !dismissed && bannerRef.current) {
@@ -60,10 +61,7 @@ const PromoBanner = () => {
     } else {
       document.documentElement.style.setProperty('--promo-banner-height', '0px');
     }
-
-    return () => {
-      document.documentElement.style.setProperty('--promo-banner-height', '0px');
-    };
+    // No cleanup - we only reset when banner is actually dismissed/hidden
   }, [banner, dismissed, mounted]);
 
   // Don't render anything until mounted on client

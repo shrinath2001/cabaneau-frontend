@@ -80,13 +80,24 @@ const Footer = () => {
   // Helper to create localized link
   const link = (path: string) => localizedPath(locale as Locale, path);
 
-  // Hide footer on specific pages
-  const hideFooterPatterns = ['/cabins', '/search'];
-  const shouldHideFooter = hideFooterPatterns.some(pattern => {
-    // Match /en/cabins, /fr/cabins, /cabins etc but not /en/cabins/slug
-    const regex = new RegExp(`^(/[a-z]{2})?${pattern}$`);
-    return regex.test(pathname);
-  });
+  // Hide footer on specific pages (booking flow)
+  const shouldHideFooter = (() => {
+    // Exact matches: /cabins, /search (with optional locale prefix)
+    const exactPatterns = ['/cabins', '/search'];
+    const isExactMatch = exactPatterns.some(pattern => {
+      const regex = new RegExp(`^(/[a-z]{2})?${pattern}$`);
+      return regex.test(pathname);
+    });
+
+    // Prefix matches: /cabins/* (cabin detail pages)
+    const prefixPatterns = ['/cabins/'];
+    const isPrefixMatch = prefixPatterns.some(pattern => {
+      const regex = new RegExp(`^(/[a-z]{2})?${pattern}`);
+      return regex.test(pathname);
+    });
+
+    return isExactMatch || isPrefixMatch;
+  })();
 
   // Fetch footer sections - MUST be before any conditional returns
   useEffect(() => {
