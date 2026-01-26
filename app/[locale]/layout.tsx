@@ -7,6 +7,7 @@ import { getTranslations } from '../lib/translations';
 import { isValidLocale, locales, type Locale } from '../lib/i18n';
 import ConditionalHeader from '../components/ConditionalHeader';
 import PromoBanner from '../components/PromoBanner';
+import WhatsAppWidget from '../components/WhatsAppWidget';
 
 interface LocaleLayoutProps {
   children: React.ReactNode;
@@ -59,6 +60,9 @@ export default async function LocaleLayout({
           <main>
             {children}
           </main>
+          <Suspense fallback={null}>
+            <WhatsAppWidget />
+          </Suspense>
         </TranslationsProvider>
       </body>
     </html>
