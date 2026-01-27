@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
-import { EatDrinkItem } from '@/app/data/eatdrink';
+import { EatDrinkItem } from '@/app/types/content';
 import EatDrinkCard from '@/app/components/EatDrinkCard';
 import EatDrinkDetailModal from '@/app/components/EatDrinkDetailModal';
 import { apiFetch } from '@/app/lib/api';

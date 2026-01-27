@@ -1,5 +1,4 @@
 import { NextResponse } from 'next/server';
-import { cabins as staticCabins } from '@/app/data/cabins';
 import { getLanguageFromRequest } from '@/app/lib/server-language';
 
 // Transform relative upload paths to full URLs
@@ -24,8 +23,6 @@ export async function GET(request: Request) {
     const mediaBaseUrl = apiBaseUrl.replace('/api/v1', '');
     const language = getLanguageFromRequest(request);
 
-    console.log('🌐 Homepage language:', language);
-
     const response = await fetch(`${apiBaseUrl}/cabins/homepage`, {
       method: 'GET',
       headers: {
@@ -33,13 +30,12 @@ export async function GET(request: Request) {
         'x-api-key': apiKey || '',
         'Accept-Language': language,
       },
-      // Longer timeout for aggregated endpoint - cold cache takes ~20s
       signal: AbortSignal.timeout(30000),
     });
 
     if (!response.ok) {
-      console.log('⚠️ Homepage API responded with error, using static fallback');
-      return NextResponse.json({ data: staticCabins, cachedAt: new Date() });
+      console.error('Homepage cabins API error:', response.status);
+      return NextResponse.json({ data: [], cachedAt: new Date() });
     }
 
     const data = await response.json();
@@ -47,7 +43,6 @@ export async function GET(request: Request) {
     // Transform image URLs in each cabin
     if (data?.data && Array.isArray(data.data)) {
       data.data = data.data.map((cabin: { featuredImage?: string; images?: (string | { url: string })[] }) => {
-        // Extract valid image URLs from images array (handles both strings and objects)
         const imageUrls = (cabin.images || [])
           .map(img => extractImageUrl(img, mediaBaseUrl))
           .filter((url): url is string => !!url);
@@ -55,7 +50,6 @@ export async function GET(request: Request) {
         return {
           ...cabin,
           featuredImage: transformImageUrl(cabin.featuredImage, mediaBaseUrl),
-          // Return array of URL strings for the component
           images: imageUrls,
         };
       });
@@ -63,8 +57,7 @@ export async function GET(request: Request) {
 
     return NextResponse.json(data);
   } catch (error) {
-    console.error('Error proxying homepage cabins request:', error);
-    // Return static data as fallback
-    return NextResponse.json({ data: staticCabins, cachedAt: new Date() });
+    console.error('Error fetching homepage cabins:', error);
+    return NextResponse.json({ data: [], cachedAt: new Date() });
   }
 }

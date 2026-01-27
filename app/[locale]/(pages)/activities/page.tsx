@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { Activity } from "@/app/data/activities";
+import { Activity } from "@/app/types/content";
 import ActivityListCard from "@/app/components/ActivityListCard";
 import ActivityDetailModal from "@/app/components/ActivityDetailModal";
 import { apiFetch } from "@/app/lib/api";

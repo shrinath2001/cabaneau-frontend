@@ -285,7 +285,7 @@ export default function DesktopBookingModal({
         >
           {/* Header */}
           <div className="px-6 py-4 border-b border-gray-300 flex items-center justify-between">
-            <h3 className="font-logga text-[18px] md:text-[20px] uppercase text-gray-800">
+            <h3 className="font-logga font-semibold text-[18px] md:text-[20px] uppercase text-gray-800">
               {t.title}
             </h3>
             <button

@@ -1,7 +1,6 @@
 'use client';
 import { useRef, useState, useEffect, useCallback } from 'react';
 import CabinCard from './CabinCard';
-import { cabins as staticCabins } from '@/app/data/cabins';
 import { apiFetch } from '@/app/lib/api';
 import { useTranslations } from '@/app/providers/TranslationsProvider';
 
@@ -156,19 +155,7 @@ const CabinsSection = () => {
         }
       } catch (error) {
         console.error('Error fetching cabins:', error);
-        // Fallback to static data on error
-        setCabins(staticCabins.map((cabin) => ({
-          id: cabin.id,
-          slug: `cabin-${cabin.id}`,
-          images: cabin.images,
-          title: cabin.title,
-          rating: cabin.rating,
-          area: cabin.area,
-          capacity: cabin.capacity,
-          availability: cabin.availability,
-          price: cabin.price,
-          nights: 2,
-        })));
+        setCabins([]);
       } finally {
         setLoading(false);
       }
@@ -223,6 +210,10 @@ const CabinsSection = () => {
               {loading ? (
                 <div className="text-center py-12 md:-ml-20">
                   <p className="text-gray-600">{t('cabins_section.loading', 'Loading cabins...')}</p>
+                </div>
+              ) : cabins.length === 0 ? (
+                <div className="text-center py-12 md:-ml-20">
+                  <p className="text-gray-500">{t('cabins_section.empty', 'No cabins available at the moment. Please check back later.')}</p>
                 </div>
               ) : cabins.length > 1 ? (
                 // Carousel layout - shows 1 card on mobile (centered), 3.5 cards on desktop

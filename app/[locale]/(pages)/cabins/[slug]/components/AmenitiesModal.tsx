@@ -135,13 +135,13 @@ const AmenitiesModal = ({ isOpen, onClose, amenities }: AmenitiesModalProps) => 
 
         {/* Content */}
         <div className="overflow-y-auto px-6 py-8">
-          <h2 className="text-[22px] font-logga mb-6">{t.title}</h2>
+          <h2 className="text-[22px] font-logga font-semibold mb-6">{t.title}</h2>
 
           {/* Amenities by Category */}
           <div className="space-y-6">
             {sortedCategories.map((categorySlug) => (
               <div key={categorySlug} className="pb-6 border-b border-gray-200 last:border-b-0">
-                <h3 className="text-[16px] font-logga mb-4">{getCategoryName(categorySlug)}</h3>
+                <h3 className="text-[16px] font-logga font-semibold mb-4">{getCategoryName(categorySlug)}</h3>
                 <div className="space-y-4">
                   {groupedAmenities[categorySlug].map((amenity) => (
                     <div key={amenity.id} className="flex items-center gap-4">

@@ -1,6 +1,6 @@
 'use client';
 
-import { Activity } from '@/app/data/activities';
+import { Activity } from '@/app/types/content';
 import { useEffect } from 'react';
 
 interface ActivityDetailModalProps {

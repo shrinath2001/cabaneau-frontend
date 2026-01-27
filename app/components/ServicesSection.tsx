@@ -27,23 +27,6 @@ const ServicesSection = ({
 }: ServicesSectionProps) => {
   const { t } = useTranslations('homepage');
 
-  // Fallback to default if no CMS data
-  const defaultServices: SectionItem[] = [
-    {
-      image: '/assets/breakfast.jpg',
-      title: t('services_section.breakfast', 'BREAKFAST'),
-    },
-    {
-      image: '/assets/dinner.png',
-      title: t('services_section.dinner', 'DINNER'),
-    },
-    {
-      image: '/assets/massage.png',
-      title: t('services_section.massage', 'MASSAGE'),
-    },
-  ];
-
-  const displayItems = items && items.length > 0 ? items : defaultServices;
   const displayTitle = title || t('services_section.title', 'OUR SERVICES');
   const displayButtonText = buttonText || t('services_section.button', 'DISCOVER ALL SERVICES');
   const displayButtonLink = buttonLink || '/services';
@@ -57,16 +40,22 @@ const ServicesSection = ({
           <h2 className="font-logga text-[28px] md:text-[42px] font-semibold text-center pt-6 md:pt-10 mb-10 md:mb-20">
             {displayTitle}
           </h2>
-          <div className="flex flex-col md:flex-row gap-3 justify-between">
-            {displayItems.map((item, index) => (
-              <ServiceCard
-                key={index}
-                imageSrc={item.image}
-                serviceName={item.title}
-                link={item.link}
-              />
-            ))}
-          </div>
+          {items && items.length > 0 ? (
+            <div className="flex flex-col md:flex-row gap-3 justify-between">
+              {items.map((item, index) => (
+                <ServiceCard
+                  key={index}
+                  imageSrc={item.image}
+                  serviceName={item.title}
+                  link={item.link}
+                />
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-12">
+              <p className="text-gray-500">{t('services_section.empty', 'No services available at the moment.')}</p>
+            </div>
+          )}
           {displayButtonLink && (
             <div className="text-center mt-6 md:mt-10 mb-6 md:mb-8">
               <Link href={displayButtonLink}>

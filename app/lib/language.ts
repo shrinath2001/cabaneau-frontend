@@ -60,18 +60,18 @@ export function getLanguageFromCookie(cookieString: string | null): string {
 
 /**
  * Convert language code to Lodgify-compatible locale code for Book Now Box widgets.
- * These widgets support full locale codes like 'en-GB' for proper calendar formatting.
+ * Note: 'en-GB' is NOT supported by Lodgify widgets, use simple 'en' instead.
  *
  * @example
- * getLodgifyLocale('en') // 'en-GB'
+ * getLodgifyLocale('en') // 'en'
  * getLodgifyLocale('fr') // 'fr'
  */
 export function getLodgifyLocale(languageCode?: string): string {
   const code = languageCode || getLanguage();
 
-  // Map language codes to Lodgify locale codes (Book Now Box supports en-GB)
+  // Map language codes to Lodgify locale codes (simple codes only, en-GB not supported)
   const localeMap: Record<string, string> = {
-    en: 'en-GB',
+    en: 'en',
     fr: 'fr',
     de: 'de',
     nl: 'nl',

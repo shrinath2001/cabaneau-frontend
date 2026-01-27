@@ -287,7 +287,7 @@ export default function MobileBottomSheet({
 
         {/* Header */}
         <div className="px-5 pb-3 border-b border-gray-300">
-          <h3 className="font-logga text-[18px] uppercase text-gray-800">
+          <h3 className="font-logga font-semibold text-[18px] uppercase text-gray-800">
             {t.title}
           </h3>
         </div>

@@ -74,7 +74,7 @@ const AmenitiesSection = ({ additionalAmenities, featuredAmenities }: AmenitiesS
 
   return (
     <div className="mb-8">
-      <h2 className="font-logga text-[16px] md:text-[20px] mb-6 uppercase tracking-wide text-gray-800 p-4 md:p-6" style={{ backgroundColor: '#F1FAF7' }}>
+      <h2 className="font-logga font-semibold text-[16px] md:text-[20px] mb-6 uppercase tracking-wide text-gray-800 p-4 md:p-6" style={{ backgroundColor: '#F1FAF7' }}>
         {t.title}
       </h2>
       <div className="grid grid-cols-2 gap-x-6 md:gap-x-16 gap-y-4">

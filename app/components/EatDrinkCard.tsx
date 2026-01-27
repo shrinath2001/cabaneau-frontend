@@ -1,6 +1,6 @@
 'use client';
 
-import { EatDrinkItem } from '@/app/data/eatdrink';
+import { EatDrinkItem } from '@/app/types/content';
 
 interface EatDrinkCardProps {
   item: EatDrinkItem;
