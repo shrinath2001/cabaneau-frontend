@@ -333,10 +333,10 @@ const Header = () => {
           )}
         </div>
       </header>
-      <div className="absolute inset-0 flex flex-col items-center justify-center text-white text-center px-6 md:px-4 z-10 pt-6 md:pt-0">
+      <div className="absolute inset-0 flex flex-col items-center justify-start md:justify-center text-white text-center px-6 md:px-4 z-10 mt-[200px] md:mt-0 pt-6 md:pt-0">
         <p className="font-jost font-normal text-[14px] uppercase mb-0 md:mb-4" style={{ letterSpacing: '0.15px' }}>{tHome('hero.subtitle', 'Luxury Cabines with Private Wellness')}</p>
         <h1 className="font-logga font-normal text-[32px] md:text-[68px] uppercase leading-tight">{tHome('hero.title_sleep', 'Sleep,')} <span className="text-customyellow">{tHome('hero.title_highlight', 'Eat & Relax')}</span></h1>
-        <h2 className="font-logga font-normal text-[32px] md:text-[68px] uppercase mb-2 md:mb-12">{tHome('hero.title_above', 'Above the Trees')}</h2>
+        <h2 className="font-logga font-normal text-[32px] md:text-[68px] uppercase mb-0 md:mb-12">{tHome('hero.title_above', 'Above the Trees')}</h2>
 
         {/* Lodgify Search Widget - handles all booking rules */}
         <LodgifyBookingWidget languageCode={locale} />

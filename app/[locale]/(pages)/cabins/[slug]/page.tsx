@@ -38,10 +38,22 @@ interface ImageTag {
   displayOrder: number;
 }
 
-interface ThingsToKnowItem {
+interface ThingsToKnowSection {
   icon: string;
   title: string;
-  content: string;
+  intro?: string;
+  previewItems?: Array<{ text: string }>;
+  groups?: Array<{
+    header: string;
+    items: Array<{
+      icon: string;
+      text?: string;
+      description?: string;
+    }>;
+  }>;
+  footer?: string;
+  // Old format backward compat
+  content?: string;
 }
 
 interface CabinDetails {
@@ -70,7 +82,7 @@ interface CabinDetails {
   featuredAmenities?: AmenityInfo[];
   additionalAmenities?: AmenityInfo[];
   services?: ServiceInfo[];
-  thingsToKnow?: ThingsToKnowItem[];
+  thingsToKnow?: ThingsToKnowSection[];
 }
 
 const SingleCabinPage = () => {
@@ -381,6 +393,7 @@ const SingleCabinPage = () => {
               checkOut={departure}
               capacity={cabin.capacity}
               locale={locale}
+              thingsToKnow={cabin.thingsToKnow}
             />
           </div>
 
