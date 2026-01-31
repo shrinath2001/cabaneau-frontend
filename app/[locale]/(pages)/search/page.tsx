@@ -715,10 +715,10 @@ function SearchResults() {
                           <Link
                             key={cabin.id}
                             href={cabinUrl}
-                            className="flex items-center gap-4 p-3 border border-gray-200 rounded-lg hover:border-[#495D4D] hover:shadow-md transition-all duration-200 bg-white group"
+                            className="flex items-center gap-4 p-3 border border-gray-200 hover:border-[#495D4D] hover:shadow-md transition-all duration-200 bg-white group"
                           >
                             {/* Thumbnail */}
-                            <div className="relative w-20 h-20 md:w-24 md:h-24 rounded-md overflow-hidden flex-shrink-0">
+                            <div className="relative w-20 h-20 md:w-24 md:h-24 overflow-hidden flex-shrink-0">
                               <Image
                                 src={imgUrl}
                                 alt={cabin.name || 'Cabin'}
@@ -743,7 +743,7 @@ function SearchResults() {
                                 )}
                               </div>
                               <div className="mt-1.5 flex items-center gap-2">
-                                <span className={"inline-flex items-center text-xs font-medium font-jost px-2 py-0.5 rounded-full " + (isAvailableNow ? 'bg-emerald-50 text-emerald-700' : 'bg-amber-50 text-amber-700')}>
+                                <span className={"inline-flex items-center text-xs font-medium font-jost px-2 py-0.5 " + (isAvailableNow ? 'bg-emerald-50 text-emerald-700' : 'bg-amber-50 text-amber-700')}>
                                   <span className={"w-1.5 h-1.5 rounded-full mr-1.5 " + (isAvailableNow ? 'bg-emerald-500' : 'bg-amber-500')}></span>
                                   {formattedDate}
                                 </span>
