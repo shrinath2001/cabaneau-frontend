@@ -4,6 +4,9 @@ import { useSearchParams } from 'next/navigation';
 import CabinCard from '@/app/components/CabinCard';
 import SearchPageWidget from '@/app/components/SearchPageWidget';
 import { apiFetch } from '@/app/lib/api';
+import Image from 'next/image';
+import Link from 'next/link';
+import { localizedPath, type Locale } from '@/app/lib/i18n';
 import { useTranslations } from '@/app/providers/TranslationsProvider';
 
 // Locale map for date formatting
@@ -35,6 +38,13 @@ const searchTranslations: Record<string, {
   infants: string;
   pet: string;
   pets: string;
+  nextAvailable: string;
+  nextAvailableSubtitle: string;
+  availableFrom: string;
+  availableNow: string;
+  viewCabin: string;
+  fromPrice: string;
+  perNightShort: string;
   guest: string;
   guests: string;
 }> = {
@@ -58,6 +68,13 @@ const searchTranslations: Record<string, {
     infants: 'Infants',
     pet: 'Pet',
     pets: 'Pets',
+    nextAvailable: 'Next available cabins',
+    nextAvailableSubtitle: 'These cabins have upcoming availability',
+    availableFrom: 'Available from',
+    availableNow: 'Available now',
+    viewCabin: 'View',
+    fromPrice: 'from',
+    perNightShort: '/ night',
     guest: 'Guest',
     guests: 'Guests',
   },
@@ -81,6 +98,13 @@ const searchTranslations: Record<string, {
     infants: 'Bébés',
     pet: 'Animal',
     pets: 'Animaux',
+    nextAvailable: 'Prochaines cabanes disponibles',
+    nextAvailableSubtitle: 'Ces cabanes ont une disponibilité prochaine',
+    availableFrom: 'Disponible à partir du',
+    availableNow: 'Disponible maintenant',
+    viewCabin: 'Voir',
+    fromPrice: 'à partir de',
+    perNightShort: '/ nuit',
     guest: 'Invité',
     guests: 'Invités',
   },
@@ -104,6 +128,13 @@ const searchTranslations: Record<string, {
     infants: 'Kleinkinder',
     pet: 'Haustier',
     pets: 'Haustiere',
+    nextAvailable: 'Nächste verfügbare Hütten',
+    nextAvailableSubtitle: 'Diese Hütten sind bald verfügbar',
+    availableFrom: 'Verfügbar ab',
+    availableNow: 'Jetzt verfügbar',
+    viewCabin: 'Ansehen',
+    fromPrice: 'ab',
+    perNightShort: '/ Nacht',
     guest: 'Gast',
     guests: 'Gäste',
   },
@@ -127,6 +158,13 @@ const searchTranslations: Record<string, {
     infants: 'Baby\'s',
     pet: 'Huisdier',
     pets: 'Huisdieren',
+    nextAvailable: 'Volgende beschikbare hutten',
+    nextAvailableSubtitle: 'Deze hutten zijn binnenkort beschikbaar',
+    availableFrom: 'Beschikbaar vanaf',
+    availableNow: 'Nu beschikbaar',
+    viewCabin: 'Bekijk',
+    fromPrice: 'vanaf',
+    perNightShort: '/ nacht',
     guest: 'Gast',
     guests: 'Gasten',
   },
@@ -308,6 +346,10 @@ function SearchResults() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [total, setTotal] = useState(0);
+  // Next available cabins (shown when search returns 0 results)
+  const [nextAvailableCabins, setNextAvailableCabins] = useState<any[]>([]);
+  const [nextAvailableLoading, setNextAvailableLoading] = useState(false);
+
   const { locale } = useTranslations('search');
 
   // Get hardcoded translations for current locale
@@ -429,6 +471,25 @@ function SearchResults() {
 
     fetchCabins();
   }, [checkIn, checkOut, guests.total, guests.pets, guests.adults, guests.children, guests.infants]);
+
+
+
+  // Fetch next available cabins when search returns 0 results
+  useEffect(() => {
+    if (!loading && cabins.length === 0 && checkIn && checkOut) {
+      setNextAvailableLoading(true);
+      apiFetch('/api/cabins/homepage')
+        .then((res) => res.json())
+        .then((result) => {
+          const cabinArray = result?.data ?? result;
+          if (Array.isArray(cabinArray)) {
+            setNextAvailableCabins(cabinArray);
+          }
+        })
+        .catch((err) => console.error('Error fetching next available cabins:', err))
+        .finally(() => setNextAvailableLoading(false));
+    }
+  }, [loading, cabins.length, checkIn, checkOut]);
 
   // Format date for display with locale support
   const formatDate = (dateStr: string | null) => {
@@ -595,26 +656,119 @@ function SearchResults() {
                 </div>
               </>
             ) : (
-              <div className="text-center py-16">
-                <div className="mb-4">
-                  <svg
-                    className="mx-auto h-24 w-24 text-gray-400"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={1}
-                      d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-                    />
-                  </svg>
+              <div className="py-8">
+                {/* No results message */}
+                <div className="text-center mb-10">
+                  <div className="mb-4">
+                    <svg
+                      className="mx-auto h-16 w-16 text-gray-300"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={1}
+                        d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                      />
+                    </svg>
+                  </div>
+                  <h3 className="text-2xl font-logga text-gray-900 mb-2">{st.noResults}</h3>
+                  <p className="text-gray-600 font-jost font-light">
+                    {st.noResultsSubtitle}
+                  </p>
                 </div>
-                <h3 className="text-2xl font-logga text-gray-900 mb-2">{st.noResults}</h3>
-                <p className="text-gray-600 font-jost font-light">
-                  {st.noResultsSubtitle}
-                </p>
+
+                {/* Next Available Cabins - Mini Cards */}
+                {nextAvailableLoading ? (
+                  <div className="flex justify-center py-8">
+                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-400"></div>
+                  </div>
+                ) : nextAvailableCabins.length > 0 && (
+                  <div className="max-w-2xl mx-auto">
+                    <div className="text-center mb-6">
+                      <h4 className="text-xl font-logga text-gray-800">{st.nextAvailable}</h4>
+                      <p className="text-sm text-gray-500 font-jost font-light mt-1">{st.nextAvailableSubtitle}</p>
+                    </div>
+                    <div className="flex flex-col gap-3">
+                      {nextAvailableCabins.map((cabin: any) => {
+                        const imgUrl = cabin.featuredImage || cabin.images?.[0]?.url || cabin.images?.[0] || '/assets/placeholder.jpg';
+                        const nextDate = cabin.nextAvailableDate ? new Date(cabin.nextAvailableDate) : null;
+                        const today = new Date();
+                        today.setHours(0, 0, 0, 0);
+                        const isAvailableNow = nextDate && nextDate <= today;
+                        const dateLocale = localeMap[locale] || 'en-US';
+                        const formattedDate = nextDate
+                          ? isAvailableNow
+                            ? st.availableNow
+                            : st.availableFrom + ' ' + nextDate.toLocaleDateString(dateLocale, { day: 'numeric', month: 'short' })
+                          : '';
+                        const priceDisplay = cabin.nightlyRate
+                          ? Math.round(cabin.nightlyRate) + ' €'
+                          : cabin.basePrice
+                            ? Math.round(Number(cabin.basePrice)) + ' €'
+                            : '';
+                        const cabinUrl = localizedPath(locale as Locale, '/cabins/' + (cabin.slug || cabin.id));
+
+                        return (
+                          <Link
+                            key={cabin.id}
+                            href={cabinUrl}
+                            className="flex items-center gap-4 p-3 border border-gray-200 rounded-lg hover:border-[#495D4D] hover:shadow-md transition-all duration-200 bg-white group"
+                          >
+                            {/* Thumbnail */}
+                            <div className="relative w-20 h-20 md:w-24 md:h-24 rounded-md overflow-hidden flex-shrink-0">
+                              <Image
+                                src={imgUrl}
+                                alt={cabin.name || 'Cabin'}
+                                fill
+                                style={{ objectFit: 'cover' }}
+                                sizes="96px"
+                              />
+                            </div>
+
+                            {/* Info */}
+                            <div className="flex-1 min-w-0">
+                              <h5 className="font-logga text-lg text-gray-900 truncate">{cabin.name}</h5>
+                              <div className="flex items-center gap-3 mt-1 text-sm text-gray-500 font-jost">
+                                <span className="flex items-center gap-1">
+                                  <svg className="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20">
+                                    <path d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" />
+                                  </svg>
+                                  {cabin.capacity} {st.persons}
+                                </span>
+                                {cabin.squareMeters && (
+                                  <span>{Math.round(Number(cabin.squareMeters))}m²</span>
+                                )}
+                              </div>
+                              <div className="mt-1.5 flex items-center gap-2">
+                                <span className={"inline-flex items-center text-xs font-medium font-jost px-2 py-0.5 rounded-full " + (isAvailableNow ? 'bg-emerald-50 text-emerald-700' : 'bg-amber-50 text-amber-700')}>
+                                  <span className={"w-1.5 h-1.5 rounded-full mr-1.5 " + (isAvailableNow ? 'bg-emerald-500' : 'bg-amber-500')}></span>
+                                  {formattedDate}
+                                </span>
+                              </div>
+                            </div>
+
+                            {/* Price + Arrow */}
+                            <div className="flex flex-col items-end flex-shrink-0">
+                              {priceDisplay && (
+                                <div className="text-right mb-2">
+                                  <span className="text-[11px] text-gray-400 font-jost">{st.fromPrice}</span>
+                                  <div className="font-jost font-medium text-lg leading-tight">{priceDisplay}</div>
+                                  <span className="text-[11px] text-gray-400 font-jost">{st.perNightShort}</span>
+                                </div>
+                              )}
+                              <svg className="w-5 h-5 text-gray-300 group-hover:text-[#495D4D] transition-colors" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+                              </svg>
+                            </div>
+                          </Link>
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
               </div>
             )}
           </>
