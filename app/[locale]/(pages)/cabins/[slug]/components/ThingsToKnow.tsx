@@ -6,9 +6,6 @@ import ThingsToKnowSlidePanel from './ThingsToKnowSlidePanel';
 import ThingsToKnowModal from './ThingsToKnowModal';
 import {
   type CMSThingsToKnowSection,
-  cancellationPolicyContent,
-  getLocalizedText,
-  getCancellationPreviewText,
   isOldFormat,
   replaceTemplatePlaceholders,
 } from './thingsToKnowContent';
@@ -33,20 +30,11 @@ const ThingsToKnow = ({ checkIn, checkOut, capacity = 6, locale = 'en', thingsTo
   const [activePanel, setActivePanel] = useState<string | null>(null);
   const [activeModal, setActiveModal] = useState<string | null>(null);
 
-  // Build row configurations: cancellation first (always), then CMS sections
+  // Build row configurations from CMS sections only
   const getRows = (): RowConfig[] => {
     const rows: RowConfig[] = [];
 
-    // Cancellation policy - always first, hardcoded with dynamic dates
-    const cancellationPreview = getCancellationPreviewText(checkIn, locale);
-    rows.push({
-      type: 'cancellation',
-      icon: 'fa-calendar-xmark',
-      title: getLocalizedText(cancellationPolicyContent.title, locale),
-      previewLines: [cancellationPreview.line1, cancellationPreview.line2],
-    });
-
-    // CMS-driven sections follow
+    // CMS-driven sections
     if (thingsToKnow && thingsToKnow.length > 0) {
       thingsToKnow.forEach((section, index) => {
         if (isOldFormat(section)) {
