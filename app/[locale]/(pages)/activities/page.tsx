@@ -292,7 +292,7 @@ export default function ActivitiesPage() {
             handleTabChange(
               activeTab === "activities" ? "restaurants" : "activities"
             );
-            window.scrollTo({ top: 0, behavior: "smooth" });
+            setTimeout(() => window.scrollTo({ top: 0, behavior: "smooth" }), 50);
           }}
           className="relative z-10 px-8 py-3 text-white font-heading tracking-wider transition-all hover:bg-hoverorange"
           style={{
