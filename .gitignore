@@ -43,3 +43,4 @@ next-env.d.ts
 # PM2
 ecosystem.config.js
 logs/
+backups/

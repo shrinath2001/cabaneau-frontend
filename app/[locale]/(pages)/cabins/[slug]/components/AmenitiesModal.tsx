@@ -53,7 +53,7 @@ const AmenitiesModal = ({ isOpen, onClose, amenities }: AmenitiesModalProps) => 
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const response = await apiFetch('/api/amenity-categories');
+        const response = await apiFetch('/api/amenity-categories', { headers: { 'x-language': locale } });
         if (response.ok) {
           const data: AmenityCategory[] = await response.json();
           setCategories(data);

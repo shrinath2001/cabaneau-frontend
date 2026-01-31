@@ -6,6 +6,7 @@ import { usePathname, useParams, useRouter, useSearchParams } from 'next/navigat
 import { FlagIcon, getLanguageDisplayName, getLanguageLabel } from './FlagIcon';
 import { useTranslations } from '@/app/providers/TranslationsProvider';
 import { locales, switchLocale, localizedPath, type Locale } from '@/app/lib/i18n';
+import { setLanguage } from '@/app/lib/language';
 
 interface Language {
   code: string;
@@ -51,6 +52,7 @@ const Header2 = () => {
     const newPath = switchLocale(pathname, code as Locale);
     const queryString = searchParams.toString();
     const fullPath = queryString ? `${newPath}?${queryString}` : newPath;
+    setLanguage(code);
     setIsLanguageOpen(false);
     router.push(fullPath);
   };
