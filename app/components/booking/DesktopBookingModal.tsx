@@ -137,6 +137,33 @@ export default function DesktopBookingModal({
     setCanSave(false);
   }, []);
 
+  // Clean up all Lodgify widget artifacts from the DOM
+  const cleanupLodgifyWidget = useCallback(() => {
+    const scriptUrl =
+      "https://app.lodgify.com/book-now-box/stable/renderBookNowBox.js";
+
+    // Remove the script
+    const existingScript = document.querySelector(`script[src="${scriptUrl}"]`);
+    if (existingScript) {
+      existingScript.remove();
+    }
+
+    // Remove any Lodgify portal/popup elements (calendar popups, overlays)
+    document.querySelectorAll('[class*="ldg"], [data-testid*="lodgify"], [id*="lodgify"]:not(#lodgify-book-now-box)').forEach((el) => {
+      el.remove();
+    });
+
+    // Clean up any orphaned Lodgify portals attached to body
+    document.querySelectorAll('body > div[style*="z-index"]').forEach((el) => {
+      const htmlEl = el as HTMLElement;
+      if (htmlEl.querySelector('[class*="ldg"]') || htmlEl.querySelector('[class*="css-"]')) {
+        if (htmlEl.querySelector('table') || htmlEl.querySelector('[role="dialog"]') || htmlEl.querySelector('[class*="calendar"]')) {
+          htmlEl.remove();
+        }
+      }
+    });
+  }, []);
+
   // Load Lodgify widget script when modal opens
   useEffect(() => {
     if (!isOpen || !cabin.lodgifyId) return;
@@ -144,14 +171,11 @@ export default function DesktopBookingModal({
     // Reset widget loaded state when modal opens
     setWidgetLoaded(false);
 
+    // Clean up existing widget artifacts first
+    cleanupLodgifyWidget();
+
     const scriptUrl =
       "https://app.lodgify.com/book-now-box/stable/renderBookNowBox.js";
-
-    // Clean up existing script
-    const existingScript = document.querySelector(`script[src="${scriptUrl}"]`);
-    if (existingScript) {
-      existingScript.remove();
-    }
 
     // Load script after a small delay
     const timer = setTimeout(() => {
@@ -163,8 +187,9 @@ export default function DesktopBookingModal({
 
     return () => {
       clearTimeout(timer);
+      cleanupLodgifyWidget();
     };
-  }, [isOpen, cabin.lodgifyId]);
+  }, [isOpen, cabin.lodgifyId, cleanupLodgifyWidget]);
 
   // Check if widget is fully loaded (has guest counter input)
   useEffect(() => {
@@ -327,7 +352,7 @@ export default function DesktopBookingModal({
                 --ldg-component-calendar-cell-selection-color: #ffffff;
                 --ldg-component-calendar-cell-selected-bg-color: #a4aea6;
                 --ldg-component-calendar-cell-selected-color: #ffffff;
-                --ldg-component-modal-z-index: 9999;
+                --ldg-component-modal-z-index: 99999;
                 --ldg-bnb-font-family: inherit;
               }
 

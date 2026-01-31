@@ -138,6 +138,41 @@ export default function MobileBottomSheet({
     setCanSave(false);
   }, []);
 
+  // Clean up all Lodgify widget artifacts from the DOM
+  const cleanupLodgifyWidget = useCallback(() => {
+    const scriptUrl =
+      "https://app.lodgify.com/book-now-box/stable/renderBookNowBox.js";
+
+    // Remove the script
+    const existingScript = document.querySelector(`script[src="${scriptUrl}"]`);
+    if (existingScript) {
+      existingScript.remove();
+    }
+
+    // Remove any Lodgify portal/popup elements (calendar popups, overlays)
+    document.querySelectorAll('[class*="ldg"], [data-testid*="lodgify"], [id*="lodgify"]:not(#lodgify-book-now-box)').forEach((el) => {
+      el.remove();
+    });
+
+    // Remove any Lodgify-created style tags
+    document.querySelectorAll('style[data-styled], style[data-emotion]').forEach((el) => {
+      if (el.textContent && el.textContent.includes('ldg')) {
+        el.remove();
+      }
+    });
+
+    // Clean up any orphaned Lodgify portals attached to body
+    document.querySelectorAll('body > div[style*="z-index"]').forEach((el) => {
+      const htmlEl = el as HTMLElement;
+      if (htmlEl.querySelector('[class*="ldg"]') || htmlEl.querySelector('[class*="css-"]')) {
+        // Check if it looks like a Lodgify popup (has calendar elements or date picker)
+        if (htmlEl.querySelector('table') || htmlEl.querySelector('[role="dialog"]') || htmlEl.querySelector('[class*="calendar"]')) {
+          htmlEl.remove();
+        }
+      }
+    });
+  }, []);
+
   // Load Lodgify widget script when sheet opens
   useEffect(() => {
     if (!isOpen || !cabin.lodgifyId) return;
@@ -148,11 +183,8 @@ export default function MobileBottomSheet({
     const scriptUrl =
       "https://app.lodgify.com/book-now-box/stable/renderBookNowBox.js";
 
-    // Clean up existing script
-    const existingScript = document.querySelector(`script[src="${scriptUrl}"]`);
-    if (existingScript) {
-      existingScript.remove();
-    }
+    // Clean up existing widget artifacts first
+    cleanupLodgifyWidget();
 
     // Load script after a small delay
     const timer = setTimeout(() => {
@@ -164,8 +196,9 @@ export default function MobileBottomSheet({
 
     return () => {
       clearTimeout(timer);
+      cleanupLodgifyWidget();
     };
-  }, [isOpen, cabin.lodgifyId]);
+  }, [isOpen, cabin.lodgifyId, cleanupLodgifyWidget]);
 
   // Check if widget is fully loaded (has guest counter input)
   useEffect(() => {
@@ -315,7 +348,7 @@ export default function MobileBottomSheet({
               --ldg-component-calendar-cell-selection-color: #ffffff;
               --ldg-component-calendar-cell-selected-bg-color: #a4aea6;
               --ldg-component-calendar-cell-selected-color: #ffffff;
-              --ldg-component-modal-z-index: 9999;
+              --ldg-component-modal-z-index: 99999;
               --ldg-bnb-font-family: inherit;
             }
 
@@ -498,6 +531,13 @@ export default function MobileBottomSheet({
             /* Hide the label, show only count */
             #lodgify-book-now-box .styled-override .css-1k396i {
               display: none !important;
+            }
+
+            /* Ensure Lodgify calendar popup renders above bottom sheet */
+            div[class*="ldg"][style*="position"],
+            div[data-testid*="calendar"],
+            div[role="dialog"] {
+              z-index: 99999 !important;
             }
           `}</style>
 
