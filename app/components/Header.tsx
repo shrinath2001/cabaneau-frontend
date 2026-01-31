@@ -25,9 +25,35 @@ const Header = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
 
+
+  // Hero section settings
+  const [heroSettings, setHeroSettings] = useState<{
+    backgroundType: string;
+    backgroundUrl: string;
+    overlayColor: string;
+    overlayOpacity: number;
+  } | null>(null);
+
   // Scroll to top when homepage loads (fixes SPA navigation scroll issue)
   useEffect(() => {
     window.scrollTo(0, 0);
+  }, []);
+
+
+  // Fetch hero section settings
+  useEffect(() => {
+    const fetchHeroSettings = async () => {
+      try {
+        const response = await fetch('/api/hero-section');
+        if (response.ok) {
+          const data = await response.json();
+          setHeroSettings(data);
+        }
+      } catch (error) {
+        console.error('Failed to fetch hero settings:', error);
+      }
+    };
+    fetchHeroSettings();
   }, []);
 
   // Fetch languages from API
@@ -69,13 +95,30 @@ const Header = () => {
 
   return (
     <div
-      className="relative bg-cover bg-center h-screen md:h-[859px]"
-      style={{
-        backgroundImage:
-          "url(/assets/d206536ef067f64b29cad184324fe360bb763e30.jpg)",
+      className="relative bg-cover bg-center h-screen md:h-[859px] overflow-hidden"
+      style={heroSettings?.backgroundType === 'video' && heroSettings?.backgroundUrl ? {} : {
+        backgroundImage: heroSettings?.backgroundUrl
+          ? `url(${heroSettings.backgroundUrl})`
+          : "url(/assets/d206536ef067f64b29cad184324fe360bb763e30.jpg)",
       }}
     >
-      <div className="absolute inset-0 bg-black opacity-50 z-0"></div>
+      {heroSettings?.backgroundType === 'video' && heroSettings?.backgroundUrl && (
+        <video
+          autoPlay
+          muted
+          loop
+          playsInline
+          className="absolute inset-0 w-full h-full object-cover z-0"
+          src={heroSettings.backgroundUrl}
+        />
+      )}
+      <div
+        className="absolute inset-0 z-[1]"
+        style={{
+          backgroundColor: heroSettings?.overlayColor || '#000000',
+          opacity: heroSettings?.overlayOpacity != null ? heroSettings.overlayOpacity / 100 : 0.5,
+        }}
+      ></div>
       <header className="bg-transparent absolute left-0 w-full z-20" style={{ top: 'var(--promo-banner-height, 0px)' }}>
         {/* Container: match Header2 padding (px-4) */}
         <div className="container mx-auto px-4">
