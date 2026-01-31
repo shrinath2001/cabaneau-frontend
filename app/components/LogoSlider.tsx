@@ -11,7 +11,7 @@ export default function LogoSlider() {
   ];
 
   return (
-    <div className="w-full overflow-hidden bg-white py-4 -mt-20 shadow-md relative z-10">
+    <div className="w-full overflow-hidden bg-white py-2 -mt-20 shadow-md relative z-10">
       <style jsx>{`
         @keyframes scroll {
           0% {
@@ -23,31 +23,33 @@ export default function LogoSlider() {
         }
 
         .animate-scroll {
-          animation: scroll 4s linear infinite;
+          display: flex;
+          width: max-content;
+          animation: scroll 20s linear infinite;
         }
 
         .animate-scroll:hover {
           animation-play-state: paused;
         }
 
-        @media (min-width: 768px) {
+        @media (max-width: 767px) {
           .animate-scroll {
-            animation: scroll 10s linear infinite;
+            animation-duration: 12s;
           }
         }
       `}</style>
 
-      <div className="flex animate-scroll">
+      <div className="animate-scroll">
         {/* First set of logos */}
         {logos.map((logo, index) => (
           <div
             key={`logo-1-${index}`}
-            className="flex-shrink-0 mx-8 flex items-center justify-center"
+            className="flex-shrink-0 mx-6 md:mx-10 flex items-center justify-center"
           >
             <img
               src={logo}
               alt={`Partner logo ${index + 1}`}
-              className="h-20 w-auto object-contain grayscale hover:grayscale-0 transition-all duration-300"
+              className="h-10 md:h-12 w-auto object-contain grayscale hover:grayscale-0 transition-all duration-300"
             />
           </div>
         ))}
@@ -55,12 +57,12 @@ export default function LogoSlider() {
         {logos.map((logo, index) => (
           <div
             key={`logo-2-${index}`}
-            className="flex-shrink-0 mx-8 flex items-center justify-center"
+            className="flex-shrink-0 mx-6 md:mx-10 flex items-center justify-center"
           >
             <img
               src={logo}
               alt={`Partner logo ${index + 1}`}
-              className="h-16 w-auto object-contain grayscale hover:grayscale-0 transition-all duration-300"
+              className="h-10 md:h-12 w-auto object-contain grayscale hover:grayscale-0 transition-all duration-300"
             />
           </div>
         ))}
