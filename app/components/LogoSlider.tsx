@@ -1,14 +1,41 @@
 "use client";
 
+import { useEffect, useState } from "react";
+
+interface Logo {
+  url: string;
+  alt: string;
+  displayOrder: number;
+}
+
+interface LogoSliderData {
+  logos: Logo[];
+  isActive: boolean;
+}
+
 export default function LogoSlider() {
-  const logos = [
-    "/logos/move.png",
-    "/logos/wallonie.png",
-    "/logos/GE.png",
-    "/logos/ostbelgien.png",
-    "/logos/neau.png",
-    "/logos/Casapilot.png",
-  ];
+  const [data, setData] = useState<LogoSliderData | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetch("/api/logo-slider")
+      .then((res) => res.json())
+      .then((d: LogoSliderData) => {
+        setData(d);
+        setLoading(false);
+      })
+      .catch((err) => {
+        console.error("Failed to fetch logo slider:", err);
+        setLoading(false);
+      });
+  }, []);
+
+  // Don't render while loading or if inactive/empty
+  if (loading) return null;
+  if (!data || !data.isActive || !data.logos || data.logos.length === 0) return null;
+
+  // Sort by displayOrder
+  const logos = [...data.logos].sort((a, b) => a.displayOrder - b.displayOrder);
 
   return (
     <div className="w-full overflow-hidden bg-white py-3 shadow-md relative z-10">
@@ -47,8 +74,8 @@ export default function LogoSlider() {
             className="flex-shrink-0 mx-6 md:mx-10 flex items-center justify-center"
           >
             <img
-              src={logo}
-              alt={`Partner logo ${index + 1}`}
+              src={logo.url}
+              alt={logo.alt || `Partner logo ${index + 1}`}
               className="h-14 md:h-16 w-auto object-contain grayscale hover:grayscale-0 transition-all duration-300"
             />
           </div>
@@ -60,8 +87,8 @@ export default function LogoSlider() {
             className="flex-shrink-0 mx-6 md:mx-10 flex items-center justify-center"
           >
             <img
-              src={logo}
-              alt={`Partner logo ${index + 1}`}
+              src={logo.url}
+              alt={logo.alt || `Partner logo ${index + 1}`}
               className="h-14 md:h-16 w-auto object-contain grayscale hover:grayscale-0 transition-all duration-300"
             />
           </div>
