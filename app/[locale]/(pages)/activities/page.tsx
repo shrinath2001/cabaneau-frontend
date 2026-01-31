@@ -109,6 +109,29 @@ export default function ActivitiesPage() {
     fetchData();
   }, [locale]);
 
+  // Handle URL hash for tab navigation
+  useEffect(() => {
+    const handleHashChange = () => {
+      const hash = window.location.hash.replace('#', '') as 'activities' | 'restaurants';
+      if (hash && ['activities', 'restaurants'].includes(hash)) {
+        setActiveTab(hash);
+      }
+    };
+
+    // Set initial tab from hash
+    handleHashChange();
+
+    // Listen for hash changes
+    window.addEventListener('hashchange', handleHashChange);
+    return () => window.removeEventListener('hashchange', handleHashChange);
+  }, []);
+
+  // Update URL hash when tab changes
+  const handleTabChange = (tab: 'activities' | 'restaurants') => {
+    setActiveTab(tab);
+    window.history.replaceState(null, '', `#${tab}`);
+  };
+
   // Sticky tabs scroll handler
   useEffect(() => {
     const handleScroll = () => {
@@ -177,7 +200,7 @@ export default function ActivitiesPage() {
         <div className="container mx-auto px-4 max-w-6xl">
           <div className="flex justify-center gap-6 sm:gap-12 overflow-x-auto py-2">
             <button
-              onClick={() => setActiveTab("activities")}
+              onClick={() => handleTabChange("activities")}
               className="py-2 px-2 text-[16px] md:text-[18px] font-medium font-heading uppercase tracking-wider transition-colors relative whitespace-nowrap"
               style={{
                 color: activeTab === "activities" ? "#F49A4A" : "#495D4D",
@@ -189,7 +212,7 @@ export default function ActivitiesPage() {
               )}
             </button>
             <button
-              onClick={() => setActiveTab("restaurants")}
+              onClick={() => handleTabChange("restaurants")}
               className="py-2 px-2 text-[16px] md:text-[18px] font-medium font-heading uppercase tracking-wider transition-colors relative whitespace-nowrap"
               style={{
                 color: activeTab === "restaurants" ? "#F49A4A" : "#495D4D",
@@ -266,7 +289,7 @@ export default function ActivitiesPage() {
         </h2>
         <button
           onClick={() => {
-            setActiveTab(
+            handleTabChange(
               activeTab === "activities" ? "restaurants" : "activities"
             );
             window.scrollTo({ top: 0, behavior: "smooth" });
