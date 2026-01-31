@@ -5,6 +5,7 @@ import { useParams, useRouter } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
 import BlogSidebarCabin from '@/app/components/BlogSidebarCabin';
+import { useTranslations } from '@/app/providers/TranslationsProvider';
 
 interface BlogPost {
   id: string;
@@ -29,6 +30,7 @@ export default function BlogPostPage() {
   const router = useRouter();
   const slug = params.slug as string;
   const locale = (params?.locale as string) || 'en';
+  const { t } = useTranslations('blog');
 
   const [post, setPost] = useState<BlogPost | null>(null);
   const [loading, setLoading] = useState(true);
@@ -88,7 +90,7 @@ export default function BlogPostPage() {
       <main>
         <section className="py-20 bg-white">
           <div className="container mx-auto px-4 max-w-4xl text-center">
-            <p className="text-gray-600 font-jost font-light">Loading...</p>
+            <p className="text-gray-600 font-jost font-light">{t("detail_loading", "Loading...")}</p>
           </div>
         </section>
       </main>
@@ -101,13 +103,13 @@ export default function BlogPostPage() {
         <section className="py-20 bg-white">
           <div className="container mx-auto px-4 max-w-4xl text-center">
             <h1 className="text-2xl font-logga text-[#495D4D] mb-4">
-              {error || 'Blog post not found'}
+              {error || t("post_not_found", "Blog post not found")}
             </h1>
             <Link
               href={`/${locale}/blog`}
               className="inline-block bg-[#F49A4A] text-white px-6 py-3 hover:bg-[#e08c3c] transition-colors font-jost"
             >
-              Back to Blog
+              {t('back_to_blog', 'Back to Blog')}
             </Link>
           </div>
         </section>
@@ -158,7 +160,7 @@ export default function BlogPostPage() {
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-4 h-4 mr-2">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18" />
                 </svg>
-                Back to Blog
+                {t('back_to_blog', 'Back to Blog')}
               </Link>
 
               {/* Content */}
@@ -169,7 +171,7 @@ export default function BlogPostPage() {
               {/* Tags */}
               {post.tags && post.tags.length > 0 && (
                 <div className="mt-8 pt-8 border-t border-gray-200">
-                  <h4 className="text-sm font-logga text-[#495D4D] mb-3">Tags:</h4>
+                  <h4 className="text-sm font-logga text-[#495D4D] mb-3">{t("tags", "Tags:")}</h4>
                   <div className="flex flex-wrap gap-2">
                     {post.tags.map((tag, index) => (
                       <span

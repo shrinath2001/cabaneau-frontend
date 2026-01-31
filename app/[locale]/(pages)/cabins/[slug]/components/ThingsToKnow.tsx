@@ -6,6 +6,9 @@ import ThingsToKnowSlidePanel from './ThingsToKnowSlidePanel';
 import ThingsToKnowModal from './ThingsToKnowModal';
 import {
   type CMSThingsToKnowSection,
+  cancellationPolicyContent,
+  getLocalizedText,
+  getCancellationPreviewText,
   isOldFormat,
   replaceTemplatePlaceholders,
 } from './thingsToKnowContent';
@@ -30,31 +33,45 @@ const ThingsToKnow = ({ checkIn, checkOut, capacity = 6, locale = 'en', thingsTo
   const [activePanel, setActivePanel] = useState<string | null>(null);
   const [activeModal, setActiveModal] = useState<string | null>(null);
 
-  // Nothing to show if no CMS sections
-  if (!thingsToKnow || thingsToKnow.length === 0) return null;
-
-  // Build row configurations from CMS data only
+  // Build row configurations: cancellation first (always), then CMS sections
   const getRows = (): RowConfig[] => {
-    return thingsToKnow.map((section, index) => {
-      if (isOldFormat(section)) {
-        const contentLines = (section.content || '').split('\n').filter((l: string) => l.trim()).slice(0, 3);
-        return {
-          type: `cms_${index}`,
-          icon: section.icon || 'fa-info-circle',
-          title: section.title || '',
-          previewLines: contentLines,
-        };
-      }
-      const previewLines = (section.previewItems || [])
-        .slice(0, 3)
-        .map((pi) => replaceTemplatePlaceholders(pi.text || '', { capacity }));
-      return {
-        type: `cms_${index}`,
-        icon: section.icon || 'fa-info-circle',
-        title: replaceTemplatePlaceholders(section.title || '', { capacity }),
-        previewLines,
-      };
+    const rows: RowConfig[] = [];
+
+    // Cancellation policy - always first, hardcoded with dynamic dates
+    const cancellationPreview = getCancellationPreviewText(checkIn, locale);
+    rows.push({
+      type: 'cancellation',
+      icon: 'fa-calendar-xmark',
+      title: getLocalizedText(cancellationPolicyContent.title, locale),
+      previewLines: [cancellationPreview.line1, cancellationPreview.line2],
     });
+
+    // CMS-driven sections follow
+    if (thingsToKnow && thingsToKnow.length > 0) {
+      thingsToKnow.forEach((section, index) => {
+        if (isOldFormat(section)) {
+          const contentLines = (section.content || '').split('\n').filter((l: string) => l.trim()).slice(0, 3);
+          rows.push({
+            type: `cms_${index}`,
+            icon: section.icon || 'fa-info-circle',
+            title: section.title || '',
+            previewLines: contentLines,
+          });
+        } else {
+          const previewLines = (section.previewItems || [])
+            .slice(0, 3)
+            .map((pi) => replaceTemplatePlaceholders(pi.text || '', { capacity }));
+          rows.push({
+            type: `cms_${index}`,
+            icon: section.icon || 'fa-info-circle',
+            title: replaceTemplatePlaceholders(section.title || '', { capacity }),
+            previewLines,
+          });
+        }
+      });
+    }
+
+    return rows;
   };
 
   const rows = getRows();
@@ -128,8 +145,10 @@ const ThingsToKnow = ({ checkIn, checkOut, capacity = 6, locale = 'en', thingsTo
       <ThingsToKnowSlidePanel
         isOpen={activePanel !== null}
         onClose={() => setActivePanel(null)}
-        type={activePanel || 'cms_0'}
+        type={activePanel || 'cancellation'}
+        checkIn={checkIn}
         capacity={capacity}
+        locale={locale}
         thingsToKnow={thingsToKnow}
       />
 
@@ -137,8 +156,10 @@ const ThingsToKnow = ({ checkIn, checkOut, capacity = 6, locale = 'en', thingsTo
       <ThingsToKnowModal
         isOpen={activeModal !== null}
         onClose={() => setActiveModal(null)}
-        type={activeModal || 'cms_0'}
+        type={activeModal || 'cancellation'}
+        checkIn={checkIn}
         capacity={capacity}
+        locale={locale}
         thingsToKnow={thingsToKnow}
       />
     </div>

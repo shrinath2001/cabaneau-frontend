@@ -3,15 +3,30 @@
 import { useEffect } from 'react';
 import {
   type CMSThingsToKnowSection,
+  type CancellationSection,
+  cancellationPolicyContent,
+  getLocalizedText,
+  calculateCancellationDate,
+  formatDateForLocale,
   isOldFormat,
   replaceTemplatePlaceholders,
 } from './thingsToKnowContent';
 
+// Fallback text when no check-in date is selected
+const noDateFallback = {
+  en: "14 days before check-in",
+  fr: "14 jours avant l'arrivee",
+  de: "14 Tage vor dem Check-in",
+  nl: "14 dagen voor inchecken"
+};
+
 interface ThingsToKnowModalProps {
   isOpen: boolean;
   onClose: () => void;
-  type: string; // 'cms_0' | 'cms_1' | etc.
+  type: string; // 'cancellation' | 'cms_0' | 'cms_1' | etc.
+  checkIn?: string;
   capacity: number;
+  locale: string;
   thingsToKnow?: CMSThingsToKnowSection[];
 }
 
@@ -19,7 +34,9 @@ const ThingsToKnowModal = ({
   isOpen,
   onClose,
   type,
+  checkIn,
   capacity,
+  locale,
   thingsToKnow,
 }: ThingsToKnowModalProps) => {
   // Prevent body scroll when modal is open
@@ -41,6 +58,8 @@ const ThingsToKnowModal = ({
     return () => window.removeEventListener('keydown', handleEscape);
   }, [isOpen, onClose]);
 
+  const isCancellation = type === 'cancellation';
+
   // Get CMS section by index
   const getCMSSection = (): CMSThingsToKnowSection | null => {
     if (!type.startsWith('cms_') || !thingsToKnow) return null;
@@ -48,14 +67,63 @@ const ThingsToKnowModal = ({
     return thingsToKnow[index] || null;
   };
 
-  const section = getCMSSection();
+  // Determine title
+  const getTitle = (): string => {
+    if (isCancellation) {
+      return getLocalizedText(cancellationPolicyContent.title, locale);
+    }
+    const section = getCMSSection();
+    return section ? replaceTemplatePlaceholders(section.title || '', { capacity }) : '';
+  };
 
-  if (!isOpen || !section) return null;
+  // Render cancellation policy content with tiers
+  const renderCancellationContent = (section: CancellationSection) => {
+    const refundDate = calculateCancellationDate(checkIn || '');
+    const formattedRefundDate = refundDate
+      ? formatDateForLocale(refundDate, locale)
+      : noDateFallback[locale as keyof typeof noDateFallback] || noDateFallback.en;
 
-  const title = replaceTemplatePlaceholders(section.title || '', { capacity });
+    return (
+      <>
+        <div className="space-y-6">
+          {section.tiers.map((tier, tierIndex) => (
+            <div
+              key={tierIndex}
+              className={`pb-6 ${tierIndex < section.tiers.length - 1 ? 'border-b border-[#EBEBEB]' : ''}`}
+            >
+              <p className="font-jost text-[#212121] text-base mb-3">
+                <span className="font-medium">{getLocalizedText(tier.label, locale)}</span>{' '}
+                <span className="font-semibold">{formattedRefundDate}</span>
+              </p>
+              <div className="mb-3">
+                <span
+                  className={`inline-block px-3 py-1.5 rounded-full font-jost font-medium text-sm ${
+                    tierIndex === 0
+                      ? 'bg-[#E8F5E9] text-[#2E7D32]'
+                      : 'bg-[#FFEBEE] text-[#C62828]'
+                  }`}
+                >
+                  {getLocalizedText(tier.refundType, locale)}
+                </span>
+              </div>
+              <p className="font-jost font-light text-gray-600 text-base">
+                {getLocalizedText(tier.description, locale)}
+              </p>
+            </div>
+          ))}
+        </div>
+
+        <div className="mt-6 pt-4 border-t border-[#EBEBEB]">
+          <p className="font-jost font-light text-gray-500 text-sm">
+            {getLocalizedText(section.footer.timeNote, locale)}
+          </p>
+        </div>
+      </>
+    );
+  };
 
   // Render CMS section content
-  const renderContent = (s: CMSThingsToKnowSection) => {
+  const renderCMSContent = (s: CMSThingsToKnowSection) => {
     if (isOldFormat(s)) {
       const lines = (s.content || '').split('\n').filter((l: string) => l.trim());
       return (
@@ -121,6 +189,16 @@ const ThingsToKnowModal = ({
     );
   };
 
+  if (!isOpen) return null;
+
+  // For CMS sections, verify the section exists
+  if (!isCancellation) {
+    const section = getCMSSection();
+    if (!section) return null;
+  }
+
+  const title = getTitle();
+
   return (
     <>
       {/* Backdrop */}
@@ -149,7 +227,9 @@ const ThingsToKnowModal = ({
 
           {/* Scrollable Content */}
           <div className="overflow-y-auto flex-1 px-6 py-4">
-            {renderContent(section)}
+            {isCancellation
+              ? renderCancellationContent(cancellationPolicyContent)
+              : renderCMSContent(getCMSSection()!)}
           </div>
         </div>
       </div>

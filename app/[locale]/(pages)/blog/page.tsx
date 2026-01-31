@@ -5,6 +5,7 @@ import { useParams } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
 import BlogSidebarCabin from '@/app/components/BlogSidebarCabin';
+import { useTranslations } from '@/app/providers/TranslationsProvider';
 interface BlogPost {
   id: string;
   title: string;
@@ -37,6 +38,7 @@ interface BlogResponse {
 export default function BlogPage() {
   const params = useParams();
   const locale = (params?.locale as string) || 'en';
+  const { t } = useTranslations('blog');
   const [posts, setPosts] = useState<BlogPost[]>([]);
   const [categories, setCategories] = useState<BlogCategory[]>([]);
   const [allPosts, setAllPosts] = useState<BlogPost[]>([]); // For category counts
@@ -172,7 +174,7 @@ export default function BlogPage() {
           <div className="absolute inset-0" style={{ backgroundColor: 'rgba(0, 0, 0, 0.50)' }}></div>
         </div>
         <h1 className="relative z-10 text-white text-4xl md:text-5xl lg:text-6xl font-logga text-center px-4">
-          BLOG
+          {t('hero_title', 'BLOG')}
         </h1>
       </section>
 
@@ -184,7 +186,7 @@ export default function BlogPage() {
             <div className="relative">
               <input
                 type="text"
-                placeholder="Search articles..."
+                placeholder={t("search_placeholder", "Search articles...")}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="w-full px-4 py-3 border border-gray-300 focus:border-[#495D4D] focus:outline-none font-jost font-light"
@@ -211,11 +213,11 @@ export default function BlogPage() {
             <div className="flex-1">
               {loading ? (
                 <div className="text-center py-12">
-                  <p className="text-gray-600 font-jost font-light">Loading posts...</p>
+                  <p className="text-gray-600 font-jost font-light">{t("loading", "Loading posts...")}</p>
                 </div>
               ) : posts.length === 0 ? (
                 <div className="text-center py-12">
-                  <p className="text-gray-600 text-lg font-jost font-light">No blog posts found.</p>
+                  <p className="text-gray-600 text-lg font-jost font-light">{t("no_posts", "No blog posts found.")}</p>
                   {(searchQuery || selectedCategory) && (
                     <button
                       onClick={() => {
@@ -224,7 +226,7 @@ export default function BlogPage() {
                       }}
                       className="mt-4 text-[#F49A4A] hover:underline font-jost"
                     >
-                      Clear filters
+                      {t("clear_filters", "Clear filters")}
                     </button>
                   )}
                 </div>
@@ -289,7 +291,7 @@ export default function BlogPage() {
                                 </p>
                               )}
                               <span className="text-[#F49A4A] font-jost font-medium text-sm">
-                                Read more →
+                                {t('read_more', 'Read more →')}
                               </span>
                             </div>
                           </div>
@@ -306,7 +308,7 @@ export default function BlogPage() {
                         disabled={currentPage === 1}
                         className="px-4 py-2 border border-gray-300 text-gray-700 hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed font-jost font-light"
                       >
-                        Previous
+                        {t('previous', 'Previous')}
                       </button>
                       <div className="flex items-center gap-1">
                         {Array.from({ length: totalPages }, (_, i) => i + 1)
@@ -346,15 +348,14 @@ export default function BlogPage() {
                         disabled={currentPage === totalPages}
                         className="px-4 py-2 border border-gray-300 text-gray-700 hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed font-jost font-light"
                       >
-                        Next
+                        {t('next', 'Next')}
                       </button>
                     </div>
                   )}
 
                   {/* Results info */}
                   <p className="mt-4 text-center text-sm text-gray-500 font-jost font-light">
-                    Showing {(currentPage - 1) * postsPerPage + 1} -{' '}
-                    {Math.min(currentPage * postsPerPage, totalPosts)} of {totalPosts} posts
+                    {t('showing_posts', 'Showing')} {(currentPage - 1) * postsPerPage + 1} - {Math.min(currentPage * postsPerPage, totalPosts)} {t('of_posts', 'of')} {totalPosts} {t('posts_label', 'posts')}
                   </p>
                 </>
               )}
@@ -364,11 +365,11 @@ export default function BlogPage() {
             <aside className="hidden lg:block lg:w-[420px] flex-shrink-0">
               {/* Search */}
               <div className="bg-gray-50 p-6 mb-6">
-                <h3 className="text-lg font-logga text-[#495D4D] mb-4">Search</h3>
+                <h3 className="text-lg font-logga text-[#495D4D] mb-4">{t("search_title", "Search")}</h3>
                 <div className="relative">
                   <input
                     type="text"
-                    placeholder="Search articles..."
+                    placeholder={t("search_placeholder", "Search articles...")}
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     className="w-full px-4 py-3 border border-gray-300 focus:border-[#495D4D] focus:outline-none font-jost font-light"

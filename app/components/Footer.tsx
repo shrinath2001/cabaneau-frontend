@@ -83,7 +83,7 @@ const Footer = () => {
   // Hide footer on specific pages (booking flow)
   const shouldHideFooter = (() => {
     // Exact matches: /cabins, /search (with optional locale prefix)
-    const exactPatterns = ['/cabins', '/search'];
+    const exactPatterns = ['/search'];
     const isExactMatch = exactPatterns.some(pattern => {
       const regex = new RegExp(`^(/[a-z]{2})?${pattern}$`);
       return regex.test(pathname);

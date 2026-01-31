@@ -3,17 +3,32 @@
 import { useEffect } from 'react';
 import {
   type CMSThingsToKnowSection,
+  type CancellationSection,
+  cancellationPolicyContent,
+  getLocalizedText,
+  calculateCancellationDate,
+  formatDateForLocale,
   isOldFormat,
   replaceTemplatePlaceholders,
 } from './thingsToKnowContent';
 
 export type PanelType = string;
 
+// Fallback text when no check-in date is selected
+const noDateFallback = {
+  en: "14 days before check-in",
+  fr: "14 jours avant l'arrivee",
+  de: "14 Tage vor dem Check-in",
+  nl: "14 dagen voor inchecken"
+};
+
 interface ThingsToKnowSlidePanelProps {
   isOpen: boolean;
   onClose: () => void;
   type: PanelType;
+  checkIn?: string;
   capacity: number;
+  locale: string;
   thingsToKnow?: CMSThingsToKnowSection[];
 }
 
@@ -21,7 +36,9 @@ const ThingsToKnowSlidePanel = ({
   isOpen,
   onClose,
   type,
+  checkIn,
   capacity,
+  locale,
   thingsToKnow,
 }: ThingsToKnowSlidePanelProps) => {
   // Prevent body scroll when panel is open
@@ -34,6 +51,8 @@ const ThingsToKnowSlidePanel = ({
     return () => { document.body.style.overflow = ''; };
   }, [isOpen]);
 
+  const isCancellation = type === 'cancellation';
+
   // Get CMS section by index
   const getCMSSection = (): CMSThingsToKnowSection | null => {
     if (!type.startsWith('cms_') || !thingsToKnow) return null;
@@ -41,11 +60,63 @@ const ThingsToKnowSlidePanel = ({
     return thingsToKnow[index] || null;
   };
 
-  const section = getCMSSection();
-  const title = section ? replaceTemplatePlaceholders(section.title || '', { capacity }) : '';
+  // Determine title
+  const getTitle = (): string => {
+    if (isCancellation) {
+      return getLocalizedText(cancellationPolicyContent.title, locale);
+    }
+    const section = getCMSSection();
+    return section ? replaceTemplatePlaceholders(section.title || '', { capacity }) : '';
+  };
+
+  // Render cancellation policy content with tiers
+  const renderCancellationContent = (section: CancellationSection) => {
+    const refundDate = calculateCancellationDate(checkIn || '');
+    const formattedRefundDate = refundDate
+      ? formatDateForLocale(refundDate, locale)
+      : noDateFallback[locale as keyof typeof noDateFallback] || noDateFallback.en;
+
+    return (
+      <>
+        <div className="space-y-6">
+          {section.tiers.map((tier, tierIndex) => (
+            <div
+              key={tierIndex}
+              className={`pb-6 ${tierIndex < section.tiers.length - 1 ? 'border-b border-[#EBEBEB]' : ''}`}
+            >
+              <p className="font-jost text-[#212121] text-base mb-3">
+                <span className="font-medium">{getLocalizedText(tier.label, locale)}</span>{' '}
+                <span className="font-semibold">{formattedRefundDate}</span>
+              </p>
+              <div className="mb-3">
+                <span
+                  className={`inline-block px-3 py-1.5 rounded-full font-jost font-medium text-sm ${
+                    tierIndex === 0
+                      ? 'bg-[#E8F5E9] text-[#2E7D32]'
+                      : 'bg-[#FFEBEE] text-[#C62828]'
+                  }`}
+                >
+                  {getLocalizedText(tier.refundType, locale)}
+                </span>
+              </div>
+              <p className="font-jost font-light text-gray-600 text-base">
+                {getLocalizedText(tier.description, locale)}
+              </p>
+            </div>
+          ))}
+        </div>
+
+        <div className="mt-6 pt-4 border-t border-[#EBEBEB]">
+          <p className="font-jost font-light text-gray-500 text-sm">
+            {getLocalizedText(section.footer.timeNote, locale)}
+          </p>
+        </div>
+      </>
+    );
+  };
 
   // Render CMS section content
-  const renderContent = (s: CMSThingsToKnowSection) => {
+  const renderCMSContent = (s: CMSThingsToKnowSection) => {
     if (isOldFormat(s)) {
       const lines = (s.content || '').split('\n').filter((l: string) => l.trim());
       return (
@@ -111,6 +182,8 @@ const ThingsToKnowSlidePanel = ({
     );
   };
 
+  const title = getTitle();
+
   return (
     <>
       {/* Backdrop */}
@@ -146,7 +219,9 @@ const ThingsToKnowSlidePanel = ({
           <h2 className="font-logga font-semibold text-2xl uppercase tracking-wide text-[#212121] mb-4">
             {title}
           </h2>
-          {section && renderContent(section)}
+          {isCancellation
+            ? renderCancellationContent(cancellationPolicyContent)
+            : getCMSSection() && renderCMSContent(getCMSSection()!)}
         </div>
       </div>
     </>
