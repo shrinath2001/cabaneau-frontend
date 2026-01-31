@@ -11,7 +11,7 @@ export default function LogoSlider() {
   ];
 
   return (
-    <div className="w-full overflow-hidden bg-white py-2 shadow-md relative z-10">
+    <div className="w-full overflow-hidden bg-white py-3 shadow-md relative z-10">
       <style jsx>{`
         @keyframes scroll {
           0% {
@@ -49,7 +49,7 @@ export default function LogoSlider() {
             <img
               src={logo}
               alt={`Partner logo ${index + 1}`}
-              className="h-10 md:h-12 w-auto object-contain grayscale hover:grayscale-0 transition-all duration-300"
+              className="h-14 md:h-16 w-auto object-contain grayscale hover:grayscale-0 transition-all duration-300"
             />
           </div>
         ))}
@@ -62,7 +62,7 @@ export default function LogoSlider() {
             <img
               src={logo}
               alt={`Partner logo ${index + 1}`}
-              className="h-10 md:h-12 w-auto object-contain grayscale hover:grayscale-0 transition-all duration-300"
+              className="h-14 md:h-16 w-auto object-contain grayscale hover:grayscale-0 transition-all duration-300"
             />
           </div>
         ))}
