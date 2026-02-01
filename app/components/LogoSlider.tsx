@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 
 interface Logo {
   url: string;
@@ -16,6 +16,7 @@ interface LogoSliderData {
 export default function LogoSlider() {
   const [data, setData] = useState<LogoSliderData | null>(null);
   const [loading, setLoading] = useState(true);
+  const trackRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     fetch("/api/logo-slider")
@@ -37,58 +38,67 @@ export default function LogoSlider() {
   // Sort by displayOrder
   const logos = [...data.logos].sort((a, b) => a.displayOrder - b.displayOrder);
 
+  // Repeat logos enough times to guarantee seamless scrolling on any screen width.
+  // Each logo is roughly ~160-200px wide (image + margins). For a 2560px ultrawide,
+  // we need at least ~13 logos per "half". With 6 logos, repeating 4x = 24 per half.
+  const repeatCount = Math.max(4, Math.ceil(16 / logos.length));
+  const repeatedLogos: Logo[] = [];
+  for (let i = 0; i < repeatCount; i++) {
+    repeatedLogos.push(...logos);
+  }
+
   return (
     <div className="w-full overflow-hidden bg-white py-3 shadow-md relative z-10">
       <style jsx>{`
-        @keyframes scroll {
-          0% {
+        @keyframes logo-scroll {
+          from {
             transform: translateX(0);
           }
-          100% {
+          to {
             transform: translateX(-50%);
           }
         }
 
-        .animate-scroll {
+        .logo-track {
           display: flex;
           width: max-content;
-          animation: scroll 20s linear infinite;
+          animation: logo-scroll 30s linear infinite;
         }
 
-        .animate-scroll:hover {
+        .logo-track:hover {
           animation-play-state: paused;
         }
 
         @media (max-width: 767px) {
-          .animate-scroll {
-            animation-duration: 12s;
+          .logo-track {
+            animation-duration: 18s;
           }
         }
       `}</style>
 
-      <div className="animate-scroll">
-        {/* First set of logos */}
-        {logos.map((logo, index) => (
+      <div className="logo-track" ref={trackRef}>
+        {/* First half */}
+        {repeatedLogos.map((logo, index) => (
           <div
-            key={`logo-1-${index}`}
+            key={`a-${index}`}
             className="flex-shrink-0 mx-6 md:mx-10 flex items-center justify-center"
           >
             <img
               src={logo.url}
-              alt={logo.alt || `Partner logo ${index + 1}`}
+              alt={logo.alt || `Partner logo`}
               className="h-14 md:h-16 w-auto object-contain grayscale hover:grayscale-0 transition-all duration-300"
             />
           </div>
         ))}
-        {/* Duplicate set for seamless loop */}
-        {logos.map((logo, index) => (
+        {/* Second half (identical, for seamless loop) */}
+        {repeatedLogos.map((logo, index) => (
           <div
-            key={`logo-2-${index}`}
+            key={`b-${index}`}
             className="flex-shrink-0 mx-6 md:mx-10 flex items-center justify-center"
           >
             <img
               src={logo.url}
-              alt={logo.alt || `Partner logo ${index + 1}`}
+              alt={logo.alt || `Partner logo`}
               className="h-14 md:h-16 w-auto object-contain grayscale hover:grayscale-0 transition-all duration-300"
             />
           </div>
