@@ -201,7 +201,7 @@ const CabinsSection = () => {
           <div className="max-w-full mx-auto md:pl-20">
             {/* Header with Title */}
             <div className="flex justify-center items-center pt-6 md:pt-10 mb-10 md:mb-10 px-4 md:px-0 md:-ml-20">
-              <h2 className="font-logga text-[28px] md:text-[42px] font-semibold text-center">
+              <h2 className="font-logga text-[32px] md:text-[48px] font-semibold text-center">
                 {t('cabins_section.title', 'OUR CABINES')}
               </h2>
             </div>

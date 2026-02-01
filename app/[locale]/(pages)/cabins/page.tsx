@@ -109,17 +109,20 @@ export default async function CabinsPage() {
   const cabinsData = await getCabins();
 
   const cabins = cabinsData.map((cabin: CabinFromAPI, index: number) => {
-    // Filter out null/undefined images and get valid URLs
-    const validImages = (cabin.images || [])
-      .map((img: string | { url: string } | null) => typeof img === 'string' ? img : img?.url)
-      .filter((url: string | null | undefined): url is string => !!url);
-
-    // Use valid images, or featured image, or fallback
-    const displayImages = validImages.length > 0
-      ? validImages
-      : cabin.featuredImage
-        ? [cabin.featuredImage]
-        : ['/assets/d206536ef067f64b29cad184324fe360bb763e30.jpg'];
+    // Build image array with featured image first
+    const imageUrls: string[] = [];
+    if (cabin.featuredImage) {
+      imageUrls.push(cabin.featuredImage);
+    }
+    for (const img of (cabin.images || [])) {
+      const url = typeof img === 'string' ? img : (img as { url: string })?.url;
+      if (url && !imageUrls.includes(url)) {
+        imageUrls.push(url);
+      }
+    }
+    const displayImages = imageUrls.length > 0
+      ? imageUrls
+      : ['/assets/d206536ef067f64b29cad184324fe360bb763e30.jpg'];
 
     return {
     id: cabin.id || index + 1,
