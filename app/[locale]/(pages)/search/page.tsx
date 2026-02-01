@@ -40,11 +40,18 @@ const searchTranslations: Record<string, {
   pets: string;
   nextAvailable: string;
   nextAvailableSubtitle: string;
+  nextAvailableWeekends: string;
+  nextAvailableWeekendsSub: string;
   availableFrom: string;
   availableNow: string;
   viewCabin: string;
   fromPrice: string;
   perNightShort: string;
+  minStayMessage: string;
+  minStaySuggestion: string;
+  unavailableNextDate: string;
+  unavailableNextWeekend: string;
+  bookNights: string;
   guest: string;
   guests: string;
 }> = {
@@ -70,11 +77,18 @@ const searchTranslations: Record<string, {
     pets: 'Pets',
     nextAvailable: 'Next available cabins',
     nextAvailableSubtitle: 'These cabins have upcoming availability',
+    nextAvailableWeekends: 'Next available weekends',
+    nextAvailableWeekendsSub: 'You searched for a weekend stay \u2014 here are the next openings',
     availableFrom: 'Available from',
     availableNow: 'Available now',
     viewCabin: 'View',
     fromPrice: 'from',
     perNightShort: '/ night',
+    minStayMessage: 'Minimum stay is',
+    minStaySuggestion: 'nights for your dates',
+    unavailableNextDate: 'Next available from',
+    unavailableNextWeekend: 'Next weekend from',
+    bookNights: 'nights',
     guest: 'Guest',
     guests: 'Guests',
   },
@@ -105,6 +119,13 @@ const searchTranslations: Record<string, {
     viewCabin: 'Voir',
     fromPrice: 'à partir de',
     perNightShort: '/ nuit',
+    minStayMessage: 'Séjour minimum de',
+    minStaySuggestion: 'nuits pour vos dates',
+    unavailableNextDate: 'Disponible à partir du',
+    unavailableNextWeekend: 'Prochain week-end dès le',
+    bookNights: 'nuits',
+    nextAvailableWeekends: 'Prochains week-ends disponibles',
+    nextAvailableWeekendsSub: 'Vous avez cherché un séjour de week-end — voici les prochaines disponibilités',
     guest: 'Invité',
     guests: 'Invités',
   },
@@ -135,6 +156,13 @@ const searchTranslations: Record<string, {
     viewCabin: 'Ansehen',
     fromPrice: 'ab',
     perNightShort: '/ Nacht',
+    minStayMessage: 'Mindestaufenthalt',
+    minStaySuggestion: 'Nächte für Ihre Daten',
+    unavailableNextDate: 'Nächste Verfügbarkeit ab',
+    unavailableNextWeekend: 'Nächstes Wochenende ab',
+    bookNights: 'Nächte',
+    nextAvailableWeekends: 'Nächste verfügbare Wochenenden',
+    nextAvailableWeekendsSub: 'Sie haben nach einem Wochenendaufenthalt gesucht — hier sind die nächsten Möglichkeiten',
     guest: 'Gast',
     guests: 'Gäste',
   },
@@ -160,11 +188,18 @@ const searchTranslations: Record<string, {
     pets: 'Huisdieren',
     nextAvailable: 'Volgende beschikbare hutten',
     nextAvailableSubtitle: 'Deze hutten zijn binnenkort beschikbaar',
+    nextAvailableWeekends: 'Volgende beschikbare weekenden',
+    nextAvailableWeekendsSub: 'U zocht een weekendverblijf \u2014 hier zijn de volgende mogelijkheden',
     availableFrom: 'Beschikbaar vanaf',
     availableNow: 'Nu beschikbaar',
     viewCabin: 'Bekijk',
     fromPrice: 'vanaf',
     perNightShort: '/ nacht',
+    minStayMessage: 'Minimaal verblijf is',
+    minStaySuggestion: 'nachten voor uw data',
+    unavailableNextDate: 'Volgende beschikbaarheid vanaf',
+    unavailableNextWeekend: 'Volgend weekend vanaf',
+    bookNights: 'nachten',
     guest: 'Gast',
     guests: 'Gasten',
   },
@@ -346,9 +381,9 @@ function SearchResults() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [total, setTotal] = useState(0);
-  // Next available cabins (shown when search returns 0 results)
-  const [nextAvailableCabins, setNextAvailableCabins] = useState<any[]>([]);
-  const [nextAvailableLoading, setNextAvailableLoading] = useState(false);
+  // Smart alternatives (shown when search returns 0 results)
+  const [smartAlternatives, setSmartAlternatives] = useState<any>(null);
+  const [alternativesLoading, setAlternativesLoading] = useState(false);
 
   const { locale } = useTranslations('search');
 
@@ -474,22 +509,28 @@ function SearchResults() {
 
 
 
-  // Fetch next available cabins when search returns 0 results
+  // Fetch smart alternatives when search returns 0 results
   useEffect(() => {
     if (!loading && cabins.length === 0 && checkIn && checkOut) {
-      setNextAvailableLoading(true);
-      apiFetch('/api/cabins/homepage')
+      setAlternativesLoading(true);
+      const altParams = new URLSearchParams({
+        checkIn,
+        checkOut,
+        guests: guests.total.toString(),
+      });
+      if (guests.pets > 0) altParams.set('pets', guests.pets.toString());
+
+      apiFetch('/api/cabins/smart-alternatives?' + altParams.toString())
         .then((res) => res.json())
-        .then((result) => {
-          const cabinArray = result?.data ?? result;
-          if (Array.isArray(cabinArray)) {
-            setNextAvailableCabins(cabinArray);
+        .then((data) => {
+          if (data && data.alternatives) {
+            setSmartAlternatives(data);
           }
         })
-        .catch((err) => console.error('Error fetching next available cabins:', err))
-        .finally(() => setNextAvailableLoading(false));
+        .catch((err) => console.error('Error fetching smart alternatives:', err))
+        .finally(() => setAlternativesLoading(false));
     }
-  }, [loading, cabins.length, checkIn, checkOut]);
+  }, [loading, cabins.length, checkIn, checkOut, guests.total, guests.pets]);
 
   // Format date for display with locale support
   const formatDate = (dateStr: string | null) => {
@@ -680,36 +721,65 @@ function SearchResults() {
                   </p>
                 </div>
 
-                {/* Next Available Cabins - Mini Cards */}
-                {nextAvailableLoading ? (
+                {/* Smart Alternatives - Mini Cards */}
+                {alternativesLoading ? (
                   <div className="flex justify-center py-8">
                     <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-400"></div>
                   </div>
-                ) : nextAvailableCabins.length > 0 && (
+                ) : smartAlternatives && smartAlternatives.alternatives && smartAlternatives.alternatives.length > 0 && (
                   <div className="max-w-2xl mx-auto">
                     <div className="text-center mb-6">
-                      <h4 className="text-xl font-logga text-gray-800">{st.nextAvailable}</h4>
-                      <p className="text-sm text-gray-500 font-jost font-light mt-1">{st.nextAvailableSubtitle}</p>
+                      <h4 className="text-xl font-logga text-gray-800">
+                        {smartAlternatives.searchContext?.isWeekendSearch ? st.nextAvailableWeekends : st.nextAvailable}
+                      </h4>
+                      <p className="text-sm text-gray-500 font-jost font-light mt-1">
+                        {smartAlternatives.searchContext?.isWeekendSearch ? st.nextAvailableWeekendsSub : st.nextAvailableSubtitle}
+                      </p>
                     </div>
                     <div className="flex flex-col gap-3">
-                      {nextAvailableCabins.map((cabin: any) => {
-                        const imgUrl = cabin.featuredImage || cabin.images?.[0]?.url || cabin.images?.[0] || '/assets/placeholder.jpg';
-                        const nextDate = cabin.nextAvailableDate ? new Date(cabin.nextAvailableDate) : null;
-                        const today = new Date();
-                        today.setHours(0, 0, 0, 0);
-                        const isAvailableNow = nextDate && nextDate <= today;
+                      {smartAlternatives.alternatives.map((alt: any) => {
+                        const cabin = alt.cabin;
+                        const imgUrl = cabin.featuredImage || '/assets/placeholder.jpg';
                         const dateLocale = localeMap[locale] || 'en-US';
-                        const formattedDate = nextDate
-                          ? isAvailableNow
-                            ? st.availableNow
-                            : st.availableFrom + ' ' + nextDate.toLocaleDateString(dateLocale, { day: 'numeric', month: 'short' })
+                        const priceDisplay = cabin.basePrice
+                          ? Math.round(Number(cabin.basePrice)) + ' €'
                           : '';
-                        const priceDisplay = cabin.nightlyRate
-                          ? Math.round(cabin.nightlyRate) + ' €'
-                          : cabin.basePrice
-                            ? Math.round(Number(cabin.basePrice)) + ' €'
-                            : '';
-                        const cabinUrl = localizedPath(locale as Locale, '/cabins/' + (cabin.slug || cabin.id));
+
+                        // Build status message based on reason
+                        let statusMessage = '';
+                        let statusColor = 'bg-amber-50 text-amber-700';
+                        let dotColor = 'bg-amber-500';
+
+                        if (alt.reason === 'min_stay') {
+                          statusMessage = st.minStayMessage + ' ' + alt.minStay + ' ' + st.minStaySuggestion;
+                          statusColor = 'bg-blue-50 text-blue-700';
+                          dotColor = 'bg-blue-500';
+                        } else if (alt.suggestedCheckIn) {
+                          const sugDate = new Date(alt.suggestedCheckIn);
+                          const formatted = sugDate.toLocaleDateString(dateLocale, { day: 'numeric', month: 'short' });
+                          statusMessage = alt.isWeekendSuggestion
+                            ? st.unavailableNextWeekend + ' ' + formatted
+                            : st.unavailableNextDate + ' ' + formatted;
+                        }
+
+                        // Build URL with suggested dates pre-filled (Lodgify YYYYMMDD format)
+                        const cabinBase = localizedPath(locale as Locale, '/cabins/' + cabin.slug);
+                        const urlParams = new URLSearchParams();
+                        if (alt.suggestedCheckIn) urlParams.set('arrival', alt.suggestedCheckIn.replace(/-/g, ''));
+                        if (alt.suggestedCheckOut) urlParams.set('departure', alt.suggestedCheckOut.replace(/-/g, ''));
+                        if (guests.adults > 0) urlParams.set('adults', guests.adults.toString());
+                        if (guests.children > 0) urlParams.set('children', guests.children.toString());
+                        if (guests.infants > 0) urlParams.set('infants', guests.infants.toString());
+                        if (guests.pets > 0) urlParams.set('pets', guests.pets.toString());
+                        const cabinUrl = urlParams.toString() ? cabinBase + '?' + urlParams.toString() : cabinBase;
+
+                        // Suggested stay display
+                        const suggestedNights = alt.suggestedCheckIn && alt.suggestedCheckOut
+                          ? Math.round((new Date(alt.suggestedCheckOut).getTime() - new Date(alt.suggestedCheckIn).getTime()) / (1000 * 60 * 60 * 24))
+                          : null;
+                        const suggestedDateRange = alt.suggestedCheckIn && alt.suggestedCheckOut
+                          ? new Date(alt.suggestedCheckIn).toLocaleDateString(dateLocale, { day: 'numeric', month: 'short' }) + ' - ' + new Date(alt.suggestedCheckOut).toLocaleDateString(dateLocale, { day: 'numeric', month: 'short' })
+                          : '';
 
                         return (
                           <Link
@@ -742,12 +812,21 @@ function SearchResults() {
                                   <span>{Math.round(Number(cabin.squareMeters))}m²</span>
                                 )}
                               </div>
-                              <div className="mt-1.5 flex items-center gap-2">
-                                <span className={"inline-flex items-center text-xs font-medium font-jost px-2 py-0.5 " + (isAvailableNow ? 'bg-emerald-50 text-emerald-700' : 'bg-amber-50 text-amber-700')}>
-                                  <span className={"w-1.5 h-1.5 rounded-full mr-1.5 " + (isAvailableNow ? 'bg-emerald-500' : 'bg-amber-500')}></span>
-                                  {formattedDate}
-                                </span>
-                              </div>
+                              {/* Status badge */}
+                              {statusMessage && (
+                                <div className="mt-1.5">
+                                  <span className={"inline-flex items-center text-xs font-medium font-jost px-2 py-0.5 " + statusColor}>
+                                    <span className={"w-1.5 h-1.5 rounded-full mr-1.5 " + dotColor}></span>
+                                    {statusMessage}
+                                  </span>
+                                </div>
+                              )}
+                              {/* Suggested dates */}
+                              {suggestedDateRange && (
+                                <div className="mt-1 text-xs text-gray-500 font-jost">
+                                  {suggestedDateRange} ({suggestedNights} {st.bookNights})
+                                </div>
+                              )}
                             </div>
 
                             {/* Price + Arrow */}
