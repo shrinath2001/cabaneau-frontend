@@ -10,6 +10,9 @@ const DEFAULT_HERO = {
   overlayOpacity: 50,
 };
 
+// Don't statically cache this route - hero settings can change via CMS
+export const dynamic = 'force-dynamic';
+
 export async function GET(request: NextRequest) {
   try {
     const url = API_BASE_URL + '/site-settings/hero-section';
@@ -17,7 +20,7 @@ export async function GET(request: NextRequest) {
       headers: {
         'x-api-key': API_KEY,
       },
-      next: { revalidate: 60 },
+      next: { revalidate: 30 },
     });
 
     if (!response.ok) {
