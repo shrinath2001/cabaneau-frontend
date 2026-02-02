@@ -104,13 +104,22 @@ const Header = () => {
     >
       {heroSettings?.backgroundType === 'video' && heroSettings?.backgroundUrl && (
         <video
+          ref={(el) => {
+            // Force autoplay on mobile - browsers may ignore the autoPlay attribute
+            if (el) {
+              el.muted = true;
+              el.play().catch(() => {});
+            }
+          }}
           autoPlay
           muted
           loop
           playsInline
+          preload="auto"
           className="absolute inset-0 w-full h-full object-cover z-0"
-          src={heroSettings.backgroundUrl}
-        />
+        >
+          <source src={heroSettings.backgroundUrl} type="video/mp4" />
+        </video>
       )}
       <div
         className="absolute inset-0 z-[1]"
