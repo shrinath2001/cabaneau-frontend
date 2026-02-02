@@ -6,7 +6,14 @@ import Header from './Header';
 import Header2 from './Header2';
 import { locales } from '@/app/lib/i18n';
 
-export default function ConditionalHeader() {
+interface HeroSettings {
+  backgroundType: string;
+  backgroundUrl: string;
+  overlayColor: string;
+  overlayOpacity: number;
+}
+
+export default function ConditionalHeader({ heroSettings }: { heroSettings?: HeroSettings }) {
   const pathname = usePathname();
   // Home page is now at /{locale} (e.g., /en, /fr, /de, /nl)
   const isHomePage = pathname === '/' || locales.some(locale => pathname === `/${locale}`);
@@ -55,7 +62,7 @@ export default function ConditionalHeader() {
   // On homepage, show both: Header always (for hero), and Header2 on top when scrolled
   return (
     <>
-      <Header />
+      <Header heroSettings={heroSettings} />
       <div
         className={`transition-opacity duration-300 ease-in-out ${
           showHeader2

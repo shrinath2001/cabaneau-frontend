@@ -9,6 +9,30 @@ import ConditionalHeader from '../components/ConditionalHeader';
 import PromoBanner from '../components/PromoBanner';
 import WhatsAppWidget from '../components/WhatsAppWidget';
 
+
+interface HeroSettings {
+  backgroundType: string;
+  backgroundUrl: string;
+  overlayColor: string;
+  overlayOpacity: number;
+}
+
+async function getHeroSettings(): Promise<HeroSettings> {
+  const apiKey = process.env.API_KEY || '';
+  const apiBaseUrl = process.env.API_BASE_URL || 'http://localhost:3002/api/v1';
+  const defaults: HeroSettings = { backgroundType: 'image', backgroundUrl: '', overlayColor: '#000000', overlayOpacity: 50 };
+  try {
+    const res = await fetch(`${apiBaseUrl}/site-settings/hero-section`, {
+      headers: { 'x-api-key': apiKey },
+      next: { revalidate: 30 },
+    });
+    if (!res.ok) return defaults;
+    return await res.json();
+  } catch {
+    return defaults;
+  }
+}
+
 interface LocaleLayoutProps {
   children: React.ReactNode;
   params: Promise<{ locale: string }>;
@@ -36,8 +60,9 @@ export default async function LocaleLayout({
     notFound();
   }
 
-  // Fetch translations for the current locale
+  // Fetch translations and hero settings
   const translations = await getTranslations(locale);
+  const heroSettings = await getHeroSettings();
 
   return (
     <html lang={locale} className={`${jost.variable} ${raleway.variable} ${logga.variable}`}>
@@ -55,7 +80,7 @@ export default async function LocaleLayout({
             <PromoBanner />
           </Suspense>
           <Suspense fallback={null}>
-            <ConditionalHeader />
+            <ConditionalHeader heroSettings={heroSettings} />
           </Suspense>
           <main>
             {children}

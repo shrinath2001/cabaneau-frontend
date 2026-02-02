@@ -15,7 +15,14 @@ interface Language {
   isDefault: boolean;
 }
 
-const Header = () => {
+interface HeroSettings {
+  backgroundType: string;
+  backgroundUrl: string;
+  overlayColor: string;
+  overlayOpacity: number;
+}
+
+const Header = ({ heroSettings: initialHeroSettings }: { heroSettings?: HeroSettings }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isLanguageOpen, setIsLanguageOpen] = useState(false);
   const [languages, setLanguages] = useState<Language[]>([]);
@@ -26,13 +33,13 @@ const Header = () => {
   const searchParams = useSearchParams();
 
 
-  // Hero section settings
+  // Hero section settings (SSR for mobile video autoplay)
   const [heroSettings, setHeroSettings] = useState<{
     backgroundType: string;
     backgroundUrl: string;
     overlayColor: string;
     overlayOpacity: number;
-  } | null>(null);
+  } | null>(initialHeroSettings || null);
 
   // Scroll to top when homepage loads (fixes SPA navigation scroll issue)
   useEffect(() => {
@@ -40,8 +47,10 @@ const Header = () => {
   }, []);
 
 
-  // Fetch hero section settings
+  // Hero settings come from server component for SSR (enables mobile video autoplay)
+  // Fallback: fetch client-side if not provided
   useEffect(() => {
+    if (initialHeroSettings) return;
     const fetchHeroSettings = async () => {
       try {
         const response = await fetch('/api/hero-section');
@@ -54,7 +63,7 @@ const Header = () => {
       }
     };
     fetchHeroSettings();
-  }, []);
+  }, [initialHeroSettings]);
 
   // Fetch languages from API
   useEffect(() => {
