@@ -3,16 +3,6 @@ import { getLanguageFromRequest } from '@/app/lib/server-language';
 
 export const dynamic = 'force-dynamic';
 
-function localize(field: unknown, lang: string): string {
-  if (!field) return '';
-  if (typeof field === 'string') return field;
-  if (typeof field === 'object') {
-    const obj = field as Record<string, string>;
-    return obj[lang] || obj['en'] || '';
-  }
-  return '';
-}
-
 export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
@@ -27,12 +17,14 @@ export async function GET(
       return NextResponse.json({ error: 'ID is required' }, { status: 400 });
     }
 
-    const apiUrl = `${apiBaseUrl}/admin/blog/${id}`;
+    // Use the public preview endpoint (no JWT needed, just API key)
+    const apiUrl = `${apiBaseUrl}/blog/preview/${id}`;
     const response = await fetch(apiUrl, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
         'x-api-key': apiKey || '',
+        'Accept-Language': language,
       },
     });
 
@@ -43,23 +35,7 @@ export async function GET(
       );
     }
 
-    const raw = await response.json();
-
-    // Localize translated fields to match the public endpoint format
-    const data = {
-      ...raw,
-      title: localize(raw.title, language),
-      content: localize(raw.content, language),
-      excerpt: localize(raw.excerpt, language),
-      metaTitle: localize(raw.metaTitle, language),
-      metaDescription: localize(raw.metaDescription, language),
-      category: raw.category ? {
-        ...raw.category,
-        name: localize(raw.category.name, language),
-      } : undefined,
-      _preview: true,
-    };
-
+    const data = await response.json();
     return NextResponse.json(data);
   } catch (error) {
     console.error('Error fetching blog preview:', error);
