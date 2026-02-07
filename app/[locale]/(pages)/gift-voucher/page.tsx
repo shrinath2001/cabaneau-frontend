@@ -30,7 +30,7 @@ export default function GiftVoucherPage() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-16">
             {/* Left Column - Title and Description */}
             <div>
-              <h1 className="font-logga text-[32px] md:text-[48px] font-semibold mb-6 md:mb-8" style={{ color: '#212121' }}>
+              <h1 className="font-logga text-[28px] md:text-[42px] font-semibold mb-6 md:mb-8" style={{ color: '#212121' }}>
                 GIFT VOUCHER
               </h1>
               <div className="font-jost font-light text-[16px] md:text-[18px] leading-relaxed text-gray-700 space-y-4">

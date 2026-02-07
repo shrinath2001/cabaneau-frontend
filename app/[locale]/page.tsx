@@ -5,12 +5,13 @@ import ActivitiesSection from "../components/ActivitiesSection";
 import HostsSection from "../components/HostsSection";
 import LocationSection from "../components/LocationSection";
 import CustomCardsSection from "../components/CustomCardsSection";
+import ReviewsSection from "../components/ReviewsSection";
 import LogoSlider from "../components/LogoSlider";
 
 interface HomepageSection {
   id: string;
   identifier: string;
-  sectionType: 'SERVICES' | 'ACTIVITIES' | 'HOSTS' | 'LOCATION' | 'CUSTOM_CARDS';
+  sectionType: 'SERVICES' | 'ACTIVITIES' | 'HOSTS' | 'LOCATION' | 'CUSTOM_CARDS' | 'REVIEWS';
   title?: string;
   subtitle?: string;
   config?: Record<string, unknown>;
@@ -114,6 +115,15 @@ function renderSection(section: HomepageSection) {
           items={(config?.items as Array<{ image: string; title: string; link?: string }>) || undefined}
           buttonText={buttonText}
           buttonLink={buttonLink}
+          backgroundColor={backgroundColor}
+        />
+      );
+
+    case 'REVIEWS':
+      return (
+        <ReviewsSection
+          key={section.id}
+          title={title}
           backgroundColor={backgroundColor}
         />
       );

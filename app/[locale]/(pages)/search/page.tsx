@@ -575,7 +575,7 @@ function SearchResults() {
       <div className="container mx-auto px-4 py-16">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-4xl font-logga text-center mb-4">{st.title}</h1>
+          <h1 className="font-logga text-[28px] md:text-[42px] font-semibold text-center mb-4">{st.title}</h1>
           <p className="text-center text-gray-600 font-jost font-light">
             {st.subtitle}
           </p>
