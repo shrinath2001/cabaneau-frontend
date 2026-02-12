@@ -321,54 +321,10 @@ const SingleCabinPage = () => {
                     })}
                   </div>
                 )}
-              {/* Fallback when no featured amenities from API */}
-              {(!cabin.featuredAmenities ||
-                cabin.featuredAmenities.length === 0) && (
-                <div className="flex flex-wrap items-center gap-4 md:gap-6 mb-4 md:mb-6 text-[11px] md:text-sm text-gray-700">
-                  <div className="flex items-center gap-1.5">
-                    <svg
-                      className="w-4 h-4 md:w-5 md:h-5"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M8.111 16.404a5.5 5.5 0 017.778 0M12 20h.01m-7.08-7.071c3.904-3.905 10.236-3.905 14.141 0M1.394 9.393c5.857-5.857 15.355-5.857 21.213 0"
-                      />
-                    </svg>
-                    <span className="font-jost font-light uppercase">
-                      {t("amenities.wifi", "WiFi")}
-                    </span>
-                  </div>
-                  <div className="flex items-center gap-1.5">
-                    <svg
-                      className="w-4 h-4 md:w-5 md:h-5"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M17.657 18.657A8 8 0 016.343 7.343S7 9 9 10c0-2 .5-5 2.986-7C14 5 16.09 5.777 17.656 7.343A7.975 7.975 0 0120 13a7.975 7.975 0 01-2.343 5.657z"
-                      />
-                    </svg>
-                    <span className="font-jost font-light uppercase">
-                      {t("amenities.private_sauna", "Private Sauna")}
-                    </span>
-                  </div>
-                </div>
-              )}
 
               {/* Description */}
               <p className="font-jost font-light leading-relaxed text-[13px] md:text-[16px] mb-6 md:mb-8 text-gray-700">
-                {cabin.description ||
-                  cabin.shortDescription ||
-                  "Lorem Ipsum Is Simply Dummy Text Of The Printing And Typesetting Industry. Lorem Ipsum Has Been The Industry's Standard Dummy Text Ever Since The 1500s, When An Unknown Printer Took A Galley Of Type And Scrambled It To Make A Type Specimen Book. It Has Survived Not Only Five Centuries, But Also The Leap Into Electronic Typesetting, Remaining Essentially Unchanged. It Was Popularised In The 1960s With The Release Of Letraset Sheets Containing Lorem Ipsum Passages, And..."}
+                {cabin.description || cabin.shortDescription}
               </p>
             </div>
 

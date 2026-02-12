@@ -37,7 +37,7 @@ interface EatDrinkItemWithPrice extends EatDrinkItem {
 // Transform API response to match existing EatDrinkItem interface
 function transformService(service: APIService, index: number): EatDrinkItemWithPrice {
   return {
-    id: index + 1,
+    id: service.id,
     title: service.name?.toUpperCase() || '',
     subtitle: service.shortDescription || '',
     price: '', // Will be formatted with translations in render

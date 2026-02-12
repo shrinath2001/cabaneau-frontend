@@ -1,8 +1,15 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import AmenitiesModal from './AmenitiesModal';
 import { useTranslations } from '@/app/providers/TranslationsProvider';
+import { apiFetch } from '@/app/lib/api';
+
+interface AmenityCategory {
+  slug: string;
+  name: string;
+  displayOrder: number;
+}
 
 // Translations for amenities section
 const amenitiesTranslations: Record<string, {
@@ -60,6 +67,27 @@ const AmenitiesSection = ({ additionalAmenities, featuredAmenities }: AmenitiesS
   const [showModal, setShowModal] = useState(false);
   const { locale } = useTranslations();
   const t = amenitiesTranslations[locale] || amenitiesTranslations.en;
+  const [categories, setCategories] = useState<AmenityCategory[]>([]);
+  const [categoryMap, setCategoryMap] = useState<Record<string, string>>({});
+
+  // Preload amenity categories on mount so modal renders instantly
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const response = await apiFetch('/api/amenity-categories', { headers: { 'x-language': locale } });
+        if (response.ok) {
+          const data: AmenityCategory[] = await response.json();
+          setCategories(data);
+          const map: Record<string, string> = {};
+          data.forEach((cat) => { map[cat.slug] = cat.name; });
+          setCategoryMap(map);
+        }
+      } catch (error) {
+        console.error('Failed to fetch amenity categories:', error);
+      }
+    };
+    fetchCategories();
+  }, [locale]);
 
   // Combine all amenities from API
   const allAmenities = [...(featuredAmenities || []), ...(additionalAmenities || [])];
@@ -104,6 +132,8 @@ const AmenitiesSection = ({ additionalAmenities, featuredAmenities }: AmenitiesS
         isOpen={showModal}
         onClose={() => setShowModal(false)}
         amenities={allAmenities}
+        categories={categories}
+        categoryMap={categoryMap}
       />
     </div>
   );

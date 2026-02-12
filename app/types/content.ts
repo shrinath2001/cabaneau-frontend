@@ -19,7 +19,7 @@ export interface Activity {
 }
 
 export interface EatDrinkItem {
-  id: number;
+  id: number | string;
   title: string;
   subtitle: string;
   price: string;

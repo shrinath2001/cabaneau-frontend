@@ -44,7 +44,7 @@ const CabinsPageContent = ({ cabins }: CabinsPageContentProps) => {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {cabins.map((cabin: Cabin) => (
-            <CabinCard key={cabin.id} {...cabin} priceType="total" />
+            <CabinCard key={cabin.id} {...cabin} />
           ))}
         </div>
       )}

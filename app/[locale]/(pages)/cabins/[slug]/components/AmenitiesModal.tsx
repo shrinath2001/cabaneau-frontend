@@ -1,8 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
 import { useTranslations } from '@/app/providers/TranslationsProvider';
-import { apiFetch } from '@/app/lib/api';
 
 interface AmenityInfo {
   id: string;
@@ -22,6 +20,8 @@ interface AmenitiesModalProps {
   isOpen: boolean;
   onClose: () => void;
   amenities?: AmenityInfo[];
+  categories?: AmenityCategory[];
+  categoryMap?: Record<string, string>;
 }
 
 // Translations for modal
@@ -43,36 +43,9 @@ const AmenityIcon = ({ icon }: { icon?: string }) => {
   return <i className={`${iconClass} w-5 h-5 flex-shrink-0 text-[#495D4D]`} />;
 };
 
-const AmenitiesModal = ({ isOpen, onClose, amenities }: AmenitiesModalProps) => {
+const AmenitiesModal = ({ isOpen, onClose, amenities, categories = [], categoryMap = {} }: AmenitiesModalProps) => {
   const { locale } = useTranslations();
   const t = modalTranslations[locale] || modalTranslations.en;
-  const [categories, setCategories] = useState<AmenityCategory[]>([]);
-  const [categoryMap, setCategoryMap] = useState<Record<string, string>>({});
-
-  // Fetch amenity categories for translated names
-  useEffect(() => {
-    const fetchCategories = async () => {
-      try {
-        const response = await apiFetch('/api/amenity-categories', { headers: { 'x-language': locale } });
-        if (response.ok) {
-          const data: AmenityCategory[] = await response.json();
-          setCategories(data);
-          // Create slug -> name mapping
-          const map: Record<string, string> = {};
-          data.forEach((cat) => {
-            map[cat.slug] = cat.name;
-          });
-          setCategoryMap(map);
-        }
-      } catch (error) {
-        console.error('Failed to fetch amenity categories:', error);
-      }
-    };
-
-    if (isOpen) {
-      fetchCategories();
-    }
-  }, [isOpen, locale]);
 
   if (!isOpen) return null;
 

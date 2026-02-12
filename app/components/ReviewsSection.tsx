@@ -118,6 +118,24 @@ function StarRating({ rating, size = 'sm' }: { rating: number; size?: 'sm' | 'md
   return <span className="inline-flex items-center gap-0.5">{stars}</span>;
 }
 
+function BookingRatingBar({ rating, size = 'sm' }: { rating: number; size?: 'sm' | 'md' }) {
+  const score10 = Math.min(rating * 2, 10);
+  const pct = (score10 / 10) * 100;
+  const barH = size === 'md' ? 'h-[6px]' : 'h-[4px]';
+  const barW = size === 'md' ? 'w-[80px]' : 'w-[60px]';
+
+  return (
+    <span className="inline-flex items-center gap-1.5">
+      <span className={`${barW} ${barH} rounded-full bg-[#e0e5ec] overflow-hidden`}>
+        <span className={`block ${barH} rounded-full bg-[#003580]`} style={{ width: `${pct}%` }} />
+      </span>
+      <span className={`font-jost font-semibold ${size === 'md' ? 'text-[14px]' : 'text-[11px]'} text-[#003580]`}>
+        {score10.toFixed(1)}
+      </span>
+    </span>
+  );
+}
+
 function ChannelBadge({ channel }: { channel: string }) {
   const config = CHANNEL_CONFIG[channel] || CHANNEL_CONFIG.WEBSITE;
   return (
@@ -152,19 +170,14 @@ const ReviewsSection = ({ title, backgroundColor }: ReviewsSectionProps) => {
 
         setReviews(reviewsData?.data || []);
 
-        // Normalize Booking.com ratings from /10 to /5 scale for overall calculation
+        // All channel ratings are already normalized to /5 by the backend
         if (statsData?.channels) {
-          const normalizedChannels = statsData.channels.map((ch: ChannelStat) =>
-            ch.channel === 'BOOKING_COM'
-              ? { ...ch, averageRating: ch.averageRating / 2 }
-              : ch
-          );
-          const totalCount = normalizedChannels.reduce((sum: number, ch: ChannelStat) => sum + ch.count, 0);
-          const weightedSum = normalizedChannels.reduce((sum: number, ch: ChannelStat) => sum + ch.averageRating * ch.count, 0);
+          const totalCount = statsData.channels.reduce((sum: number, ch: ChannelStat) => sum + ch.count, 0);
+          const weightedSum = statsData.channels.reduce((sum: number, ch: ChannelStat) => sum + ch.averageRating * ch.count, 0);
           const overallAvg = totalCount > 0 ? weightedSum / totalCount : 0;
 
           setStats({
-            channels: normalizedChannels,
+            channels: statsData.channels,
             overall: { averageRating: overallAvg, count: totalCount },
           });
         } else {
@@ -259,10 +272,12 @@ const ReviewsSection = ({ title, backgroundColor }: ReviewsSectionProps) => {
                         <div className="min-w-0">
                           <div className="font-jost font-medium text-[12px] text-gray-800 truncate">{config.label}</div>
                           <div className="font-jost text-[11px] text-gray-600 flex items-center gap-1">
-                            <svg className="w-3 h-3 text-[#F49A4A]" fill="currentColor" viewBox="0 0 20 20">
-                              <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                            </svg>
-                            {ch.averageRating.toFixed(1)} <span className="text-gray-400">({ch.count})</span>
+                            {ch.channel === 'BOOKING_COM' ? (
+                              <BookingRatingBar rating={ch.averageRating} size="sm" />
+                            ) : (
+                              <><StarRating rating={ch.averageRating} size="sm" /> {ch.averageRating.toFixed(1)}</>
+                            )}
+                            <span className="text-gray-400">({ch.count})</span>
                           </div>
                         </div>
                       </div>
@@ -286,10 +301,13 @@ const ReviewsSection = ({ title, backgroundColor }: ReviewsSectionProps) => {
                       <div>
                         <div className="font-jost font-medium text-[14px] text-gray-800">{config.label}</div>
                         <div className="flex items-center gap-1.5">
-                          <StarRating rating={ch.averageRating} size="sm" />
-                          <span className="font-jost text-[13px] text-gray-600">
-                            {ch.averageRating.toFixed(1)} ({ch.count})
-                          </span>
+                          {ch.channel === 'BOOKING_COM' ? (
+                            <BookingRatingBar rating={ch.averageRating} size="sm" />
+                          ) : (
+                            <><StarRating rating={ch.averageRating} size="sm" />
+                            <span className="font-jost text-[13px] text-gray-600">{ch.averageRating.toFixed(1)}</span></>
+                          )}
+                          <span className="font-jost text-[13px] text-gray-600">({ch.count})</span>
                         </div>
                       </div>
                     </div>
@@ -334,14 +352,15 @@ const ReviewsSection = ({ title, backgroundColor }: ReviewsSectionProps) => {
 
             <div
               ref={scrollContainerRef}
-              className="flex gap-4 md:gap-5 overflow-x-auto reviews-no-scrollbar py-4"
+              className="flex gap-[19.42px] overflow-x-auto reviews-no-scrollbar py-4 -mx-4 md:mx-0"
               style={{ scrollSnapType: 'x mandatory' }}
             >
-              {reviews.map((review) => (
+              <div className="flex-shrink-0 w-[10px] md:w-0"></div>
+              {reviews.map((review, index) => (
                 <div
                   key={review.id}
-                  className="flex-shrink-0 w-[calc(100vw-32px)] md:w-[360px] bg-white p-6 shadow-sm border border-gray-100 hover:shadow-md transition-shadow"
-                  style={{ scrollSnapAlign: 'start' }}
+                  className="flex-shrink-0 w-[380px] bg-white p-[15px] shadow-sm border border-gray-100 transition-all duration-300 hover:-translate-y-2 hover:shadow-[0_4px_6px_-1px_rgba(0,0,0,0.1),0_10px_15px_-3px_rgba(0,0,0,0.1),0_20px_25px_-5px_rgba(0,0,0,0.1)]"
+                  style={{ scrollSnapAlign: index === 0 ? 'start' : 'center' }}
                 >
                   {/* Header: Avatar + Name + Channel */}
                   <div className="flex items-start gap-3 mb-4">
@@ -369,9 +388,13 @@ const ReviewsSection = ({ title, backgroundColor }: ReviewsSectionProps) => {
                     </div>
                   </div>
 
-                  {/* Stars - normalize Booking.com from /10 to /5 */}
+                  {/* Rating: blue bar for Booking.com, stars for others */}
                   <div className="mb-3">
-                    <StarRating rating={review.channel === 'BOOKING_COM' ? Number(review.rating) / 2 : Number(review.rating)} size="md" />
+                    {review.channel === 'BOOKING_COM' ? (
+                      <BookingRatingBar rating={Number(review.rating)} size="md" />
+                    ) : (
+                      <StarRating rating={Number(review.rating)} size="md" />
+                    )}
                   </div>
 
                   {/* Review Text */}
@@ -390,6 +413,7 @@ const ReviewsSection = ({ title, backgroundColor }: ReviewsSectionProps) => {
                   )}
                 </div>
               ))}
+              <div className="flex-shrink-0 w-[10px] md:w-0"></div>
             </div>
 
             {/* Right Arrow */}

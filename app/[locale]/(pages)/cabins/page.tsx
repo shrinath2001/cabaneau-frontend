@@ -134,9 +134,9 @@ export default async function CabinsPage() {
     capacity: cabin.capacity ? `2-${cabin.capacity} Persons` : '2 Persons',
     availability: formatAvailabilityDate(cabin.nextAvailableDate),
     price: cabin.nightlyRate
-           ? formatNightlyRate(cabin.nightlyRate, cabin.currency)
+           ? `${Math.round(cabin.nightlyRate)} €`
            : cabin.basePrice
-             ? `€${Number(cabin.basePrice).toFixed(2)}/night`
+             ? `${Math.round(Number(cabin.basePrice))} €`
              : '',
     featuredAmenities: cabin.featuredAmenities,
   };
