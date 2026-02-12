@@ -140,15 +140,14 @@ function BookingRatingBar({ rating, size = 'sm' }: { rating: number; size?: 'sm'
 }
 
 function ChannelBadge({ channel }: { channel: string }) {
-  const config = CHANNEL_CONFIG[channel] || CHANNEL_CONFIG.WEBSITE;
-  return (
-    <span
-      className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-white text-[12px] font-jost font-medium"
-      style={{ backgroundColor: config.color }}
-    >
-      {config.label}
-    </span>
-  );
+  const logos: Record<string, { src: string; alt: string; className: string }> = {
+    AIRBNB: { src: '/assets/airbnb-logo.svg', alt: 'Airbnb', className: 'h-5 w-auto object-contain' },
+    BOOKING_COM: { src: '/assets/booking-logo.svg', alt: 'Booking.com', className: 'h-3.5 w-auto object-contain' },
+    CASAPILOT: { src: '/assets/casapilot-logo.svg', alt: 'CasaPilot', className: 'h-5 w-auto object-contain' },
+    WEBSITE: { src: '/assets/cabaneau-logo-dark.svg', alt: 'Cabaneau', className: 'h-5 w-auto object-contain' },
+  };
+  const logo = logos[channel] || logos.WEBSITE;
+  return <img src={logo.src} alt={logo.alt} className={logo.className} />;
 }
 
 const ReviewsSection = ({ title, backgroundColor }: ReviewsSectionProps) => {
@@ -367,20 +366,9 @@ const ReviewsSection = ({ title, backgroundColor }: ReviewsSectionProps) => {
                 >
                   {/* Header: Avatar + Name + Channel */}
                   <div className="flex items-start gap-3 mb-4">
-                    {review.reviewerAvatar ? (
-                      <Image
-                        src={review.reviewerAvatar}
-                        alt={review.reviewerName}
-                        width={48}
-                        height={48}
-                        className="rounded-full object-cover flex-shrink-0"
-                        style={{ width: 48, height: 48 }}
-                      />
-                    ) : (
-                      <div className="w-12 h-12 rounded-full bg-[#495D4D] flex items-center justify-center text-white font-jost font-medium text-[18px] flex-shrink-0">
-                        {review.reviewerName.charAt(0).toUpperCase()}
-                      </div>
-                    )}
+                    <div className="w-12 h-12 bg-[#495D4D] flex items-center justify-center text-white font-jost font-medium text-[18px] flex-shrink-0">
+                      {review.reviewerName.charAt(0).toUpperCase()}
+                    </div>
                     <div className="flex-1 min-w-0">
                       <div className="font-jost font-medium text-[16px] text-gray-900 truncate">
                         {review.reviewerName}
