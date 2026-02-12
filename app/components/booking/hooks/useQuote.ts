@@ -45,6 +45,7 @@ export interface QuoteResponse {
   currency?: string;
   checkoutUrl: string;
   unavailableReason?: string;
+  minStay?: number;
   checkIn: string;
   checkOut: string;
   guests: QuoteGuests;

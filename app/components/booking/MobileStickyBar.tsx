@@ -10,6 +10,7 @@ interface MobileStickyBarProps {
   error: string | null;
   onCheckAvailability: () => void;
   onChangeDates?: () => void;
+  minStayWarning?: string;
 }
 
 /**
@@ -26,13 +27,14 @@ export default function MobileStickyBar({
   error,
   onCheckAvailability,
   onChangeDates,
+  minStayWarning,
 }: MobileStickyBarProps) {
   const { t } = useTranslations('booking');
 
   // Mode 1: No dates selected - show "Check Availability"
   if (!hasDateParams) {
     return (
-      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-300 shadow-[0_-2px_10px_rgba(0,0,0,0.1)] z-50 lg:hidden">
+      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-300 shadow-[0_-2px_10px_rgba(0,0,0,0.1)] z-40 lg:hidden">
         <div className="flex items-center justify-between px-5 py-4">
           <div className="flex flex-col">
             <span className="text-sm font-jost font-light text-gray-600">
@@ -60,7 +62,7 @@ export default function MobileStickyBar({
   // Loading state
   if (loading) {
     return (
-      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-300 shadow-[0_-2px_10px_rgba(0,0,0,0.1)] z-50 lg:hidden">
+      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-300 shadow-[0_-2px_10px_rgba(0,0,0,0.1)] z-40 lg:hidden">
         <div className="flex items-center justify-between px-5 py-4">
           <div className="flex flex-col gap-1">
             <div className="h-5 w-20 bg-gray-200 animate-pulse rounded" />
@@ -75,7 +77,7 @@ export default function MobileStickyBar({
   // Error or unavailable state
   if (error || (quote && !quote.available)) {
     return (
-      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-300 shadow-[0_-2px_10px_rgba(0,0,0,0.1)] z-50 lg:hidden">
+      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-300 shadow-[0_-2px_10px_rgba(0,0,0,0.1)] z-40 lg:hidden">
         <div className="flex items-center justify-between px-5 py-4">
           <div className="flex flex-col">
             <span className="text-base font-jost font-medium text-red-600">
@@ -102,7 +104,15 @@ export default function MobileStickyBar({
     const hasDiscount = !!pricing.discount;
 
     return (
-      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-300 shadow-[0_-2px_10px_rgba(0,0,0,0.1)] z-50 lg:hidden">
+      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-300 shadow-[0_-2px_10px_rgba(0,0,0,0.1)] z-40 lg:hidden">
+        {minStayWarning && (
+          <div className="flex items-center gap-1.5 px-5 py-1.5 bg-amber-50 border-b border-amber-200">
+            <svg className="w-3.5 h-3.5 text-amber-600 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+              <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+            </svg>
+            <span className="font-jost text-[11px] text-amber-700">{minStayWarning}</span>
+          </div>
+        )}
         <div className="flex items-center justify-between px-5 py-4">
           <div className="flex flex-col">
             <div className="flex items-center gap-2">
@@ -141,7 +151,15 @@ export default function MobileStickyBar({
   // Available but pricing not available - show minPrice fallback
   if (quote?.available && !quote.pricingAvailable) {
     return (
-      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-300 shadow-[0_-2px_10px_rgba(0,0,0,0.1)] z-50 lg:hidden">
+      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-300 shadow-[0_-2px_10px_rgba(0,0,0,0.1)] z-40 lg:hidden">
+        {minStayWarning && (
+          <div className="flex items-center gap-1.5 px-5 py-1.5 bg-amber-50 border-b border-amber-200">
+            <svg className="w-3.5 h-3.5 text-amber-600 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+              <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+            </svg>
+            <span className="font-jost text-[11px] text-amber-700">{minStayWarning}</span>
+          </div>
+        )}
         <div className="flex items-center justify-between px-5 py-4">
           <div className="flex flex-col">
             {quote.minPrice ? (

@@ -48,7 +48,7 @@ const searchTranslations: Record<string, {
   fromPrice: string;
   perNightShort: string;
   minStayMessage: string;
-  minStaySuggestion: string;
+  minStayNights: string;
   unavailableNextDate: string;
   unavailableNextWeekend: string;
   bookNights: string;
@@ -84,8 +84,8 @@ const searchTranslations: Record<string, {
     viewCabin: 'View',
     fromPrice: 'from',
     perNightShort: '/ night',
-    minStayMessage: 'Minimum stay is',
-    minStaySuggestion: 'nights for your dates',
+    minStayMessage: 'This cabin requires a minimum stay of',
+    minStayNights: 'nights for your selected dates',
     unavailableNextDate: 'Next available from',
     unavailableNextWeekend: 'Next weekend from',
     bookNights: 'nights',
@@ -119,8 +119,8 @@ const searchTranslations: Record<string, {
     viewCabin: 'Voir',
     fromPrice: 'à partir de',
     perNightShort: '/ nuit',
-    minStayMessage: 'Séjour minimum de',
-    minStaySuggestion: 'nuits pour vos dates',
+    minStayMessage: 'Ce chalet nécessite un séjour minimum de',
+    minStayNights: 'nuits pour les dates sélectionnées',
     unavailableNextDate: 'Disponible à partir du',
     unavailableNextWeekend: 'Prochain week-end dès le',
     bookNights: 'nuits',
@@ -156,8 +156,8 @@ const searchTranslations: Record<string, {
     viewCabin: 'Ansehen',
     fromPrice: 'ab',
     perNightShort: '/ Nacht',
-    minStayMessage: 'Mindestaufenthalt',
-    minStaySuggestion: 'Nächte für Ihre Daten',
+    minStayMessage: 'Diese Hütte erfordert einen Mindestaufenthalt von',
+    minStayNights: 'Nächten für die gewählten Daten',
     unavailableNextDate: 'Nächste Verfügbarkeit ab',
     unavailableNextWeekend: 'Nächstes Wochenende ab',
     bookNights: 'Nächte',
@@ -195,8 +195,8 @@ const searchTranslations: Record<string, {
     viewCabin: 'Bekijk',
     fromPrice: 'vanaf',
     perNightShort: '/ nacht',
-    minStayMessage: 'Minimaal verblijf is',
-    minStaySuggestion: 'nachten voor uw data',
+    minStayMessage: 'Deze hut vereist een minimaal verblijf van',
+    minStayNights: 'nachten voor de geselecteerde data',
     unavailableNextDate: 'Volgende beschikbaarheid vanaf',
     unavailableNextWeekend: 'Volgend weekend vanaf',
     bookNights: 'nachten',
@@ -258,6 +258,8 @@ interface QuoteResponse {
   minPrice?: number;
   currency?: string;
   checkoutUrl: string;
+  unavailableReason?: string;
+  minStay?: number;
 }
 
 interface CabinWithQuote extends SearchCabin {
@@ -666,6 +668,17 @@ function SearchResults() {
                       ? `${formatShortDate(checkIn)} - ${formatShortDate(checkOut)}`
                       : st.available;
 
+                    // Check minimum stay requirement
+                    let minStayWarning: string | undefined;
+                    if (cabin.quote?.minStay && checkIn && checkOut) {
+                      const requestedNights = Math.ceil(
+                        (new Date(checkOut).getTime() - new Date(checkIn).getTime()) / (1000 * 60 * 60 * 24)
+                      );
+                      if (requestedNights < cabin.quote.minStay) {
+                        minStayWarning = `${st.minStayMessage} ${cabin.quote.minStay} ${st.minStayNights}`;
+                      }
+                    }
+
                     return (
                       <CabinCard
                         key={cabin.id}
@@ -691,6 +704,7 @@ function SearchResults() {
                           pets: searchParams.get('pets') || undefined,
                         }}
                         featuredAmenities={cabin.featuredAmenities}
+                        warningMessage={minStayWarning}
                       />
                     );
                   })}
@@ -751,7 +765,7 @@ function SearchResults() {
                         let dotColor = 'bg-amber-500';
 
                         if (alt.reason === 'min_stay') {
-                          statusMessage = st.minStayMessage + ' ' + alt.minStay + ' ' + st.minStaySuggestion;
+                          statusMessage = st.minStayMessage + ' ' + alt.minStay + ' ' + st.minStayNights;
                           statusColor = 'bg-blue-50 text-blue-700';
                           dotColor = 'bg-blue-500';
                         } else if (alt.suggestedCheckIn) {

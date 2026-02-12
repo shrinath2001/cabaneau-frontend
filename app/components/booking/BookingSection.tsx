@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useQuote } from './hooks/useQuote';
 import MobileStickyBar from './MobileStickyBar';
 import MobileBottomSheet from './MobileBottomSheet';
@@ -84,6 +84,49 @@ export default function BookingSection({
     locale,
   });
 
+  // Auto-adjust checkout date when min_stay is not met
+  const hasAutoAdjusted = useRef(false);
+  useEffect(() => {
+    if (!quote?.minStay || !checkIn || !checkOut || loading || hasAutoAdjusted.current) return;
+
+    const requestedNights = Math.ceil(
+      (new Date(checkOut).getTime() - new Date(checkIn).getTime()) / (1000 * 60 * 60 * 24)
+    );
+
+    if (requestedNights < quote.minStay) {
+      hasAutoAdjusted.current = true;
+      // Calculate new checkout date that meets min_stay
+      const newCheckOut = new Date(checkIn);
+      newCheckOut.setDate(newCheckOut.getDate() + quote.minStay);
+      const newCheckOutStr = newCheckOut.toISOString().split('T')[0];
+      // Convert to Lodgify YYYYMMDD format for URL
+      const newDeparture = newCheckOutStr.replace(/-/g, '');
+
+      const url = new URL(window.location.href);
+      url.searchParams.set('departure', newDeparture);
+      window.location.href = url.toString();
+    }
+  }, [quote, checkIn, checkOut, loading]);
+
+  // Build min_stay warning message (shown after auto-adjust)
+  const minStayTexts: Record<string, (n: number) => string> = {
+    en: (n) => `This cabin has a ${n}-night minimum stay. We've preselected the best available dates for you.`,
+    fr: (n) => `Ce chalet a un séjour minimum de ${n} nuits. Nous avons présélectionné les meilleures dates pour vous.`,
+    de: (n) => `Diese Hütte hat einen Mindestaufenthalt von ${n} Nächten. Wir haben die besten verfügbaren Daten für Sie vorausgewählt.`,
+    nl: (n) => `Deze hut heeft een minimaal verblijf van ${n} nachten. We hebben de beste beschikbare data voor u voorgeselecteerd.`,
+  };
+
+  let minStayWarning: string | undefined;
+  if (quote?.minStay && checkIn && checkOut && !loading) {
+    const requestedNights = Math.ceil(
+      (new Date(checkOut).getTime() - new Date(checkIn).getTime()) / (1000 * 60 * 60 * 24)
+    );
+    if (requestedNights === quote.minStay) {
+      const getText = minStayTexts[locale] || minStayTexts.en;
+      minStayWarning = getText(quote.minStay);
+    }
+  }
+
   // Handle "Save" from widget - refreshes page with URL params
   const handleSaveFromWidget = (params: {
     arrival: string;
@@ -111,6 +154,7 @@ export default function BookingSection({
           error={error}
           onCheckAvailability={() => setShowBottomSheet(true)}
           onChangeDates={() => setShowBottomSheet(true)}
+          minStayWarning={minStayWarning}
         />
 
         {/* Bottom sheet with Lodgify widget */}
@@ -138,6 +182,7 @@ export default function BookingSection({
           loading={loading}
           error={error}
           onChangeDates={() => setShowDesktopModal(true)}
+          minStayWarning={minStayWarning}
         />
 
         {/* Desktop Modal for changing dates */}

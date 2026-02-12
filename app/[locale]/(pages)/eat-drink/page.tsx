@@ -213,18 +213,20 @@ export default function EatDrinkPage() {
   return (
     <main>
       {/* Hero Section */}
-      <section className="relative h-[300px] md:h-[400px] flex items-center justify-center">
-        <div
-          className="absolute inset-0 bg-cover bg-center"
-          style={{
-            backgroundImage: `url(${pageData.heroImage || '/assets/d206536ef067f64b29cad184324fe360bb763e30.jpg'})`,
-          }}
-        >
-          <div className="absolute inset-0 bg-black bg-opacity-40"style={{ backgroundColor: 'rgba(0, 0, 0, 0.50)' }}></div>
-        </div>
+      <section className="relative h-[300px] md:h-[400px] flex items-center justify-center bg-[#495D4D]">
+        {!loading && (
+          <div
+            className="absolute inset-0 bg-cover bg-center transition-opacity duration-300"
+            style={{
+              backgroundImage: `url(${pageData.heroImage || '/assets/d206536ef067f64b29cad184324fe360bb763e30.jpg'})`,
+            }}
+          >
+            <div className="absolute inset-0" style={{ backgroundColor: 'rgba(0, 0, 0, 0.50)' }}></div>
+          </div>
+        )}
         <h1 className="relative z-10 text-white text-4xl md:text-5xl lg:text-6xl font-custom text-center px-4">
-          {pageData.heroText || t('eat_drink.hero_title', 'OUR EAT & DRINK SERVICES')}
-         </h1>
+          {!loading && (pageData.heroText || t('eat_drink.hero_title', 'OUR EAT & DRINK SERVICES'))}
+        </h1>
       </section>
 
       {/* Tabs Section */}
