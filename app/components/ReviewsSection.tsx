@@ -63,40 +63,43 @@ function ChannelLogo({ channel, size = 32 }: { channel: string; size?: number })
       );
     case 'CASAPILOT':
       return (
-        <div
-          className="flex items-center justify-center rounded-full bg-[#2c3e50] text-white font-bold text-[14px]"
-          style={{ width: size, height: size }}
-        >
-          C
-        </div>
+        <img
+          src="/assets/casapilot-symbol.png"
+          alt="CasaPilot"
+          width={size}
+          height={size}
+          className="object-contain rounded"
+        />
       );
     case 'WEBSITE':
     default:
       return (
-        <div
-          className="flex items-center justify-center rounded-full bg-[#495D4D] text-white font-bold text-[14px]"
-          style={{ width: size, height: size }}
-        >
-          C
-        </div>
+        <img
+          src="/assets/cabaneau-symbol.png"
+          alt="Cabaneau"
+          width={size}
+          height={size}
+          className="object-contain rounded"
+        />
       );
   }
 }
 
 function StarRating({ rating, size = 'sm' }: { rating: number; size?: 'sm' | 'md' }) {
   const stars = [];
-  const sizeClass = size === 'md' ? 'text-[18px]' : 'text-[14px]';
+  const svgSize = size === 'md' ? 18 : 11;
+  const sizeClass = size === 'md' ? 'text-[18px]' : 'text-[11px]';
 
   for (let i = 1; i <= 5; i++) {
     if (i <= Math.floor(rating)) {
       stars.push(
-        <svg key={i} className={`inline-block ${sizeClass} text-[#F49A4A]`} fill="currentColor" viewBox="0 0 20 20" width={size === 'md' ? 18 : 14} height={size === 'md' ? 18 : 14}>
+        <svg key={i} className={`inline-block ${sizeClass} text-[#F49A4A]`} fill="currentColor" viewBox="0 0 20 20" width={svgSize} height={svgSize}>
           <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
         </svg>
       );
     } else if (i - 0.5 <= rating) {
       stars.push(
-        <svg key={i} className={`inline-block ${sizeClass} text-[#F49A4A]`} fill="currentColor" viewBox="0 0 20 20" width={size === 'md' ? 18 : 14} height={size === 'md' ? 18 : 14}>
+        <svg key={i} className={`inline-block ${sizeClass} text-[#F49A4A]`} fill="currentColor" viewBox="0 0 20 20" width={svgSize} height={svgSize}>
           <defs>
             <linearGradient id={`half-${i}`}>
               <stop offset="50%" stopColor="currentColor" />
@@ -108,14 +111,14 @@ function StarRating({ rating, size = 'sm' }: { rating: number; size?: 'sm' | 'md
       );
     } else {
       stars.push(
-        <svg key={i} className={`inline-block ${sizeClass} text-gray-300`} fill="currentColor" viewBox="0 0 20 20" width={size === 'md' ? 18 : 14} height={size === 'md' ? 18 : 14}>
+        <svg key={i} className={`inline-block ${sizeClass} text-gray-300`} fill="currentColor" viewBox="0 0 20 20" width={svgSize} height={svgSize}>
           <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
         </svg>
       );
     }
   }
 
-  return <span className="inline-flex items-center gap-0.5">{stars}</span>;
+  return <span className={`inline-flex items-center ${size === 'sm' ? 'gap-0' : 'gap-0.5'}`}>{stars}</span>;
 }
 
 function BookingRatingBar({ rating, size = 'sm' }: { rating: number; size?: 'sm' | 'md' }) {
@@ -271,13 +274,13 @@ const ReviewsSection = ({ title, backgroundColor }: ReviewsSectionProps) => {
                         <ChannelLogo channel={ch.channel} size={24} />
                         <div className="min-w-0">
                           <div className="font-jost font-medium text-[12px] text-gray-800 truncate">{config.label}</div>
-                          <div className="font-jost text-[11px] text-gray-600 flex items-center gap-1">
+                          <div className="font-jost text-[11px] text-gray-600 flex items-center gap-0.5 flex-nowrap">
                             {ch.channel === 'BOOKING_COM' ? (
                               <BookingRatingBar rating={ch.averageRating} size="sm" />
                             ) : (
-                              <><StarRating rating={ch.averageRating} size="sm" /> {ch.averageRating.toFixed(1)}</>
+                              <><StarRating rating={ch.averageRating} size="sm" /><span>{ch.averageRating.toFixed(1)}</span></>
                             )}
-                            <span className="text-gray-400">({ch.count})</span>
+                            <span className="text-gray-400 whitespace-nowrap">({ch.count})</span>
                           </div>
                         </div>
                       </div>

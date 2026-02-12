@@ -293,8 +293,8 @@ const Header = ({ heroSettings: initialHeroSettings }: { heroSettings?: HeroSett
                   <img
                     src="/assets/cabaneau-logo-dark.svg"
                     alt="Cabaneau Logo"
-                    width={120}
-                    height={40}
+                    width={150}
+                    height={50}
                   />
                 </Link>
                 <div className="flex items-center gap-4">
