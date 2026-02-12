@@ -147,7 +147,7 @@ function ChannelBadge({ channel }: { channel: string }) {
     WEBSITE: { src: '/assets/cabaneau-logo-dark.svg', alt: 'Cabaneau', className: 'h-5 w-auto object-contain' },
   };
   const logo = logos[channel] || logos.WEBSITE;
-  return <img src={logo.src} alt={logo.alt} className={logo.className} />;
+  return <img src={logo.src} alt={logo.alt} className={`${logo.className} grayscale opacity-60`} />;
 }
 
 const ReviewsSection = ({ title, backgroundColor }: ReviewsSectionProps) => {
