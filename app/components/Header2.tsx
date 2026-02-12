@@ -232,7 +232,7 @@ const Header2 = () => {
             {/* Mobile Menu Header */}
             <div className="flex items-center justify-between px-4 py-6 border-b border-gray-200">
               <Link href={link('/')} scroll={true} onClick={() => setIsMenuOpen(false)}>
-                <Image
+                <img
                   src="/assets/cabaneau-logo-dark.svg"
                   alt="Cabaneau Logo"
                   width={120}
