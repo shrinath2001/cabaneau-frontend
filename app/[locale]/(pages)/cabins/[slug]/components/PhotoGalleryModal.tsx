@@ -1,6 +1,8 @@
 'use client';
 
+import { useEffect } from 'react';
 import Image from 'next/image';
+import { useTranslations } from '@/app/providers/TranslationsProvider';
 
 // Image structure matching backend CabinImage type
 interface CabinImage {
@@ -23,7 +25,7 @@ interface PhotoGalleryModalProps {
   images: (CabinImage | string)[];  // Support both new tagged format and legacy string[]
   featuredImage?: string;
   imageTags?: ImageTag[];  // Dynamic tags from API
-  onImageClick?: (imageIndex: number) => void;
+  onImageClick?: (imageIndex: number, orderedImages: string[]) => void;
 }
 
 // Fallback category definitions (used when imageTags not provided)
@@ -112,6 +114,30 @@ const getMasonryPattern = (imageCount: number, images: CabinImage[]) => {
 };
 
 const PhotoGalleryModal = ({ isOpen, onClose, images, featuredImage, imageTags, onImageClick }: PhotoGalleryModalProps) => {
+  const { t } = useTranslations('cabin');
+
+  // Body scroll lock
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => { document.body.style.overflow = ''; };
+  }, [isOpen]);
+
+  // Keyboard support
+  useEffect(() => {
+    if (!isOpen) return;
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        onClose();
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isOpen, onClose]);
+
   if (!isOpen) return null;
 
   // Build category config from dynamic tags or use defaults
@@ -120,7 +146,7 @@ const PhotoGalleryModal = ({ isOpen, onClose, images, featuredImage, imageTags, 
         .sort((a, b) => a.displayOrder - b.displayOrder)
         .map(tag => ({
           tag: tag.slug,
-          name: tag.slug === 'other' ? 'Additional photos' : tag.name,
+          name: tag.slug === 'other' ? t('gallery.additional_photos', 'Additional photos') : tag.name,
         }))
     : DEFAULT_CATEGORY_CONFIG;
 
@@ -161,8 +187,22 @@ const PhotoGalleryModal = ({ isOpen, onClose, images, featuredImage, imageTags, 
   // If no active categories, show all images under "Photos"
   if (activeCategories.length === 0 && normalizedImages.length > 0) {
     imagesByTag['other'] = normalizedImages;
-    activeCategories.push({ tag: 'other', name: 'Photos' });
+    activeCategories.push({ tag: 'other', name: t('gallery.photos', 'Photos') });
   }
+
+  // Build flat ordered image URL array in category display order
+  const getFlatOrderedImages = (): string[] => {
+    const urls: string[] = [];
+    for (const cat of activeCategories) {
+      const catImages = imagesByTag[cat.tag];
+      if (catImages) {
+        for (const img of catImages) {
+          urls.push(img.url);
+        }
+      }
+    }
+    return urls;
+  };
 
   // Scroll to category function
   const scrollToCategory = (tag: string) => {
@@ -191,6 +231,7 @@ const PhotoGalleryModal = ({ isOpen, onClose, images, featuredImage, imageTags, 
         <button
           onClick={onClose}
           className="flex items-center text-gray-700 hover:text-black transition"
+          aria-label={t('gallery.close_gallery', 'Close photo gallery')}
         >
           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
@@ -200,11 +241,11 @@ const PhotoGalleryModal = ({ isOpen, onClose, images, featuredImage, imageTags, 
 
       <div className="max-w-7xl mx-auto px-6 md:px-20 py-8">
         {/* Photo Tour Title */}
-        <h2 className="text-3xl font-logga font-semibold mb-8">Photo tour</h2>
+        <h2 className="text-3xl font-logga font-semibold mb-8">{t('gallery.photo_tour', 'Photo tour')}</h2>
 
         {/* Category Thumbnails Grid - Only show categories with images */}
         {activeCategories.length > 1 && (
-          <div className="flex flex-wrap gap-6 mb-12">
+          <div className="grid grid-cols-2 sm:flex sm:flex-wrap gap-4 sm:gap-6 mb-12">
             {activeCategories.map((category) => {
               const catImages = imagesByTag[category.tag];
               const thumbnailUrl = catImages[0]?.thumbnailUrl || catImages[0]?.url;
@@ -215,13 +256,13 @@ const PhotoGalleryModal = ({ isOpen, onClose, images, featuredImage, imageTags, 
                   className="cursor-pointer group"
                   onClick={() => scrollToCategory(category.tag)}
                 >
-                  <div className="relative w-[185px] h-[90px] bg-gray-200 overflow-hidden mb-2">
+                  <div className="relative w-full sm:w-[185px] h-[90px] bg-gray-200 overflow-hidden mb-2">
                     <Image
                       src={thumbnailUrl}
                       alt={category.name}
                       fill
                       className="object-cover group-hover:scale-105 transition-transform duration-200"
-                      sizes="185px"
+                      sizes="(max-width: 640px) 50vw, 185px"
                     />
                   </div>
                   <p className="text-sm font-medium text-gray-800">{category.name}</p>
@@ -244,19 +285,19 @@ const PhotoGalleryModal = ({ isOpen, onClose, images, featuredImage, imageTags, 
               <div
                 key={category.tag}
                 id={`category-${category.tag}`}
-                className="grid grid-cols-[200px_1fr] gap-8 scroll-mt-24"
+                className="grid grid-cols-1 md:grid-cols-[200px_1fr] gap-4 md:gap-8 scroll-mt-24"
               >
                 <div>
-                  <h3 className="text-xl font-logga font-semibold sticky top-24">{category.name}</h3>
+                  <h3 className="text-xl font-logga font-semibold md:sticky md:top-24">{category.name}</h3>
                 </div>
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   {masonryItems.map((item, idx) => {
                     const flatIndex = getFlatIndex(category.tag, idx);
 
                     return (
                       <div
                         key={idx}
-                        onClick={() => onImageClick?.(flatIndex)}
+                        onClick={() => onImageClick?.(flatIndex, getFlatOrderedImages())}
                         className={`relative ${item.className} bg-gray-200 overflow-hidden cursor-pointer group`}
                       >
                         <Image
@@ -264,7 +305,7 @@ const PhotoGalleryModal = ({ isOpen, onClose, images, featuredImage, imageTags, 
                           alt={category.name}
                           fill
                           className="object-cover group-hover:scale-105 transition-transform duration-200"
-                          sizes="(max-width: 768px) 100vw, 50vw"
+                          sizes="(max-width: 640px) 100vw, (max-width: 768px) 100vw, 50vw"
                         />
                         {/* Hover overlay */}
                         <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-200" />

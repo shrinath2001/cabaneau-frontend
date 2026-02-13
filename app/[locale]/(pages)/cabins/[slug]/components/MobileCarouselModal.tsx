@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Image from 'next/image';
 
 // Image type that supports both old string[] and new tagged image format
@@ -25,6 +25,8 @@ interface MobileCarouselModalProps {
 
 const MobileCarouselModal = ({ isOpen, onClose, images, initialIndex = 0 }: MobileCarouselModalProps) => {
   const [currentIndex, setCurrentIndex] = useState(initialIndex);
+  const touchStartX = useRef(0);
+  const touchEndX = useRef(0);
 
   // Extract URLs for display
   const imageUrls = (images || []).map(getImageUrl);
@@ -39,12 +41,28 @@ const MobileCarouselModal = ({ isOpen, onClose, images, initialIndex = 0 }: Mobi
     if (isOpen) {
       document.body.style.overflow = 'hidden';
     } else {
-      document.body.style.overflow = 'unset';
+      document.body.style.overflow = '';
     }
     return () => {
-      document.body.style.overflow = 'unset';
+      document.body.style.overflow = '';
     };
   }, [isOpen]);
+
+  // Keyboard support
+  useEffect(() => {
+    if (!isOpen) return;
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        onClose();
+      } else if (e.key === 'ArrowLeft') {
+        setCurrentIndex((prev) => (prev - 1 + imageUrls.length) % imageUrls.length);
+      } else if (e.key === 'ArrowRight') {
+        setCurrentIndex((prev) => (prev + 1) % imageUrls.length);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isOpen, imageUrls.length, onClose]);
 
   if (!isOpen || imageUrls.length === 0) return null;
 
@@ -56,25 +74,16 @@ const MobileCarouselModal = ({ isOpen, onClose, images, initialIndex = 0 }: Mobi
     setCurrentIndex((prev) => (prev - 1 + imageUrls.length) % imageUrls.length);
   };
 
-  // Handle swipe gestures
-  let touchStartX = 0;
-  let touchEndX = 0;
-
   const handleTouchStart = (e: React.TouchEvent) => {
-    touchStartX = e.touches[0].clientX;
+    touchStartX.current = e.touches[0].clientX;
   };
 
   const handleTouchEnd = (e: React.TouchEvent) => {
-    touchEndX = e.changedTouches[0].clientX;
-    handleSwipe();
-  };
-
-  const handleSwipe = () => {
-    if (touchStartX - touchEndX > 50) {
-      // Swipe left - next image
+    touchEndX.current = e.changedTouches[0].clientX;
+    const diff = touchStartX.current - touchEndX.current;
+    if (diff > 50) {
       nextImage();
-    } else if (touchEndX - touchStartX > 50) {
-      // Swipe right - previous image
+    } else if (diff < -50) {
       prevImage();
     }
   };

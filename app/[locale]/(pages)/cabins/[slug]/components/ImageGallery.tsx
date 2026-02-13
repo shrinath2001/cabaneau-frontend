@@ -96,9 +96,20 @@ const ImageGallery = ({ images, featuredImage, onShowAllClick, onMobileImageClic
             </svg>
           </button>
 
-          {/* Image Counter */}
-          <div className="absolute bottom-3 right-3 bg-black/70 text-white px-3 py-1 rounded text-sm font-medium">
-            {currentImageIndex + 1} / {totalImages}
+          {/* Image Counter + View All */}
+          <div className="absolute bottom-3 right-3 flex items-center gap-2">
+            <div className="bg-black/70 text-white px-3 py-1 rounded text-sm font-medium">
+              {currentImageIndex + 1} / {totalImages}
+            </div>
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                onShowAllClick();
+              }}
+              className="bg-white/90 text-black px-3 py-1 rounded text-sm font-medium hover:bg-white transition"
+            >
+              {t('gallery.view_all', 'View all')}
+            </button>
           </div>
         </div>
       </div>

@@ -99,6 +99,7 @@ const SingleCabinPage = () => {
   const [showPhotoGallery, setShowPhotoGallery] = useState(false);
   const [showMobileCarousel, setShowMobileCarousel] = useState(false);
   const [mobileCarouselIndex, setMobileCarouselIndex] = useState(0);
+  const [mobileCarouselImages, setMobileCarouselImages] = useState<string[]>([]);
 
   // Get booking params from URL (passed from search page)
   const arrival = searchParams.get("arrival") || undefined;
@@ -236,6 +237,7 @@ const SingleCabinPage = () => {
           featuredImage={cabin.featuredImage}
           onShowAllClick={() => setShowPhotoGallery(true)}
           onMobileImageClick={(index) => {
+            setMobileCarouselImages([]);
             setMobileCarouselIndex(index);
             setShowMobileCarousel(true);
           }}
@@ -383,7 +385,8 @@ const SingleCabinPage = () => {
         images={cabin.images || []}
         featuredImage={cabin.featuredImage}
         imageTags={imageTags}
-        onImageClick={(index) => {
+        onImageClick={(index, orderedImages) => {
+          setMobileCarouselImages(orderedImages);
           setMobileCarouselIndex(index);
           setShowMobileCarousel(true);
         }}
@@ -393,7 +396,7 @@ const SingleCabinPage = () => {
       <MobileCarouselModal
         isOpen={showMobileCarousel}
         onClose={() => setShowMobileCarousel(false)}
-        images={cabin.images || []}
+        images={mobileCarouselImages.length > 0 ? mobileCarouselImages : (cabin.images || [])}
         initialIndex={mobileCarouselIndex}
       />
 
