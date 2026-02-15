@@ -41,8 +41,8 @@ export default function LogoSlider() {
       <Marquee
         speed={40}
         gradient={false}
-        pauseOnHover={true}
-        pauseOnClick={true}
+        pauseOnHover={false}
+        pauseOnClick={false}
       >
         {logos.map((logo, index) => (
           <div

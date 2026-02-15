@@ -36,7 +36,7 @@ export default function ImageSliderSection({
 
       {topSliderImages.length > 0 && (
         <div className="mb-4">
-          <Marquee speed={30} pauseOnHover direction="left" gradient={false}>
+          <Marquee speed={50} direction="left" gradient={false}>
             {topSliderImages.map((item, index) => (
               <div key={index} className="mx-2">
                 <img
@@ -52,7 +52,7 @@ export default function ImageSliderSection({
 
       {bottomSliderImages.length > 0 && (
         <div>
-          <Marquee speed={30} pauseOnHover direction="right" gradient={false}>
+          <Marquee speed={50} direction="right" gradient={false}>
             {bottomSliderImages.map((item, index) => (
               <div key={index} className="mx-2">
                 <img
