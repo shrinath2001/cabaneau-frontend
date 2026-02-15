@@ -265,7 +265,7 @@ const PhotoGalleryModal = ({ isOpen, onClose, images, featuredImage, imageTags, 
                       sizes="(max-width: 640px) 50vw, 185px"
                     />
                   </div>
-                  <p className="text-sm font-medium text-gray-800">{category.name}</p>
+                  <p className="text-sm font-jost font-medium text-gray-800">{category.name}</p>
                 </div>
               );
             })}

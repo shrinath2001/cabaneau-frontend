@@ -106,7 +106,7 @@ const ImageGallery = ({ images, featuredImage, onShowAllClick, onMobileImageClic
                 e.stopPropagation();
                 onShowAllClick();
               }}
-              className="bg-white/90 text-black px-3 py-1 rounded text-sm font-medium hover:bg-white transition"
+              className="bg-white/90 text-black px-3 py-1 text-sm font-medium hover:bg-white transition"
             >
               {t('gallery.view_all', 'View all')}
             </button>

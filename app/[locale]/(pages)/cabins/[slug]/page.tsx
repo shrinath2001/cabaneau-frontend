@@ -237,7 +237,11 @@ const SingleCabinPage = () => {
           featuredImage={cabin.featuredImage}
           onShowAllClick={() => setShowPhotoGallery(true)}
           onMobileImageClick={(index) => {
-            setMobileCarouselImages([]);
+            const urls = (cabin.images || []).map((img: string | { url: string }) => typeof img === 'string' ? img : img.url);
+            if (cabin.featuredImage && !urls.includes(cabin.featuredImage)) {
+              urls.unshift(cabin.featuredImage);
+            }
+            setMobileCarouselImages(urls);
             setMobileCarouselIndex(index);
             setShowMobileCarousel(true);
           }}
