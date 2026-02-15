@@ -6,12 +6,13 @@ import HostsSection from "../components/HostsSection";
 import LocationSection from "../components/LocationSection";
 import CustomCardsSection from "../components/CustomCardsSection";
 import ReviewsSection from "../components/ReviewsSection";
+import ImageSliderSection from "../components/ImageSliderSection";
 import LogoSlider from "../components/LogoSlider";
 
 interface HomepageSection {
   id: string;
   identifier: string;
-  sectionType: 'SERVICES' | 'ACTIVITIES' | 'HOSTS' | 'LOCATION' | 'CUSTOM_CARDS' | 'REVIEWS';
+  sectionType: 'SERVICES' | 'ACTIVITIES' | 'HOSTS' | 'LOCATION' | 'CUSTOM_CARDS' | 'REVIEWS' | 'IMAGE_SLIDER';
   title?: string;
   subtitle?: string;
   config?: Record<string, unknown>;
@@ -124,6 +125,17 @@ function renderSection(section: HomepageSection) {
         <ReviewsSection
           key={section.id}
           title={title}
+          backgroundColor={backgroundColor}
+        />
+      );
+
+    case 'IMAGE_SLIDER':
+      return (
+        <ImageSliderSection
+          key={section.id}
+          title={title}
+          topSliderImages={(config?.topSliderImages as Array<{ image: string }>) || []}
+          bottomSliderImages={(config?.bottomSliderImages as Array<{ image: string }>) || []}
           backgroundColor={backgroundColor}
         />
       );

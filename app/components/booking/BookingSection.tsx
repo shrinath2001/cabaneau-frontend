@@ -104,11 +104,12 @@ export default function BookingSection({
 
       const url = new URL(window.location.href);
       url.searchParams.set('departure', newDeparture);
+      url.searchParams.set('min_stay_adjusted', '1');
       window.location.href = url.toString();
     }
   }, [quote, checkIn, checkOut, loading]);
 
-  // Build min_stay warning message (shown after auto-adjust)
+  // Build min_stay warning message (only shown after auto-adjust via URL param)
   const minStayTexts: Record<string, (n: number) => string> = {
     en: (n) => `This cabin has a ${n}-night minimum stay. We've preselected the best available dates for you.`,
     fr: (n) => `Ce chalet a un séjour minimum de ${n} nuits. Nous avons présélectionné les meilleures dates pour vous.`,
@@ -117,14 +118,10 @@ export default function BookingSection({
   };
 
   let minStayWarning: string | undefined;
-  if (quote?.minStay && checkIn && checkOut && !loading) {
-    const requestedNights = Math.ceil(
-      (new Date(checkOut).getTime() - new Date(checkIn).getTime()) / (1000 * 60 * 60 * 24)
-    );
-    if (requestedNights === quote.minStay) {
-      const getText = minStayTexts[locale] || minStayTexts.en;
-      minStayWarning = getText(quote.minStay);
-    }
+  const wasAutoAdjusted = typeof window !== 'undefined' && new URLSearchParams(window.location.search).get('min_stay_adjusted') === '1';
+  if (wasAutoAdjusted && quote?.minStay && !loading) {
+    const getText = minStayTexts[locale] || minStayTexts.en;
+    minStayWarning = getText(quote.minStay);
   }
 
   // Handle "Save" from widget - refreshes page with URL params
