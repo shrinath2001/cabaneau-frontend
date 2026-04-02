@@ -30,6 +30,7 @@ interface StatsData {
 interface ReviewsSectionProps {
   title?: string;
   backgroundColor?: string;
+  cabinId?: string;
 }
 
 const CHANNEL_CONFIG: Record<string, { label: string; color: string }> = {
@@ -150,7 +151,7 @@ function ChannelBadge({ channel }: { channel: string }) {
   return <img src={logo.src} alt={logo.alt} className={`${logo.className} grayscale opacity-60`} />;
 }
 
-const ReviewsSection = ({ title, backgroundColor }: ReviewsSectionProps) => {
+const ReviewsSection = ({ title, backgroundColor, cabinId }: ReviewsSectionProps) => {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const [reviews, setReviews] = useState<ReviewData[]>([]);
   const [stats, setStats] = useState<StatsData | null>(null);
@@ -162,13 +163,17 @@ const ReviewsSection = ({ title, backgroundColor }: ReviewsSectionProps) => {
   useEffect(() => {
     const fetchData = async () => {
       try {
+        const reviewsUrl = cabinId
+          ? `/api/reviews?limit=50&cabinId=${cabinId}`
+          : '/api/reviews?limit=50';
+
         const [reviewsRes, statsRes] = await Promise.all([
-          apiFetch('/api/reviews?limit=50'),
-          apiFetch('/api/reviews/stats'),
+          apiFetch(reviewsUrl),
+          cabinId ? Promise.resolve(null) : apiFetch('/api/reviews/stats'),
         ]);
 
         const reviewsData = await reviewsRes.json();
-        const statsData = await statsRes.json();
+        const statsData = statsRes ? await statsRes.json() : null;
 
         setReviews(reviewsData?.data || []);
 
@@ -209,8 +214,8 @@ const ReviewsSection = ({ title, backgroundColor }: ReviewsSectionProps) => {
 
   if (loading) {
     return (
-      <section className="py-6 md:py-5 px-4 md:px-20" style={backgroundColor ? { backgroundColor } : {}}>
-        <div className="max-w-[1390px] mx-auto text-center py-12">
+      <section className="py-6 md:py-5" style={backgroundColor ? { backgroundColor } : {}}>
+        <div className="max-w-[1390px] mx-auto px-4 md:px-20 text-center py-12">
           <p className="text-gray-400 font-jost font-light">{t('reviews_section.loading', 'Loading reviews...')}</p>
         </div>
       </section>
@@ -234,18 +239,19 @@ const ReviewsSection = ({ title, backgroundColor }: ReviewsSectionProps) => {
           scrollbar-width: none;
         }
       `}</style>
-      <section className="py-6 md:py-5 px-4 md:px-20 md:mt-12" style={bgStyle}>
-        <div className="max-w-[1390px] mx-auto">
+      <section className="py-6 md:py-5 md:mt-12" style={bgStyle}>
+        <div className="max-w-[1390px] mx-auto px-4 md:px-20">
           {/* Section Title */}
-          <h2 className="font-logga text-[28px] md:text-[42px] font-semibold text-center pt-6 md:pt-10 mb-8 md:mb-12">
+          <h2 className="font-logga text-[28px] md:text-[42px] font-semibold md:font-normal text-center pt-6 md:pt-10 mb-8 md:mb-12">
             {displayTitle}
           </h2>
+        </div>
 
           {/* Channel Stats Bar */}
           {stats && stats.channels.length > 0 && (
             <div className="mb-8 md:mb-12">
               {/* Mobile: Compact overall + 2x2 grid for channels */}
-              <div className="md:hidden">
+              <div className="md:hidden px-4">
                 {/* Overall rating - compact horizontal */}
                 {stats.overall.count > 0 && (
                   <div className="flex items-center justify-center gap-3 mb-3 px-4 py-2 bg-[#495D4D] text-white mx-auto max-w-[320px]">
@@ -288,14 +294,14 @@ const ReviewsSection = ({ title, backgroundColor }: ReviewsSectionProps) => {
                 </div>
               </div>
 
-              {/* Desktop: horizontal row */}
-              <div className="hidden md:flex flex-wrap justify-center gap-8">
+              {/* Desktop: horizontal row - full width */}
+              <div className="hidden md:flex justify-center gap-0 bg-white border-y border-gray-100 overflow-hidden">
                 {stats.channels.map((ch) => {
                   const config = CHANNEL_CONFIG[ch.channel] || CHANNEL_CONFIG.WEBSITE;
                   return (
                     <div
                       key={ch.channel}
-                      className="flex items-center gap-3 px-4 py-3 bg-white shadow-sm border border-gray-100"
+                      className="flex flex-1 items-center justify-center gap-3 px-4 py-3 border-r border-gray-100 min-w-0"
                     >
                       <div className="flex-shrink-0">
                         <ChannelLogo channel={ch.channel} size={32} />
@@ -318,7 +324,7 @@ const ReviewsSection = ({ title, backgroundColor }: ReviewsSectionProps) => {
 
                 {/* Overall - desktop */}
                 {stats.overall.count > 0 && (
-                  <div className="flex items-center gap-3 px-4 py-3 bg-[#495D4D] text-white">
+                  <div className="flex flex-1 items-center justify-center gap-3 px-4 py-3 bg-[#495D4D] text-white">
                     <div className="w-8 h-8 rounded-full bg-[#F49A4A] flex items-center justify-center text-white text-[12px] font-bold flex-shrink-0">
                       {stats.overall.averageRating.toFixed(1)}
                     </div>
@@ -343,7 +349,7 @@ const ReviewsSection = ({ title, backgroundColor }: ReviewsSectionProps) => {
             {reviews.length > 3 && (
               <button
                 onClick={scrollLeft}
-                className="hidden md:flex absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 z-10 w-10 h-10 bg-white shadow-md rounded-full items-center justify-center hover:bg-gray-50 transition-colors"
+                className="hidden md:flex absolute left-6 top-1/2 -translate-y-1/2 z-10 w-10 h-10 bg-white shadow-md rounded-full items-center justify-center hover:bg-gray-50 transition-colors"
                 aria-label="Scroll left"
               >
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#495D4D" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -354,14 +360,14 @@ const ReviewsSection = ({ title, backgroundColor }: ReviewsSectionProps) => {
 
             <div
               ref={scrollContainerRef}
-              className="flex gap-[19.42px] overflow-x-auto reviews-no-scrollbar py-4 -mx-4 md:mx-0"
+              className="flex gap-[19.42px] overflow-x-auto reviews-no-scrollbar py-4 md:py-8"
               style={{ scrollSnapType: 'x mandatory' }}
             >
-              <div className="flex-shrink-0 w-[10px] md:w-0"></div>
+              <div className="flex-shrink-0 w-[16px] md:w-[24px]"></div>
               {reviews.map((review, index) => (
                 <div
                   key={review.id}
-                  className="flex-shrink-0 w-[380px] bg-white p-[15px] shadow-sm border border-gray-100 transition-all duration-300 hover:-translate-y-2 hover:shadow-[0_4px_6px_-1px_rgba(0,0,0,0.1),0_10px_15px_-3px_rgba(0,0,0,0.1),0_20px_25px_-5px_rgba(0,0,0,0.1)]"
+                  className="flex-shrink-0 w-[380px] bg-white p-[15px] shadow-[0_2px_10px_rgba(0,0,0,0.06)] border border-gray-100 transition-all duration-300 hover:-translate-y-2 hover:shadow-[0_12px_36px_rgba(0,0,0,0.14)]"
                   style={{ scrollSnapAlign: index === 0 ? 'start' : 'center' }}
                 >
                   {/* Header: Avatar + Name + Channel */}
@@ -404,14 +410,14 @@ const ReviewsSection = ({ title, backgroundColor }: ReviewsSectionProps) => {
                   )}
                 </div>
               ))}
-              <div className="flex-shrink-0 w-[10px] md:w-0"></div>
+              <div className="flex-shrink-0 w-[16px] md:w-[24px]"></div>
             </div>
 
             {/* Right Arrow */}
             {reviews.length > 3 && (
               <button
                 onClick={scrollRight}
-                className="hidden md:flex absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 z-10 w-10 h-10 bg-white shadow-md rounded-full items-center justify-center hover:bg-gray-50 transition-colors"
+                className="hidden md:flex absolute right-6 top-1/2 -translate-y-1/2 z-10 w-10 h-10 bg-white shadow-md rounded-full items-center justify-center hover:bg-gray-50 transition-colors"
                 aria-label="Scroll right"
               >
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#495D4D" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -420,7 +426,6 @@ const ReviewsSection = ({ title, backgroundColor }: ReviewsSectionProps) => {
               </button>
             )}
           </div>
-        </div>
       </section>
     </>
   );

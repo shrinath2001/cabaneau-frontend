@@ -17,8 +17,12 @@ export async function GET(request: Request) {
 
     const { searchParams } = new URL(request.url);
     const limit = searchParams.get('limit') || '50';
+    const cabinId = searchParams.get('cabinId');
 
-    const response = await fetch(`${apiBaseUrl}/reviews?limit=${limit}`, {
+    const qs = new URLSearchParams({ limit });
+    if (cabinId) qs.set('cabinId', cabinId);
+
+    const response = await fetch(`${apiBaseUrl}/reviews?${qs.toString()}`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',

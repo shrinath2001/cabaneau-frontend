@@ -120,7 +120,7 @@ export default function BlogPostPage() {
   return (
     <main>
       {/* Hero Section */}
-      <section className="relative h-[300px] md:h-[400px] lg:h-[500px] flex items-center justify-center">
+      <section className="relative h-screen flex items-center justify-center">
         <div
           className="absolute inset-0 bg-cover bg-center"
           style={{

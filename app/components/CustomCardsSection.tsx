@@ -37,7 +37,7 @@ const CustomCardsSection = ({
       <div className="container mx-auto">
         <div className="max-w-[1390px] mx-auto">
           {title && (
-            <h2 className="font-logga text-[28px] md:text-[42px] font-semibold text-center mb-4 md:mb-8">
+            <h2 className="font-logga text-[28px] md:text-[42px] font-semibold md:font-normal text-center mb-4 md:mb-8">
               {title}
             </h2>
           )}

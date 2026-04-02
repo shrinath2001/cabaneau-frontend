@@ -174,7 +174,7 @@ export default function ActivitiesPage() {
   return (
     <main>
       {/* Hero Section */}
-      <section className="relative h-[300px] md:h-[400px] flex items-center justify-center bg-[#495D4D]">
+      <section className="relative h-screen flex items-center justify-center bg-[#495D4D]">
         {!loading && (
           <div
             className="absolute inset-0 bg-cover bg-center transition-opacity duration-300"

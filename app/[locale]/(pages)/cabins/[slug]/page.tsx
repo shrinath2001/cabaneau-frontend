@@ -11,6 +11,7 @@ import AmenitiesSection from "./components/AmenitiesSection";
 import ExtraServicesSection from "./components/ExtraServicesSection";
 import SleepingAreasSection from "./components/SleepingAreasSection";
 import ThingsToKnow from "./components/ThingsToKnow";
+import ReviewsSection from "@/app/components/ReviewsSection";
 import { apiFetch } from "@/app/lib/api";
 import { useTranslations } from "@/app/providers/TranslationsProvider";
 
@@ -100,6 +101,7 @@ const SingleCabinPage = () => {
   const [showMobileCarousel, setShowMobileCarousel] = useState(false);
   const [mobileCarouselIndex, setMobileCarouselIndex] = useState(0);
   const [mobileCarouselImages, setMobileCarouselImages] = useState<string[]>([]);
+  const [carouselKey, setCarouselKey] = useState(0);
 
   // Get booking params from URL (passed from search page)
   const arrival = searchParams.get("arrival") || undefined;
@@ -382,6 +384,9 @@ const SingleCabinPage = () => {
         </div>
       </div>
 
+      {/* Cabin-specific Reviews */}
+      <ReviewsSection cabinId={cabin.id} />
+
       {/* Photo Gallery Modal Component (Desktop) */}
       <PhotoGalleryModal
         isOpen={showPhotoGallery}
@@ -392,12 +397,14 @@ const SingleCabinPage = () => {
         onImageClick={(index, orderedImages) => {
           setMobileCarouselImages(orderedImages);
           setMobileCarouselIndex(index);
+          setCarouselKey(k => k + 1);
           setShowMobileCarousel(true);
         }}
       />
 
       {/* Mobile Carousel Modal Component */}
       <MobileCarouselModal
+        key={carouselKey}
         isOpen={showMobileCarousel}
         onClose={() => setShowMobileCarousel(false)}
         images={mobileCarouselImages.length > 0 ? mobileCarouselImages : (cabin.images || [])}
@@ -425,8 +432,8 @@ const SingleCabinPage = () => {
         />
       </div>
 
-      {/* Bottom padding for mobile sticky bar */}
-      <div className="h-24 lg:hidden" />
+      {/* Bottom padding for mobile sticky bar - h-36 covers notice banner height */}
+      <div className="h-36 lg:hidden" />
     </div>
   );
 };

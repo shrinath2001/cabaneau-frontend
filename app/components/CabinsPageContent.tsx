@@ -33,7 +33,7 @@ const CabinsPageContent = ({ cabins }: CabinsPageContentProps) => {
 
   return (
     <div className="container mx-auto px-4 py-16">
-      <h1 className="font-logga text-[28px] md:text-[42px] font-semibold text-center mb-12">
+      <h1 className="font-logga text-[28px] md:text-[42px] font-semibold md:font-normal text-center mb-12">
         {t('page.title', 'OUR CABINS')}
       </h1>
 
@@ -42,9 +42,11 @@ const CabinsPageContent = ({ cabins }: CabinsPageContentProps) => {
           <p className="text-gray-600 text-lg">{t('page.no_cabins', 'No cabins available at the moment.')}</p>
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="flex flex-wrap justify-center gap-8">
           {cabins.map((cabin: Cabin) => (
-            <CabinCard key={cabin.id} {...cabin} />
+            <div key={cabin.id} className="w-full md:w-[calc(50%-1rem)] lg:w-[calc(33.333%-1.34rem)]">
+              <CabinCard {...cabin} />
+            </div>
           ))}
         </div>
       )}

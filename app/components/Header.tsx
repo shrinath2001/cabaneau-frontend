@@ -104,7 +104,7 @@ const Header = ({ heroSettings: initialHeroSettings }: { heroSettings?: HeroSett
 
   return (
     <div
-      className="relative bg-cover bg-center h-screen md:h-[859px] overflow-hidden"
+      className="relative bg-cover bg-center h-screen overflow-hidden"
       style={heroSettings?.backgroundType === 'video' && heroSettings?.backgroundUrl ? {} : {
         backgroundImage: heroSettings?.backgroundUrl
           ? `url(${heroSettings.backgroundUrl})`

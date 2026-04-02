@@ -29,7 +29,7 @@ export default function ImageSliderSection({
       style={{ backgroundColor: backgroundColor || undefined }}
     >
       {title && (
-        <h2 className="font-logga text-[28px] md:text-[42px] font-semibold text-center pt-6 md:pt-10 mb-10 md:mb-14">
+        <h2 className="font-logga text-[28px] md:text-[42px] font-semibold md:font-normal text-center pt-6 md:pt-10 mb-10 md:mb-14">
           {title}
         </h2>
       )}

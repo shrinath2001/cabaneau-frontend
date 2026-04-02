@@ -119,7 +119,7 @@ const ImageGallery = ({ images, featuredImage, onShowAllClick, onMobileImageClic
         {/* Large main image - LEFT SIDE, full height */}
         <div
           className="relative bg-gray-200 h-[341px] cursor-pointer"
-          onClick={() => onMobileImageClick?.(0)}
+          onClick={() => onShowAllClick()}
         >
           <Image
             src={displayImages[0]}
@@ -135,7 +135,7 @@ const ImageGallery = ({ images, featuredImage, onShowAllClick, onMobileImageClic
           {/* Top left */}
           <div
             className="relative bg-gray-200 cursor-pointer"
-            onClick={() => onMobileImageClick?.(1)}
+            onClick={() => onShowAllClick()}
           >
             <Image
               src={displayImages[1]}
@@ -149,7 +149,7 @@ const ImageGallery = ({ images, featuredImage, onShowAllClick, onMobileImageClic
           {/* Top right */}
           <div
             className="relative bg-gray-200 cursor-pointer"
-            onClick={() => onMobileImageClick?.(2)}
+            onClick={() => onShowAllClick()}
           >
             <Image
               src={displayImages[2]}
@@ -163,7 +163,7 @@ const ImageGallery = ({ images, featuredImage, onShowAllClick, onMobileImageClic
           {/* Bottom left */}
           <div
             className="relative bg-gray-200 cursor-pointer"
-            onClick={() => onMobileImageClick?.(3)}
+            onClick={() => onShowAllClick()}
           >
             <Image
               src={displayImages[3]}
@@ -177,7 +177,7 @@ const ImageGallery = ({ images, featuredImage, onShowAllClick, onMobileImageClic
           {/* Bottom right with "SHOW ALL PICTURES" button */}
           <div
             className="relative bg-gray-200 cursor-pointer"
-            onClick={() => onMobileImageClick?.(4)}
+            onClick={() => onShowAllClick()}
           >
             <Image
               src={displayImages[4]}
