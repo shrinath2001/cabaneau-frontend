@@ -20,7 +20,9 @@ export async function GET(request: NextRequest) {
       return NextResponse.json(null);
     }
 
-    const data = await response.json();
+    const text = await response.text();
+    if (!text) return NextResponse.json(null);
+    const data = JSON.parse(text);
     return NextResponse.json(data);
   } catch (error) {
     console.error('Error fetching promo banner:', error);
