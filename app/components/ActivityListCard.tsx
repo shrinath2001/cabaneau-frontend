@@ -23,12 +23,12 @@ const ActivityListCard: React.FC<ActivityListCardProps> = ({ activity, onReadMor
         {/* Content Section */}
         <div className="flex-1 flex flex-col">
           {/* Title - 22px Logga #212121 */}
-          <h3 className="text-[22px] font-logga mb-2 uppercase tracking-wide" style={{ color: '#212121' }}>
+          <h3 className="text-[18px] md:text-[22px] font-logga mb-2 uppercase tracking-wide" style={{ color: '#212121' }}>
             {activity.title}
           </h3>
 
           {/* Subtitle - 18px Jost Light #706C6C */}
-          <p className="text-[18px] font-jost font-light mb-4 leading-relaxed" style={{ color: '#706C6C' }}>
+          <p className="text-[14px] md:text-[18px] font-jost font-light mb-4 leading-relaxed" style={{ color: '#706C6C' }}>
             {activity.subtitle}
           </p>
 
@@ -53,12 +53,12 @@ const ActivityListCard: React.FC<ActivityListCardProps> = ({ activity, onReadMor
           </div>
 
           {/* Description - 18px Jost Light #706C6C */}
-          <p className="text-[18px] font-jost font-light mb-4 leading-relaxed" style={{ color: '#706C6C' }}>
+          <p className="text-[14px] md:text-[18px] font-jost font-light mb-4 leading-relaxed" style={{ color: '#706C6C' }}>
             {activity.description}
           </p>
 
           {/* Contact Info */}
-          <div className="flex flex-wrap gap-x-6 gap-y-2 text-[18px] font-jost font-light mb-6" style={{ color: '#706C6C' }}>
+          <div className="flex flex-wrap gap-x-6 gap-y-2 text-[13px] md:text-[18px] font-jost font-light mb-6" style={{ color: '#706C6C' }}>
             <div className="flex items-center gap-2">
               <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
                 <path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z" />

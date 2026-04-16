@@ -27,22 +27,22 @@ const EatDrinkCard: React.FC<EatDrinkCardProps> = ({ item, onReadMore, isReverse
         <div className="flex-1 flex flex-col">
           <div>
             {/* Title - 22px Logga #212121 */}
-            <h3 className="text-[22px] font-logga mb-2 uppercase tracking-wide" style={{ color: '#212121' }}>
+            <h3 className="text-[18px] md:text-[22px] font-logga mb-2 uppercase tracking-wide" style={{ color: '#212121' }}>
               {item.title}
             </h3>
 
             {/* Subtitle - 18px Jost Light #706C6C */}
-            <p className="text-[18px] font-jost font-light mb-3 leading-relaxed" style={{ color: '#706C6C' }}>
+            <p className="text-[14px] md:text-[18px] font-jost font-light mb-3 leading-relaxed" style={{ color: '#706C6C' }}>
               {item.subtitle}
             </p>
 
             {/* Price - 22px Jost 500 Medium #212121 */}
-            <p className="text-[22px] font-medium font-heading mb-4" style={{ color: '#212121' }}>
+            <p className="text-[18px] md:text-[22px] font-medium font-heading mb-4" style={{ color: '#212121' }}>
               {item.price}
             </p>
 
             {/* Description - 18px Jost Light #706C6C */}
-            <p className="text-[18px] font-jost font-light mb-5 leading-relaxed" style={{ color: '#706C6C' }}>
+            <p className="text-[14px] md:text-[18px] font-jost font-light mb-5 leading-relaxed" style={{ color: '#706C6C' }}>
               {item.description}
             </p>
           </div>
