@@ -7,9 +7,21 @@ import EatDrinkDetailModal from '@/app/components/EatDrinkDetailModal';
 import { apiFetch } from '@/app/lib/api';
 import { useTranslations } from '@/app/providers/TranslationsProvider';
 
+interface DiscoverSlot {
+  image?: string;
+  text?: Record<string, string>;
+  buttonText?: Record<string, string>;
+  buttonLink?: string;
+}
+
 interface PageData {
   heroImage?: string;
   heroText?: string;
+  discoverSection?: {
+    dining?: DiscoverSlot;
+    breakfast?: DiscoverSlot;
+    drinks?: DiscoverSlot;
+  };
 }
 
 type TabType = 'breakfast' | 'dining' | 'drinks';
@@ -140,6 +152,7 @@ export default function EatDrinkPage() {
           setPageData({
             heroImage: pageResult.heroImage,
             heroText: pageResult.heroText,
+            discoverSection: pageResult.discoverSection,
           });
         }
       } catch (error) {
@@ -308,35 +321,38 @@ export default function EatDrinkPage() {
             className="absolute inset-0 bg-cover bg-center"
             style={{
               backgroundImage: activeTab === 'breakfast'
-                ? 'url(/assets/dinner.png)'
+                ? `url(${pageData.discoverSection?.dining?.image || '/assets/dinner.png'})`
                 : activeTab === 'dining'
-                ? 'url(/assets/breakfast.jpg)'
-                : 'url(/assets/dinner.png)',
+                ? `url(${pageData.discoverSection?.breakfast?.image || '/assets/breakfast.jpg'})`
+                : `url(${pageData.discoverSection?.dining?.image || '/assets/dinner.png'})`,
             }}
           >
             <div className="absolute inset-0" style={{ backgroundColor: 'rgba(0, 0, 0, 0.50)' }}></div>
           </div>
-          <h2 className="relative z-10 text-white text-4xl md:text-5xl lg:text-6xl font-custom text-center px-4 mb-6">
-            {activeTab === 'breakfast' ? (
-              <>{t('eat_drink.discover.our', 'OUR')}<br />{t('eat_drink.discover.dining_offering', 'DINING OFFERING')}</>
-            ) : activeTab === 'dining' ? (
-              <>{t('eat_drink.discover.our', 'OUR')}<br />{t('eat_drink.discover.breakfast_offering', 'BREAKFAST OFFERING')}</>
-            ) : (
-              <>{t('eat_drink.discover.our', 'OUR')}<br />{t('eat_drink.discover.dining_offering', 'DINING OFFERING')}</>
-            )}
-          </h2>
-          <button
-            onClick={() => {
-              // Show dining from breakfast, breakfast from dining, dining from drinks
-              const newTab: TabType = activeTab === 'breakfast' ? 'dining' : activeTab === 'dining' ? 'breakfast' : 'dining';
-              handleTabChange(newTab);
-              window.scrollTo({ top: 0, behavior: 'smooth' });
-            }}
-            className="relative z-10 px-8 py-3 text-white font-heading tracking-wider transition-all hover:bg-hoverorange"
-            style={{ backgroundColor: '#939D92', fontSize: '18px', fontWeight: 500 }}
-          >
-            {t('eat_drink.discover.button', 'DISCOVER OUR SELECTION')}
-          </button>
+          {(() => {
+            const slot = activeTab === 'breakfast' ? pageData.discoverSection?.dining : activeTab === 'dining' ? pageData.discoverSection?.breakfast : pageData.discoverSection?.dining;
+            const text = slot?.text?.[locale] || slot?.text?.en;
+            const btnText = slot?.buttonText?.[locale] || slot?.buttonText?.en;
+            const defaultText = activeTab === 'breakfast' ? 'OUR DINING OFFERING' : activeTab === 'dining' ? 'OUR BREAKFAST OFFERING' : 'OUR DINING OFFERING';
+            return (
+              <>
+                <h2 className="relative z-10 text-white text-4xl md:text-5xl lg:text-6xl font-custom text-center px-4 mb-6">
+                  {text || defaultText}
+                </h2>
+                <button
+                  onClick={() => {
+                    const newTab: TabType = activeTab === 'breakfast' ? 'dining' : activeTab === 'dining' ? 'breakfast' : 'dining';
+                    handleTabChange(newTab);
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                  }}
+                  className="relative z-10 px-8 py-3 text-white font-heading tracking-wider transition-all hover:bg-hoverorange"
+                  style={{ backgroundColor: '#939D92', fontSize: '18px', fontWeight: 500 }}
+                >
+                  {btnText || t('eat_drink.discover.button', 'DISCOVER OUR SELECTION')}
+                </button>
+              </>
+            );
+          })()}
         </div>
 
         {/* Second Section */}
@@ -345,35 +361,38 @@ export default function EatDrinkPage() {
             className="absolute inset-0 bg-cover bg-center"
             style={{
               backgroundImage: activeTab === 'breakfast'
-                ? 'url(/assets/drinks.jpg)'
+                ? `url(${pageData.discoverSection?.drinks?.image || '/assets/drinks.jpg'})`
                 : activeTab === 'dining'
-                ? 'url(/assets/drinks.jpg)'
-                : 'url(/assets/breakfast.jpg)',
+                ? `url(${pageData.discoverSection?.drinks?.image || '/assets/drinks.jpg'})`
+                : `url(${pageData.discoverSection?.breakfast?.image || '/assets/breakfast.jpg'})`,
             }}
           >
             <div className="absolute inset-0" style={{ backgroundColor: 'rgba(0, 0, 0, 0.50)' }}></div>
           </div>
-          <h2 className="relative z-10 text-white text-4xl md:text-5xl lg:text-6xl font-custom text-center px-4 mb-6">
-            {activeTab === 'breakfast' ? (
-              <>{t('eat_drink.discover.our', 'OUR')}<br />{t('eat_drink.discover.drinks_offering', 'DRINKS OFFERING')}</>
-            ) : activeTab === 'dining' ? (
-              <>{t('eat_drink.discover.our', 'OUR')}<br />{t('eat_drink.discover.drinks_offering', 'DRINKS OFFERING')}</>
-            ) : (
-              <>{t('eat_drink.discover.our', 'OUR')}<br />{t('eat_drink.discover.breakfast_offering', 'BREAKFAST OFFERING')}</>
-            )}
-          </h2>
-          <button
-            onClick={() => {
-              // Show drinks from breakfast/dining, breakfast from drinks
-              const newTab: TabType = activeTab === 'drinks' ? 'breakfast' : 'drinks';
-              handleTabChange(newTab);
-              window.scrollTo({ top: 0, behavior: 'smooth' });
-            }}
-            className="relative z-10 px-8 py-3 text-white font-heading tracking-wider transition-all hover:bg-hoverorange"
-            style={{ backgroundColor: '#939D92', fontSize: '18px', fontWeight: 500 }}
-          >
-            {t('eat_drink.discover.button', 'DISCOVER OUR SELECTION')}
-          </button>
+          {(() => {
+            const slot = activeTab === 'drinks' ? pageData.discoverSection?.breakfast : pageData.discoverSection?.drinks;
+            const text = slot?.text?.[locale] || slot?.text?.en;
+            const btnText = slot?.buttonText?.[locale] || slot?.buttonText?.en;
+            const defaultText = activeTab === 'drinks' ? 'OUR BREAKFAST OFFERING' : 'OUR DRINKS OFFERING';
+            return (
+              <>
+                <h2 className="relative z-10 text-white text-4xl md:text-5xl lg:text-6xl font-custom text-center px-4 mb-6">
+                  {text || defaultText}
+                </h2>
+                <button
+                  onClick={() => {
+                    const newTab: TabType = activeTab === 'drinks' ? 'breakfast' : 'drinks';
+                    handleTabChange(newTab);
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                  }}
+                  className="relative z-10 px-8 py-3 text-white font-heading tracking-wider transition-all hover:bg-hoverorange"
+                  style={{ backgroundColor: '#939D92', fontSize: '18px', fontWeight: 500 }}
+                >
+                  {btnText || t('eat_drink.discover.button', 'DISCOVER OUR SELECTION')}
+                </button>
+              </>
+            );
+          })()}
         </div>
       </section>
 

@@ -7,9 +7,19 @@ import ActivityDetailModal from "@/app/components/ActivityDetailModal";
 import { apiFetch } from "@/app/lib/api";
 import { useTranslations } from "@/app/providers/TranslationsProvider";
 
+interface DiscoverSlot {
+  image?: string;
+  text?: Record<string, string>;
+  buttonText?: Record<string, string>;
+  buttonLink?: string;
+}
+
 interface PageData {
   heroImage?: string;
   heroText?: string;
+  discoverSection?: {
+    main?: DiscoverSlot;
+  };
 }
 
 interface APIActivity {
@@ -97,6 +107,7 @@ export default function ActivitiesPage() {
           setPageData({
             heroImage: pageResult.heroImage,
             heroText: pageResult.heroText,
+            discoverSection: pageResult.discoverSection,
           });
         }
       } catch (error) {
@@ -266,7 +277,7 @@ export default function ActivitiesPage() {
         <div
           className="absolute inset-0 bg-cover bg-center"
           style={{
-            backgroundImage: "url(/assets/breakfast.jpg)",
+            backgroundImage: `url(${pageData.discoverSection?.main?.image || '/assets/breakfast.jpg'})`,
           }}
         >
           <div
@@ -274,37 +285,31 @@ export default function ActivitiesPage() {
             style={{ backgroundColor: "rgba(0, 0, 0, 0.50)" }}
           ></div>
         </div>
-        <h2 className="relative z-10 text-white text-4xl md:text-5xl lg:text-6xl font-custom text-center px-4 mb-6">
-          {activeTab === "activities" ? (
+        {(() => {
+          const slot = pageData.discoverSection?.main;
+          const text = slot?.text?.[locale] || slot?.text?.en;
+          const btnText = slot?.buttonText?.[locale] || slot?.buttonText?.en;
+          const defaultText = activeTab === "activities"
+            ? t("discover.restaurants_title", "DISCOVER THE RESTAURANTS AROUND")
+            : t("discover.activities_title", "DISCOVER THE ACTIVITIES AROUND");
+          return (
             <>
-              {t("discover.restaurants_title", "DISCOVER THE RESTAURANTS")}
-              <br />
-              {t("discover.around", "AROUND")}
+              <h2 className="relative z-10 text-white text-4xl md:text-5xl lg:text-6xl font-custom text-center px-4 mb-6">
+                {text || defaultText}
+              </h2>
+              <button
+                onClick={() => {
+                  handleTabChange(activeTab === "activities" ? "restaurants" : "activities");
+                  setTimeout(() => window.scrollTo({ top: 0, behavior: "smooth" }), 50);
+                }}
+                className="relative z-10 px-8 py-3 text-white font-heading tracking-wider transition-all hover:bg-hoverorange"
+                style={{ backgroundColor: "#939D92", fontSize: "18px", fontWeight: 500 }}
+              >
+                {btnText || t("discover.button", "DISCOVER")}
+              </button>
             </>
-          ) : (
-            <>
-              {t("discover.activities_title", "DISCOVER THE ACTIVITIES")}
-              <br />
-              {t("discover.around", "AROUND")}
-            </>
-          )}
-        </h2>
-        <button
-          onClick={() => {
-            handleTabChange(
-              activeTab === "activities" ? "restaurants" : "activities"
-            );
-            setTimeout(() => window.scrollTo({ top: 0, behavior: "smooth" }), 50);
-          }}
-          className="relative z-10 px-8 py-3 text-white font-heading tracking-wider transition-all hover:bg-hoverorange"
-          style={{
-            backgroundColor: "#939D92",
-            fontSize: "18px",
-            fontWeight: 500,
-          }}
-        >
-          {t("discover.button", "DISCOVER")}
-        </button>
+          );
+        })()}
       </section>
 
       {/* Activity Detail Modal */}
