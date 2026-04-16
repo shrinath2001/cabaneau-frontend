@@ -41,7 +41,7 @@ const ServicesSection = ({
             {displayTitle}
           </h2>
           {items && items.length > 0 ? (
-            <div className="flex flex-col md:flex-row gap-3 justify-between">
+            <div className="flex flex-col lg:flex-row gap-3 justify-between">
               {items.map((item, index) => (
                 <ServiceCard
                   key={index}

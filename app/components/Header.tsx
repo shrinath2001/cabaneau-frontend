@@ -153,7 +153,7 @@ const Header = ({ heroSettings: initialHeroSettings }: { heroSettings?: HeroSett
               </Link>
             </div>
             {/* Nav spacing: space-x-10 lg:space-x-12 (PreFinal UI) | Revert to: space-x-8 */}
-            <nav className="hidden md:flex items-center space-x-10 lg:space-x-12">
+            <nav className="hidden lg:flex items-center space-x-10 lg:space-x-12">
               <Link href={link('/cabins')} className="font-heading font-medium text-[18px] text-white hover:text-[#F49A4A] transition-colors uppercase">
                 {t('link.our_cabins', 'Our Cabins')}
               </Link>
@@ -167,7 +167,7 @@ const Header = ({ heroSettings: initialHeroSettings }: { heroSettings?: HeroSett
                 {t('link.blog', 'Blog')}
               </Link>
             </nav>
-            <div className="hidden md:flex items-center space-x-3 lg:space-x-4">
+            <div className="hidden lg:flex items-center space-x-3 lg:space-x-4">
               <Link
                 href={link('/gift-voucher')}
                 className="text-white w-[134px] h-[50px] flex items-center justify-center font-heading font-medium text-sm bg-[#939D92] hover:bg-[#7d8d7d] transition uppercase"
@@ -212,7 +212,7 @@ const Header = ({ heroSettings: initialHeroSettings }: { heroSettings?: HeroSett
                 )}
               </div>
             </div>
-            <div className="md:hidden flex items-center gap-3">
+            <div className="lg:hidden flex items-center gap-3">
               {/* Book Now Button */}
               <Link
                 href={link('/search')}
@@ -286,7 +286,7 @@ const Header = ({ heroSettings: initialHeroSettings }: { heroSettings?: HeroSett
           </div>
           {/* Full Screen Mobile Menu */}
           {isMenuOpen && (
-            <div className="md:hidden fixed inset-0 bg-white z-50">
+            <div className="lg:hidden fixed inset-0 bg-white z-50">
               {/* Mobile Menu Header */}
               <div className="flex items-center justify-between px-4 py-6 border-b border-gray-200">
                 <Link href={link('/')} onClick={() => setIsMenuOpen(false)}>
