@@ -98,7 +98,7 @@ export default function StaticPage() {
   return (
     <main>
       {/* Hero Section */}
-      <section className="relative h-screen flex items-center justify-center">
+      <section className="relative h-[250px] md:h-[300px] flex items-center justify-center">
         <div
           className="absolute inset-0 bg-cover bg-center"
           style={{
