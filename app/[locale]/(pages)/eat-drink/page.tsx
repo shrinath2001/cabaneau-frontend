@@ -238,7 +238,7 @@ export default function EatDrinkPage() {
           </div>
         )}
         <h1 className="relative z-10 text-white text-4xl md:text-5xl lg:text-6xl font-custom text-center px-4">
-          {!loading && (pageData.heroText || t('eat_drink.hero_title', 'OUR EAT & DRINK SERVICES'))}
+          {!loading && pageData.heroText}
         </h1>
       </section>
 
@@ -315,85 +315,89 @@ export default function EatDrinkPage() {
 
       {/* Discover More Section */}
       <section ref={discoverSectionRef} className="grid grid-cols-1 md:grid-cols-2">
-        {/* First Section - Shows the "other" main category */}
-        <div className="relative h-[300px] md:h-[400px] flex flex-col items-center justify-center">
-          <div
-            className="absolute inset-0 bg-cover bg-center"
-            style={{
-              backgroundImage: activeTab === 'breakfast'
-                ? `url(${pageData.discoverSection?.dining?.image || '/assets/dinner.png'})`
-                : activeTab === 'dining'
-                ? `url(${pageData.discoverSection?.breakfast?.image || '/assets/breakfast.jpg'})`
-                : `url(${pageData.discoverSection?.dining?.image || '/assets/dinner.png'})`,
-            }}
-          >
-            <div className="absolute inset-0" style={{ backgroundColor: 'rgba(0, 0, 0, 0.50)' }}></div>
-          </div>
-          {(() => {
-            const slot = activeTab === 'breakfast' ? pageData.discoverSection?.dining : activeTab === 'dining' ? pageData.discoverSection?.breakfast : pageData.discoverSection?.dining;
-            const text = slot?.text?.[locale] || slot?.text?.en;
-            const btnText = slot?.buttonText?.[locale] || slot?.buttonText?.en;
-            const defaultText = activeTab === 'breakfast' ? 'OUR DINING OFFERING' : activeTab === 'dining' ? 'OUR BREAKFAST OFFERING' : 'OUR DINING OFFERING';
-            return (
-              <>
+        {/* First slot: cross-promotes dining↔breakfast based on active tab */}
+        {(() => {
+          const slot1Key = (activeTab === 'dining' ? 'breakfast' : 'dining') as 'breakfast' | 'dining';
+          const slot1 = pageData.discoverSection?.[slot1Key];
+          const slot1Text = slot1?.text?.[locale] || slot1?.text?.en;
+          const slot1BtnText = slot1?.buttonText?.[locale] || slot1?.buttonText?.en;
+          const slot1BtnLink = slot1?.buttonLink;
+          const slot1Image = slot1?.image || '/assets/dinner.png';
+          const slot1FallbackTab: TabType = activeTab === 'dining' ? 'breakfast' : 'dining';
+          return (
+            <div className="relative h-[300px] md:h-[400px] flex flex-col items-center justify-center">
+              <div
+                className="absolute inset-0 bg-cover bg-center"
+                style={{ backgroundImage: `url(${slot1Image})` }}
+              >
+                <div className="absolute inset-0" style={{ backgroundColor: 'rgba(0, 0, 0, 0.50)' }}></div>
+              </div>
+              {slot1Text && (
                 <h2 className="relative z-10 text-white text-4xl md:text-5xl lg:text-6xl font-custom text-center px-4 mb-6">
-                  {text || defaultText}
+                  {slot1Text}
                 </h2>
+              )}
+              {slot1BtnText && (
                 <button
                   onClick={() => {
-                    const newTab: TabType = activeTab === 'breakfast' ? 'dining' : activeTab === 'dining' ? 'breakfast' : 'dining';
-                    handleTabChange(newTab);
-                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                    if (slot1BtnLink) {
+                      window.location.href = slot1BtnLink;
+                    } else {
+                      handleTabChange(slot1FallbackTab);
+                      window.scrollTo({ top: 0, behavior: 'smooth' });
+                    }
                   }}
                   className="relative z-10 px-8 py-3 text-white font-heading tracking-wider transition-all hover:bg-hoverorange"
                   style={{ backgroundColor: '#939D92', fontSize: '18px', fontWeight: 500 }}
                 >
-                  {btnText || t('eat_drink.discover.button', 'DISCOVER OUR SELECTION')}
+                  {slot1BtnText}
                 </button>
-              </>
-            );
-          })()}
-        </div>
+              )}
+            </div>
+          );
+        })()}
 
-        {/* Second Section */}
-        <div className="relative h-[300px] md:h-[400px] flex flex-col items-center justify-center">
-          <div
-            className="absolute inset-0 bg-cover bg-center"
-            style={{
-              backgroundImage: activeTab === 'breakfast'
-                ? `url(${pageData.discoverSection?.drinks?.image || '/assets/drinks.jpg'})`
-                : activeTab === 'dining'
-                ? `url(${pageData.discoverSection?.drinks?.image || '/assets/drinks.jpg'})`
-                : `url(${pageData.discoverSection?.breakfast?.image || '/assets/breakfast.jpg'})`,
-            }}
-          >
-            <div className="absolute inset-0" style={{ backgroundColor: 'rgba(0, 0, 0, 0.50)' }}></div>
-          </div>
-          {(() => {
-            const slot = activeTab === 'drinks' ? pageData.discoverSection?.breakfast : pageData.discoverSection?.drinks;
-            const text = slot?.text?.[locale] || slot?.text?.en;
-            const btnText = slot?.buttonText?.[locale] || slot?.buttonText?.en;
-            const defaultText = activeTab === 'drinks' ? 'OUR BREAKFAST OFFERING' : 'OUR DRINKS OFFERING';
-            return (
-              <>
+        {/* Second slot: always promotes drinks (or breakfast when on drinks tab) */}
+        {(() => {
+          const slot2Key = (activeTab === 'drinks' ? 'breakfast' : 'drinks') as 'breakfast' | 'drinks';
+          const slot2 = pageData.discoverSection?.[slot2Key];
+          const slot2Text = slot2?.text?.[locale] || slot2?.text?.en;
+          const slot2BtnText = slot2?.buttonText?.[locale] || slot2?.buttonText?.en;
+          const slot2BtnLink = slot2?.buttonLink;
+          const slot2Image = slot2?.image || '/assets/drinks.jpg';
+          const slot2FallbackTab: TabType = activeTab === 'drinks' ? 'breakfast' : 'drinks';
+          return (
+            <div className="relative h-[300px] md:h-[400px] flex flex-col items-center justify-center">
+              <div
+                className="absolute inset-0 bg-cover bg-center"
+                style={{ backgroundImage: `url(${slot2Image})` }}
+              >
+                <div className="absolute inset-0" style={{ backgroundColor: 'rgba(0, 0, 0, 0.50)' }}></div>
+              </div>
+              {slot2Text && (
                 <h2 className="relative z-10 text-white text-4xl md:text-5xl lg:text-6xl font-custom text-center px-4 mb-6">
-                  {text || defaultText}
+                  {slot2Text}
                 </h2>
+              )}
+              {slot2BtnText && (
                 <button
                   onClick={() => {
-                    const newTab: TabType = activeTab === 'drinks' ? 'breakfast' : 'drinks';
-                    handleTabChange(newTab);
-                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                    if (slot2BtnLink) {
+                      window.location.href = slot2BtnLink;
+                    } else {
+                      handleTabChange(slot2FallbackTab);
+                      window.scrollTo({ top: 0, behavior: 'smooth' });
+                    }
                   }}
                   className="relative z-10 px-8 py-3 text-white font-heading tracking-wider transition-all hover:bg-hoverorange"
                   style={{ backgroundColor: '#939D92', fontSize: '18px', fontWeight: 500 }}
                 >
-                  {btnText || t('eat_drink.discover.button', 'DISCOVER OUR SELECTION')}
+                  {slot2BtnText}
                 </button>
-              </>
-            );
-          })()}
-        </div>
+              )}
+            </div>
+          );
+        })()}
       </section>
 
       {/* Detail Modal */}

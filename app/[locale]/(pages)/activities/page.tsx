@@ -200,7 +200,7 @@ export default function ActivitiesPage() {
           </div>
         )}
         <h1 className="relative z-10 text-white text-4xl md:text-5xl lg:text-6xl font-custom text-center px-4">
-          {!loading && (pageData.heroText || t("page.hero_title", "WHAT TO DO? WHERE TO GO?"))}
+          {!loading && pageData.heroText}
         </h1>
       </section>
 
@@ -289,24 +289,30 @@ export default function ActivitiesPage() {
           const slot = pageData.discoverSection?.main;
           const text = slot?.text?.[locale] || slot?.text?.en;
           const btnText = slot?.buttonText?.[locale] || slot?.buttonText?.en;
-          const defaultText = activeTab === "activities"
-            ? t("discover.restaurants_title", "DISCOVER THE RESTAURANTS AROUND")
-            : t("discover.activities_title", "DISCOVER THE ACTIVITIES AROUND");
+          const btnLink = slot?.buttonLink;
           return (
             <>
-              <h2 className="relative z-10 text-white text-4xl md:text-5xl lg:text-6xl font-custom text-center px-4 mb-6">
-                {text || defaultText}
-              </h2>
-              <button
-                onClick={() => {
-                  handleTabChange(activeTab === "activities" ? "restaurants" : "activities");
-                  setTimeout(() => window.scrollTo({ top: 0, behavior: "smooth" }), 50);
-                }}
-                className="relative z-10 px-8 py-3 text-white font-heading tracking-wider transition-all hover:bg-hoverorange"
-                style={{ backgroundColor: "#939D92", fontSize: "18px", fontWeight: 500 }}
-              >
-                {btnText || t("discover.button", "DISCOVER")}
-              </button>
+              {text && (
+                <h2 className="relative z-10 text-white text-4xl md:text-5xl lg:text-6xl font-custom text-center px-4 mb-6">
+                  {text}
+                </h2>
+              )}
+              {btnText && (
+                <button
+                  onClick={() => {
+                    if (btnLink) {
+                      window.location.href = btnLink;
+                    } else {
+                      handleTabChange(activeTab === "activities" ? "restaurants" : "activities");
+                      setTimeout(() => window.scrollTo({ top: 0, behavior: "smooth" }), 50);
+                    }
+                  }}
+                  className="relative z-10 px-8 py-3 text-white font-heading tracking-wider transition-all hover:bg-hoverorange"
+                  style={{ backgroundColor: "#939D92", fontSize: "18px", fontWeight: 500 }}
+                >
+                  {btnText}
+                </button>
+              )}
             </>
           );
         })()}
