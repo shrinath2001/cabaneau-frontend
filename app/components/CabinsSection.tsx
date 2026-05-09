@@ -198,9 +198,9 @@ const CabinsSection = () => {
       `}</style>
       <section className="bg-white py-6 md:py-5 md:mt-12 px-0">
         <div className="w-full">
-          <div className="max-w-full mx-auto md:pl-20">
+          <div className="max-w-full mx-auto">
             {/* Header with Title */}
-            <div className="flex justify-center items-center pt-6 md:pt-10 mb-10 md:mb-10 px-4 md:px-0 md:-ml-20">
+            <div className="flex justify-center items-center pt-6 md:pt-10 mb-10 md:mb-10 px-4 md:px-0">
               <h2 className="font-logga text-[28px] md:text-[42px] font-semibold md:font-normal text-center">
                 {t('cabins_section.title', 'OUR CABINES')}
               </h2>
@@ -209,29 +209,27 @@ const CabinsSection = () => {
             {/* Cabins Carousel or Centered Grid */}
             <div className="w-full">
               {loading ? (
-                <div className="text-center py-12 md:-ml-20">
+                <div className="text-center py-12">
                   <p className="text-gray-600">{t('cabins_section.loading', 'Loading cabins...')}</p>
                 </div>
               ) : cabins.length === 0 ? (
-                <div className="text-center py-12 md:-ml-20">
+                <div className="text-center py-12">
                   <p className="text-gray-500">{t('cabins_section.empty', 'No cabins available at the moment. Please check back later.')}</p>
                 </div>
               ) : cabins.length > 1 ? (
-                // Carousel layout - shows 1 card on mobile (centered), 3.5 cards on desktop
+                // Carousel layout - centered, scrollable
                 <div className="relative">
                   <div
                     ref={scrollContainerRef}
-                    className="flex gap-[19.42px] overflow-x-auto no-scrollbar py-8 justify-start md:justify-start"
+                    className="flex gap-[19.42px] overflow-x-auto no-scrollbar py-8 justify-center"
                     style={{ scrollSnapType: 'x mandatory' }}
                   >
-                    {/* Minimal padding on mobile to show peek of next card, normal on desktop */}
                     <div className="flex-shrink-0 w-[10px] md:w-0"></div>
                     {cabins.map((cabin, index) => (
-                      <div key={cabin.id} className="flex-shrink-0" style={{ scrollSnapAlign: index === 0 ? 'start' : 'center' }}>
+                      <div key={cabin.id} className="flex-shrink-0" style={{ scrollSnapAlign: 'center' }}>
                         <CabinCard {...cabin} />
                       </div>
                     ))}
-                    {/* Add padding at the end */}
                     <div className="flex-shrink-0 w-[10px] md:w-0"></div>
                   </div>
                 </div>
@@ -248,7 +246,7 @@ const CabinsSection = () => {
             </div>
 
             {/* Discover All Button */}
-            <div className="text-center mt-6 md:mt-10 mb-6 md:mb-8 px-4 md:px-0 md:-ml-20">
+            <div className="text-center mt-6 md:mt-10 mb-6 md:mb-8 px-4 md:px-0">
               <Link href={`/${locale}/cabins`} className="px-8 py-3 bg-[#495D4D] text-white text-base md:text-lg font-heading font-medium tracking-widest hover:bg-[#2d4a2d] transition-colors">
                 {t('cabins_section.button', 'DISCOVER ALL CABINS')}
               </Link>

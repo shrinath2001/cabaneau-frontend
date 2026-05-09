@@ -13,6 +13,7 @@ interface ReviewData {
   rating: number;
   channel: 'AIRBNB' | 'BOOKING_COM' | 'CASAPILOT' | 'WEBSITE';
   reviewDate?: string;
+  externalUrl?: string;
   cabin?: { name: string; slug: string };
 }
 
@@ -31,6 +32,8 @@ interface ReviewsSectionProps {
   title?: string;
   backgroundColor?: string;
   cabinId?: string;
+  /** When true, renders as an inline content block (no outer section padding, heading matches cabin detail style) */
+  inline?: boolean;
 }
 
 const CHANNEL_CONFIG: Record<string, { label: string; color: string }> = {
@@ -151,7 +154,7 @@ function ChannelBadge({ channel }: { channel: string }) {
   return <img src={logo.src} alt={logo.alt} className={`${logo.className} grayscale opacity-60`} />;
 }
 
-const ReviewsSection = ({ title, backgroundColor, cabinId }: ReviewsSectionProps) => {
+const ReviewsSection = ({ title, backgroundColor, cabinId, inline = false }: ReviewsSectionProps) => {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const [reviews, setReviews] = useState<ReviewData[]>([]);
   const [stats, setStats] = useState<StatsData | null>(null);
@@ -213,6 +216,7 @@ const ReviewsSection = ({ title, backgroundColor, cabinId }: ReviewsSectionProps
   };
 
   if (loading) {
+    if (inline) return null;
     return (
       <section className="py-6 md:py-5" style={backgroundColor ? { backgroundColor } : {}}>
         <div className="max-w-[1390px] mx-auto px-4 md:px-20 text-center py-12">
@@ -227,6 +231,78 @@ const ReviewsSection = ({ title, backgroundColor, cabinId }: ReviewsSectionProps
   }
 
   const bgStyle = backgroundColor ? { backgroundColor } : {};
+
+  if (inline) {
+    return (
+      <>
+        <style jsx>{`
+          .reviews-no-scrollbar::-webkit-scrollbar { display: none; }
+          .reviews-no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        `}</style>
+        <div className="mt-8 md:mt-10">
+          <h2 className="font-logga font-semibold text-[16px] md:text-[20px] mb-6 uppercase tracking-wide text-gray-800 p-4 md:p-6" style={{ backgroundColor: '#F1FAF7' }}>
+            {displayTitle}
+          </h2>
+
+          {/* Reviews Carousel */}
+          <div className="relative">
+            {reviews.length > 2 && (
+              <button onClick={scrollLeft} className="hidden md:flex absolute left-0 top-1/2 -translate-y-1/2 z-10 w-8 h-8 bg-white shadow-md rounded-full items-center justify-center hover:bg-gray-50 transition-colors" aria-label="Scroll left">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#495D4D" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M15 18l-6-6 6-6" /></svg>
+              </button>
+            )}
+            <div ref={scrollContainerRef} className="flex gap-4 overflow-x-auto reviews-no-scrollbar py-4" style={{ scrollSnapType: 'x mandatory' }}>
+              {reviews.map((review, index) => (
+                <div
+                  key={review.id}
+                  className="flex-shrink-0 w-[300px] bg-white p-4 shadow-[0_2px_10px_rgba(0,0,0,0.06)] border border-gray-100 transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_8px_24px_rgba(0,0,0,0.12)]"
+                  style={{ scrollSnapAlign: index === 0 ? 'start' : 'center' }}
+                >
+                  <div className="flex items-start gap-3 mb-3">
+                    <div className="w-10 h-10 bg-[#495D4D] flex items-center justify-center text-white font-jost font-medium text-[16px] flex-shrink-0">
+                      {review.reviewerName.charAt(0).toUpperCase()}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="font-jost font-medium text-[15px] text-gray-900 truncate">{review.reviewerName}</div>
+                      <div className="mt-1">
+                        {review.externalUrl ? (
+                          <a href={review.externalUrl} target="_blank" rel="noopener noreferrer" className="inline-block opacity-60 hover:opacity-100 transition-opacity" onClick={e => e.stopPropagation()}>
+                            <ChannelBadge channel={review.channel} />
+                          </a>
+                        ) : (
+                          <ChannelBadge channel={review.channel} />
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                  <div className="mb-2">
+                    {review.channel === 'BOOKING_COM' ? (
+                      <BookingRatingBar rating={Number(review.rating)} size="sm" />
+                    ) : (
+                      <StarRating rating={Number(review.rating)} size="sm" />
+                    )}
+                  </div>
+                  <p className="font-jost font-light text-[13px] leading-relaxed text-gray-700 line-clamp-4 mb-2">
+                    &ldquo;{review.content}&rdquo;
+                  </p>
+                  {review.reviewDate && (
+                    <p className="font-jost text-[12px] text-gray-400">
+                      {new Date(review.reviewDate).toLocaleDateString('en-GB', { month: 'short', year: 'numeric' })}
+                    </p>
+                  )}
+                </div>
+              ))}
+            </div>
+            {reviews.length > 2 && (
+              <button onClick={scrollRight} className="hidden md:flex absolute right-0 top-1/2 -translate-y-1/2 z-10 w-8 h-8 bg-white shadow-md rounded-full items-center justify-center hover:bg-gray-50 transition-colors" aria-label="Scroll right">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#495D4D" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 18l6-6-6-6" /></svg>
+              </button>
+            )}
+          </div>
+        </div>
+      </>
+    );
+  }
 
   return (
     <>
@@ -380,7 +456,13 @@ const ReviewsSection = ({ title, backgroundColor, cabinId }: ReviewsSectionProps
                         {review.reviewerName}
                       </div>
                       <div className="mt-1">
-                        <ChannelBadge channel={review.channel} />
+                        {review.externalUrl ? (
+                          <a href={review.externalUrl} target="_blank" rel="noopener noreferrer" className="inline-block opacity-60 hover:opacity-100 transition-opacity">
+                            <ChannelBadge channel={review.channel} />
+                          </a>
+                        ) : (
+                          <ChannelBadge channel={review.channel} />
+                        )}
                       </div>
                     </div>
                   </div>

@@ -343,6 +343,9 @@ const SingleCabinPage = () => {
               cabinName={cabin.name || cabin.slug}
             />
 
+            {/* Guest Reviews */}
+            <ReviewsSection cabinId={cabin.id} inline />
+
             {/* Things to Know Section */}
             <ThingsToKnow
               checkIn={arrival}
@@ -375,9 +378,6 @@ const SingleCabinPage = () => {
           </div>
         </div>
       </div>
-
-      {/* Cabin-specific Reviews */}
-      <ReviewsSection cabinId={cabin.id} />
 
       {/* Photo Gallery Modal Component (Desktop) */}
       <PhotoGalleryModal

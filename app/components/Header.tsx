@@ -15,6 +15,12 @@ interface Language {
   isDefault: boolean;
 }
 
+interface Cabin {
+  id: string;
+  slug: string;
+  name: string;
+}
+
 interface HeroSettings {
   backgroundType: string;
   backgroundUrl: string;
@@ -25,7 +31,10 @@ interface HeroSettings {
 const Header = ({ heroSettings: initialHeroSettings }: { heroSettings?: HeroSettings }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isLanguageOpen, setIsLanguageOpen] = useState(false);
+  const [isCabinsOpen, setIsCabinsOpen] = useState(false);
+  const [isMobileCabinsOpen, setIsMobileCabinsOpen] = useState(false);
   const [languages, setLanguages] = useState<Language[]>([]);
+  const [cabins, setCabins] = useState<Cabin[]>([]);
   const { t, locale } = useTranslations('navigation');
   const { t: tHome } = useTranslations('homepage');
   const pathname = usePathname();
@@ -87,6 +96,22 @@ const Header = ({ heroSettings: initialHeroSettings }: { heroSettings?: HeroSett
     };
 
     fetchLanguages();
+  }, []);
+
+  useEffect(() => {
+    const fetchCabins = async () => {
+      try {
+        const response = await fetch('/api/cabins');
+        if (response.ok) {
+          const data = await response.json();
+          const list = Array.isArray(data) ? data : (data?.data ?? []);
+          setCabins(list);
+        }
+      } catch (error) {
+        console.error('Failed to fetch cabins:', error);
+      }
+    };
+    fetchCabins();
   }, []);
 
   // Navigate to same page with different locale (preserving query params)
@@ -154,9 +179,31 @@ const Header = ({ heroSettings: initialHeroSettings }: { heroSettings?: HeroSett
             </div>
             {/* Nav spacing: space-x-10 lg:space-x-12 (PreFinal UI) | Revert to: space-x-8 */}
             <nav className="hidden lg:flex items-center space-x-10 lg:space-x-12">
-              <Link href={link('/cabins')} className="font-heading font-medium text-[18px] text-white hover:text-[#F49A4A] transition-colors uppercase">
-                {t('link.our_cabins', 'Our Cabins')}
-              </Link>
+              <div
+                className="relative"
+                onMouseEnter={() => setIsCabinsOpen(true)}
+                onMouseLeave={() => setIsCabinsOpen(false)}
+              >
+                <button className="font-heading font-medium text-[18px] text-white hover:text-[#F49A4A] transition-colors uppercase flex items-center gap-1">
+                  {t('link.our_cabins', 'Our Cabins')}
+                  <svg className={`w-4 h-4 transition-transform ${isCabinsOpen ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                  </svg>
+                </button>
+                {isCabinsOpen && (
+                  <div className="absolute left-0 mt-0 w-56 bg-white shadow-lg py-1 z-50">
+                    {cabins.map((cabin) => (
+                      <Link
+                        key={cabin.id}
+                        href={link(`/cabins/${cabin.slug}`)}
+                        className="block px-4 py-2.5 text-[#495D4D] hover:bg-gray-50 hover:text-[#F49A4A] font-heading text-sm uppercase tracking-wide"
+                      >
+                        {cabin.name}
+                      </Link>
+                    ))}
+                  </div>
+                )}
+              </div>
               <Link href={link('/activities')} className="font-heading font-medium text-[18px] text-white hover:text-[#F49A4A] transition-colors uppercase">
                 {t('link.activities', 'Activities')}
               </Link>
@@ -286,7 +333,7 @@ const Header = ({ heroSettings: initialHeroSettings }: { heroSettings?: HeroSett
           </div>
           {/* Full Screen Mobile Menu */}
           {isMenuOpen && (
-            <div className="lg:hidden fixed inset-0 bg-white z-50">
+            <div className="lg:hidden fixed left-0 right-0 bottom-0 bg-white z-[100]" style={{ top: 'var(--promo-banner-height, 0px)' }}>
               {/* Mobile Menu Header */}
               <div className="flex items-center justify-between px-4 py-6 border-b border-gray-200">
                 <Link href={link('/')} onClick={() => setIsMenuOpen(false)}>
@@ -345,13 +392,29 @@ const Header = ({ heroSettings: initialHeroSettings }: { heroSettings?: HeroSett
 
               {/* Mobile Menu Content */}
               <nav className="flex flex-col px-4 pt-8">
-                <Link
-                  href={link('/cabins')}
-                  onClick={() => setIsMenuOpen(false)}
-                  className="text-[#F49A4A] font-heading font-medium text-center py-4 text-[16px] tracking-wider uppercase"
+                <button
+                  onClick={() => setIsMobileCabinsOpen(!isMobileCabinsOpen)}
+                  className="text-[#F49A4A] font-heading font-medium text-center py-4 text-[16px] tracking-wider uppercase flex items-center justify-center gap-2"
                 >
                   {t('link.our_cabins', 'Our Cabins')}
-                </Link>
+                  <svg className={`w-4 h-4 transition-transform ${isMobileCabinsOpen ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                  </svg>
+                </button>
+                {isMobileCabinsOpen && (
+                  <div className="flex flex-col border-t border-gray-100 mb-2">
+                    {cabins.map((cabin) => (
+                      <Link
+                        key={cabin.id}
+                        href={link(`/cabins/${cabin.slug}`)}
+                        onClick={() => { setIsMenuOpen(false); setIsMobileCabinsOpen(false); }}
+                        className="text-[#495D4D] font-heading font-medium text-center py-3 text-[14px] tracking-wider uppercase hover:text-[#F49A4A]"
+                      >
+                        {cabin.name}
+                      </Link>
+                    ))}
+                  </div>
+                )}
                 <Link
                   href={link('/activities')}
                   onClick={() => setIsMenuOpen(false)}

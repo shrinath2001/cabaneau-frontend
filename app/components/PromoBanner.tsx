@@ -76,7 +76,7 @@ const PromoBanner = () => {
   return (
     <div
       ref={bannerRef}
-      className="fixed top-0 left-0 w-full py-2 px-4 text-center z-[60]"
+      className="fixed top-0 left-0 w-full py-2 px-4 text-center z-[30]"
       style={{
         backgroundColor: banner.backgroundColor,
         color: banner.textColor,
