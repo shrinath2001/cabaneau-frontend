@@ -98,7 +98,7 @@ const ImageGallery = ({ images, featuredImage, onShowAllClick, onMobileImageClic
 
           {/* Image Counter + View All */}
           <div className="absolute bottom-3 right-3 flex items-center gap-2">
-            <div className="bg-black/70 text-white px-3 py-1 rounded text-sm font-medium">
+            <div className="bg-black/70 text-white px-3 py-1 text-sm font-medium">
               {currentImageIndex + 1} / {totalImages}
             </div>
             <button

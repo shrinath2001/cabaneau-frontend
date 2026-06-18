@@ -598,7 +598,7 @@ function SearchResults() {
         {/* Error State */}
         {error && !loading && (
           <div className="text-center py-16">
-            <div className="bg-red-50 border border-red-200 text-red-800 px-6 py-4 rounded-md inline-block">
+            <div className="bg-red-50 border border-red-200 text-red-800 px-6 py-4 inline-block">
               <p className="font-medium">Error loading cabins</p>
               <p className="text-sm mt-1">{error}</p>
             </div>

@@ -95,6 +95,17 @@ const BCP47: Record<string, string> = {
   nl: 'nl-NL',
 };
 
+// Screen-reader labels (not visible text)
+const ARIA: Record<
+  string,
+  { prevMonth: string; nextMonth: string; decGuests: string; incGuests: string }
+> = {
+  en: { prevMonth: 'Previous month', nextMonth: 'Next month', decGuests: 'Decrease guests', incGuests: 'Increase guests' },
+  fr: { prevMonth: 'Mois précédent', nextMonth: 'Mois suivant', decGuests: "Moins d'invités", incGuests: "Plus d'invités" },
+  de: { prevMonth: 'Vorheriger Monat', nextMonth: 'Nächster Monat', decGuests: 'Weniger Gäste', incGuests: 'Mehr Gäste' },
+  nl: { prevMonth: 'Vorige maand', nextMonth: 'Volgende maand', decGuests: 'Minder gasten', incGuests: 'Meer gasten' },
+};
+
 // --- pure date helpers (UTC-based to avoid tz drift) ---
 function toDate(d: string): Date {
   return new Date(`${d}T00:00:00Z`);
@@ -137,6 +148,7 @@ export default function DateRangePicker({
   onConfirm,
 }: DateRangePickerProps) {
   const t = STRINGS[locale] || STRINGS.en;
+  const aria = ARIA[locale] || ARIA.en;
   const bcp47 = BCP47[locale] || 'en-GB';
 
   const { loading, error, helpers } = useRatesCalendar({ slug, enabled, locale });
@@ -275,7 +287,7 @@ export default function DateRangePicker({
           <div className="flex items-center justify-between mb-2">
             <button
               type="button"
-              aria-label="Previous month"
+              aria-label={aria.prevMonth}
               disabled={!canPrev}
               onClick={() => canPrev && setViewMonth(addMonths(viewMonth, -1))}
               className="p-2 text-[#495D4D] disabled:text-gray-300 hover:bg-gray-100"
@@ -287,7 +299,7 @@ export default function DateRangePicker({
             <span className="font-logga text-base capitalize text-gray-800">{monthLabel}</span>
             <button
               type="button"
-              aria-label="Next month"
+              aria-label={aria.nextMonth}
               disabled={!canNext}
               onClick={() => canNext && setViewMonth(addMonths(viewMonth, 1))}
               className="p-2 text-[#495D4D] disabled:text-gray-300 hover:bg-gray-100"
@@ -362,7 +374,7 @@ export default function DateRangePicker({
           <div className="flex items-center gap-3">
             <button
               type="button"
-              aria-label="Decrease guests"
+              aria-label={aria.decGuests}
               onClick={() => setAdults((a) => Math.max(1, a - 1))}
               disabled={adults <= 1}
               className="w-8 h-8 border border-gray-300 flex items-center justify-center text-gray-700 disabled:text-gray-300 hover:border-[#495D4D]"
@@ -372,7 +384,7 @@ export default function DateRangePicker({
             <span className="w-6 text-center text-gray-800">{adults}</span>
             <button
               type="button"
-              aria-label="Increase guests"
+              aria-label={aria.incGuests}
               onClick={() => setAdults((a) => Math.min(Math.max(1, capacity), a + 1))}
               disabled={adults >= Math.max(1, capacity)}
               className="w-8 h-8 border border-gray-300 flex items-center justify-center text-gray-700 disabled:text-gray-300 hover:border-[#495D4D]"

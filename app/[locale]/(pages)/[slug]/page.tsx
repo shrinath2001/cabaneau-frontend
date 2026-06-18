@@ -62,11 +62,11 @@ export default function StaticPage() {
         <section className="py-20 bg-white">
           <div className="container mx-auto px-4 max-w-4xl text-center">
             <div className="animate-pulse">
-              <div className="h-8 bg-gray-200 rounded w-1/2 mx-auto mb-4"></div>
+              <div className="h-8 bg-gray-200 w-1/2 mx-auto mb-4"></div>
               <div className="space-y-3">
-                <div className="h-4 bg-gray-200 rounded w-3/4 mx-auto"></div>
-                <div className="h-4 bg-gray-200 rounded w-2/3 mx-auto"></div>
-                <div className="h-4 bg-gray-200 rounded w-4/5 mx-auto"></div>
+                <div className="h-4 bg-gray-200 w-3/4 mx-auto"></div>
+                <div className="h-4 bg-gray-200 w-2/3 mx-auto"></div>
+                <div className="h-4 bg-gray-200 w-4/5 mx-auto"></div>
               </div>
             </div>
           </div>

@@ -52,7 +52,7 @@ function ChannelLogo({ channel, size = 32 }: { channel: string; size?: number })
           alt="Airbnb"
           width={size}
           height={size}
-          className="object-contain rounded"
+          className="object-contain"
         />
       );
     case 'BOOKING_COM':
@@ -62,7 +62,7 @@ function ChannelLogo({ channel, size = 32 }: { channel: string; size?: number })
           alt="Booking.com"
           width={size}
           height={size}
-          className="object-contain rounded"
+          className="object-contain"
         />
       );
     case 'CASAPILOT':
@@ -72,7 +72,7 @@ function ChannelLogo({ channel, size = 32 }: { channel: string; size?: number })
           alt="CasaPilot"
           width={size}
           height={size}
-          className="object-contain rounded"
+          className="object-contain"
         />
       );
     case 'WEBSITE':
@@ -83,7 +83,7 @@ function ChannelLogo({ channel, size = 32 }: { channel: string; size?: number })
           alt="Cabaneau"
           width={size}
           height={size}
-          className="object-contain rounded"
+          className="object-contain"
         />
       );
   }

@@ -65,8 +65,8 @@ export default function MobileStickyBar({
       <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-300 shadow-[0_-2px_10px_rgba(0,0,0,0.1)] z-40 lg:hidden">
         <div className="flex items-center justify-between px-5 py-4">
           <div className="flex flex-col gap-1">
-            <div className="h-5 w-20 bg-gray-200 animate-pulse rounded" />
-            <div className="h-4 w-32 bg-gray-200 animate-pulse rounded" />
+            <div className="h-5 w-20 bg-gray-200 animate-pulse" />
+            <div className="h-4 w-32 bg-gray-200 animate-pulse" />
           </div>
           <div className="h-14 w-28 bg-gray-200 animate-pulse" />
         </div>
@@ -120,7 +120,7 @@ export default function MobileStickyBar({
                 {formatCurrency(pricing.total, pricing.currency)}
               </span>
               {hasDiscount && (
-                <span className="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded font-jost font-medium">
+                <span className="text-xs bg-green-100 text-green-700 px-2 py-0.5 font-jost font-medium">
                   -{pricing.discount!.percentage || Math.round((pricing.discount!.amount / pricing.subtotal) * 100)}%
                 </span>
               )}

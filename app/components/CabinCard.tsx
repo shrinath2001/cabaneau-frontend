@@ -277,8 +277,8 @@ const CabinCard: React.FC<CabinCardProps> = ({
           <div className="text-right">
             {priceLoading ? (
               <div className="animate-pulse">
-                <div className="h-7 w-24 bg-gray-200 rounded mb-1"></div>
-                <div className="h-3 w-16 bg-gray-200 rounded ml-auto"></div>
+                <div className="h-7 w-24 bg-gray-200 mb-1"></div>
+                <div className="h-3 w-16 bg-gray-200 ml-auto"></div>
               </div>
             ) : (
               <>

@@ -667,7 +667,7 @@ const LodgifyBookingWidget = ({
         }
       `}</style>
 
-      <div className="w-full md:w-auto md:inline-flex relative z-10 bg-white/10 backdrop-blur-sm md:rounded">
+      <div className="w-full md:w-auto md:inline-flex relative z-10 bg-white/10 backdrop-blur-sm">
         <div
           id="lodgify-search-bar"
           data-website-id="572847"

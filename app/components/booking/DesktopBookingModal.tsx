@@ -46,6 +46,7 @@ export default function DesktopBookingModal({
 }: DesktopBookingModalProps) {
   const { locale } = useTranslations();
   const title = titleByLocale[locale] || titleByLocale.en;
+  const closeLabel = ({ en: "Close", fr: "Fermer", de: "Schließen", nl: "Sluiten" }[locale]) || "Close";
 
   // Close on Escape
   useEffect(() => {
@@ -102,7 +103,7 @@ export default function DesktopBookingModal({
             <button
               onClick={onClose}
               className="text-gray-400 hover:text-gray-600 transition-colors"
-              aria-label="Close"
+              aria-label={closeLabel}
             >
               <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
