@@ -127,7 +127,8 @@ function buildMonthCells(monthStart: string): (string | null)[] {
   const dt = toDate(monthStart);
   const year = dt.getUTCFullYear();
   const month = dt.getUTCMonth();
-  const firstWeekday = new Date(Date.UTC(year, month, 1)).getUTCDay(); // 0=Sun
+  // Monday-first week: Mon=0 … Sun=6 (getUTCDay is Sun=0 … Sat=6)
+  const firstWeekday = (new Date(Date.UTC(year, month, 1)).getUTCDay() + 6) % 7;
   const daysInMonth = new Date(Date.UTC(year, month + 1, 0)).getUTCDate();
   const cells: (string | null)[] = [];
   for (let i = 0; i < firstWeekday; i++) cells.push(null);
@@ -182,8 +183,8 @@ export default function DateRangePicker({
   );
 
   const weekdayLabels = useMemo(() => {
-    // Sunday-first short weekday names in locale
-    const base = Date.UTC(2024, 0, 7); // a Sunday
+    // Monday-first short weekday names in locale
+    const base = Date.UTC(2024, 0, 1); // a Monday
     return Array.from({ length: 7 }, (_, i) =>
       new Date(base + i * 86400000).toLocaleDateString(bcp47, {
         weekday: 'short',
