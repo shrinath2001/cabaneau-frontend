@@ -76,13 +76,18 @@ function addDays(date: string, days: number): string {
   return d.toISOString().split('T')[0];
 }
 
-/** Local calendar "today" (browser tz) as YYYY-MM-DD. */
+// All cabins are in Eupen, Belgium, so "today" and the earliest selectable
+// date must be anchored to the property's timezone, not the visitor's browser.
+// Otherwise an international guest near midnight sees the earliest check-in day
+// off by one (e.g. a guest in Asia greying a day that is still bookable in
+// Belgium). en-CA formats as YYYY-MM-DD.
+const PROPERTY_TIMEZONE = 'Europe/Brussels';
+
+/** Calendar "today" in the property's timezone (Europe/Brussels) as YYYY-MM-DD. */
 function localToday(): string {
-  const now = new Date();
-  const y = now.getFullYear();
-  const m = String(now.getMonth() + 1).padStart(2, '0');
-  const d = String(now.getDate()).padStart(2, '0');
-  return `${y}-${m}-${d}`;
+  return new Intl.DateTimeFormat('en-CA', {
+    timeZone: PROPERTY_TIMEZONE,
+  }).format(new Date());
 }
 
 export function nightsBetween(checkIn: string, checkOut: string): number {
