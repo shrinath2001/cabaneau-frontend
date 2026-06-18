@@ -242,7 +242,7 @@ const Header = ({ heroSettings: initialHeroSettings }: { heroSettings?: HeroSett
 
                 {/* Dropdown Menu */}
                 {isLanguageOpen && (
-                  <div className="absolute right-0 mt-2 w-36 bg-white rounded-md shadow-lg py-1 z-50">
+                  <div className="absolute right-0 mt-2 w-36 bg-white shadow-lg py-1 z-50">
                     {languages.map((lang) => (
                       <button
                         key={lang.code}
@@ -283,7 +283,7 @@ const Header = ({ heroSettings: initialHeroSettings }: { heroSettings?: HeroSett
 
                 {/* Language Dropdown */}
                 {isLanguageOpen && (
-                  <div className="absolute right-0 mt-2 w-32 bg-white rounded-md shadow-lg py-1 z-50 border border-gray-200">
+                  <div className="absolute right-0 mt-2 w-32 bg-white shadow-lg py-1 z-50 border border-gray-200">
                     {languages.map((lang) => (
                       <button
                         key={lang.code}
@@ -360,7 +360,7 @@ const Header = ({ heroSettings: initialHeroSettings }: { heroSettings?: HeroSett
 
                     {/* Language Dropdown */}
                     {isLanguageOpen && (
-                      <div className="absolute right-0 mt-2 w-36 bg-white rounded-md shadow-lg py-1 z-50 border border-gray-200">
+                      <div className="absolute right-0 mt-2 w-36 bg-white shadow-lg py-1 z-50 border border-gray-200">
                         {languages.map((lang) => (
                           <button
                             key={lang.code}

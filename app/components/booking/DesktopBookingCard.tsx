@@ -163,21 +163,21 @@ export default function DesktopBookingCard({
         {loading && (
           <div className="border-t border-gray-300 pt-4 space-y-3">
             <div className="flex justify-between items-center">
-              <div className="h-4 w-24 bg-gray-200 animate-pulse rounded" />
-              <div className="h-4 w-16 bg-gray-200 animate-pulse rounded" />
+              <div className="h-4 w-24 bg-gray-200 animate-pulse" />
+              <div className="h-4 w-16 bg-gray-200 animate-pulse" />
             </div>
             <div className="flex justify-between items-center">
-              <div className="h-4 w-20 bg-gray-200 animate-pulse rounded" />
-              <div className="h-4 w-12 bg-gray-200 animate-pulse rounded" />
+              <div className="h-4 w-20 bg-gray-200 animate-pulse" />
+              <div className="h-4 w-12 bg-gray-200 animate-pulse" />
             </div>
-            <div className="h-12 bg-gray-200 animate-pulse rounded mt-4" />
+            <div className="h-12 bg-gray-200 animate-pulse mt-4" />
           </div>
         )}
 
         {/* Error State */}
         {!loading && (error || (quote && !quote.available)) && (
           <div className="border-t border-gray-300 pt-4">
-            <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-4">
+            <div className="bg-red-50 border border-red-200 p-4 mb-4">
               <p className="text-red-600 font-jost font-medium text-sm">
                 {quote?.unavailableReason || error || t('dates_not_available', 'Selected dates are not available')}
               </p>
@@ -220,7 +220,7 @@ export default function DesktopBookingCard({
 
               {/* Discount (special styling) */}
               {quote.pricing.discount && (
-                <div className="flex justify-between items-center bg-green-50 -mx-4 px-4 py-2 rounded">
+                <div className="flex justify-between items-center bg-green-50 -mx-4 px-4 py-2">
                   <span className="text-sm font-jost text-green-700 font-medium">
                     {quote.pricing.discount.name}
                     {quote.pricing.discount.percentage && (
