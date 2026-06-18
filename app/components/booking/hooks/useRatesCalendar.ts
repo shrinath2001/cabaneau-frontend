@@ -9,6 +9,8 @@ export interface RatesCalendarDay {
   minStay: number;
   maxStay: number; // 0 = no max
   pricePerDay: number | null;
+  canCheckIn: boolean; // arrival allowed this date (weekday check-in rule)
+  canCheckOut: boolean; // departure allowed this date (weekday check-out rule)
 }
 
 export interface RatesCalendarSettings {
@@ -167,9 +169,10 @@ export function useRatesCalendar({
       if (maxDate && date > maxDate) return false;
       const day = byDate.get(date);
       // Unknown days (outside loaded range) are not selectable; the night that
-      // starts on the arrival date must be available.
+      // starts on the arrival date must be available AND check-in must be
+      // allowed on this weekday (e.g. no Sunday arrivals).
       if (!day) return false;
-      return day.available;
+      return day.available && day.canCheckIn;
     };
 
     const isCheckOutSelectable = (checkIn: string, date: string): boolean => {
@@ -181,6 +184,9 @@ export function useRatesCalendar({
       const maxStay = byDate.get(checkIn)?.maxStay ?? 0;
       if (maxStay > 0 && nights > maxStay) return false;
       if (maxDate && date > maxDate) return false;
+      // Check-out must be allowed on this weekday (e.g. no Saturday departures).
+      const coDay = byDate.get(date);
+      if (coDay && !coDay.canCheckOut) return false;
       // Every night in [checkIn, checkOut) must be available.
       for (let i = 0; i < nights; i++) {
         const night = addDays(checkIn, i);
