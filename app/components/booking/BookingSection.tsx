@@ -154,11 +154,14 @@ export default function BookingSection({
           minStayWarning={minStayWarning}
         />
 
-        {/* Bottom sheet with Lodgify widget */}
+        {/* Bottom sheet with custom date-range picker */}
         <MobileBottomSheet
           isOpen={showBottomSheet}
           onClose={() => setShowBottomSheet(false)}
           cabin={cabin}
+          initialCheckIn={checkIn}
+          initialCheckOut={checkOut}
+          initialAdults={adults}
           onSave={handleSaveFromWidget}
         />
       </div>
@@ -187,6 +190,9 @@ export default function BookingSection({
           isOpen={showDesktopModal}
           onClose={() => setShowDesktopModal(false)}
           cabin={cabin}
+          initialCheckIn={checkIn}
+          initialCheckOut={checkOut}
+          initialAdults={adults}
           onSave={handleSaveFromWidget}
         />
       </>
@@ -221,11 +227,12 @@ export default function BookingSection({
         </div>
       </div>
 
-      {/* Desktop Modal with Lodgify widget */}
+      {/* Desktop Modal with custom date-range picker */}
       <DesktopBookingModal
         isOpen={showDesktopModal}
         onClose={() => setShowDesktopModal(false)}
         cabin={cabin}
+        initialAdults={adults}
         onSave={handleSaveFromWidget}
       />
     </>
