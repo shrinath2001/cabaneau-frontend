@@ -6,6 +6,7 @@ import { useParams, useSearchParams, notFound } from "next/navigation";
 import PhotoGalleryModal from "./components/PhotoGalleryModal";
 import MobileCarouselModal from "./components/MobileCarouselModal";
 import BookingSection from "@/app/components/booking/BookingSection";
+import AvailabilityCalendar from "@/app/components/booking/AvailabilityCalendar";
 import ImageGallery from "./components/ImageGallery";
 import AmenitiesSection from "./components/AmenitiesSection";
 import ExtraServicesSection from "./components/ExtraServicesSection";
@@ -345,6 +346,13 @@ const SingleCabinPage = () => {
 
             {/* Guest Reviews */}
             <ReviewsSection cabinId={cabin.id} inline />
+
+            {/* Inline availability calendar (display-only, Airbnb-style) */}
+            <AvailabilityCalendar
+              slug={cabin.slug}
+              locale={locale}
+              city={cabin.city}
+            />
 
             {/* Things to Know Section */}
             <ThingsToKnow
