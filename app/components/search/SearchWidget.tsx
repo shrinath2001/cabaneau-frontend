@@ -1,6 +1,7 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { useRouter } from 'next/navigation';
 import { useTranslations } from '@/app/providers/TranslationsProvider';
 import { useBookingDates } from '@/app/providers/BookingDatesProvider';
@@ -31,6 +32,33 @@ const NOUNS: Record<string, Record<keyof GuestCounts, [string, string]>> = {
   nl: { adults: ['volwassene', 'volwassenen'], children: ['kind', 'kinderen'], infants: ['baby', "baby's"], pets: ['huisdier', 'huisdieren'] },
 };
 
+interface PanelPos {
+  left: number;
+  width: number;
+  top?: number;
+  bottom?: number;
+  maxH: number;
+}
+
+// Fixed-position placement under (or above, if no room) an anchor, clamped to
+// the viewport. Used so the popovers can be portaled out of the hero's
+// overflow:hidden container.
+function computePos(anchor: HTMLElement, desiredWidth: number, align: 'left' | 'right'): PanelPos {
+  const r = anchor.getBoundingClientRect();
+  const vw = window.innerWidth;
+  const vh = window.innerHeight;
+  const width = Math.min(desiredWidth, vw - 16);
+  let left = align === 'left' ? r.left : r.right - width;
+  left = Math.max(8, Math.min(left, vw - width - 8));
+
+  const belowSpace = vh - r.bottom - 16;
+  const aboveSpace = r.top - 16;
+  if (belowSpace >= 340 || belowSpace >= aboveSpace) {
+    return { left, width, top: r.bottom + 8, maxH: belowSpace };
+  }
+  return { left, width, bottom: vh - r.top + 8, maxH: aboveSpace };
+}
+
 export default function SearchWidget({ variant = 'page' }: SearchWidgetProps) {
   const router = useRouter();
   const { locale } = useTranslations();
@@ -42,13 +70,42 @@ export default function SearchWidget({ variant = 'page' }: SearchWidgetProps) {
   const bcp47 = BCP47[locale] || 'en-GB';
 
   const [open, setOpen] = useState<'cal' | 'guests' | null>(null);
+  const [pos, setPos] = useState<PanelPos | null>(null);
+  const [mounted, setMounted] = useState(false);
   const rootRef = useRef<HTMLDivElement>(null);
+  const datesRef = useRef<HTMLDivElement>(null);
+  const guestsRef = useRef<HTMLDivElement>(null);
+  const panelRef = useRef<HTMLDivElement>(null);
 
-  // Close popovers on outside click
+  useEffect(() => setMounted(true), []);
+
+  const recompute = useCallback(() => {
+    if (open === 'cal' && datesRef.current) setPos(computePos(datesRef.current, 640, 'left'));
+    else if (open === 'guests' && guestsRef.current) setPos(computePos(guestsRef.current, 320, 'right'));
+  }, [open]);
+
+  // Position the portaled panel and keep it anchored on scroll/resize.
+  useEffect(() => {
+    if (!open) {
+      setPos(null);
+      return;
+    }
+    recompute();
+    window.addEventListener('scroll', recompute, true);
+    window.addEventListener('resize', recompute);
+    return () => {
+      window.removeEventListener('scroll', recompute, true);
+      window.removeEventListener('resize', recompute);
+    };
+  }, [open, recompute]);
+
+  // Close on outside click (ignore the trigger bar and the portaled panel)
   useEffect(() => {
     if (!open) return;
     const onDown = (e: MouseEvent) => {
-      if (rootRef.current && !rootRef.current.contains(e.target as Node)) setOpen(null);
+      const t = e.target as Node;
+      if (rootRef.current?.contains(t) || panelRef.current?.contains(t)) return;
+      setOpen(null);
     };
     document.addEventListener('mousedown', onDown);
     return () => document.removeEventListener('mousedown', onDown);
@@ -60,17 +117,11 @@ export default function SearchWidget({ variant = 'page' }: SearchWidgetProps) {
 
   const fmt = (iso?: string) =>
     iso
-      ? toDate(iso).toLocaleDateString(bcp47, {
-          day: '2-digit',
-          month: '2-digit',
-          year: 'numeric',
-          timeZone: 'UTC',
-        })
+      ? toDate(iso).toLocaleDateString(bcp47, { day: '2-digit', month: '2-digit', year: 'numeric', timeZone: 'UTC' })
       : '';
 
   const hasRange = !!(arrival && departure);
 
-  // Two-step range selection writing to the shared store
   const onPickDay = (date: string) => {
     if (!arrival || (arrival && departure)) {
       setDates({ arrival: date, departure: undefined });
@@ -95,8 +146,6 @@ export default function SearchWidget({ variant = 'page' }: SearchWidgetProps) {
   };
 
   const onSearch = () => {
-    // Guide the user to pick dates first if missing (button stays enabled to
-    // match the previous widget's always-on styling).
     if (!hasRange) {
       setOpen('cal');
       return;
@@ -128,11 +177,21 @@ export default function SearchWidget({ variant = 'page' }: SearchWidgetProps) {
   const clearCls = isHero ? 'text-white/70 hover:text-white' : 'text-gray-400 hover:text-gray-700';
   const chevronCls = isHero ? 'text-white/80' : 'text-gray-500';
 
+  const panelStyle: React.CSSProperties | undefined = pos
+    ? {
+        position: 'fixed',
+        left: pos.left,
+        width: pos.width,
+        maxHeight: pos.maxH,
+        ...(pos.top !== undefined ? { top: pos.top } : { bottom: pos.bottom }),
+      }
+    : undefined;
+
   return (
     <div ref={rootRef} className="relative w-full max-w-3xl font-jost text-left">
       <div className={`flex flex-col md:flex-row items-stretch ${bar}`}>
         {/* Dates */}
-        <div className="relative flex items-stretch flex-1">
+        <div ref={datesRef} className="relative flex items-stretch flex-1">
           <button
             type="button"
             onClick={() => setOpen(open === 'cal' ? null : 'cal')}
@@ -170,26 +229,13 @@ export default function SearchWidget({ variant = 'page' }: SearchWidgetProps) {
               </svg>
             </button>
           )}
-
-          {open === 'cal' && (
-            <div className="absolute z-50 top-full mt-2 left-0 w-[640px] max-w-[calc(100vw-2rem)] bg-white border border-gray-300 shadow-xl p-4">
-              <SearchDateRange
-                checkIn={arrival}
-                checkOut={departure}
-                today={today}
-                maxDate={maxDate}
-                locale={locale}
-                onPickDay={onPickDay}
-              />
-            </div>
-          )}
         </div>
 
         {/* Divider between dates and guests (desktop) */}
         <div className={`hidden md:block w-px my-2 ${dividerCls}`} />
 
         {/* Guests */}
-        <div className={`relative flex items-stretch md:w-64 border-t md:border-t-0 ${hBorder}`}>
+        <div ref={guestsRef} className={`relative flex items-stretch md:w-64 border-t md:border-t-0 ${hBorder}`}>
           <button
             type="button"
             onClick={() => setOpen(open === 'guests' ? null : 'guests')}
@@ -203,17 +249,6 @@ export default function SearchWidget({ variant = 'page' }: SearchWidgetProps) {
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
             </svg>
           </button>
-
-          {open === 'guests' && (
-            <div className="absolute z-50 top-full mt-2 left-0 right-0 md:left-auto md:right-0 md:w-80 bg-white border border-gray-300 shadow-xl p-4">
-              <SearchGuests
-                value={{ adults, children, infants, pets }}
-                onChange={onGuestChange}
-                onDone={() => setOpen(null)}
-                locale={locale}
-              />
-            </div>
-          )}
         </div>
 
         {/* Search */}
@@ -225,6 +260,37 @@ export default function SearchWidget({ variant = 'page' }: SearchWidgetProps) {
           {L.search}
         </button>
       </div>
+
+      {/* Popovers portaled to body so they escape the hero's overflow:hidden */}
+      {mounted &&
+        open &&
+        pos &&
+        createPortal(
+          <div
+            ref={panelRef}
+            style={panelStyle}
+            className="z-[1000] bg-white border border-gray-300 shadow-xl p-4 overflow-y-auto font-jost"
+          >
+            {open === 'cal' ? (
+              <SearchDateRange
+                checkIn={arrival}
+                checkOut={departure}
+                today={today}
+                maxDate={maxDate}
+                locale={locale}
+                onPickDay={onPickDay}
+              />
+            ) : (
+              <SearchGuests
+                value={{ adults, children, infants, pets }}
+                onChange={onGuestChange}
+                onDone={() => setOpen(null)}
+                locale={locale}
+              />
+            )}
+          </div>,
+          document.body
+        )}
     </div>
   );
 }
