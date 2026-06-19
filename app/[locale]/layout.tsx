@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation';
 import Script from 'next/script';
 import { jost, raleway, logga } from '../fonts';
 import { TranslationsProvider } from '../providers/TranslationsProvider';
+import { BookingDatesProvider } from '../providers/BookingDatesProvider';
 import { getTranslations } from '../lib/translations';
 import { isValidLocale, locales, type Locale } from '../lib/i18n';
 import ConditionalHeader from '../components/ConditionalHeader';
@@ -76,18 +77,20 @@ export default async function LocaleLayout({
       </head>
       <body className="font-raleway antialiased">
         <TranslationsProvider initialTranslations={translations} locale={locale}>
-          <Suspense fallback={null}>
-            <PromoBanner />
-          </Suspense>
-          <Suspense fallback={null}>
-            <ConditionalHeader heroSettings={heroSettings} />
-          </Suspense>
-          <main>
-            {children}
-          </main>
-          <Suspense fallback={null}>
-            <WhatsAppWidget />
-          </Suspense>
+          <BookingDatesProvider>
+            <Suspense fallback={null}>
+              <PromoBanner />
+            </Suspense>
+            <Suspense fallback={null}>
+              <ConditionalHeader heroSettings={heroSettings} />
+            </Suspense>
+            <main>
+              {children}
+            </main>
+            <Suspense fallback={null}>
+              <WhatsAppWidget />
+            </Suspense>
+          </BookingDatesProvider>
         </TranslationsProvider>
       </body>
     </html>

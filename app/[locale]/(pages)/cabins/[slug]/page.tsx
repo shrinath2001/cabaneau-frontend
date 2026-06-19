@@ -2,7 +2,8 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { useParams, useSearchParams, notFound } from "next/navigation";
+import { useParams, notFound } from "next/navigation";
+import { useBookingDates } from "@/app/providers/BookingDatesProvider";
 import PhotoGalleryModal from "./components/PhotoGalleryModal";
 import MobileCarouselModal from "./components/MobileCarouselModal";
 import BookingSection from "@/app/components/booking/BookingSection";
@@ -89,7 +90,6 @@ interface CabinDetails {
 
 const SingleCabinPage = () => {
   const params = useParams();
-  const searchParams = useSearchParams();
   const slug = params.slug as string;
   const locale = (params.locale as string) || "en";
   const { t } = useTranslations("cabin");
@@ -104,13 +104,9 @@ const SingleCabinPage = () => {
   const [mobileCarouselImages, setMobileCarouselImages] = useState<string[]>([]);
   const [carouselKey, setCarouselKey] = useState(0);
 
-  // Get booking params from URL (passed from search page)
-  const arrival = searchParams.get("arrival") || undefined;
-  const departure = searchParams.get("departure") || undefined;
-  const adults = searchParams.get("adults") || undefined;
-  const children = searchParams.get("children") || undefined;
-  const infants = searchParams.get("infants") || undefined;
-  const pets = searchParams.get("pets") || undefined;
+  // Selected dates from the shared booking store (used by the Things to Know
+  // panel for display). The booking widgets read the store directly.
+  const { arrival, departure } = useBookingDates();
 
   useEffect(() => {
     const fetchCabin = async () => {
@@ -347,13 +343,11 @@ const SingleCabinPage = () => {
             {/* Guest Reviews */}
             <ReviewsSection cabinId={cabin.id} inline />
 
-            {/* Inline availability calendar (display-only, Airbnb-style) */}
+            {/* Inline availability calendar (Airbnb-style; drives the booking store) */}
             <AvailabilityCalendar
               slug={cabin.slug}
               locale={locale}
               city={cabin.city}
-              initialArrival={arrival}
-              initialDeparture={departure}
             />
 
             {/* Things to Know Section */}
@@ -375,14 +369,6 @@ const SingleCabinPage = () => {
                 name: cabin.name || cabin.slug,
                 lodgifyId: cabin.lodgifyId,
                 capacity: cabin.capacity,
-              }}
-              searchParams={{
-                arrival,
-                departure,
-                adults,
-                children,
-                infants,
-                pets,
               }}
             />
           </div>
@@ -422,14 +408,6 @@ const SingleCabinPage = () => {
             name: cabin.name || cabin.slug,
             lodgifyId: cabin.lodgifyId,
             capacity: cabin.capacity,
-          }}
-          searchParams={{
-            arrival,
-            departure,
-            adults,
-            children,
-            infants,
-            pets,
           }}
         />
       </div>

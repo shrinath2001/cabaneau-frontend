@@ -1,16 +1,14 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useRatesCalendar, nightsBetween } from './hooks/useRatesCalendar';
+import { useBookingDates } from '@/app/providers/BookingDatesProvider';
 
 interface AvailabilityCalendarProps {
   slug: string;
   locale: string;
   /** Cabin city, used for the "<N> nights in <city>" heading. */
   city?: string;
-  /** Current selection from the URL (YYYYMMDD or YYYY-MM-DD) to prefill. */
-  initialArrival?: string;
-  initialDeparture?: string;
 }
 
 const STRINGS: Record<
@@ -87,13 +85,6 @@ function addMonths(monthStart: string, n: number): string {
   const dt = toDate(monthStart);
   return ymd(new Date(Date.UTC(dt.getUTCFullYear(), dt.getUTCMonth() + n, 1)));
 }
-/** Convert a raw URL date (YYYYMMDD or YYYY-MM-DD) to ISO YYYY-MM-DD. */
-function toISO(d?: string): string | undefined {
-  if (!d) return undefined;
-  if (d.includes('-')) return d;
-  if (/^\d{8}$/.test(d)) return `${d.slice(0, 4)}-${d.slice(4, 6)}-${d.slice(6, 8)}`;
-  return undefined;
-}
 /** Monday-first grid for the month containing monthStart. */
 function buildMonthCells(monthStart: string): (string | null)[] {
   const dt = toDate(monthStart);
@@ -111,11 +102,11 @@ function buildMonthCells(monthStart: string): (string | null)[] {
 
 /**
  * AvailabilityCalendar - inline, Airbnb-style availability calendar for the
- * cabin page. Selecting a complete range applies the dates to the booking
- * widget the same way the modal does (writes arrival/departure to the URL and
- * reloads), so the booking card + sticky bar + quote update. Prefilled from the
- * URL so it stays in sync. All availability/min-stay/check-in-out rules come
- * from useRatesCalendar.
+ * cabin page. Selecting a complete range applies it to the shared booking
+ * store (useBookingDates), so the booking card + sticky bar + quote update
+ * reactively with NO page reload (the URL is mirrored shallowly). Stays in sync
+ * with the store. All availability/min-stay/check-in-out rules come from
+ * useRatesCalendar.
  *
  * Two months on desktop, one on mobile, with prev/next navigation.
  */
@@ -123,22 +114,30 @@ export default function AvailabilityCalendar({
   slug,
   locale,
   city,
-  initialArrival,
-  initialDeparture,
 }: AvailabilityCalendarProps) {
   const t = STRINGS[locale] || STRINGS.en;
   const aria = ARIA[locale] || ARIA.en;
   const bcp47 = BCP47[locale] || 'en-GB';
 
   const { loading, error, helpers } = useRatesCalendar({ slug, locale });
+  const { arrival, departure, setDates, clearDates } = useBookingDates();
 
-  const [checkIn, setCheckIn] = useState<string | undefined>(() => toISO(initialArrival));
-  const [checkOut, setCheckOut] = useState<string | undefined>(() => toISO(initialDeparture));
+  const [checkIn, setCheckIn] = useState<string | undefined>(arrival);
+  const [checkOut, setCheckOut] = useState<string | undefined>(departure);
   const [hover, setHover] = useState<string | undefined>();
   const [message, setMessage] = useState<string | undefined>();
   const [viewMonth, setViewMonth] = useState<string>(() =>
-    firstOfMonth(toISO(initialArrival) || helpers.today)
+    firstOfMonth(arrival || helpers.today)
   );
+
+  // Keep the calendar's selection in sync with the shared store, so a change
+  // made elsewhere (modal, another page) is reflected here. Mid-selection (only
+  // check-in chosen) doesn't write to the store, so it's preserved.
+  useEffect(() => {
+    setCheckIn(arrival);
+    setCheckOut(departure);
+    if (arrival) setViewMonth(firstOfMonth(arrival));
+  }, [arrival, departure]);
 
   const minMonth = firstOfMonth(helpers.today);
   const maxMonth = helpers.maxDate ? firstOfMonth(helpers.maxDate) : addMonths(minMonth, 11);
@@ -189,22 +188,12 @@ export default function AvailabilityCalendar({
     }
     if (helpers.isCheckOutSelectable(checkIn, date)) {
       setCheckOut(date);
-      // Auto-apply: push the range to the booking widget (URL + reload), the
-      // same flow the booking modal uses, so the card/sticky/quote update.
-      applyAndReload(checkIn, date);
+      // Auto-apply: push the range to the shared store. Reactive, NO reload, the
+      // booking card/sticky/quote update and the URL is mirrored shallowly.
+      setDates({ arrival: checkIn, departure: date });
     } else {
       setMessage(t.notAvailable);
     }
-  };
-
-  // Write the selected range to the URL (Lodgify YYYYMMDD) and reload, mirroring
-  // the booking modal. Preserves existing guest params; defaults adults to 1.
-  const applyAndReload = (ci: string, co: string) => {
-    const url = new URL(window.location.href);
-    url.searchParams.set('arrival', ci.replace(/-/g, ''));
-    url.searchParams.set('departure', co.replace(/-/g, ''));
-    if (!url.searchParams.get('adults')) url.searchParams.set('adults', '1');
-    window.location.href = url.toString();
   };
 
   const previewEnd =
@@ -228,14 +217,10 @@ export default function AvailabilityCalendar({
     setCheckIn(undefined);
     setCheckOut(undefined);
     setMessage(undefined);
-    // If a range was applied (present in the URL), clear it everywhere so the
-    // booking widget resets too; otherwise just drop the in-progress selection.
-    const url = new URL(window.location.href);
-    if (url.searchParams.has('arrival') || url.searchParams.has('departure')) {
-      url.searchParams.delete('arrival');
-      url.searchParams.delete('departure');
-      window.location.href = url.toString();
-    }
+    // Clear the shared store too (resets the booking widget + URL). Reactive,
+    // no reload. If only a check-in was chosen (not committed to the store),
+    // this is a harmless no-op on the store.
+    if (arrival || departure) clearDates();
   };
 
   const renderMonth = (monthStart: string, className = '') => {

@@ -25,7 +25,7 @@ interface MobileBottomSheetProps {
   initialCheckIn?: string;
   initialCheckOut?: string;
   initialAdults?: number;
-  onSave: (params: { arrival: string; departure: string; adults: number }) => void;
+  onSave: (params: { checkIn: string; checkOut: string; adults: number }) => void;
 }
 
 /**
@@ -71,11 +71,7 @@ export default function MobileBottomSheet({
     checkOut: string;
     adults: number;
   }) => {
-    onSave({
-      arrival: checkIn.replace(/-/g, ""),
-      departure: checkOut.replace(/-/g, ""),
-      adults,
-    });
+    onSave({ checkIn, checkOut, adults });
   };
 
   return (
