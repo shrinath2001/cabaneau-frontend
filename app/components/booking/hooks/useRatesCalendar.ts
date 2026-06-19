@@ -161,9 +161,13 @@ export function useRatesCalendar({
 
     const settings = data?.rateSettings;
     const today = localToday();
-    const advance = settings?.advanceNoticeDays ?? 0;
     const window = settings?.bookingWindowDays ?? 0;
-    const minCheckIn = addDays(today, advance);
+    // Earliest selectable = today (only past dates are excluded). Advance notice
+    // is NOT applied here: Lodgify already bakes it into canCheckIn (the in_out
+    // allowlist) and the Quote enforces it. Using today + advanceNoticeDays
+    // over-restricted (e.g. Bogota's June 19 is bookable on Lodgify but was
+    // greyed here, since advance_notice_days=1 still allows same-day check-in).
+    const minCheckIn = today;
     const maxDate = window > 0 ? addDays(today, window) : null;
 
     const getDay = (date: string) => byDate.get(date);
