@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
-import LodgifyBookingWidget from './LodgifyBookingWidget';
+import SearchWidget from './search/SearchWidget';
 import { FlagIcon, getLanguageDisplayName, getLanguageLabel } from './FlagIcon';
 import { useTranslations } from '@/app/providers/TranslationsProvider';
 import { locales, switchLocale, localizedPath, type Locale } from '@/app/lib/i18n';
@@ -464,8 +464,8 @@ const Header = ({ heroSettings: initialHeroSettings }: { heroSettings?: HeroSett
         <h1 className="font-logga font-normal text-[32px] md:text-[68px] uppercase leading-tight">{tHome('hero.title_sleep', 'Sleep,')} <span className="text-customyellow">{tHome('hero.title_highlight', 'Eat & Relax')}</span></h1>
         <h2 className="font-logga font-normal text-[32px] md:text-[68px] uppercase leading-tight mb-6 md:mb-16">{tHome('hero.title_above', 'Above the Trees')}</h2>
 
-        {/* Lodgify Search Widget - handles all booking rules */}
-        <LodgifyBookingWidget languageCode={locale} />
+        {/* Custom search widget (date range + guests) */}
+        <SearchWidget variant="hero" />
       </div>
       {/* Marker element for scroll detection */}
       <div id="header-scroll-marker" className="absolute bottom-0 h-1 w-full"></div>

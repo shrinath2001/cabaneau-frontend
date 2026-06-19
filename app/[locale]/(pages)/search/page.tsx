@@ -2,7 +2,7 @@
 import { useEffect, useState, Suspense, useCallback } from 'react';
 import { useSearchParams } from 'next/navigation';
 import CabinCard from '@/app/components/CabinCard';
-import SearchPageWidget from '@/app/components/SearchPageWidget';
+import SearchWidget from '@/app/components/search/SearchWidget';
 import { apiFetch } from '@/app/lib/api';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -585,7 +585,7 @@ function SearchResults() {
 
         {/* Search Widget */}
         <div className="flex justify-center mb-12">
-          <SearchPageWidget />
+          <SearchWidget variant="page" />
         </div>
 
         {/* Loading State */}
