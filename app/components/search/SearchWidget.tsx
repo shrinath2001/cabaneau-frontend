@@ -41,8 +41,7 @@ interface PanelPos {
 }
 
 // Fixed-position placement under (or above, if no room) an anchor, clamped to
-// the viewport. Used so the popovers can be portaled out of the hero's
-// overflow:hidden container.
+// the viewport. Lets the popovers be portaled out of the hero's overflow:hidden.
 function computePos(anchor: HTMLElement, desiredWidth: number, align: 'left' | 'right'): PanelPos {
   const r = anchor.getBoundingClientRect();
   const vw = window.innerWidth;
@@ -84,7 +83,6 @@ export default function SearchWidget({ variant = 'page' }: SearchWidgetProps) {
     else if (open === 'guests' && guestsRef.current) setPos(computePos(guestsRef.current, 320, 'right'));
   }, [open]);
 
-  // Position the portaled panel and keep it anchored on scroll/resize.
   useEffect(() => {
     if (!open) {
       setPos(null);
@@ -99,7 +97,6 @@ export default function SearchWidget({ variant = 'page' }: SearchWidgetProps) {
     };
   }, [open, recompute]);
 
-  // Close on outside click (ignore the trigger bar and the portaled panel)
   useEffect(() => {
     if (!open) return;
     const onDown = (e: MouseEvent) => {
@@ -161,9 +158,9 @@ export default function SearchWidget({ variant = 'page' }: SearchWidgetProps) {
     router.push(`/${locale}/search?${q.toString()}`);
   };
 
-  // Variant styling matched to the previous Lodgify widget: frosted glass with
-  // white text on the dark hero; a white bordered bar with dark text on the
-  // light /search page. Sharp corners, green Search, in both.
+  // Variant styling matched to the previous Lodgify widget: a single connected
+  // row at all breakpoints, sharp corners, green icon-only Search. Hero =
+  // frosted glass + white text; /search page = white bar + #e0e0e0 + dark text.
   const isHero = variant === 'hero';
   const bar = isHero
     ? 'bg-white/10 backdrop-blur-[8px] border border-white/20'
@@ -173,9 +170,13 @@ export default function SearchWidget({ variant = 'page' }: SearchWidgetProps) {
   const valOn = isHero ? 'text-white' : 'text-gray-900';
   const valOff = isHero ? 'text-white/60' : 'text-gray-400';
   const dividerCls = isHero ? 'bg-white/25' : 'bg-[#e0e0e0]';
-  const hBorder = isHero ? 'border-white/25' : 'border-[#e0e0e0]';
   const clearCls = isHero ? 'text-white/70 hover:text-white' : 'text-gray-400 hover:text-gray-700';
   const chevronCls = isHero ? 'text-white/80' : 'text-gray-500';
+
+  const cellCls = `min-w-0 flex-1 text-left px-2 md:px-4 py-2.5 md:py-3 transition ${cellHover}`;
+  const labelTextCls = `text-[10px] md:text-xs uppercase tracking-wide truncate ${labelCls}`;
+  const valueTextCls = (filled: boolean) =>
+    `text-[12px] md:text-[15px] truncate ${filled ? 'font-medium ' + valOn : valOff}`;
 
   const panelStyle: React.CSSProperties | undefined = pos
     ? {
@@ -189,38 +190,34 @@ export default function SearchWidget({ variant = 'page' }: SearchWidgetProps) {
 
   return (
     <div ref={rootRef} className="relative w-full max-w-3xl font-jost text-left">
-      <div className={`flex flex-col md:flex-row items-stretch ${bar}`}>
+      <div className={`flex flex-row flex-nowrap items-stretch ${bar}`}>
         {/* Dates */}
-        <div ref={datesRef} className="relative flex items-stretch flex-1">
+        <div ref={datesRef} className="relative flex items-stretch flex-[2] md:flex-1 min-w-0">
           <button
             type="button"
             onClick={() => setOpen(open === 'cal' ? null : 'cal')}
-            className={`flex-1 text-left px-4 py-3 transition ${cellHover}`}
+            className={cellCls}
           >
-            <div className={`text-xs uppercase tracking-wide ${labelCls}`}>{L.checkIn}</div>
-            <div className={`text-[15px] ${arrival ? 'font-medium ' + valOn : valOff}`}>
-              {fmt(arrival) || L.addDates}
-            </div>
+            <div className={labelTextCls}>{L.checkIn}</div>
+            <div className={valueTextCls(!!arrival)}>{fmt(arrival) || L.addDates}</div>
           </button>
-          <div className={`w-px my-2 ${dividerCls}`} />
+          <div className={`w-px my-2 shrink-0 ${dividerCls}`} />
           <button
             type="button"
             onClick={() => setOpen(open === 'cal' ? null : 'cal')}
-            className={`flex-1 text-left px-4 py-3 transition ${cellHover}`}
+            className={cellCls}
           >
-            <div className={`text-xs uppercase tracking-wide ${labelCls}`}>{L.checkOut}</div>
-            <div className={`text-[15px] ${departure ? 'font-medium ' + valOn : valOff}`}>
-              {fmt(departure) || L.addDates}
-            </div>
+            <div className={labelTextCls}>{L.checkOut}</div>
+            <div className={valueTextCls(!!departure)}>{fmt(departure) || L.addDates}</div>
           </button>
           {hasRange && (
             <button
               type="button"
               onClick={() => clearDates()}
               aria-label="Clear dates"
-              className={`px-3 ${clearCls}`}
+              className={`shrink-0 px-1.5 md:px-2 ${clearCls}`}
             >
-              <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+              <svg className="w-4 h-4 md:w-5 md:h-5" fill="currentColor" viewBox="0 0 20 20">
                 <path
                   fillRule="evenodd"
                   d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.7 7.3a1 1 0 00-1.4 1.4L8.6 10l-1.3 1.3a1 1 0 101.4 1.4L10 11.4l1.3 1.3a1 1 0 001.4-1.4L11.4 10l1.3-1.3a1 1 0 00-1.4-1.4L10 8.6 8.7 7.3z"
@@ -231,33 +228,36 @@ export default function SearchWidget({ variant = 'page' }: SearchWidgetProps) {
           )}
         </div>
 
-        {/* Divider between dates and guests (desktop) */}
-        <div className={`hidden md:block w-px my-2 ${dividerCls}`} />
+        <div className={`w-px my-2 shrink-0 ${dividerCls}`} />
 
         {/* Guests */}
-        <div ref={guestsRef} className={`relative flex items-stretch md:w-64 border-t md:border-t-0 ${hBorder}`}>
+        <div ref={guestsRef} className="relative flex items-stretch flex-1 md:flex-none md:w-56 min-w-0">
           <button
             type="button"
             onClick={() => setOpen(open === 'guests' ? null : 'guests')}
-            className={`w-full text-left px-4 py-3 flex items-center justify-between transition ${cellHover}`}
+            className={`w-full min-w-0 text-left px-2 md:px-4 py-2.5 md:py-3 flex items-center justify-between gap-1 transition ${cellHover}`}
           >
-            <div>
-              <div className={`text-xs uppercase tracking-wide ${labelCls}`}>{L.guests}</div>
-              <div className={`text-[15px] ${valOn}`}>{guestSummary()}</div>
+            <div className="min-w-0">
+              <div className={labelTextCls}>{L.guests}</div>
+              <div className={`text-[12px] md:text-[15px] truncate ${valOn}`}>{guestSummary()}</div>
             </div>
-            <svg className={`w-5 h-5 ${chevronCls}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className={`w-4 h-4 md:w-5 md:h-5 shrink-0 ${chevronCls}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
             </svg>
           </button>
         </div>
 
-        {/* Search */}
+        {/* Search (icon only, matching the previous widget) */}
         <button
           type="button"
           onClick={onSearch}
-          className="bg-[#495D4D] text-white px-8 py-4 md:py-0 min-h-[56px] uppercase tracking-wide font-heading font-medium hover:bg-[#3d5a3d] transition flex items-center justify-center"
+          aria-label={L.search}
+          title={L.search}
+          className="shrink-0 w-12 md:w-[60px] min-h-[52px] md:min-h-[60px] bg-[#495D4D] text-white flex items-center justify-center hover:bg-[#3d5a3d] transition"
         >
-          {L.search}
+          <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-4.35-4.35M11 19a8 8 0 100-16 8 8 0 000 16z" />
+          </svg>
         </button>
       </div>
 
