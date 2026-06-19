@@ -9,7 +9,7 @@ import SearchDateRange from './SearchDateRange';
 import SearchGuests, { GuestCounts } from './SearchGuests';
 
 interface SearchWidgetProps {
-  /** 'hero' = on the dark homepage hero; 'page' = on the light /search page. */
+  /** 'hero' = on the dark homepage hero (frosted glass); 'page' = light /search page. */
   variant?: 'hero' | 'page';
 }
 
@@ -95,7 +95,12 @@ export default function SearchWidget({ variant = 'page' }: SearchWidgetProps) {
   };
 
   const onSearch = () => {
-    if (!hasRange) return;
+    // Guide the user to pick dates first if missing (button stays enabled to
+    // match the previous widget's always-on styling).
+    if (!hasRange) {
+      setOpen('cal');
+      return;
+    }
     const q = new URLSearchParams();
     q.set('arrival', arrival!.replace(/-/g, ''));
     q.set('departure', departure!.replace(/-/g, ''));
@@ -107,56 +112,67 @@ export default function SearchWidget({ variant = 'page' }: SearchWidgetProps) {
     router.push(`/${locale}/search?${q.toString()}`);
   };
 
-  const boxBase =
-    'bg-white border border-gray-300' + (variant === 'page' ? ' shadow-sm' : '');
+  // Variant styling matched to the previous Lodgify widget: frosted glass with
+  // white text on the dark hero; a white bordered bar with dark text on the
+  // light /search page. Sharp corners, green Search, in both.
+  const isHero = variant === 'hero';
+  const bar = isHero
+    ? 'bg-white/10 backdrop-blur-[8px] border border-white/20'
+    : 'bg-white border border-[#e0e0e0] shadow-sm';
+  const cellHover = isHero ? 'hover:bg-white/10' : 'hover:bg-gray-50';
+  const labelCls = isHero ? 'text-white/70' : 'text-gray-500';
+  const valOn = isHero ? 'text-white' : 'text-gray-900';
+  const valOff = isHero ? 'text-white/60' : 'text-gray-400';
+  const dividerCls = isHero ? 'bg-white/25' : 'bg-[#e0e0e0]';
+  const hBorder = isHero ? 'border-white/25' : 'border-[#e0e0e0]';
+  const clearCls = isHero ? 'text-white/70 hover:text-white' : 'text-gray-400 hover:text-gray-700';
+  const chevronCls = isHero ? 'text-white/80' : 'text-gray-500';
 
   return (
     <div ref={rootRef} className="relative w-full max-w-3xl font-jost text-left">
-      <div className="flex flex-col md:flex-row gap-3">
+      <div className={`flex flex-col md:flex-row items-stretch ${bar}`}>
         {/* Dates */}
-        <div className="relative flex-1">
-          <div className={`flex items-stretch ${boxBase}`}>
+        <div className="relative flex items-stretch flex-1">
+          <button
+            type="button"
+            onClick={() => setOpen(open === 'cal' ? null : 'cal')}
+            className={`flex-1 text-left px-4 py-3 transition ${cellHover}`}
+          >
+            <div className={`text-xs uppercase tracking-wide ${labelCls}`}>{L.checkIn}</div>
+            <div className={`text-[15px] ${arrival ? 'font-medium ' + valOn : valOff}`}>
+              {fmt(arrival) || L.addDates}
+            </div>
+          </button>
+          <div className={`w-px my-2 ${dividerCls}`} />
+          <button
+            type="button"
+            onClick={() => setOpen(open === 'cal' ? null : 'cal')}
+            className={`flex-1 text-left px-4 py-3 transition ${cellHover}`}
+          >
+            <div className={`text-xs uppercase tracking-wide ${labelCls}`}>{L.checkOut}</div>
+            <div className={`text-[15px] ${departure ? 'font-medium ' + valOn : valOff}`}>
+              {fmt(departure) || L.addDates}
+            </div>
+          </button>
+          {hasRange && (
             <button
               type="button"
-              onClick={() => setOpen(open === 'cal' ? null : 'cal')}
-              className="flex-1 text-left px-4 py-3 hover:bg-gray-50 transition"
+              onClick={() => clearDates()}
+              aria-label="Clear dates"
+              className={`px-3 ${clearCls}`}
             >
-              <div className="text-xs uppercase tracking-wide text-gray-500">{L.checkIn}</div>
-              <div className={`text-[15px] ${arrival ? 'font-medium text-gray-900' : 'text-gray-400'}`}>
-                {fmt(arrival) || L.addDates}
-              </div>
+              <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                <path
+                  fillRule="evenodd"
+                  d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.7 7.3a1 1 0 00-1.4 1.4L8.6 10l-1.3 1.3a1 1 0 101.4 1.4L10 11.4l1.3 1.3a1 1 0 001.4-1.4L11.4 10l1.3-1.3a1 1 0 00-1.4-1.4L10 8.6 8.7 7.3z"
+                  clipRule="evenodd"
+                />
+              </svg>
             </button>
-            <div className="w-px bg-gray-300" />
-            <button
-              type="button"
-              onClick={() => setOpen(open === 'cal' ? null : 'cal')}
-              className="flex-1 text-left px-4 py-3 hover:bg-gray-50 transition"
-            >
-              <div className="text-xs uppercase tracking-wide text-gray-500">{L.checkOut}</div>
-              <div className={`text-[15px] ${departure ? 'font-medium text-gray-900' : 'text-gray-400'}`}>
-                {fmt(departure) || L.addDates}
-              </div>
-            </button>
-            {hasRange && (
-              <button
-                type="button"
-                onClick={() => clearDates()}
-                aria-label="Clear dates"
-                className="px-3 text-gray-400 hover:text-gray-700"
-              >
-                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                  <path
-                    fillRule="evenodd"
-                    d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.7 7.3a1 1 0 00-1.4 1.4L8.6 10l-1.3 1.3a1 1 0 101.4 1.4L10 11.4l1.3 1.3a1 1 0 001.4-1.4L11.4 10l1.3-1.3a1 1 0 00-1.4-1.4L10 8.6 8.7 7.3z"
-                    clipRule="evenodd"
-                  />
-                </svg>
-              </button>
-            )}
-          </div>
+          )}
 
           {open === 'cal' && (
-            <div className="absolute z-50 mt-2 left-0 right-0 md:right-auto md:w-[640px] bg-white border border-gray-300 shadow-xl p-4">
+            <div className="absolute z-50 top-full mt-2 left-0 w-[640px] max-w-[calc(100vw-2rem)] bg-white border border-gray-300 shadow-xl p-4">
               <SearchDateRange
                 checkIn={arrival}
                 checkOut={departure}
@@ -169,24 +185,27 @@ export default function SearchWidget({ variant = 'page' }: SearchWidgetProps) {
           )}
         </div>
 
+        {/* Divider between dates and guests (desktop) */}
+        <div className={`hidden md:block w-px my-2 ${dividerCls}`} />
+
         {/* Guests */}
-        <div className="relative md:w-72">
+        <div className={`relative flex items-stretch md:w-64 border-t md:border-t-0 ${hBorder}`}>
           <button
             type="button"
             onClick={() => setOpen(open === 'guests' ? null : 'guests')}
-            className={`w-full text-left px-4 py-3 flex items-center justify-between hover:bg-gray-50 transition ${boxBase}`}
+            className={`w-full text-left px-4 py-3 flex items-center justify-between transition ${cellHover}`}
           >
             <div>
-              <div className="text-xs uppercase tracking-wide text-gray-500">{L.guests}</div>
-              <div className="text-[15px] text-gray-900">{guestSummary()}</div>
+              <div className={`text-xs uppercase tracking-wide ${labelCls}`}>{L.guests}</div>
+              <div className={`text-[15px] ${valOn}`}>{guestSummary()}</div>
             </div>
-            <svg className="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className={`w-5 h-5 ${chevronCls}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
             </svg>
           </button>
 
           {open === 'guests' && (
-            <div className="absolute z-50 mt-2 left-0 right-0 md:left-auto md:right-0 md:w-80 bg-white border border-gray-300 shadow-xl p-4">
+            <div className="absolute z-50 top-full mt-2 left-0 right-0 md:left-auto md:right-0 md:w-80 bg-white border border-gray-300 shadow-xl p-4">
               <SearchGuests
                 value={{ adults, children, infants, pets }}
                 onChange={onGuestChange}
@@ -200,14 +219,8 @@ export default function SearchWidget({ variant = 'page' }: SearchWidgetProps) {
         {/* Search */}
         <button
           type="button"
-          disabled={!hasRange}
           onClick={onSearch}
-          className={[
-            'px-8 py-3 uppercase tracking-wide font-heading font-medium transition',
-            hasRange
-              ? 'bg-[#495D4D] text-white hover:bg-[#3d5a3d]'
-              : 'bg-gray-300 text-gray-500 cursor-not-allowed',
-          ].join(' ')}
+          className="bg-[#495D4D] text-white px-8 py-4 md:py-0 min-h-[56px] uppercase tracking-wide font-heading font-medium hover:bg-[#3d5a3d] transition flex items-center justify-center"
         >
           {L.search}
         </button>
