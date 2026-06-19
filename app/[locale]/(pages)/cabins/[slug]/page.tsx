@@ -352,6 +352,8 @@ const SingleCabinPage = () => {
               slug={cabin.slug}
               locale={locale}
               city={cabin.city}
+              initialArrival={arrival}
+              initialDeparture={departure}
             />
 
             {/* Things to Know Section */}
