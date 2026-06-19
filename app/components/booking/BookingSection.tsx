@@ -7,6 +7,7 @@ import MobileBottomSheet from './MobileBottomSheet';
 import DesktopBookingCard from './DesktopBookingCard';
 import DesktopBookingModal from './DesktopBookingModal';
 import { useTranslations } from '@/app/providers/TranslationsProvider';
+import { useBookingDates } from '@/app/providers/BookingDatesProvider';
 
 interface CabinInfo {
   slug: string;
@@ -15,65 +16,30 @@ interface CabinInfo {
   capacity?: number;
 }
 
-interface SearchParams {
-  arrival?: string;
-  departure?: string;
-  adults?: string;
-  children?: string;
-  infants?: string;
-  pets?: string;
-}
-
 interface BookingSectionProps {
   cabin: CabinInfo;
-  searchParams: SearchParams;
   /** Render mode - 'desktop' or 'mobile'. Parent controls which is visible via CSS */
   mode: 'desktop' | 'mobile';
 }
 
 /**
- * BookingSection - Main orchestrator for booking UI
+ * BookingSection - Main orchestrator for booking UI.
  *
- * Renders either desktop or mobile view based on `mode` prop.
- * Parent component controls visibility via CSS (hidden lg:block / lg:hidden).
- *
- * States:
- * - Mobile + No dates: Sticky bar with "Check Availability" -> opens bottom sheet with Lodgify widget
- * - Mobile + Has dates: Sticky bar with price + "Reserve" button
- * - Desktop + No dates: Card with "Check Availability" -> opens modal with Lodgify widget
- * - Desktop + Has dates: Custom booking card with price + "Book Your Stay"
+ * Reads the selection from the shared BookingDatesProvider (ISO dates) and
+ * updates it via setDates(), so date changes are reactive with NO page reload.
+ * useQuote is keyed on the dates, so the price refreshes automatically.
  */
-export default function BookingSection({
-  cabin,
-  searchParams,
-  mode,
-}: BookingSectionProps) {
+export default function BookingSection({ cabin, mode }: BookingSectionProps) {
   const { t, locale } = useTranslations('booking');
+  const { arrival, departure, adults, setDates } = useBookingDates();
   const [showBottomSheet, setShowBottomSheet] = useState(false);
   const [showDesktopModal, setShowDesktopModal] = useState(false);
+  const [minStayAdjusted, setMinStayAdjusted] = useState(false);
 
-  // Check if we have date params (converts URL format if needed)
-  const arrival = searchParams.arrival;
-  const departure = searchParams.departure;
-  const hasDateParams = !!(arrival && departure);
-
-  // Parse guest count (simple total, passed as adults)
-  const adults = parseInt(searchParams.adults || '1', 10);
-
-  // Convert Lodgify date format (YYYYMMDD) to ISO format (YYYY-MM-DD) if needed
-  const formatDateForApi = (date: string | undefined): string | undefined => {
-    if (!date) return undefined;
-    // Already ISO format
-    if (date.includes('-')) return date;
-    // Lodgify format - convert to ISO
-    if (date.length === 8 && /^\d{8}$/.test(date)) {
-      return `${date.substring(0, 4)}-${date.substring(4, 6)}-${date.substring(6, 8)}`;
-    }
-    return date;
-  };
-
-  const checkIn = formatDateForApi(arrival);
-  const checkOut = formatDateForApi(departure);
+  // Dates from context are already ISO (YYYY-MM-DD).
+  const checkIn = arrival;
+  const checkOut = departure;
+  const hasDateParams = !!(checkIn && checkOut);
 
   // Fetch quote only when we have dates
   const { quote, loading, error } = useQuote({
@@ -84,59 +50,61 @@ export default function BookingSection({
     locale,
   });
 
-  // Auto-adjust checkout date when min_stay is not met
-  const hasAutoAdjusted = useRef(false);
+  // Clear the min-stay notice when the user picks a NEW check-in (auto-adjust
+  // only changes the departure, so the notice persists until check-in changes).
+  const prevCheckIn = useRef(checkIn);
   useEffect(() => {
-    if (!quote?.minStay || !checkIn || !checkOut || loading || hasAutoAdjusted.current) return;
+    if (checkIn !== prevCheckIn.current) {
+      prevCheckIn.current = checkIn;
+      setMinStayAdjusted(false);
+    }
+  }, [checkIn]);
 
+  // Auto-extend checkout when the requested stay is below the minimum. Updates
+  // the shared store (no reload). Self-terminating: once departure == checkIn +
+  // minStay the requested nights meet the minimum and it stops.
+  useEffect(() => {
+    if (!quote?.minStay || !checkIn || !checkOut || loading) return;
     const requestedNights = Math.ceil(
       (new Date(checkOut).getTime() - new Date(checkIn).getTime()) / (1000 * 60 * 60 * 24)
     );
-
     if (requestedNights < quote.minStay) {
-      hasAutoAdjusted.current = true;
-      // Calculate new checkout date that meets min_stay
       const newCheckOut = new Date(checkIn);
       newCheckOut.setDate(newCheckOut.getDate() + quote.minStay);
       const newCheckOutStr = newCheckOut.toISOString().split('T')[0];
-      // Convert to Lodgify YYYYMMDD format for URL
-      const newDeparture = newCheckOutStr.replace(/-/g, '');
-
-      const url = new URL(window.location.href);
-      url.searchParams.set('departure', newDeparture);
-      url.searchParams.set('min_stay_adjusted', '1');
-      window.location.href = url.toString();
+      if (newCheckOutStr !== checkOut) {
+        setDates({ departure: newCheckOutStr });
+        setMinStayAdjusted(true);
+      }
     }
-  }, [quote, checkIn, checkOut, loading]);
+  }, [quote, checkIn, checkOut, loading, setDates]);
 
-  // Build min_stay warning message (only shown after auto-adjust via URL param)
+  // Min-stay warning (shown after an auto-adjust, until a new check-in is picked)
   const minStayTexts: Record<string, (n: number) => string> = {
     en: (n) => `This cabin has a ${n}-night minimum stay. We've preselected the best available dates for you.`,
     fr: (n) => `Ce chalet a un séjour minimum de ${n} nuits. Nous avons présélectionné les meilleures dates pour vous.`,
     de: (n) => `Diese Hütte hat einen Mindestaufenthalt von ${n} Nächten. Wir haben die besten verfügbaren Daten für Sie vorausgewählt.`,
     nl: (n) => `Deze hut heeft een minimaal verblijf van ${n} nachten. We hebben de beste beschikbare data voor u voorgeselecteerd.`,
   };
-
   let minStayWarning: string | undefined;
-  const wasAutoAdjusted = typeof window !== 'undefined' && new URLSearchParams(window.location.search).get('min_stay_adjusted') === '1';
-  if (wasAutoAdjusted && quote?.minStay && !loading) {
+  if (minStayAdjusted && quote?.minStay && !loading) {
     const getText = minStayTexts[locale] || minStayTexts.en;
     minStayWarning = getText(quote.minStay);
   }
 
-  // Handle "Save" from widget - refreshes page with URL params
+  // Save from the date picker modal/sheet - updates the store, no reload.
   const handleSaveFromWidget = (params: {
-    arrival: string;
-    departure: string;
+    checkIn: string;
+    checkOut: string;
     adults: number;
   }) => {
-    const url = new URL(window.location.href);
-    url.searchParams.set('arrival', params.arrival);
-    url.searchParams.set('departure', params.departure);
-    url.searchParams.set('adults', params.adults.toString());
-
-    // Refresh page with new params
-    window.location.href = url.toString();
+    setDates({
+      arrival: params.checkIn,
+      departure: params.checkOut,
+      adults: params.adults,
+    });
+    setShowDesktopModal(false);
+    setShowBottomSheet(false);
   };
 
   // MOBILE VIEW
