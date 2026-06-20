@@ -26,7 +26,18 @@ interface DesktopBookingModalProps {
   initialCheckIn?: string;
   initialCheckOut?: string;
   initialAdults?: number;
-  onSave: (params: { checkIn: string; checkOut: string; adults: number }) => void;
+  initialChildren?: number;
+  initialInfants?: number;
+  initialPets?: number;
+  allowDogs?: boolean;
+  onSave: (params: {
+    checkIn: string;
+    checkOut: string;
+    adults: number;
+    children: number;
+    infants: number;
+    pets: number;
+  }) => void;
 }
 
 /**
@@ -42,6 +53,10 @@ export default function DesktopBookingModal({
   initialCheckIn,
   initialCheckOut,
   initialAdults = 1,
+  initialChildren = 0,
+  initialInfants = 0,
+  initialPets = 0,
+  allowDogs = false,
   onSave,
 }: DesktopBookingModalProps) {
   const { locale } = useTranslations();
@@ -66,18 +81,6 @@ export default function DesktopBookingModal({
   }, [isOpen]);
 
   if (!isOpen) return null;
-
-  const handleConfirm = ({
-    checkIn,
-    checkOut,
-    adults,
-  }: {
-    checkIn: string;
-    checkOut: string;
-    adults: number;
-  }) => {
-    onSave({ checkIn, checkOut, adults });
-  };
 
   return (
     <>
@@ -116,8 +119,12 @@ export default function DesktopBookingModal({
               initialCheckIn={initialCheckIn}
               initialCheckOut={initialCheckOut}
               initialAdults={initialAdults}
+              initialChildren={initialChildren}
+              initialInfants={initialInfants}
+              initialPets={initialPets}
+              allowDogs={allowDogs}
               enabled={isOpen}
-              onConfirm={handleConfirm}
+              onConfirm={onSave}
             />
           </div>
         </div>

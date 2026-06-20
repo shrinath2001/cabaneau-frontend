@@ -3,6 +3,7 @@
 import { useMemo, useState } from 'react';
 import { useRatesCalendar, nightsBetween } from './hooks/useRatesCalendar';
 import { formatCurrency } from './hooks/useQuote';
+import GuestSteppers, { GuestCounts } from '../search/GuestSteppers';
 
 interface DateRangePickerProps {
   slug: string;
@@ -12,9 +13,21 @@ interface DateRangePickerProps {
   initialCheckIn?: string;
   initialCheckOut?: string;
   initialAdults?: number;
+  initialChildren?: number;
+  initialInfants?: number;
+  initialPets?: number;
+  /** Whether this cabin offers the Dog add-on (controls the Dogs row). */
+  allowDogs?: boolean;
   /** Whether the picker is active (controls data fetching). */
   enabled?: boolean;
-  onConfirm: (params: { checkIn: string; checkOut: string; adults: number }) => void;
+  onConfirm: (params: {
+    checkIn: string;
+    checkOut: string;
+    adults: number;
+    children: number;
+    infants: number;
+    pets: number;
+  }) => void;
 }
 
 // Locale-scoped UI strings (kept local to match the existing booking components)
@@ -145,6 +158,10 @@ export default function DateRangePicker({
   initialCheckIn,
   initialCheckOut,
   initialAdults = 1,
+  initialChildren = 0,
+  initialInfants = 0,
+  initialPets = 0,
+  allowDogs = false,
   enabled = true,
   onConfirm,
 }: DateRangePickerProps) {
@@ -156,9 +173,12 @@ export default function DateRangePicker({
 
   const [checkIn, setCheckIn] = useState<string | undefined>(initialCheckIn);
   const [checkOut, setCheckOut] = useState<string | undefined>(initialCheckOut);
-  const [adults, setAdults] = useState<number>(
-    Math.min(Math.max(1, initialAdults), Math.max(1, capacity))
-  );
+  const [guests, setGuests] = useState<GuestCounts>(() => ({
+    adults: Math.min(Math.max(1, initialAdults), Math.max(1, capacity)),
+    children: Math.max(0, initialChildren),
+    infants: Math.max(0, initialInfants),
+    pets: allowDogs ? Math.min(1, Math.max(0, initialPets)) : 0,
+  }));
   const [hover, setHover] = useState<string | undefined>();
   const [message, setMessage] = useState<string | undefined>();
 
@@ -370,36 +390,19 @@ export default function DateRangePicker({
 
       {/* Guests + actions */}
       <div className="mt-4 pt-4 border-t border-gray-200">
-        <div className="flex items-center justify-between mb-4">
-          <span className="text-sm font-light text-gray-700 uppercase">{t.guests}</span>
-          <div className="flex items-center gap-3">
-            <button
-              type="button"
-              aria-label={aria.decGuests}
-              onClick={() => setAdults((a) => Math.max(1, a - 1))}
-              disabled={adults <= 1}
-              className="w-8 h-8 border border-gray-300 flex items-center justify-center text-gray-700 disabled:text-gray-300 hover:border-[#495D4D]"
-            >
-              −
-            </button>
-            <span className="w-6 text-center text-gray-800">{adults}</span>
-            <button
-              type="button"
-              aria-label={aria.incGuests}
-              onClick={() => setAdults((a) => Math.min(Math.max(1, capacity), a + 1))}
-              disabled={adults >= Math.max(1, capacity)}
-              className="w-8 h-8 border border-gray-300 flex items-center justify-center text-gray-700 disabled:text-gray-300 hover:border-[#495D4D]"
-            >
-              +
-            </button>
-          </div>
-        </div>
+        <GuestSteppers
+          value={guests}
+          onChange={(field, next) => setGuests((g) => ({ ...g, [field]: next }))}
+          locale={locale}
+          peopleCap={Math.max(1, capacity)}
+          allowDogs={allowDogs}
+        />
 
         <button
           type="button"
           disabled={!canConfirm}
           onClick={() =>
-            canConfirm && onConfirm({ checkIn: checkIn!, checkOut: checkOut!, adults })
+            canConfirm && onConfirm({ checkIn: checkIn!, checkOut: checkOut!, ...guests })
           }
           className={[
             'w-full py-4 px-6 text-base font-bold tracking-wide uppercase transition',

@@ -67,6 +67,7 @@ interface CabinDetails {
   description?: string; // API returns localized string
   shortDescription?: string; // API returns localized string
   capacity: number;
+  addOns?: { babyAddOnId?: number | null; dogAddOnId?: number | null } | null;
   bedrooms: number;
   bathrooms: number;
   squareMeters?: number;
@@ -369,6 +370,7 @@ const SingleCabinPage = () => {
                 name: cabin.name || cabin.slug,
                 lodgifyId: cabin.lodgifyId,
                 capacity: cabin.capacity,
+                allowDogs: !!cabin.addOns?.dogAddOnId,
               }}
             />
           </div>

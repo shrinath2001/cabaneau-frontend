@@ -14,6 +14,8 @@ interface CabinInfo {
   name: string;
   lodgifyId: string;
   capacity?: number;
+  /** Whether this cabin offers the Dog add-on (shows the Dogs guest row). */
+  allowDogs?: boolean;
 }
 
 interface BookingSectionProps {
@@ -31,7 +33,7 @@ interface BookingSectionProps {
  */
 export default function BookingSection({ cabin, mode }: BookingSectionProps) {
   const { t, locale } = useTranslations('booking');
-  const { arrival, departure, adults, setDates } = useBookingDates();
+  const { arrival, departure, adults, children, infants, pets, setDates } = useBookingDates();
   const [showBottomSheet, setShowBottomSheet] = useState(false);
   const [showDesktopModal, setShowDesktopModal] = useState(false);
   const [minStayAdjusted, setMinStayAdjusted] = useState(false);
@@ -47,6 +49,9 @@ export default function BookingSection({ cabin, mode }: BookingSectionProps) {
     checkIn,
     checkOut,
     adults,
+    children,
+    infants,
+    pets,
     locale,
   });
 
@@ -97,11 +102,17 @@ export default function BookingSection({ cabin, mode }: BookingSectionProps) {
     checkIn: string;
     checkOut: string;
     adults: number;
+    children: number;
+    infants: number;
+    pets: number;
   }) => {
     setDates({
       arrival: params.checkIn,
       departure: params.checkOut,
       adults: params.adults,
+      children: params.children,
+      infants: params.infants,
+      pets: params.pets,
     });
     setShowDesktopModal(false);
     setShowBottomSheet(false);
@@ -130,6 +141,10 @@ export default function BookingSection({ cabin, mode }: BookingSectionProps) {
           initialCheckIn={checkIn}
           initialCheckOut={checkOut}
           initialAdults={adults}
+          initialChildren={children}
+          initialInfants={infants}
+          initialPets={pets}
+          allowDogs={cabin.allowDogs}
           onSave={handleSaveFromWidget}
         />
       </div>
@@ -161,6 +176,10 @@ export default function BookingSection({ cabin, mode }: BookingSectionProps) {
           initialCheckIn={checkIn}
           initialCheckOut={checkOut}
           initialAdults={adults}
+          initialChildren={children}
+          initialInfants={infants}
+          initialPets={pets}
+          allowDogs={cabin.allowDogs}
           onSave={handleSaveFromWidget}
         />
       </>
@@ -201,6 +220,10 @@ export default function BookingSection({ cabin, mode }: BookingSectionProps) {
         onClose={() => setShowDesktopModal(false)}
         cabin={cabin}
         initialAdults={adults}
+        initialChildren={children}
+        initialInfants={infants}
+        initialPets={pets}
+        allowDogs={cabin.allowDogs}
         onSave={handleSaveFromWidget}
       />
     </>
