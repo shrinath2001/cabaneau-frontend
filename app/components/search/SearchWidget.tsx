@@ -26,10 +26,10 @@ const LABELS: Record<
 
 // [singular, plural] guest nouns for the trigger summary
 const NOUNS: Record<string, Record<keyof GuestCounts, [string, string]>> = {
-  en: { adults: ['adult', 'adults'], children: ['child', 'children'], infants: ['infant', 'infants'], pets: ['pet', 'pets'] },
-  fr: { adults: ['adulte', 'adultes'], children: ['enfant', 'enfants'], infants: ['bébé', 'bébés'], pets: ['animal', 'animaux'] },
-  de: { adults: ['Erwachsener', 'Erwachsene'], children: ['Kind', 'Kinder'], infants: ['Kleinkind', 'Kleinkinder'], pets: ['Haustier', 'Haustiere'] },
-  nl: { adults: ['volwassene', 'volwassenen'], children: ['kind', 'kinderen'], infants: ['baby', "baby's"], pets: ['huisdier', 'huisdieren'] },
+  en: { adults: ['adult', 'adults'], children: ['child', 'children'], infants: ['infant', 'infants'], pets: ['dog', 'dogs'] },
+  fr: { adults: ['adulte', 'adultes'], children: ['enfant', 'enfants'], infants: ['bébé', 'bébés'], pets: ['chien', 'chiens'] },
+  de: { adults: ['Erwachsener', 'Erwachsene'], children: ['Kind', 'Kinder'], infants: ['Kleinkind', 'Kleinkinder'], pets: ['Hund', 'Hunde'] },
+  nl: { adults: ['volwassene', 'volwassenen'], children: ['kind', 'kinderen'], infants: ['baby', "baby's"], pets: ['hond', 'honden'] },
 };
 
 interface PanelPos {
