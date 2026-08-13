@@ -77,6 +77,8 @@ interface CabinDetails {
   floorPlan?: string;
   locationImage?: string;
   virtualTour?: string;
+  heroVideo?: string;
+  heroVideoPoster?: string;
   address?: string;
   city?: string;
   postalCode?: string;
@@ -228,6 +230,8 @@ const SingleCabinPage = () => {
         <ImageGallery
           images={cabin.images || []}
           featuredImage={cabin.featuredImage}
+          heroVideo={cabin.heroVideo}
+          heroVideoPoster={cabin.heroVideoPoster}
           onShowAllClick={() => {
             setGalleryTargetImage(null);
             setShowPhotoGallery(true);

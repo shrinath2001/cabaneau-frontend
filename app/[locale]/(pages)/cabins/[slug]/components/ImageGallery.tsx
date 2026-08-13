@@ -18,6 +18,9 @@ interface ImageGalleryProps {
   onShowAllClick: () => void;
   /** Called with the tapped image URL so the photo tour can open on it. */
   onMobileImageClick?: (imageUrl: string) => void;
+  /** When set, the large tile becomes a playable video instead of a photo. */
+  heroVideo?: string;
+  heroVideoPoster?: string;
 }
 
 // Helper to extract URL from either string or CabinImage
@@ -25,7 +28,7 @@ const getImageUrl = (img: string | CabinImage): string => {
   return typeof img === 'string' ? img : img.url;
 };
 
-const ImageGallery = ({ images, featuredImage, onShowAllClick, onMobileImageClick }: ImageGalleryProps) => {
+const ImageGallery = ({ images, featuredImage, onShowAllClick, onMobileImageClick, heroVideo, heroVideoPoster }: ImageGalleryProps) => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const { t } = useTranslations('cabin');
 
@@ -153,19 +156,33 @@ const ImageGallery = ({ images, featuredImage, onShowAllClick, onMobileImageClic
 
       {/* Desktop View - Grid Layout */}
       <div className="hidden md:grid grid-cols-[60fr_40fr] gap-2 mb-8">
-        {/* Large main image - LEFT SIDE, full height */}
-        <div
-          className="relative bg-gray-200 h-[440px] cursor-pointer"
-          onClick={() => onShowAllClick()}
-        >
-          <Image
-            src={displayImages[0]}
-            alt="Cabin view 1"
-            fill
-            className="object-cover"
-            sizes="60vw"
-          />
-        </div>
+        {/* Large main tile - LEFT SIDE. Playable video when one is set,
+            otherwise the first photo. */}
+        {heroVideo ? (
+          <div className="relative bg-black h-[440px]">
+            <video
+              src={heroVideo}
+              poster={heroVideoPoster || displayImages[0]}
+              controls
+              playsInline
+              preload="metadata"
+              className="w-full h-full object-cover"
+            />
+          </div>
+        ) : (
+          <div
+            className="relative bg-gray-200 h-[440px] cursor-pointer"
+            onClick={() => onShowAllClick()}
+          >
+            <Image
+              src={displayImages[0]}
+              alt="Cabin view 1"
+              fill
+              className="object-cover"
+              sizes="60vw"
+            />
+          </div>
+        )}
 
         {/* RIGHT SIDE - 2x2 Grid of smaller images */}
         <div className="grid grid-cols-2 grid-rows-2 gap-2 h-[440px]">
