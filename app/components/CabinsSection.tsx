@@ -221,7 +221,7 @@ const CabinsSection = () => {
                 <div className="relative">
                   <div
                     ref={scrollContainerRef}
-                    className="flex gap-[19.42px] overflow-x-auto no-scrollbar py-8 justify-center"
+                    className="flex gap-[19.42px] overflow-x-auto no-scrollbar py-8 md:justify-center"
                     style={{ scrollSnapType: 'x mandatory' }}
                   >
                     <div className="flex-shrink-0 w-[10px] md:w-0"></div>

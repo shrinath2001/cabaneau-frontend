@@ -108,6 +108,10 @@ const SingleCabinPage = () => {
     average: number;
     count: number;
   } | null>(null);
+  // Image the photo tour should open on, set when a hero image is tapped.
+  const [galleryTargetImage, setGalleryTargetImage] = useState<string | null>(
+    null
+  );
 
   // Selected dates from the shared booking store (used by the Things to Know
   // panel for display). The booking widgets read the store directly.
@@ -247,14 +251,20 @@ const SingleCabinPage = () => {
         <ImageGallery
           images={cabin.images || []}
           featuredImage={cabin.featuredImage}
-          onShowAllClick={() => setShowPhotoGallery(true)}
-          onMobileImageClick={() => setShowPhotoGallery(true)}
+          onShowAllClick={() => {
+            setGalleryTargetImage(null);
+            setShowPhotoGallery(true);
+          }}
+          onMobileImageClick={(imageUrl) => {
+            setGalleryTargetImage(imageUrl);
+            setShowPhotoGallery(true);
+          }}
         />
 
         {/* Cabin Name - Mobile Only */}
         <div className="md:hidden px-4 pt-1 pb-2">
           <h1
-            className="font-logga font-medium text-[20px] uppercase tracking-wide"
+            className="font-logga font-medium text-[22px] uppercase tracking-wide"
             style={{ color: "#212121" }}
           >
             {cabin.name?.toUpperCase() || "CABIN"}
@@ -268,7 +278,7 @@ const SingleCabinPage = () => {
             {/* Cabin Details Title */}
             <div className="mb-4 md:mb-6">
               <h2
-                className="font-jost font-medium text-[14px] md:text-[20px] lg:text-[24px] mb-3 md:mb-4 uppercase tracking-wide"
+                className="font-jost font-medium text-[16px] md:text-[20px] lg:text-[24px] mb-3 md:mb-4 uppercase tracking-wide"
                 style={{ color: "#212121" }}
               >
                 {`${cabin.capacity} ${t("detail.guests", "GUESTS")} · ${
@@ -319,7 +329,7 @@ const SingleCabinPage = () => {
               {/* Quick Amenities Icons Row - Show featured amenities */}
               {cabin.featuredAmenities &&
                 cabin.featuredAmenities.length > 0 && (
-                  <div className="flex flex-wrap items-center gap-4 md:gap-6 mb-4 md:mb-6 text-[11px] md:text-sm text-gray-700">
+                  <div className="flex flex-wrap items-center gap-4 md:gap-6 mb-4 md:mb-6 text-[13px] md:text-sm text-gray-700">
                     {cabin.featuredAmenities.slice(0, 4).map((amenity) => {
                       // Support both new format (fa-solid fa-bath) and legacy (fa-bath)
                       const iconClass = amenity.icon
@@ -365,7 +375,7 @@ const SingleCabinPage = () => {
                 )}
 
               {/* Description */}
-              <p className="font-jost font-light leading-relaxed text-[13px] md:text-[16px] mb-6 md:mb-8 text-gray-700">
+              <p className="font-jost font-light leading-relaxed text-[15px] md:text-[16px] mb-6 md:mb-8 text-gray-700">
                 {cabin.description || cabin.shortDescription}
               </p>
             </div>
@@ -434,6 +444,7 @@ const SingleCabinPage = () => {
         images={cabin.images || []}
         featuredImage={cabin.featuredImage}
         imageTags={imageTags}
+        scrollToImageUrl={galleryTargetImage}
         onImageClick={(index, orderedImages) => {
           setMobileCarouselImages(orderedImages);
           setMobileCarouselIndex(index);

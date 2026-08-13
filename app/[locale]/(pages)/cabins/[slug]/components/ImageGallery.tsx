@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import Image from 'next/image';
 import { useTranslations } from '@/app/providers/TranslationsProvider';
 
@@ -16,7 +16,8 @@ interface ImageGalleryProps {
   images: (string | CabinImage)[];
   featuredImage?: string;
   onShowAllClick: () => void;
-  onMobileImageClick?: (index: number) => void;
+  /** Called with the tapped image URL so the photo tour can open on it. */
+  onMobileImageClick?: (imageUrl: string) => void;
 }
 
 // Helper to extract URL from either string or CabinImage
@@ -54,13 +55,49 @@ const ImageGallery = ({ images, featuredImage, onShowAllClick, onMobileImageClic
     setCurrentImageIndex((prev) => (prev - 1 + totalImages) % totalImages);
   };
 
+  // Swipe handling for the mobile carousel. `didSwipe` stops the tap handler
+  // from opening the photo tour at the end of a swipe gesture.
+  const touchStartX = useRef<number | null>(null);
+  const touchDeltaX = useRef(0);
+  const didSwipe = useRef(false);
+  const SWIPE_THRESHOLD_PX = 40;
+
+  const handleTouchStart = (e: React.TouchEvent) => {
+    touchStartX.current = e.touches[0].clientX;
+    touchDeltaX.current = 0;
+    didSwipe.current = false;
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    if (touchStartX.current === null) return;
+    touchDeltaX.current = e.touches[0].clientX - touchStartX.current;
+  };
+
+  const handleTouchEnd = () => {
+    if (Math.abs(touchDeltaX.current) > SWIPE_THRESHOLD_PX) {
+      didSwipe.current = true;
+      if (touchDeltaX.current < 0) {
+        nextImage();
+      } else {
+        prevImage();
+      }
+    }
+    touchStartX.current = null;
+  };
+
   return (
     <>
       {/* Mobile View - Single Carousel */}
       <div className="block md:hidden relative mb-6">
         <div
-          className="relative bg-gray-200 h-[300px] w-full cursor-pointer"
-          onClick={() => onMobileImageClick?.(currentImageIndex)}
+          className="relative bg-gray-200 h-[300px] w-full cursor-pointer touch-pan-y"
+          onTouchStart={handleTouchStart}
+          onTouchMove={handleTouchMove}
+          onTouchEnd={handleTouchEnd}
+          onClick={() => {
+            if (didSwipe.current) return;
+            onMobileImageClick?.(allImages[currentImageIndex] || displayImages[0]);
+          }}
         >
           <Image
             src={allImages[currentImageIndex] || displayImages[0]}
