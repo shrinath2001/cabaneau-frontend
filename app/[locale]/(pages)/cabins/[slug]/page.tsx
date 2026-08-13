@@ -216,29 +216,6 @@ const SingleCabinPage = () => {
   return (
     <div className="bg-white min-h-screen pt-0 md:pt-4 pb-0 md:pb-5 px-0 md:px-8 lg:px-20 -mt-2 md:mt-0">
       <div className="max-w-[1400px] mx-auto px-0 md:px-6 py-0 md:py-2">
-        {/* Back to cabins link - Desktop Only */}
-        <div className="hidden md:block mb-0 md:mb-6 px-4 md:px-0 py-3 md:py-0">
-          <Link
-            href="/cabins"
-            className="flex items-center text-gray-700 hover:text-black text-sm font-medium font-jost"
-          >
-            <svg
-              className="w-4 h-4 mr-2"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M15 19l-7-7 7-7"
-              />
-            </svg>
-            {t("detail.back_to_all", "BACK TO ALL CABINES")}
-          </Link>
-        </div>
-
         {/* Cabin Name - Desktop only, left aligned above the gallery */}
         <h1
           className="hidden md:block font-logga font-medium text-[28px] lg:text-[32px] uppercase tracking-wide mb-3"
@@ -272,7 +249,10 @@ const SingleCabinPage = () => {
         </div>
 
         {/* CONTENT SECTION BELOW IMAGES */}
-        <div className="grid grid-cols-1 lg:grid-cols-[1fr_464px] gap-4 sm:gap-8 mt-0 md:mt-8 px-4 md:px-0">
+        {/* minmax(0,1fr) so the left column can shrink below its content's
+            min-content width - a plain 1fr lets wide content push the booking
+            card past the container's right edge. */}
+        <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_464px] gap-4 sm:gap-8 mt-0 md:mt-8 px-4 md:px-0">
           {/* Left Column - Cabin Details */}
           <div>
             {/* Cabin Details Title */}

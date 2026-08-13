@@ -188,10 +188,15 @@ const ReviewsSection = ({ title, backgroundColor, cabinId, inline = false, onSum
         setReviews(reviewItems);
 
         // Report the aggregate score to the parent (cabin detail header).
-        if (reviewItems.length > 0) {
-          const ratingSum = reviewItems.reduce((sum, review) => sum + (review.rating || 0), 0);
+        // The API sends rating as a decimal string ("5.0"), so coerce before
+        // summing - adding it raw concatenates and yields NaN.
+        const ratings = reviewItems
+          .map((review) => Number(review.rating))
+          .filter((rating) => Number.isFinite(rating) && rating > 0);
+
+        if (ratings.length > 0) {
           onSummaryRef.current?.({
-            average: ratingSum / reviewItems.length,
+            average: ratings.reduce((sum, rating) => sum + rating, 0) / ratings.length,
             count: reviewItems.length,
           });
         }

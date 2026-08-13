@@ -326,9 +326,11 @@ export default function AvailabilityCalendar({
             </svg>
           </button>
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 flex-1">
+          {/* Two months only from xl: at lg the page splits into content +
+              booking card, leaving this column too narrow for a second month. */}
+          <div className="grid grid-cols-1 xl:grid-cols-2 gap-8 flex-1 min-w-0">
             {renderMonth(viewMonth)}
-            {renderMonth(addMonths(viewMonth, 1), 'hidden lg:block')}
+            {renderMonth(addMonths(viewMonth, 1), 'hidden xl:block')}
           </div>
 
           <button
