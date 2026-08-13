@@ -104,6 +104,10 @@ const SingleCabinPage = () => {
   const [mobileCarouselIndex, setMobileCarouselIndex] = useState(0);
   const [mobileCarouselImages, setMobileCarouselImages] = useState<string[]>([]);
   const [carouselKey, setCarouselKey] = useState(0);
+  const [reviewSummary, setReviewSummary] = useState<{
+    average: number;
+    count: number;
+  } | null>(null);
 
   // Selected dates from the shared booking store (used by the Things to Know
   // panel for display). The booking widgets read the store directly.
@@ -231,6 +235,14 @@ const SingleCabinPage = () => {
           </Link>
         </div>
 
+        {/* Cabin Name - Desktop only, left aligned above the gallery */}
+        <h1
+          className="hidden md:block font-logga font-medium text-[28px] lg:text-[32px] uppercase tracking-wide mb-3"
+          style={{ color: "#212121" }}
+        >
+          {cabin.name?.toUpperCase() || "CABIN"}
+        </h1>
+
         {/* Image Gallery Component */}
         <ImageGallery
           images={cabin.images || []}
@@ -255,7 +267,7 @@ const SingleCabinPage = () => {
           <div>
             {/* Cabin Details Title */}
             <div className="mb-4 md:mb-6">
-              <h1
+              <h2
                 className="font-jost font-medium text-[14px] md:text-[20px] lg:text-[24px] mb-3 md:mb-4 uppercase tracking-wide"
                 style={{ color: "#212121" }}
               >
@@ -270,7 +282,39 @@ const SingleCabinPage = () => {
                     ? t("detail.bathrooms", "BATHROOMS")
                     : t("detail.bathroom", "BATHROOM")
                 }`}
-              </h1>
+              </h2>
+
+              {/* Review score - scrolls to the guest reviews section */}
+              {reviewSummary && (
+                <button
+                  type="button"
+                  onClick={() =>
+                    document
+                      .getElementById("guest-reviews")
+                      ?.scrollIntoView({ behavior: "smooth", block: "start" })
+                  }
+                  className="flex items-center gap-1.5 mb-3 md:mb-4 text-[13px] md:text-[15px] text-gray-800 hover:text-black transition-colors"
+                >
+                  <svg
+                    className="w-4 h-4"
+                    style={{ color: "#F49A4A" }}
+                    fill="currentColor"
+                    viewBox="0 0 20 20"
+                  >
+                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.958a1 1 0 00.95.69h4.162c.969 0 1.371 1.24.588 1.81l-3.367 2.446a1 1 0 00-.363 1.118l1.286 3.958c.3.921-.755 1.688-1.539 1.118l-3.366-2.446a1 1 0 00-1.176 0l-3.366 2.446c-.784.57-1.838-.197-1.539-1.118l1.286-3.958a1 1 0 00-.363-1.118L2.063 9.385c-.783-.57-.38-1.81.588-1.81h4.162a1 1 0 00.951-.69l1.285-3.958z" />
+                  </svg>
+                  <span className="font-jost font-medium">
+                    {reviewSummary.average.toFixed(1)}
+                  </span>
+                  <span className="text-gray-400">·</span>
+                  <span className="font-jost font-light underline">
+                    {reviewSummary.count}{" "}
+                    {reviewSummary.count === 1
+                      ? t("detail.review_singular", "review")
+                      : t("detail.review_plural", "reviews")}
+                  </span>
+                </button>
+              )}
 
               {/* Quick Amenities Icons Row - Show featured amenities */}
               {cabin.featuredAmenities &&
@@ -332,6 +376,13 @@ const SingleCabinPage = () => {
               featuredAmenities={cabin.featuredAmenities}
             />
 
+            {/* Inline availability calendar (Airbnb-style; drives the booking store) */}
+            <AvailabilityCalendar
+              slug={cabin.slug}
+              locale={locale}
+              city={cabin.city}
+            />
+
             {/* Extra Services Section Component */}
             <ExtraServicesSection services={cabin.services} />
 
@@ -342,14 +393,13 @@ const SingleCabinPage = () => {
             />
 
             {/* Guest Reviews */}
-            <ReviewsSection cabinId={cabin.id} inline />
-
-            {/* Inline availability calendar (Airbnb-style; drives the booking store) */}
-            <AvailabilityCalendar
-              slug={cabin.slug}
-              locale={locale}
-              city={cabin.city}
-            />
+            <div id="guest-reviews" className="scroll-mt-24">
+              <ReviewsSection
+                cabinId={cabin.id}
+                inline
+                onSummary={setReviewSummary}
+              />
+            </div>
 
             {/* Things to Know Section */}
             <ThingsToKnow

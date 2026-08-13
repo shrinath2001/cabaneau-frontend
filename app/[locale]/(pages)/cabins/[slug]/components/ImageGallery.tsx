@@ -59,7 +59,7 @@ const ImageGallery = ({ images, featuredImage, onShowAllClick, onMobileImageClic
       {/* Mobile View - Single Carousel */}
       <div className="block md:hidden relative mb-6">
         <div
-          className="relative bg-gray-200 h-[250px] w-full cursor-pointer"
+          className="relative bg-gray-200 h-[300px] w-full cursor-pointer"
           onClick={() => onMobileImageClick?.(currentImageIndex)}
         >
           <Image
@@ -118,7 +118,7 @@ const ImageGallery = ({ images, featuredImage, onShowAllClick, onMobileImageClic
       <div className="hidden md:grid grid-cols-[60fr_40fr] gap-2 mb-8">
         {/* Large main image - LEFT SIDE, full height */}
         <div
-          className="relative bg-gray-200 h-[341px] cursor-pointer"
+          className="relative bg-gray-200 h-[440px] cursor-pointer"
           onClick={() => onShowAllClick()}
         >
           <Image
@@ -131,7 +131,7 @@ const ImageGallery = ({ images, featuredImage, onShowAllClick, onMobileImageClic
         </div>
 
         {/* RIGHT SIDE - 2x2 Grid of smaller images */}
-        <div className="grid grid-cols-2 grid-rows-2 gap-2 h-[341px]">
+        <div className="grid grid-cols-2 grid-rows-2 gap-2 h-[440px]">
           {/* Top left */}
           <div
             className="relative bg-gray-200 cursor-pointer"

@@ -2,6 +2,7 @@
 
 import { QuoteResponse, formatCurrency } from './hooks/useQuote';
 import { useTranslations } from '@/app/providers/TranslationsProvider';
+import { getCancellationPreviewText } from '@/app/[locale]/(pages)/cabins/[slug]/components/thingsToKnowContent';
 
 interface CabinInfo {
   slug: string;
@@ -43,7 +44,11 @@ export default function DesktopBookingCard({
   onChangeDates,
   minStayWarning,
 }: DesktopBookingCardProps) {
-  const { t } = useTranslations('booking');
+  const { t, locale } = useTranslations('booking');
+
+  // Cancellation deadline notice shown just above the book button. Uses the
+  // single source of truth for the policy (50% refund, NOT free cancellation).
+  const cancellationNotice = getCancellationPreviewText(checkIn, locale).line1;
 
   // Format dates for display
   const formatDateForDisplay = (dateStr: string): string => {
@@ -77,55 +82,54 @@ export default function DesktopBookingCard({
       </div>
 
       <div className="p-4 md:p-6 space-y-4">
-        {/* Date Inputs - Clickable to open date picker */}
-        <div className="grid grid-cols-2 gap-3">
-          <div>
-            <label className="block text-xs font-jost font-light text-gray-700 mb-1 uppercase">
-              {t('arrival', 'Arrival')}
-            </label>
+        {/* Date + guests box - one bordered block with square edges (Airbnb style) */}
+        <div className="border border-gray-400">
+          <div className="grid grid-cols-2">
             <div
               onClick={onChangeDates}
-              className="w-full px-3 py-2 border border-gray-300 text-sm font-jost font-light bg-gray-50 flex items-center justify-between cursor-pointer hover:border-[#495D4D] transition-colors"
+              className="px-3 py-2.5 border-r border-gray-400 cursor-pointer hover:bg-gray-50 transition-colors"
             >
-              <span>{formatDateForDisplay(checkIn)}</span>
-              <svg
-                className="w-4 h-4 text-gray-400"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
-                />
-              </svg>
+              <div className="text-[10px] font-jost font-medium text-gray-700 uppercase tracking-wide">
+                {t('arrival', 'Arrival')}
+              </div>
+              <div className="text-sm font-jost font-light text-gray-900">
+                {formatDateForDisplay(checkIn)}
+              </div>
+            </div>
+            <div
+              onClick={onChangeDates}
+              className="px-3 py-2.5 cursor-pointer hover:bg-gray-50 transition-colors"
+            >
+              <div className="text-[10px] font-jost font-medium text-gray-700 uppercase tracking-wide">
+                {t('departure', 'Departure')}
+              </div>
+              <div className="text-sm font-jost font-light text-gray-900">
+                {formatDateForDisplay(checkOut)}
+              </div>
             </div>
           </div>
-          <div>
-            <label className="block text-xs font-jost font-light text-gray-700 mb-1 uppercase">
-              {t('departure', 'Departure')}
-            </label>
-            <div
-              onClick={onChangeDates}
-              className="w-full px-3 py-2 border border-gray-300 text-sm font-jost font-light bg-gray-50 flex items-center justify-between cursor-pointer hover:border-[#495D4D] transition-colors"
-            >
-              <span>{formatDateForDisplay(checkOut)}</span>
-              <svg
-                className="w-4 h-4 text-gray-400"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
-                />
-              </svg>
+          <div
+            onClick={onChangeDates}
+            className="px-3 py-2.5 border-t border-gray-400 flex items-center justify-between cursor-pointer hover:bg-gray-50 transition-colors"
+          >
+            <div>
+              <div className="text-[10px] font-jost font-medium text-gray-700 uppercase tracking-wide">
+                {t('guests_label', 'Guests')}
+              </div>
+              <div className="text-sm font-jost font-light text-gray-900">
+                {totalGuests}{' '}
+                {totalGuests === 1 ? t('guest_singular', 'guest') : t('guest_plural', 'guests')}
+              </div>
             </div>
+            <svg
+              className="w-4 h-4 text-gray-500"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth={2}
+              viewBox="0 0 24 24"
+            >
+              <polyline points="6 9 12 15 18 9" />
+            </svg>
           </div>
         </div>
 
@@ -148,16 +152,6 @@ export default function DesktopBookingCard({
             <span className="font-jost text-xs text-amber-700">{minStayWarning}</span>
           </div>
         )}
-
-        {/* Guest Display */}
-        <div className="flex items-center justify-between py-2">
-          <span className="text-sm font-jost font-light text-gray-700 uppercase">
-            {t('guests_label', 'Guests')}
-          </span>
-          <span className="font-jost font-light text-gray-800">
-            {totalGuests} {totalGuests === 1 ? t('guest_singular', 'guest') : t('guest_plural', 'guests')}
-          </span>
-        </div>
 
         {/* Loading State */}
         {loading && (
@@ -246,10 +240,17 @@ export default function DesktopBookingCard({
               </span>
             </div>
 
+            {/* Cancellation deadline notice */}
+            <div className="bg-gray-50 border border-gray-200 px-3 py-2 mt-3">
+              <p className="font-jost font-light text-xs text-gray-700 text-center">
+                {cancellationNotice}
+              </p>
+            </div>
+
             {/* Book Button */}
             <button
               onClick={handleBooking}
-              className="w-full bg-[#495D4D] text-white py-4 px-6 text-base font-bold tracking-wide hover:bg-[#3d5a3d] transition uppercase font-jost mt-4"
+              className="w-full bg-[#495D4D] text-white py-4 px-6 text-base font-bold tracking-wide hover:bg-[#3d5a3d] transition uppercase font-jost mt-3"
             >
               {t('book_your_stay', 'BOOK YOUR STAY')}
             </button>
