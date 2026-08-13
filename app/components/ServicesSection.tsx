@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import ServiceCard from './ServiceCard';
+import CardSlider from './CardSlider';
 import { useTranslations } from '@/app/providers/TranslationsProvider';
 
 interface SectionItem {
@@ -41,7 +42,7 @@ const ServicesSection = ({
             {displayTitle}
           </h2>
           {items && items.length > 0 ? (
-            <div className="flex flex-col lg:flex-row gap-3 justify-between">
+            <CardSlider label="services">
               {items.map((item, index) => (
                 <ServiceCard
                   key={index}
@@ -50,7 +51,7 @@ const ServicesSection = ({
                   link={item.link}
                 />
               ))}
-            </div>
+            </CardSlider>
           ) : (
             <div className="text-center py-12">
               <p className="text-gray-500">{t('services_section.empty', 'No services available at the moment.')}</p>

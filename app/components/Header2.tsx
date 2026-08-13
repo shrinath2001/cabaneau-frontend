@@ -132,7 +132,14 @@ const Header2 = () => {
               onMouseEnter={() => setIsCabinsOpen(true)}
               onMouseLeave={() => setIsCabinsOpen(false)}
             >
-              <button className={`font-heading font-medium text-[18px] hover:text-[#F49A4A] transition-colors uppercase flex items-center gap-1 ${isActive('/cabins') ? 'text-[#F49A4A]' : 'text-[#495D4D]'}`}>
+              <button
+                onClick={() => {
+                  setIsCabinsOpen(false);
+                  // Inner pages have no cabins section - go to the one on the homepage.
+                  router.push(`${link('/')}#our-cabins`);
+                }}
+                className={`font-heading font-medium text-[18px] hover:text-[#F49A4A] transition-colors uppercase flex items-center gap-1 ${isActive('/cabins') ? 'text-[#F49A4A]' : 'text-[#495D4D]'}`}
+              >
                 {t('link.our_cabins', 'Our Cabins')}
                 <svg className={`w-4 h-4 transition-transform ${isCabinsOpen ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />

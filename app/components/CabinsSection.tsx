@@ -196,7 +196,7 @@ const CabinsSection = () => {
           scrollbar-width: none;
         }
       `}</style>
-      <section className="bg-white py-6 md:py-5 md:mt-12 px-0">
+      <section id="our-cabins" className="bg-white py-6 md:py-5 md:mt-12 px-0 scroll-mt-24">
         <div className="w-full">
           <div className="max-w-full mx-auto">
             {/* Header with Title */}

@@ -1,12 +1,15 @@
 import Image from 'next/image';
+import Link from 'next/link';
 
 interface ActivityCardProps {
   imageSrc: string;
   activityName: string;
+  /** Target page for this card, e.g. an activities category set in the CMS. */
+  link?: string;
 }
 
-const ActivityCard: React.FC<ActivityCardProps> = ({ imageSrc, activityName }) => {
-  return (
+const ActivityCard: React.FC<ActivityCardProps> = ({ imageSrc, activityName, link }) => {
+  const cardContent = (
     <div className="relative h-[160px] md:h-[461px] w-full md:w-[410px] overflow-hidden group cursor-pointer">
       <Image src={imageSrc} alt={activityName} fill style={{ objectFit: 'cover' }} />
       <div className="absolute inset-0 flex items-end justify-center p-6 bg-gradient-to-t from-black/60 to-transparent group-hover:opacity-0 transition-opacity duration-300">
@@ -18,6 +21,12 @@ const ActivityCard: React.FC<ActivityCardProps> = ({ imageSrc, activityName }) =
       </div>
     </div>
   );
+
+  if (link) {
+    return <Link href={link}>{cardContent}</Link>;
+  }
+
+  return cardContent;
 };
 
 export default ActivityCard;

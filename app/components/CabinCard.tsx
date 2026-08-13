@@ -172,9 +172,9 @@ const CabinCard: React.FC<CabinCardProps> = ({
   };
 
   return (
-    <Link href={buildCabinUrl()} className="block group bg-white border p-[15px] border-black w-[380px] h-[491px] shrink-0 flex flex-col transition-all duration-300 hover:-translate-y-2 hover:shadow-[0_4px_6px_-1px_rgba(0,0,0,0.1),0_10px_15px_-3px_rgba(0,0,0,0.1),0_20px_25px_-5px_rgba(0,0,0,0.1)] cursor-pointer">
-      {/* Image Section */}
-      <div className="relative w-[350px] h-[232.9px] bg-gray-100">
+    <Link href={buildCabinUrl()} className="block group bg-white w-[380px] h-[491px] shrink-0 flex flex-col overflow-hidden shadow-[0_1px_3px_rgba(0,0,0,0.08),0_6px_16px_-6px_rgba(0,0,0,0.12)] transition-all duration-300 hover:-translate-y-2 hover:shadow-[0_4px_6px_-1px_rgba(0,0,0,0.1),0_10px_15px_-3px_rgba(0,0,0,0.1),0_20px_25px_-5px_rgba(0,0,0,0.1)] cursor-pointer">
+      {/* Image Section - full bleed to the card edges */}
+      <div className="relative w-full h-[248px] bg-gray-100">
         <Image
           src={images[currentImageIndex]}
           alt={title}
@@ -221,7 +221,7 @@ const CabinCard: React.FC<CabinCardProps> = ({
       </div>
 
       {/* Content Section */}
-      <div className=" mt-4 flex flex-col justify-between flex-1">
+      <div className="px-[15px] pb-[15px] pt-4 flex flex-col justify-between flex-1">
         {/* Title and Rating */}
         <div className="flex justify-between items-center mb-3">
           <h3 className="font-logga text-2xl text-black">{title}</h3>

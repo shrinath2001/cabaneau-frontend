@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import ActivityCard from './ActivityCard';
+import CardSlider from './CardSlider';
 import { apiFetch } from '@/app/lib/api';
 import { useTranslations } from '@/app/providers/TranslationsProvider';
 
@@ -24,6 +25,7 @@ interface ActivitiesSectionProps {
 interface ActivityData {
   imageSrc: string;
   activityName: string;
+  link?: string;
 }
 
 const ActivitiesSection = ({
@@ -74,7 +76,7 @@ const ActivitiesSection = ({
 
   // Use CMS items if provided
   const displayItems = useCmsData && items && items.length > 0
-    ? items.map(item => ({ imageSrc: item.image, activityName: item.title }))
+    ? items.map(item => ({ imageSrc: item.image, activityName: item.title, link: item.link }))
     : activities;
 
   const displayTitle = title || t('activities_section.title', 'ACTIVITIES IN THE REGION');
@@ -99,11 +101,11 @@ const ActivitiesSection = ({
               <p className="text-gray-600 text-lg">{t('activities_section.not_found', 'Activities not found')}</p>
             </div>
           ) : (
-            <div className="flex flex-col md:flex-row gap-[18px] md:gap-3 justify-between">
+            <CardSlider label="activities">
               {displayItems.map((activity, index) => (
                 <ActivityCard key={index} {...activity} />
               ))}
-            </div>
+            </CardSlider>
           )}
           <div className="text-center mt-6 md:mt-10 mb-6 md:mb-8">
             <Link href={displayButtonLink}>
