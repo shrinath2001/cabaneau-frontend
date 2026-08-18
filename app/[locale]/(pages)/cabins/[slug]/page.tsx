@@ -13,6 +13,8 @@ import AmenitiesSection from "./components/AmenitiesSection";
 import ExtraServicesSection from "./components/ExtraServicesSection";
 import SleepingAreasSection from "./components/SleepingAreasSection";
 import ThingsToKnow from "./components/ThingsToKnow";
+import CabinMapSection from "./components/CabinMapSection";
+import OtherCabinsSection from "./components/OtherCabinsSection";
 import ReviewsSection from "@/app/components/ReviewsSection";
 import { apiFetch } from "@/app/lib/api";
 import { useTranslations } from "@/app/providers/TranslationsProvider";
@@ -395,6 +397,16 @@ const SingleCabinPage = () => {
               />
             </div>
 
+            {/* Map - driven by the lat/long set in the CMS */}
+            <CabinMapSection
+              latitude={cabin.latitude}
+              longitude={cabin.longitude}
+              address={cabin.address}
+              postalCode={cabin.postalCode}
+              city={cabin.city}
+              cabinName={cabin.name}
+            />
+
             {/* Things to Know Section */}
             <ThingsToKnow
               checkIn={arrival}
@@ -403,6 +415,9 @@ const SingleCabinPage = () => {
               locale={locale}
               thingsToKnow={cabin.thingsToKnow}
             />
+
+            {/* Other cabins */}
+            <OtherCabinsSection currentSlug={cabin.slug} />
           </div>
 
           {/* Booking Section - Desktop: right sidebar */}
