@@ -1,8 +1,7 @@
 'use client';
 
-import { QuoteResponse, formatCurrency } from './hooks/useQuote';
+import { QuoteResponse, formatCurrency, localeToIntl, translateLineItem } from './hooks/useQuote';
 import { useTranslations } from '@/app/providers/TranslationsProvider';
-import { getCancellationPreviewText } from '@/app/[locale]/(pages)/cabins/[slug]/components/thingsToKnowContent';
 
 interface CabinInfo {
   slug: string;
@@ -46,9 +45,16 @@ export default function DesktopBookingCard({
 }: DesktopBookingCardProps) {
   const { t, locale } = useTranslations('booking');
 
-  // Cancellation deadline notice shown just above the book button. Uses the
-  // single source of truth for the policy (50% refund, NOT free cancellation).
-  const cancellationNotice = getCancellationPreviewText(checkIn, locale).line1;
+  // Only surfaced while the stay is still fully refundable - a partial-refund
+  // notice reads as a warning and puts people off. The window comes from the
+  // backend policy, so changing the rule there changes this with no code edit.
+  const freeCancellationDate =
+    quote?.cancellation?.isFreeNow && quote.cancellation.freeUntil
+      ? new Date(`${quote.cancellation.freeUntil}T00:00:00`).toLocaleDateString(
+          localeToIntl[locale] || 'en-GB',
+          { day: 'numeric', month: 'long', year: 'numeric' }
+        )
+      : null;
 
   // Format dates for display
   const formatDateForDisplay = (dateStr: string): string => {
@@ -71,7 +77,7 @@ export default function DesktopBookingCard({
 
   return (
     <div
-      className="bg-white border-2 border-gray-300 w-full md:w-[464px] md:sticky md:top-24"
+      className="bg-white shadow-[0_1px_3px_rgba(0,0,0,0.08),0_8px_24px_-6px_rgba(0,0,0,0.14)] w-full md:w-[464px] md:sticky md:top-24"
       style={{ maxHeight: 'calc(100vh - 100px)' }}
     >
       {/* Cabin Name Header */}
@@ -131,16 +137,6 @@ export default function DesktopBookingCard({
               <polyline points="6 9 12 15 18 9" />
             </svg>
           </div>
-        </div>
-
-        {/* Change Dates Link */}
-        <div className="text-right">
-          <button
-            onClick={onChangeDates}
-            className="text-sm font-jost text-[#495D4D] hover:text-[#3d5a3d] underline font-medium"
-          >
-            {t('change_dates', 'Change dates')}
-          </button>
         </div>
 
         {/* Min Stay Warning */}
@@ -205,7 +201,9 @@ export default function DesktopBookingCard({
                 .filter((fee) => fee.amount >= 0)
                 .map((fee, index) => (
                   <div key={index} className="flex justify-between items-center">
-                    <span className="text-sm font-jost font-light text-gray-600">{fee.name}</span>
+                    <span className="text-sm font-jost font-light text-gray-600">
+                      {translateLineItem(fee.name, t)}
+                    </span>
                     <span className="text-sm font-jost font-light text-gray-800">
                       {formatCurrency(fee.amount, quote.pricing!.currency)}
                     </span>
@@ -216,7 +214,7 @@ export default function DesktopBookingCard({
               {quote.pricing.discount && (
                 <div className="flex justify-between items-center bg-green-50 -mx-4 px-4 py-2">
                   <span className="text-sm font-jost text-green-700 font-medium">
-                    {quote.pricing.discount.name}
+                    {translateLineItem(quote.pricing.discount.name, t)}
                     {quote.pricing.discount.percentage && (
                       <span className="text-green-600 ml-1">
                         (-{quote.pricing.discount.percentage}%)
@@ -240,12 +238,17 @@ export default function DesktopBookingCard({
               </span>
             </div>
 
-            {/* Cancellation deadline notice */}
-            <div className="bg-gray-50 border border-gray-200 px-3 py-2 mt-3">
-              <p className="font-jost font-light text-xs text-gray-700 text-center">
-                {cancellationNotice}
-              </p>
-            </div>
+            {/* Free-cancellation notice, only while that window is open */}
+            {freeCancellationDate && (
+              <div className="bg-green-50 px-3 py-2 mt-3">
+                <p className="font-jost text-xs text-green-800 text-center">
+                  {t('cancel_free_before', 'Cancel for free before {{date}}').replace(
+                    '{{date}}',
+                    freeCancellationDate
+                  )}
+                </p>
+              </div>
+            )}
 
             {/* Book Button */}
             <button

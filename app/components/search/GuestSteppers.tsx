@@ -96,7 +96,7 @@ export default function GuestSteppers({
         const isDog = field === 'pets';
         const atMax = isDog ? v >= DOG_CAP : peopleTotal >= peopleCap;
         return (
-          <div key={field} className="flex items-center justify-between py-4 border-b border-gray-100 last:border-0">
+          <div key={field} className="flex items-center justify-between py-2.5 border-b border-gray-100 last:border-0">
             <div>
               <div className="capitalize text-[15px]">{label}</div>
               {sub && <div className="text-sm text-gray-400">{sub}</div>}
