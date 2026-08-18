@@ -196,7 +196,7 @@ const CabinsSection = () => {
           scrollbar-width: none;
         }
       `}</style>
-      <section className="bg-white py-6 md:py-5 md:mt-12 px-0">
+      <section id="our-cabins" className="bg-white py-6 md:py-5 md:mt-12 px-0 scroll-mt-24">
         <div className="w-full">
           <div className="max-w-full mx-auto">
             {/* Header with Title */}
@@ -221,7 +221,7 @@ const CabinsSection = () => {
                 <div className="relative">
                   <div
                     ref={scrollContainerRef}
-                    className="flex gap-[19.42px] overflow-x-auto no-scrollbar py-8 justify-center"
+                    className="flex gap-[19.42px] overflow-x-auto no-scrollbar py-8 md:justify-center"
                     style={{ scrollSnapType: 'x mandatory' }}
                   >
                     <div className="flex-shrink-0 w-[10px] md:w-0"></div>

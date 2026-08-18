@@ -43,7 +43,7 @@ export default function MobileStickyBar({
           </div>
           <button
             onClick={onCheckAvailability}
-            className="bg-[#F49A4A] hover:bg-[#e08a3a] text-white text-base font-jost font-bold tracking-wide uppercase py-4 px-6 transition"
+            className="bg-[#F49A4A] hover:bg-[#e08a3a] text-white text-sm font-jost font-bold tracking-wide uppercase py-3 px-5 transition"
           >
             {t('check_availability', 'Check Availability')}
           </button>
@@ -89,7 +89,7 @@ export default function MobileStickyBar({
           </div>
           <button
             onClick={onCheckAvailability}
-            className="bg-gray-400 text-white text-base font-jost font-bold tracking-wide uppercase py-4 px-6"
+            className="bg-gray-400 text-white text-sm font-jost font-bold tracking-wide uppercase py-3 px-5"
           >
             {t('change_dates', 'Change Dates')}
           </button>
@@ -139,7 +139,7 @@ export default function MobileStickyBar({
           </div>
           <button
             onClick={handleReserve}
-            className="bg-[#495D4D] hover:bg-[#3d5a3d] text-white text-base font-jost font-bold tracking-wide uppercase py-4 px-6 transition"
+            className="bg-[#495D4D] hover:bg-[#3d5a3d] text-white text-sm font-jost font-bold tracking-wide uppercase py-3 px-5 transition"
           >
             {t('reserve', 'Reserve')}
           </button>
@@ -187,7 +187,7 @@ export default function MobileStickyBar({
           </div>
           <button
             onClick={handleReserve}
-            className="bg-[#F49A4A] hover:bg-[#e08a3a] text-white text-base font-jost font-bold tracking-wide uppercase py-4 px-6 transition"
+            className="bg-[#F49A4A] hover:bg-[#e08a3a] text-white text-sm font-jost font-bold tracking-wide uppercase py-3 px-5 transition"
           >
             {t('book_now', 'Book Now')}
           </button>

@@ -68,7 +68,7 @@ const ExtraServicesSection = ({ services }: ExtraServicesSectionProps) => {
 
   return (
     <div className="mb-8 sm:mb-12">
-      <h2 className="font-logga font-semibold text-[16px] md:text-[20px] mb-6 uppercase tracking-wide text-gray-800 p-4 md:p-6" style={{ backgroundColor: '#F1FAF7' }}>
+      <h2 className="font-logga font-semibold text-[18px] md:text-[20px] mb-6 uppercase tracking-wide text-gray-800 p-4 md:p-6" style={{ backgroundColor: '#F1FAF7' }}>
         {t('detail.extra_services', 'AVAILABLE EXTRA SERVICES')}
       </h2>
 
@@ -83,10 +83,10 @@ const ExtraServicesSection = ({ services }: ExtraServicesSectionProps) => {
                 backgroundPosition: 'center'
               }}
             />
-            <div className="font-heading font-medium text-[10px] sm:text-[12px] lg:text-[14px] uppercase" style={{ color: '#212121' }}>
+            <div className="font-heading font-medium text-[12px] sm:text-[13px] lg:text-[14px] uppercase" style={{ color: '#212121' }}>
               {service.name}
               {service.price && (
-                <div className="text-[9px] sm:text-[10px] text-gray-500 mt-1">
+                <div className="text-[11px] sm:text-[11px] text-gray-500 mt-1">
                   €{Math.floor(Number(service.price))}{service.priceUnit === 'PER_PERSON' && t('price_unit.per_person', '/PERSON')}
                   {service.priceUnit === 'PER_GROUP' && t('price_unit.per_group', '/GROUP')}
                   {service.priceUnit === 'PER_HOUR' && t('price_unit.per_hour', '/HOUR')}

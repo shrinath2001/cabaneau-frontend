@@ -88,9 +88,16 @@ function renderSection(section: HomepageSection) {
         <HostsSection
           key={section.id}
           title={title}
-          config={config as { names?: string; image?: string; description?: string }}
-          buttonText={buttonText}
-          buttonLink={buttonLink}
+          config={
+            config as {
+              names?: string;
+              image?: string;
+              description?: string;
+              phone?: string;
+              email?: string;
+              instagram?: string;
+            }
+          }
           backgroundColor={backgroundColor}
         />
       );

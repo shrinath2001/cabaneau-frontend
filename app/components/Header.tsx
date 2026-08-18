@@ -50,9 +50,27 @@ const Header = ({ heroSettings: initialHeroSettings }: { heroSettings?: HeroSett
     overlayOpacity: number;
   } | null>(initialHeroSettings || null);
 
-  // Scroll to top when homepage loads (fixes SPA navigation scroll issue)
+  // Scroll to top when homepage loads (fixes SPA navigation scroll issue).
+  // A hash means we were sent here to reach a specific section (e.g. the
+  // "Our Cabins" nav item on inner pages), so honour that instead.
   useEffect(() => {
-    window.scrollTo(0, 0);
+    const targetId = window.location.hash.slice(1);
+    if (!targetId) {
+      window.scrollTo(0, 0);
+      return;
+    }
+    // The section renders after its data loads, so retry briefly.
+    let attempts = 0;
+    const timer = setInterval(() => {
+      const target = document.getElementById(targetId);
+      if (target) {
+        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        clearInterval(timer);
+      } else if (++attempts > 20) {
+        clearInterval(timer);
+      }
+    }, 100);
+    return () => clearInterval(timer);
   }, []);
 
 
@@ -184,7 +202,15 @@ const Header = ({ heroSettings: initialHeroSettings }: { heroSettings?: HeroSett
                 onMouseEnter={() => setIsCabinsOpen(true)}
                 onMouseLeave={() => setIsCabinsOpen(false)}
               >
-                <button className="font-heading font-medium text-[18px] text-white hover:text-[#F49A4A] transition-colors uppercase flex items-center gap-1">
+                <button
+                  onClick={() => {
+                    setIsCabinsOpen(false);
+                    document
+                      .getElementById('our-cabins')
+                      ?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                  }}
+                  className="font-heading font-medium text-[18px] text-white hover:text-[#F49A4A] transition-colors uppercase flex items-center gap-1"
+                >
                   {t('link.our_cabins', 'Our Cabins')}
                   <svg className={`w-4 h-4 transition-transform ${isCabinsOpen ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />

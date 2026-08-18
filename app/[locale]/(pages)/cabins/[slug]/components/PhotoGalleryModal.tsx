@@ -26,6 +26,12 @@ interface PhotoGalleryModalProps {
   featuredImage?: string;
   imageTags?: ImageTag[];  // Dynamic tags from API
   onImageClick?: (imageIndex: number, orderedImages: string[]) => void;
+  /**
+   * URL of the image to scroll to when the tour opens. Matched by URL rather
+   * than index because the hero carousel and the tour order images
+   * differently (the tour groups by tag and drops the featured image).
+   */
+  scrollToImageUrl?: string | null;
 }
 
 // Fallback category definitions (used when imageTags not provided)
@@ -113,8 +119,20 @@ const getMasonryPattern = (imageCount: number, images: CabinImage[]) => {
   return items;
 };
 
-const PhotoGalleryModal = ({ isOpen, onClose, images, featuredImage, imageTags, onImageClick }: PhotoGalleryModalProps) => {
+const PhotoGalleryModal = ({ isOpen, onClose, images, featuredImage, imageTags, onImageClick, scrollToImageUrl }: PhotoGalleryModalProps) => {
   const { t } = useTranslations('cabin');
+
+  // Jump to the tapped image once the tour has rendered.
+  useEffect(() => {
+    if (!isOpen || !scrollToImageUrl) return;
+    const frame = requestAnimationFrame(() => {
+      const target = document.querySelector(
+        `[data-image-url="${CSS.escape(scrollToImageUrl)}"]`
+      );
+      target?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    });
+    return () => cancelAnimationFrame(frame);
+  }, [isOpen, scrollToImageUrl]);
 
   // Body scroll lock
   useEffect(() => {
@@ -297,8 +315,9 @@ const PhotoGalleryModal = ({ isOpen, onClose, images, featuredImage, imageTags, 
                     return (
                       <div
                         key={idx}
+                        data-image-url={item.img.url}
                         onClick={() => onImageClick?.(flatIndex, getFlatOrderedImages())}
-                        className={`relative ${item.className} bg-gray-200 overflow-hidden cursor-pointer group`}
+                        className={`relative ${item.className} bg-gray-200 overflow-hidden cursor-pointer group scroll-mt-24`}
                       >
                         <Image
                           src={item.img.url}

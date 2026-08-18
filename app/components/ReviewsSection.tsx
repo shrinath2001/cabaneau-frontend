@@ -34,6 +34,8 @@ interface ReviewsSectionProps {
   cabinId?: string;
   /** When true, renders as an inline content block (no outer section padding, heading matches cabin detail style) */
   inline?: boolean;
+  /** Reports the aggregate score once reviews load, so the cabin header can show it. */
+  onSummary?: (summary: { average: number; count: number }) => void;
 }
 
 const CHANNEL_CONFIG: Record<string, { label: string; color: string }> = {
@@ -154,8 +156,12 @@ function ChannelBadge({ channel }: { channel: string }) {
   return <img src={logo.src} alt={logo.alt} className={`${logo.className} grayscale opacity-60`} />;
 }
 
-const ReviewsSection = ({ title, backgroundColor, cabinId, inline = false }: ReviewsSectionProps) => {
+const ReviewsSection = ({ title, backgroundColor, cabinId, inline = false, onSummary }: ReviewsSectionProps) => {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
+  // Held in a ref because the fetch effect runs once and must not re-run when
+  // the parent re-renders with a new callback identity.
+  const onSummaryRef = useRef(onSummary);
+  onSummaryRef.current = onSummary;
   const [reviews, setReviews] = useState<ReviewData[]>([]);
   const [stats, setStats] = useState<StatsData | null>(null);
   const [loading, setLoading] = useState(true);
@@ -178,7 +184,22 @@ const ReviewsSection = ({ title, backgroundColor, cabinId, inline = false }: Rev
         const reviewsData = await reviewsRes.json();
         const statsData = statsRes ? await statsRes.json() : null;
 
-        setReviews(reviewsData?.data || []);
+        const reviewItems: ReviewData[] = reviewsData?.data || [];
+        setReviews(reviewItems);
+
+        // Report the aggregate score to the parent (cabin detail header).
+        // The API sends rating as a decimal string ("5.0"), so coerce before
+        // summing - adding it raw concatenates and yields NaN.
+        const ratings = reviewItems
+          .map((review) => Number(review.rating))
+          .filter((rating) => Number.isFinite(rating) && rating > 0);
+
+        if (ratings.length > 0) {
+          onSummaryRef.current?.({
+            average: ratings.reduce((sum, rating) => sum + rating, 0) / ratings.length,
+            count: reviewItems.length,
+          });
+        }
 
         // All channel ratings are already normalized to /5 by the backend
         if (statsData?.channels) {

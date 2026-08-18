@@ -37,10 +37,17 @@ interface APIActivity {
   displayOrder: number;
 }
 
+interface ActivityCategoryTab {
+  id: string;
+  slug: string;
+  name: string;
+}
+
 // Transform API response to match existing Activity interface
 function transformActivity(apiActivity: APIActivity, index: number): Activity {
   return {
     id: index + 1,
+    categorySlug: apiActivity.category,
     title: apiActivity.name,
     subtitle: apiActivity.tagline || "",
     description: apiActivity.description,
@@ -57,15 +64,14 @@ function transformActivity(apiActivity: APIActivity, index: number): Activity {
 
 export default function ActivitiesPage() {
   const { t, locale } = useTranslations("activities");
-  const [activeTab, setActiveTab] = useState<"activities" | "restaurants">(
-    "activities"
-  );
+  // Tabs come from the CMS-managed activity categories; activeTab is a slug.
+  const [categories, setCategories] = useState<ActivityCategoryTab[]>([]);
+  const [activeTab, setActiveTab] = useState<string>("");
   const [selectedActivity, setSelectedActivity] = useState<Activity | null>(
     null
   );
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [activities, setActivities] = useState<Activity[]>([]);
-  const [restaurants, setRestaurants] = useState<Activity[]>([]);
   const [loading, setLoading] = useState(true);
   const [isTabsSticky, setIsTabsSticky] = useState(true);
   const [pageData, setPageData] = useState<PageData>({});
@@ -76,11 +82,15 @@ export default function ActivitiesPage() {
     const fetchData = async () => {
       try {
         // Fetch activities and page data in parallel
-        const [activitiesResponse, pageResponse] = await Promise.all([
+        const [activitiesResponse, pageResponse, categoriesResponse] =
+          await Promise.all([
           apiFetch("/api/activities", {
             headers: { "x-language": locale },
           }),
           apiFetch("/api/pages/slug/activities", {
+            headers: { "x-language": locale },
+          }),
+          apiFetch("/api/activity-categories", {
             headers: { "x-language": locale },
           }),
         ]);
@@ -89,16 +99,34 @@ export default function ActivitiesPage() {
         const data = activitiesResult?.data ?? activitiesResult ?? [];
 
         if (Array.isArray(data)) {
-          // Split by category - DINING goes to restaurants, rest to activities
-          const apiActivities = data.filter(
-            (a: APIActivity) => a.category !== "DINING"
-          );
-          const apiRestaurants = data.filter(
-            (a: APIActivity) => a.category === "DINING"
-          );
+          setActivities(data.map(transformActivity));
+        }
 
-          setActivities(apiActivities.map(transformActivity));
-          setRestaurants(apiRestaurants.map(transformActivity));
+        // Tabs come from the CMS. Only keep categories that actually have
+        // activities, so an empty tab never renders.
+        if (categoriesResponse.ok) {
+          const categoryResult = await categoriesResponse.json();
+          const used = new Set(
+            (Array.isArray(data) ? data : []).map(
+              (a: APIActivity) => a.category
+            )
+          );
+          const tabs: ActivityCategoryTab[] = (
+            Array.isArray(categoryResult) ? categoryResult : []
+          )
+            .filter((c: ActivityCategoryTab) => used.has(c.slug))
+            .map((c: ActivityCategoryTab) => ({
+              id: c.id,
+              slug: c.slug,
+              name: c.name,
+            }));
+
+          setCategories(tabs);
+          setActiveTab((current) =>
+            current && tabs.some((tab) => tab.slug === current)
+              ? current
+              : tabs[0]?.slug || ""
+          );
         }
 
         // Set page data for hero section
@@ -120,27 +148,27 @@ export default function ActivitiesPage() {
     fetchData();
   }, [locale]);
 
-  // Handle URL hash for tab navigation
+  // Handle URL hash for tab navigation. Re-runs once categories arrive so a
+  // deep link like /activities#dining selects the right tab.
   useEffect(() => {
-    const handleHashChange = () => {
-      const hash = window.location.hash.replace('#', '') as 'activities' | 'restaurants';
-      if (hash && ['activities', 'restaurants'].includes(hash)) {
+    if (categories.length === 0) return;
+
+    const applyHash = () => {
+      const hash = window.location.hash.replace('#', '');
+      if (hash && categories.some((tab) => tab.slug === hash)) {
         setActiveTab(hash);
       }
     };
 
-    // Set initial tab from hash
-    handleHashChange();
-
-    // Listen for hash changes
-    window.addEventListener('hashchange', handleHashChange);
-    return () => window.removeEventListener('hashchange', handleHashChange);
-  }, []);
+    applyHash();
+    window.addEventListener('hashchange', applyHash);
+    return () => window.removeEventListener('hashchange', applyHash);
+  }, [categories]);
 
   // Update URL hash when tab changes
-  const handleTabChange = (tab: 'activities' | 'restaurants') => {
-    setActiveTab(tab);
-    window.history.replaceState(null, '', `#${tab}`);
+  const handleTabChange = (slug: string) => {
+    setActiveTab(slug);
+    window.history.replaceState(null, '', `#${slug}`);
   };
 
   // Sticky tabs scroll handler
@@ -180,7 +208,9 @@ export default function ActivitiesPage() {
     setTimeout(() => setSelectedActivity(null), 300);
   };
 
-  const currentItems = activeTab === "activities" ? activities : restaurants;
+  const currentItems = activeTab
+    ? activities.filter((item) => item.categorySlug === activeTab)
+    : activities;
 
   return (
     <main>
@@ -212,30 +242,21 @@ export default function ActivitiesPage() {
       >
         <div className="container mx-auto px-4 max-w-6xl">
           <div className="flex justify-center gap-6 sm:gap-12 overflow-x-auto py-2">
-            <button
-              onClick={() => handleTabChange("activities")}
-              className="py-2 px-2 text-[16px] md:text-[18px] font-medium font-heading uppercase tracking-wider transition-colors relative whitespace-nowrap"
-              style={{
-                color: activeTab === "activities" ? "#F49A4A" : "#495D4D",
-              }}
-            >
-              {t("tabs.activities", "ACTIVITIES")}
-              {activeTab === "activities" && (
-                <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#F49A4A]"></span>
-              )}
-            </button>
-            <button
-              onClick={() => handleTabChange("restaurants")}
-              className="py-2 px-2 text-[16px] md:text-[18px] font-medium font-heading uppercase tracking-wider transition-colors relative whitespace-nowrap"
-              style={{
-                color: activeTab === "restaurants" ? "#F49A4A" : "#495D4D",
-              }}
-            >
-              {t("tabs.restaurants", "RESTAURANTS")}
-              {activeTab === "restaurants" && (
-                <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#F49A4A]"></span>
-              )}
-            </button>
+            {categories.map((tab) => (
+              <button
+                key={tab.slug}
+                onClick={() => handleTabChange(tab.slug)}
+                className="py-2 px-2 text-[16px] md:text-[18px] font-medium font-heading uppercase tracking-wider transition-colors relative whitespace-nowrap"
+                style={{
+                  color: activeTab === tab.slug ? "#F49A4A" : "#495D4D",
+                }}
+              >
+                {tab.name}
+                {activeTab === tab.slug && (
+                  <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#F49A4A]"></span>
+                )}
+              </button>
+            ))}
           </div>
         </div>
       </section>
@@ -250,9 +271,7 @@ export default function ActivitiesPage() {
           ) : currentItems.length === 0 ? (
             <div className="text-center py-12">
               <p className="text-gray-600 text-lg">
-                {activeTab === "activities"
-                  ? t("page.activities_not_found", "Activities not found")
-                  : t("page.restaurants_not_found", "Restaurants not found")}
+                {t("page.activities_not_found", "Activities not found")}
               </p>
             </div>
           ) : (
@@ -303,7 +322,11 @@ export default function ActivitiesPage() {
                     if (btnLink) {
                       window.location.href = btnLink;
                     } else {
-                      handleTabChange(activeTab === "activities" ? "restaurants" : "activities");
+                      const index = categories.findIndex(
+                        (tab) => tab.slug === activeTab
+                      );
+                      const next = categories[(index + 1) % (categories.length || 1)];
+                      if (next) handleTabChange(next.slug);
                       setTimeout(() => window.scrollTo({ top: 0, behavior: "smooth" }), 50);
                     }
                   }}

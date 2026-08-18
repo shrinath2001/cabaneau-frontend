@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import Image from 'next/image';
 import { useTranslations } from '@/app/providers/TranslationsProvider';
 
@@ -16,7 +16,11 @@ interface ImageGalleryProps {
   images: (string | CabinImage)[];
   featuredImage?: string;
   onShowAllClick: () => void;
-  onMobileImageClick?: (index: number) => void;
+  /** Called with the tapped image URL so the photo tour can open on it. */
+  onMobileImageClick?: (imageUrl: string) => void;
+  /** When set, the large tile becomes a playable video instead of a photo. */
+  heroVideo?: string;
+  heroVideoPoster?: string;
 }
 
 // Helper to extract URL from either string or CabinImage
@@ -24,7 +28,7 @@ const getImageUrl = (img: string | CabinImage): string => {
   return typeof img === 'string' ? img : img.url;
 };
 
-const ImageGallery = ({ images, featuredImage, onShowAllClick, onMobileImageClick }: ImageGalleryProps) => {
+const ImageGallery = ({ images, featuredImage, onShowAllClick, onMobileImageClick, heroVideo, heroVideoPoster }: ImageGalleryProps) => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const { t } = useTranslations('cabin');
 
@@ -54,13 +58,49 @@ const ImageGallery = ({ images, featuredImage, onShowAllClick, onMobileImageClic
     setCurrentImageIndex((prev) => (prev - 1 + totalImages) % totalImages);
   };
 
+  // Swipe handling for the mobile carousel. `didSwipe` stops the tap handler
+  // from opening the photo tour at the end of a swipe gesture.
+  const touchStartX = useRef<number | null>(null);
+  const touchDeltaX = useRef(0);
+  const didSwipe = useRef(false);
+  const SWIPE_THRESHOLD_PX = 40;
+
+  const handleTouchStart = (e: React.TouchEvent) => {
+    touchStartX.current = e.touches[0].clientX;
+    touchDeltaX.current = 0;
+    didSwipe.current = false;
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    if (touchStartX.current === null) return;
+    touchDeltaX.current = e.touches[0].clientX - touchStartX.current;
+  };
+
+  const handleTouchEnd = () => {
+    if (Math.abs(touchDeltaX.current) > SWIPE_THRESHOLD_PX) {
+      didSwipe.current = true;
+      if (touchDeltaX.current < 0) {
+        nextImage();
+      } else {
+        prevImage();
+      }
+    }
+    touchStartX.current = null;
+  };
+
   return (
     <>
       {/* Mobile View - Single Carousel */}
       <div className="block md:hidden relative mb-6">
         <div
-          className="relative bg-gray-200 h-[250px] w-full cursor-pointer"
-          onClick={() => onMobileImageClick?.(currentImageIndex)}
+          className="relative bg-gray-200 h-[300px] w-full cursor-pointer touch-pan-y"
+          onTouchStart={handleTouchStart}
+          onTouchMove={handleTouchMove}
+          onTouchEnd={handleTouchEnd}
+          onClick={() => {
+            if (didSwipe.current) return;
+            onMobileImageClick?.(allImages[currentImageIndex] || displayImages[0]);
+          }}
         >
           <Image
             src={allImages[currentImageIndex] || displayImages[0]}
@@ -116,22 +156,36 @@ const ImageGallery = ({ images, featuredImage, onShowAllClick, onMobileImageClic
 
       {/* Desktop View - Grid Layout */}
       <div className="hidden md:grid grid-cols-[60fr_40fr] gap-2 mb-8">
-        {/* Large main image - LEFT SIDE, full height */}
-        <div
-          className="relative bg-gray-200 h-[341px] cursor-pointer"
-          onClick={() => onShowAllClick()}
-        >
-          <Image
-            src={displayImages[0]}
-            alt="Cabin view 1"
-            fill
-            className="object-cover"
-            sizes="60vw"
-          />
-        </div>
+        {/* Large main tile - LEFT SIDE. Playable video when one is set,
+            otherwise the first photo. */}
+        {heroVideo ? (
+          <div className="relative bg-black h-[440px]">
+            <video
+              src={heroVideo}
+              poster={heroVideoPoster || displayImages[0]}
+              controls
+              playsInline
+              preload="metadata"
+              className="w-full h-full object-cover"
+            />
+          </div>
+        ) : (
+          <div
+            className="relative bg-gray-200 h-[440px] cursor-pointer"
+            onClick={() => onShowAllClick()}
+          >
+            <Image
+              src={displayImages[0]}
+              alt="Cabin view 1"
+              fill
+              className="object-cover"
+              sizes="60vw"
+            />
+          </div>
+        )}
 
         {/* RIGHT SIDE - 2x2 Grid of smaller images */}
-        <div className="grid grid-cols-2 grid-rows-2 gap-2 h-[341px]">
+        <div className="grid grid-cols-2 grid-rows-2 gap-2 h-[440px]">
           {/* Top left */}
           <div
             className="relative bg-gray-200 cursor-pointer"
