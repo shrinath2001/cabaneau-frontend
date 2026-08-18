@@ -2,6 +2,8 @@
 
 export interface Activity {
   id: number;
+  /** Slug of the activity category this belongs to (drives the page tabs). */
+  categorySlug?: string;
   title: string;
   subtitle: string;
   description: string;

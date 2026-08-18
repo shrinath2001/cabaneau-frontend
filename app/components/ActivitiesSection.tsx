@@ -56,12 +56,14 @@ const ActivitiesSection = ({
 
         if (Array.isArray(data)) {
           const nonDiningActivities = data
-            .filter((a: any) => a.category !== 'DINING')
+            .filter((a: any) => a.category !== 'dining')
             .slice(0, 3);
 
           setActivities(nonDiningActivities.map((a: any) => ({
             imageSrc: a.featuredImage || '/assets/d206536ef067f64b29cad184324fe360bb763e30.jpg',
             activityName: a.name?.toUpperCase() || '',
+            // Deep-link into the matching tab on the activities page.
+            link: a.category ? `/activities#${a.category}` : undefined,
           })));
         }
       } catch (error) {
