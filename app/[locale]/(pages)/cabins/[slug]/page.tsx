@@ -470,6 +470,7 @@ const SingleCabinPage = () => {
             name: cabin.name || cabin.slug,
             lodgifyId: cabin.lodgifyId,
             capacity: cabin.capacity,
+            allowDogs: !!cabin.addOns?.dogAddOnId,
           }}
         />
       </div>
