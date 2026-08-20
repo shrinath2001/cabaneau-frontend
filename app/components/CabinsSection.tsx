@@ -197,7 +197,11 @@ const CabinsSection = () => {
       `}</style>
       <section id="our-cabins" className="bg-white py-6 md:py-5 md:mt-12 px-0 scroll-mt-24">
         <div className="w-full">
-          <div className="max-w-full mx-auto">
+          {/* Same content-column width as the cabin detail page (Other
+              Cabins section), so this row sits in the same rail as the
+              rest of the site instead of centering against the full
+              viewport. */}
+          <div className="max-w-[1400px] mx-auto">
             {/* Header with Title */}
             <div className="flex justify-center items-center pt-6 md:pt-10 mb-10 md:mb-10 px-4 md:px-0">
               <h2 className="font-logga text-[28px] md:text-[42px] font-semibold md:font-normal text-center">
