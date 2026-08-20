@@ -183,26 +183,6 @@ const CabinsSection = () => {
     return () => observer.disconnect();
   }, [cabins]);
 
-  const scrollLeft = () => {
-    if (scrollContainerRef.current) {
-      const scrollAmount = 400; // Card width (380px) + gap (20px)
-      scrollContainerRef.current.scrollBy({
-        left: -scrollAmount,
-        behavior: 'smooth',
-      });
-    }
-  };
-
-  const scrollRight = () => {
-    if (scrollContainerRef.current) {
-      const scrollAmount = 400; // Card width (380px) + gap (20px)
-      scrollContainerRef.current.scrollBy({
-        left: scrollAmount,
-        behavior: 'smooth',
-      });
-    }
-  };
-
   return (
     <>
       <style jsx>{`
@@ -239,8 +219,10 @@ const CabinsSection = () => {
                   <p className="text-gray-500">{t('cabins_section.empty', 'No cabins available at the moment. Please check back later.')}</p>
                 </div>
               ) : cabins.length > 1 ? (
-                // Carousel layout - centered while everything fits, a
-                // left-aligned slider with arrows once it doesn't.
+                // Carousel layout - centered while everything fits; once it
+                // overflows it stays left-aligned and scrolls by touch/drag/
+                // wheel, with the next card's partial edge as the only scroll
+                // cue (no arrow buttons).
                 <div className="relative">
                   <div
                     ref={scrollContainerRef}
@@ -255,31 +237,6 @@ const CabinsSection = () => {
                     ))}
                     <div className="flex-shrink-0 w-[10px] md:w-0"></div>
                   </div>
-
-                  {isOverflowing && (
-                    <>
-                      <button
-                        type="button"
-                        onClick={scrollLeft}
-                        aria-label="Scroll cabins left"
-                        className="hidden md:flex absolute left-0 top-1/2 -translate-y-1/2 -translate-x-1/2 z-10 w-10 h-10 items-center justify-center bg-white shadow-md hover:bg-gray-50 transition"
-                      >
-                        <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-                          <polyline points="15 18 9 12 15 6" />
-                        </svg>
-                      </button>
-                      <button
-                        type="button"
-                        onClick={scrollRight}
-                        aria-label="Scroll cabins right"
-                        className="hidden md:flex absolute right-0 top-1/2 -translate-y-1/2 translate-x-1/2 z-10 w-10 h-10 items-center justify-center bg-white shadow-md hover:bg-gray-50 transition"
-                      >
-                        <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-                          <polyline points="9 18 15 12 9 6" />
-                        </svg>
-                      </button>
-                    </>
-                  )}
                 </div>
               ) : (
                 // Single cabin - centered
