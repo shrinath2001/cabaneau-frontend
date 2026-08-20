@@ -3,7 +3,6 @@ import { useRef, useState, useEffect, useCallback } from 'react';
 import CabinCard from './CabinCard';
 import { apiFetch } from '@/app/lib/api';
 import { useTranslations } from '@/app/providers/TranslationsProvider';
-import Link from 'next/link';
 
 interface AmenityInfo {
   id: string;
@@ -243,13 +242,6 @@ const CabinsSection = () => {
                   ))}
                 </div>
               )}
-            </div>
-
-            {/* Discover All Button */}
-            <div className="text-center mt-6 md:mt-10 mb-6 md:mb-8 px-4 md:px-0">
-              <Link href={`/${locale}/cabins`} className="px-8 py-3 bg-[#495D4D] text-white text-base md:text-lg font-heading font-medium tracking-widest hover:bg-[#2d4a2d] transition-colors">
-                {t('cabins_section.button', 'DISCOVER ALL CABINS')}
-              </Link>
             </div>
           </div>
         </div>

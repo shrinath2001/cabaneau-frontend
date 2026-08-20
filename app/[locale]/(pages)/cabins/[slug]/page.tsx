@@ -415,9 +415,6 @@ const SingleCabinPage = () => {
               locale={locale}
               thingsToKnow={cabin.thingsToKnow}
             />
-
-            {/* Other cabins */}
-            <OtherCabinsSection currentSlug={cabin.slug} />
           </div>
 
           {/* Booking Section - Desktop: right sidebar */}
@@ -433,6 +430,12 @@ const SingleCabinPage = () => {
               }}
             />
           </div>
+        </div>
+
+        {/* Other cabins - full width, outside the two-column grid so it isn't
+            squeezed into the left column alongside the booking sidebar */}
+        <div className="px-4 md:px-0">
+          <OtherCabinsSection currentSlug={cabin.slug} />
         </div>
       </div>
 
