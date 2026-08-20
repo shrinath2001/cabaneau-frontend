@@ -81,6 +81,11 @@ const CabinsSection = () => {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const [cabins, setCabins] = useState<CabinData[]>([]);
   const [loading, setLoading] = useState(true);
+  // Whether the row of cards is wider than its container. `justify-center`
+  // must only apply while everything fits - centering an overflowing flex
+  // row makes the browser start the scroll position mid-way, clipping the
+  // first AND last card equally on load rather than starting at the first.
+  const [isOverflowing, setIsOverflowing] = useState(false);
   const { t, locale } = useTranslations('homepage');
 
   // Get hardcoded translations for current locale
@@ -164,6 +169,20 @@ const CabinsSection = () => {
     fetchCabins();
   }, [formatAvailabilityDate, formatCapacity, formatNightlyRate, st.available]);
 
+  // Re-measured on resize and whenever the card count changes (cards render
+  // async after the fetch above resolves).
+  useEffect(() => {
+    const rail = scrollContainerRef.current;
+    if (!rail) return;
+
+    const measure = () => setIsOverflowing(rail.scrollWidth > rail.clientWidth + 1);
+    measure();
+
+    const observer = new ResizeObserver(measure);
+    observer.observe(rail);
+    return () => observer.disconnect();
+  }, [cabins]);
+
   const scrollLeft = () => {
     if (scrollContainerRef.current) {
       const scrollAmount = 400; // Card width (380px) + gap (20px)
@@ -220,11 +239,12 @@ const CabinsSection = () => {
                   <p className="text-gray-500">{t('cabins_section.empty', 'No cabins available at the moment. Please check back later.')}</p>
                 </div>
               ) : cabins.length > 1 ? (
-                // Carousel layout - centered, scrollable
+                // Carousel layout - centered while everything fits, a
+                // left-aligned slider with arrows once it doesn't.
                 <div className="relative">
                   <div
                     ref={scrollContainerRef}
-                    className="flex gap-[19.42px] overflow-x-auto no-scrollbar py-8 md:justify-center"
+                    className={`flex gap-[19.42px] overflow-x-auto no-scrollbar py-8 ${isOverflowing ? '' : 'md:justify-center'}`}
                     style={{ scrollSnapType: 'x mandatory' }}
                   >
                     <div className="flex-shrink-0 w-[10px] md:w-0"></div>
@@ -235,6 +255,31 @@ const CabinsSection = () => {
                     ))}
                     <div className="flex-shrink-0 w-[10px] md:w-0"></div>
                   </div>
+
+                  {isOverflowing && (
+                    <>
+                      <button
+                        type="button"
+                        onClick={scrollLeft}
+                        aria-label="Scroll cabins left"
+                        className="hidden md:flex absolute left-0 top-1/2 -translate-y-1/2 -translate-x-1/2 z-10 w-10 h-10 items-center justify-center bg-white shadow-md hover:bg-gray-50 transition"
+                      >
+                        <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                          <polyline points="15 18 9 12 15 6" />
+                        </svg>
+                      </button>
+                      <button
+                        type="button"
+                        onClick={scrollRight}
+                        aria-label="Scroll cabins right"
+                        className="hidden md:flex absolute right-0 top-1/2 -translate-y-1/2 translate-x-1/2 z-10 w-10 h-10 items-center justify-center bg-white shadow-md hover:bg-gray-50 transition"
+                      >
+                        <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                          <polyline points="9 18 15 12 9 6" />
+                        </svg>
+                      </button>
+                    </>
+                  )}
                 </div>
               ) : (
                 // Single cabin - centered
