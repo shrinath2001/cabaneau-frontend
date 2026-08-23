@@ -4,8 +4,6 @@ import { useRef, useState, useEffect, useCallback } from 'react';
 import CabinCard from './CabinCard';
 import { apiFetch } from '@/app/lib/api';
 import { useTranslations } from '@/app/providers/TranslationsProvider';
-import Link from 'next/link';
-import { localizedPath, type Locale } from '@/app/lib/i18n';
 
 interface AmenityInfo {
   id: string;
@@ -43,13 +41,12 @@ const sectionTranslations: Record<string, {
   available: string;
   availableNow: string;
   perNight: string;
-  button: string;
   loading: string;
 }> = {
-  en: { title: 'OUR CABINS', persons: 'Persons', available: 'Available', availableNow: 'Today', perNight: '/night', button: 'DISCOVER ALL CABINS', loading: 'Loading cabins...' },
-  fr: { title: 'NOS CABANES', persons: 'Personnes', available: 'Disponible', availableNow: 'Aujourd\'hui', perNight: '/nuit', button: 'DÉCOUVRIR TOUTES LES CABANES', loading: 'Chargement...' },
-  de: { title: 'UNSERE HÜTTEN', persons: 'Personen', available: 'Verfügbar', availableNow: 'Heute', perNight: '/Nacht', button: 'ALLE HÜTTEN ENTDECKEN', loading: 'Laden...' },
-  nl: { title: 'ONZE HUTTEN', persons: 'Personen', available: 'Beschikbaar', availableNow: 'Vandaag', perNight: '/nacht', button: 'ONTDEK ALLE HUTTEN', loading: 'Laden...' },
+  en: { title: 'OUR CABINS', persons: 'Persons', available: 'Available', availableNow: 'Today', perNight: '/night', loading: 'Loading cabins...' },
+  fr: { title: 'NOS CABANES', persons: 'Personnes', available: 'Disponible', availableNow: 'Aujourd\'hui', perNight: '/nuit', loading: 'Chargement...' },
+  de: { title: 'UNSERE HÜTTEN', persons: 'Personen', available: 'Verfügbar', availableNow: 'Heute', perNight: '/Nacht', loading: 'Laden...' },
+  nl: { title: 'ONZE HUTTEN', persons: 'Personen', available: 'Beschikbaar', availableNow: 'Vandaag', perNight: '/nacht', loading: 'Laden...' },
 };
 
 const BlogSidebarCabin = () => {
@@ -149,8 +146,6 @@ const BlogSidebarCabin = () => {
     }
   };
 
-  const cabinsLink = localizedPath(locale as Locale, '/cabins');
-
   return (
     <>
       <style jsx>{`
@@ -204,7 +199,7 @@ const BlogSidebarCabin = () => {
             <div className="relative">
               <div
                 ref={scrollContainerRef}
-                className="flex gap-[19.42px] overflow-x-auto no-scrollbar py-4"
+                className="flex gap-[19.42px] overflow-x-auto no-scrollbar py-8"
                 style={{ scrollSnapType: 'x mandatory' }}
               >
                 {cabins.map((cabin, index) => (
@@ -215,16 +210,6 @@ const BlogSidebarCabin = () => {
               </div>
             </div>
           )}
-        </div>
-
-        {/* Discover All Button */}
-        <div className="text-center mt-6">
-          <Link
-            href={cabinsLink}
-            className="inline-block px-8 py-3 bg-[#495D4D] text-white text-base font-heading font-medium tracking-widest hover:bg-[#2d4a2d] transition-colors"
-          >
-            {t.button}
-          </Link>
         </div>
       </div>
     </>

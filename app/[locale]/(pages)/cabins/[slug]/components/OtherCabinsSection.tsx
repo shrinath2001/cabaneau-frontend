@@ -134,7 +134,7 @@ const OtherCabinsSection = ({ currentSlug }: OtherCabinsSectionProps) => {
         {t('detail.other_cabins', 'OTHER CABINS')}
       </h2>
 
-      <div className="flex gap-4 overflow-x-auto pb-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden snap-x">
+      <div className="flex gap-4 overflow-x-auto py-8 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden snap-x">
         {cabins.map((cabin) => (
           <div key={cabin.slug} className="snap-start">
             <CabinCard {...cabin} />
