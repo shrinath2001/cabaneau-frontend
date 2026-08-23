@@ -226,7 +226,17 @@ const CabinsSection = () => {
                 // overflows it stays left-aligned and scrolls by touch/drag/
                 // wheel, with the next card's partial edge as the only scroll
                 // cue (no arrow buttons).
-                <div className="relative">
+                //
+                // mr-[calc((100%-100vw)/2)] bleeds ONLY the right edge out to
+                // the true viewport edge, matching the Life at Cabaneau
+                // slider, while the left edge stays put (aligned with the
+                // logo/nav, per the container above). "100%" here is this
+                // div's own width - i.e. the 1390px-capped content column -
+                // so the calc resolves to exactly one side's gutter, pulled
+                // in as a negative margin. On mobile the content column
+                // already equals the viewport width, so the calc is 0 there
+                // with no extra rule needed.
+                <div className="relative mr-[calc((100%-100vw)/2)]">
                   <div
                     ref={scrollContainerRef}
                     className={`flex gap-[19.42px] overflow-x-auto no-scrollbar py-8 ${isOverflowing ? '' : 'md:justify-center'}`}
