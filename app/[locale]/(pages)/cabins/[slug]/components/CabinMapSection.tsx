@@ -3,8 +3,11 @@
 import { useTranslations } from '@/app/providers/TranslationsProvider';
 
 interface CabinMapSectionProps {
-  latitude?: number;
-  longitude?: number;
+  // The API's decimal columns serialize as strings over JSON (a TypeORM
+  // gotcha), so this is typed to match what actually arrives, not what the
+  // DTO claims.
+  latitude?: number | string;
+  longitude?: number | string;
   address?: string;
   postalCode?: string;
   city?: string;
@@ -28,15 +31,17 @@ const CabinMapSection = ({
 }: CabinMapSectionProps) => {
   const { t, locale } = useTranslations('cabin');
 
+  const lat = Number(latitude);
+  const lng = Number(longitude);
   const hasCoordinates =
-    typeof latitude === 'number' &&
-    typeof longitude === 'number' &&
-    !Number.isNaN(latitude) &&
-    !Number.isNaN(longitude);
+    latitude !== undefined &&
+    longitude !== undefined &&
+    Number.isFinite(lat) &&
+    Number.isFinite(lng);
 
   if (!hasCoordinates) return null;
 
-  const query = `${latitude},${longitude}`;
+  const query = `${lat},${lng}`;
   const mapSrc = `https://www.google.com/maps?q=${query}&z=15&hl=${locale}&output=embed`;
   const directionsUrl = `https://www.google.com/maps/search/?api=1&query=${query}`;
 

@@ -290,9 +290,12 @@ export default function AvailabilityCalendar({
   };
 
   return (
-    <section className="mt-8 md:mt-12 font-jost">
-      {/* Heading */}
-      <h2 className="font-logga font-semibold text-[18px] md:text-[22px] uppercase text-gray-800">
+    <section className="mt-8 sm:mt-12 mb-8 sm:mb-12 font-jost">
+      {/* Heading - matches the banner style every other cabin-detail section
+          uses (Amenities, Extra Services, etc.): same size, weight, tracking,
+          padding, and #F1FAF7 background. Was plain text with no background
+          and a one-off 22px desktop size. */}
+      <h2 className="font-logga font-semibold text-[18px] md:text-[20px] mb-6 uppercase tracking-wide text-gray-800 p-4 md:p-6" style={{ backgroundColor: '#F1FAF7' }}>
         {heading}
       </h2>
       <div className="min-h-[20px] mb-4">
