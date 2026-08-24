@@ -1,8 +1,7 @@
 'use client';
 
 import { useMemo, useState } from 'react';
-import { useRatesCalendar, nightsBetween } from './hooks/useRatesCalendar';
-import { formatCurrency } from './hooks/useQuote';
+import { useRatesCalendar } from './hooks/useRatesCalendar';
 import GuestSteppers, { GuestCounts } from '../search/GuestSteppers';
 
 interface DateRangePickerProps {
@@ -269,28 +268,30 @@ export default function DateRangePicker({
     return { isCheckIn, isCheckOut, inRange, selectable };
   };
 
-  const nights = checkIn && checkOut ? nightsBetween(checkIn, checkOut) : 0;
   const canConfirm = !!(checkIn && checkOut);
   const minStayForCheckIn = checkIn ? helpers.getMinStay(checkIn) : 0;
-  const checkInPrice = checkIn ? helpers.getDay(checkIn)?.pricePerDay ?? null : null;
 
+  // Guidance only. Once both dates are chosen the calendar already shows the
+  // selection, so the line is dropped to keep the sheet compact.
   const headline = !checkIn
     ? t.selectCheckIn
     : !checkOut
       ? minStayForCheckIn > 1
         ? `${t.selectCheckOut} · ${t.minStay(minStayForCheckIn)}`
         : t.selectCheckOut
-      : t.nightsTotal(nights);
+      : null;
 
   return (
     <div className="w-full font-jost">
       {/* Status / helper line */}
-      <div className="px-1 pb-3 min-h-[20px]">
-        <p className="text-sm font-light text-gray-700">{headline}</p>
-        {message && (
-          <p className="text-xs text-amber-700 mt-1">{message}</p>
-        )}
-      </div>
+      {(headline || message) && (
+        <div className="px-1 pb-2">
+          {headline && (
+            <p className="text-sm font-light text-gray-700">{headline}</p>
+          )}
+          {message && <p className="text-xs text-amber-700 mt-1">{message}</p>}
+        </div>
+      )}
 
       {loading && (
         <div className="flex items-center justify-center py-16">
@@ -379,17 +380,12 @@ export default function DateRangePicker({
             })}
           </div>
 
-          {/* Price hint for the chosen arrival night */}
-          {checkInPrice != null && (
-            <p className="text-xs text-gray-500 mt-3 px-1">
-              {formatCurrency(checkInPrice, helpers.currency)} / {t.perNight}
-            </p>
-          )}
         </>
       )}
 
-      {/* Guests + actions */}
-      <div className="mt-4 pt-4 border-t border-gray-200">
+      {/* Guests + actions. Sticky so the confirm button stays reachable
+          without scrolling the sheet. */}
+      <div className="mt-3 pt-3 border-t border-gray-200 sticky bottom-0 bg-white">
         <GuestSteppers
           value={guests}
           onChange={(field, next) => setGuests((g) => ({ ...g, [field]: next }))}
@@ -405,7 +401,7 @@ export default function DateRangePicker({
             canConfirm && onConfirm({ checkIn: checkIn!, checkOut: checkOut!, ...guests })
           }
           className={[
-            'w-full py-4 px-6 text-base font-bold tracking-wide uppercase transition',
+            'w-full py-3 px-6 mt-1 text-sm font-bold tracking-wide uppercase transition',
             canConfirm
               ? 'bg-[#495D4D] hover:bg-[#3d5a3d] text-white'
               : 'bg-gray-200 text-gray-500 cursor-not-allowed',

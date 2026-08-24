@@ -1,0 +1,148 @@
+'use client';
+
+import { useEffect, useState } from 'react';
+import CabinCard from '@/app/components/CabinCard';
+import { apiFetch } from '@/app/lib/api';
+import { useTranslations } from '@/app/providers/TranslationsProvider';
+
+interface AmenityInfo {
+  id: string;
+  name: string;
+  slug: string;
+  icon?: string;
+  category: string;
+}
+
+interface OtherCabin {
+  id: number;
+  slug: string;
+  images: string[];
+  title: string;
+  rating: number;
+  area: string;
+  capacity: string;
+  availability: string;
+  price: string;
+  featuredAmenities?: AmenityInfo[];
+}
+
+interface OtherCabinsSectionProps {
+  /** Slug of the cabin being viewed, so it is left out of the list. */
+  currentSlug: string;
+}
+
+/** Featured image first, then the gallery, skipping duplicates. */
+function collectImageUrls(cabin: {
+  featuredImage?: string;
+  images?: Array<string | { url?: string }>;
+}): string[] {
+  const urls: string[] = [];
+  if (cabin.featuredImage) urls.push(cabin.featuredImage);
+  for (const image of cabin.images || []) {
+    const url = typeof image === 'string' ? image : image?.url;
+    if (url && !urls.includes(url)) urls.push(url);
+  }
+  return urls;
+}
+
+const OtherCabinsSection = ({ currentSlug }: OtherCabinsSectionProps) => {
+  const { t, locale } = useTranslations('cabin');
+  const [cabins, setCabins] = useState<OtherCabin[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    const fetchCabins = async () => {
+      try {
+        // Same endpoint the homepage grid uses - it carries Lodgify pricing
+        // and next-availability alongside the cabin record.
+        const response = await apiFetch('/api/cabins/homepage', {
+          headers: { 'x-language': locale },
+        });
+        const result = await response.json();
+        const rows = result?.data ?? result ?? [];
+        if (cancelled || !Array.isArray(rows)) return;
+
+        const others = rows
+          .filter((cabin: { slug?: string }) => cabin.slug !== currentSlug)
+          .map(
+            (
+              cabin: {
+                lodgifyId?: string;
+                slug?: string;
+                name?: string;
+                rating?: number;
+                squareMeters?: number;
+                capacity?: number;
+                nextAvailableDate?: string;
+                nightlyRate?: number;
+                basePrice?: number | string;
+                featuredImage?: string;
+                images?: Array<string | { url?: string }>;
+                featuredAmenities?: AmenityInfo[];
+              },
+              index: number
+            ) => ({
+              id: cabin.lodgifyId ? parseInt(cabin.lodgifyId, 10) : index + 1,
+              slug: cabin.slug || '',
+              images: collectImageUrls(cabin),
+              title: cabin.name || cabin.slug || '',
+              rating: cabin.rating ?? 5,
+              area: cabin.squareMeters ? `${cabin.squareMeters}m²` : '',
+              capacity: cabin.capacity
+                ? `2-${cabin.capacity} ${t('detail.persons', 'Persons')}`
+                : '',
+              availability: cabin.nextAvailableDate
+                ? new Date(cabin.nextAvailableDate).toLocaleDateString(
+                    locale === 'en' ? 'en-GB' : locale,
+                    { day: 'numeric', month: 'short' }
+                  )
+                : t('detail.available_today', 'Today'),
+              price: cabin.nightlyRate
+                ? `${Math.round(cabin.nightlyRate)} €`
+                : cabin.basePrice
+                  ? `${Math.round(Number(cabin.basePrice))} €`
+                  : '',
+              featuredAmenities: cabin.featuredAmenities,
+            })
+          );
+
+        setCabins(others);
+      } catch (error) {
+        console.error('Error fetching other cabins:', error);
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    };
+
+    fetchCabins();
+    return () => {
+      cancelled = true;
+    };
+  }, [currentSlug, locale, t]);
+
+  // Nothing to cross-sell to - stay quiet rather than render an empty band.
+  if (loading || cabins.length === 0) return null;
+
+  return (
+    <div className="mt-8 sm:mt-12 mb-8 sm:mb-12">
+      <h2
+        className="font-logga font-semibold text-[18px] md:text-[20px] mb-6 uppercase tracking-wide text-gray-800 p-4 md:p-6"
+        style={{ backgroundColor: '#F1FAF7' }}
+      >
+        {t('detail.other_cabins', 'OTHER CABINS')}
+      </h2>
+
+      <div className="flex gap-4 overflow-x-auto py-8 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden snap-x">
+        {cabins.map((cabin) => (
+          <div key={cabin.slug} className="snap-start">
+            <CabinCard {...cabin} />
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};
+
+export default OtherCabinsSection;

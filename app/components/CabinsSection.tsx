@@ -3,7 +3,6 @@ import { useRef, useState, useEffect, useCallback } from 'react';
 import CabinCard from './CabinCard';
 import { apiFetch } from '@/app/lib/api';
 import { useTranslations } from '@/app/providers/TranslationsProvider';
-import Link from 'next/link';
 
 interface AmenityInfo {
   id: string;
@@ -82,6 +81,11 @@ const CabinsSection = () => {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const [cabins, setCabins] = useState<CabinData[]>([]);
   const [loading, setLoading] = useState(true);
+  // Whether the row of cards is wider than its container. `justify-center`
+  // must only apply while everything fits - centering an overflowing flex
+  // row makes the browser start the scroll position mid-way, clipping the
+  // first AND last card equally on load rather than starting at the first.
+  const [isOverflowing, setIsOverflowing] = useState(false);
   const { t, locale } = useTranslations('homepage');
 
   // Get hardcoded translations for current locale
@@ -165,25 +169,19 @@ const CabinsSection = () => {
     fetchCabins();
   }, [formatAvailabilityDate, formatCapacity, formatNightlyRate, st.available]);
 
-  const scrollLeft = () => {
-    if (scrollContainerRef.current) {
-      const scrollAmount = 400; // Card width (380px) + gap (20px)
-      scrollContainerRef.current.scrollBy({
-        left: -scrollAmount,
-        behavior: 'smooth',
-      });
-    }
-  };
+  // Re-measured on resize and whenever the card count changes (cards render
+  // async after the fetch above resolves).
+  useEffect(() => {
+    const rail = scrollContainerRef.current;
+    if (!rail) return;
 
-  const scrollRight = () => {
-    if (scrollContainerRef.current) {
-      const scrollAmount = 400; // Card width (380px) + gap (20px)
-      scrollContainerRef.current.scrollBy({
-        left: scrollAmount,
-        behavior: 'smooth',
-      });
-    }
-  };
+    const measure = () => setIsOverflowing(rail.scrollWidth > rail.clientWidth + 1);
+    measure();
+
+    const observer = new ResizeObserver(measure);
+    observer.observe(rail);
+    return () => observer.disconnect();
+  }, [cabins]);
 
   return (
     <>
@@ -196,9 +194,16 @@ const CabinsSection = () => {
           scrollbar-width: none;
         }
       `}</style>
-      <section id="our-cabins" className="bg-white py-6 md:py-5 md:mt-12 px-0 scroll-mt-24">
-        <div className="w-full">
-          <div className="max-w-full mx-auto">
+      {/* container mx-auto + max-w-[1390px] matches the Header and every
+          other homepage section (Services/Activities/Hosts) exactly -
+          Tailwind's container caps width in steps at each breakpoint, so a
+          plain max-w-[Npx] here drifts out of alignment with the logo/nav
+          between those steps rather than matching it. px-0 (not px-4) on
+          mobile preserves the carousel's edge-to-edge bleed; the title
+          keeps its own mobile-only inset below. */}
+      <section id="our-cabins" className="bg-white py-6 md:py-5 px-0 md:px-20 md:mt-12 scroll-mt-24">
+        <div className="container mx-auto">
+          <div className="max-w-[1390px] mx-auto">
             {/* Header with Title */}
             <div className="flex justify-center items-center pt-6 md:pt-10 mb-10 md:mb-10 px-4 md:px-0">
               <h2 className="font-logga text-[28px] md:text-[42px] font-semibold md:font-normal text-center">
@@ -217,11 +222,24 @@ const CabinsSection = () => {
                   <p className="text-gray-500">{t('cabins_section.empty', 'No cabins available at the moment. Please check back later.')}</p>
                 </div>
               ) : cabins.length > 1 ? (
-                // Carousel layout - centered, scrollable
-                <div className="relative">
+                // Carousel layout - centered while everything fits; once it
+                // overflows it stays left-aligned and scrolls by touch/drag/
+                // wheel, with the next card's partial edge as the only scroll
+                // cue (no arrow buttons).
+                //
+                // mr-[calc((100%-100vw)/2)] bleeds ONLY the right edge out to
+                // the true viewport edge, matching the Life at Cabaneau
+                // slider, while the left edge stays put (aligned with the
+                // logo/nav, per the container above). "100%" here is this
+                // div's own width - i.e. the 1390px-capped content column -
+                // so the calc resolves to exactly one side's gutter, pulled
+                // in as a negative margin. On mobile the content column
+                // already equals the viewport width, so the calc is 0 there
+                // with no extra rule needed.
+                <div className="relative mr-[calc((100%-100vw)/2)]">
                   <div
                     ref={scrollContainerRef}
-                    className="flex gap-[19.42px] overflow-x-auto no-scrollbar py-8 md:justify-center"
+                    className={`flex gap-[19.42px] overflow-x-auto no-scrollbar py-8 ${isOverflowing ? '' : 'md:justify-center'}`}
                     style={{ scrollSnapType: 'x mandatory' }}
                   >
                     <div className="flex-shrink-0 w-[10px] md:w-0"></div>
@@ -243,13 +261,6 @@ const CabinsSection = () => {
                   ))}
                 </div>
               )}
-            </div>
-
-            {/* Discover All Button */}
-            <div className="text-center mt-6 md:mt-10 mb-6 md:mb-8 px-4 md:px-0">
-              <Link href={`/${locale}/cabins`} className="px-8 py-3 bg-[#495D4D] text-white text-base md:text-lg font-heading font-medium tracking-widest hover:bg-[#2d4a2d] transition-colors">
-                {t('cabins_section.button', 'DISCOVER ALL CABINS')}
-              </Link>
             </div>
           </div>
         </div>

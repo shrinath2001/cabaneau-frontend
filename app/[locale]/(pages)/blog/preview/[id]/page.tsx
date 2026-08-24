@@ -161,7 +161,7 @@ export default function BlogPreviewPage() {
               )}
             </div>
 
-            <aside className="hidden lg:block lg:w-[420px] flex-shrink-0">
+            <aside className="hidden lg:block lg:w-[420px] flex-shrink-0 lg:sticky lg:top-24 lg:self-start">
               <BlogSidebarCabin />
             </aside>
           </div>

@@ -41,7 +41,7 @@ const SESSION_KEY = 'cabaneau_booking_dates';
 const DEFAULTS: BookingDatesState = {
   arrival: undefined,
   departure: undefined,
-  adults: 1,
+  adults: 2,
   children: 0,
   infants: 0,
   pets: 0,
@@ -71,7 +71,7 @@ function readSession(): BookingDatesState | null {
     return {
       arrival: toISO(p.arrival),
       departure: toISO(p.departure),
-      adults: typeof p.adults === 'number' ? p.adults : 1,
+      adults: typeof p.adults === 'number' ? p.adults : DEFAULTS.adults,
       children: typeof p.children === 'number' ? p.children : 0,
       infants: typeof p.infants === 'number' ? p.infants : 0,
       pets: typeof p.pets === 'number' ? p.pets : 0,

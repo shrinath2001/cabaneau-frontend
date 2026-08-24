@@ -186,8 +186,11 @@ export default function BlogPostPage() {
               )}
             </div>
 
-            {/* Sidebar - Hidden on mobile */}
-            <aside className="hidden lg:block lg:w-[420px] flex-shrink-0">
+            {/* Sidebar - Hidden on mobile. lg:self-start stops it stretching
+                to the article's height (the flex row's default), which
+                sticky needs room to travel within as the article scrolls
+                past; lg:top-24 matches the booking sidebar's convention. */}
+            <aside className="hidden lg:block lg:w-[420px] flex-shrink-0 lg:sticky lg:top-24 lg:self-start">
               {/* Featured Cabin */}
               <BlogSidebarCabin />
             </aside>

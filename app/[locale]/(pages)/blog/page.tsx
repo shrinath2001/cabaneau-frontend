@@ -361,8 +361,11 @@ export default function BlogPage() {
               )}
             </div>
 
-            {/* Sidebar - Hidden on mobile */}
-            <aside className="hidden lg:block lg:w-[420px] flex-shrink-0">
+            {/* Sidebar - Hidden on mobile. lg:self-start stops it stretching
+                to the post list's height (the flex row's default), which
+                sticky needs room to travel within as the list scrolls past;
+                lg:top-24 matches the booking sidebar's convention. */}
+            <aside className="hidden lg:block lg:w-[420px] flex-shrink-0 lg:sticky lg:top-24 lg:self-start">
               {/* Search */}
               <div className="bg-gray-50 p-6 mb-6">
                 <h3 className="text-lg font-logga text-[#495D4D] mb-4">{t("search_title", "Search")}</h3>

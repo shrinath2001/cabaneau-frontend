@@ -3,6 +3,28 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { apiFetch } from '@/app/lib/api';
 
+/** Maps our locale codes onto Intl tags for date/number formatting. */
+export const localeToIntl: Record<string, string> = {
+  en: 'en-GB',
+  fr: 'fr-FR',
+  de: 'de-DE',
+  nl: 'nl-NL',
+};
+
+/**
+ * Price-breakdown line items arrive from Lodgify in English ("City Tax",
+ * "Long stay"). Look them up by slug in the booking namespace so they can be
+ * translated from the CMS, falling back to the raw name when unmapped.
+ */
+export function translateLineItem(
+  name: string,
+  t: (key: string, fallback: string) => string
+): string {
+  if (!name) return name;
+  const slug = name.trim().toLowerCase().replace(/[^a-z0-9]+/g, '_').replace(/^_|_$/g, '');
+  return t(`line_item.${slug}`, name);
+}
+
 // Simple cache to deduplicate requests across component instances
 const quoteCache = new Map<string, { data: QuoteResponse | null; timestamp: number; promise?: Promise<QuoteResponse> }>();
 const CACHE_TTL = 30000; // 30 seconds
@@ -37,6 +59,13 @@ export interface QuoteGuests {
   pets: number;
 }
 
+export interface QuoteCancellation {
+  /** ISO date up to which cancelling is fully refundable, null once past. */
+  freeUntil: string | null;
+  isFreeNow: boolean;
+  currentRefundPercent: number;
+}
+
 export interface QuoteResponse {
   available: boolean;
   pricingAvailable: boolean;
@@ -46,6 +75,7 @@ export interface QuoteResponse {
   checkoutUrl: string;
   unavailableReason?: string;
   minStay?: number;
+  cancellation?: QuoteCancellation;
   checkIn: string;
   checkOut: string;
   guests: QuoteGuests;
