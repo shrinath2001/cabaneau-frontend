@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import Image from 'next/image';
 import { useTranslations } from '@/app/providers/TranslationsProvider';
 import { formatCurrency } from '@/app/components/booking/hooks/useQuote';
 
@@ -121,182 +122,189 @@ export default function GiftVoucherPage() {
 
             {/* Right Column - Purchase form */}
             <div>
-              <form
-                onSubmit={handleSubmit}
-                className="border border-gray-300 p-6 md:p-8 space-y-6"
-              >
-                {/* Amount */}
-                <div>
-                  <label className={labelClass}>{t('amount_label', 'Choose an amount')}</label>
-                  <select
-                    required
-                    value={selectedAmount ?? ''}
-                    onChange={(e) => setSelectedAmount(Number(e.target.value))}
-                    className={inputClass}
-                  >
-                    {amounts.length === 0 && <option value="" />}
-                    {amounts.map((amount) => (
-                      <option key={amount} value={amount}>
-                        {formatCurrency(amount)}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-
-                {/* For myself / as a gift */}
-                <div className="grid grid-cols-2 gap-2">
-                  <button
-                    type="button"
-                    onClick={() => setIsGift(false)}
-                    className={`py-3 px-4 border font-jost text-sm transition ${
-                      !isGift
-                        ? 'bg-[#495D4D] border-[#495D4D] text-white'
-                        : 'border-gray-300 text-gray-800 hover:border-[#495D4D]'
-                    }`}
-                  >
-                    {t('for_myself', 'For myself')}
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setIsGift(true)}
-                    className={`py-3 px-4 border font-jost text-sm transition ${
-                      isGift
-                        ? 'bg-[#495D4D] border-[#495D4D] text-white'
-                        : 'border-gray-300 text-gray-800 hover:border-[#495D4D]'
-                    }`}
-                  >
-                    {t('as_a_gift', 'As a gift')}
-                  </button>
-                </div>
-
-                {/* Purchaser */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="border border-gray-300">
+                <Image
+                  src="/assets/gift-card.png"
+                  alt={t('page_title', 'Gift Voucher')}
+                  width={576}
+                  height={384}
+                  className="w-full h-auto"
+                  priority
+                />
+                <form onSubmit={handleSubmit} className="p-6 md:p-8 space-y-6">
+                  {/* Amount */}
                   <div>
-                    <label className={labelClass}>{t('your_name', 'Your name')}</label>
-                    <input
-                      type="text"
+                    <label className={labelClass}>{t('amount_label', 'Choose an amount')}</label>
+                    <select
                       required
-                      value={purchaserName}
-                      onChange={(e) => setPurchaserName(e.target.value)}
+                      value={selectedAmount ?? ''}
+                      onChange={(e) => setSelectedAmount(Number(e.target.value))}
                       className={inputClass}
-                    />
+                    >
+                      {amounts.length === 0 && <option value="" />}
+                      {amounts.map((amount) => (
+                        <option key={amount} value={amount}>
+                          {formatCurrency(amount)}
+                        </option>
+                      ))}
+                    </select>
                   </div>
-                  <div>
-                    <label className={labelClass}>{t('your_email', 'Your email')}</label>
-                    <input
-                      type="email"
-                      required
-                      value={purchaserEmail}
-                      onChange={(e) => setPurchaserEmail(e.target.value)}
-                      className={inputClass}
-                    />
+  
+                  {/* For myself / as a gift */}
+                  <div className="grid grid-cols-2 gap-2">
+                    <button
+                      type="button"
+                      onClick={() => setIsGift(false)}
+                      className={`py-3 px-4 border font-jost text-sm transition ${
+                        !isGift
+                          ? 'bg-[#495D4D] border-[#495D4D] text-white'
+                          : 'border-gray-300 text-gray-800 hover:border-[#495D4D]'
+                      }`}
+                    >
+                      {t('for_myself', 'For myself')}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setIsGift(true)}
+                      className={`py-3 px-4 border font-jost text-sm transition ${
+                        isGift
+                          ? 'bg-[#495D4D] border-[#495D4D] text-white'
+                          : 'border-gray-300 text-gray-800 hover:border-[#495D4D]'
+                      }`}
+                    >
+                      {t('as_a_gift', 'As a gift')}
+                    </button>
                   </div>
-                </div>
-
-                {/* Recipient + occasion + message + schedule - gift only */}
-                {isGift && (
-                  <>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                      <div>
-                        <label className={labelClass}>
-                          {t('recipient_name', "Recipient's name")}
-                        </label>
-                        <input
-                          type="text"
-                          required={isGift}
-                          value={recipientName}
-                          onChange={(e) => setRecipientName(e.target.value)}
-                          className={inputClass}
-                        />
-                      </div>
-                      <div>
-                        <label className={labelClass}>
-                          {t('recipient_email', "Recipient's email")}
-                        </label>
-                        <input
-                          type="email"
-                          required={isGift}
-                          value={recipientEmail}
-                          onChange={(e) => setRecipientEmail(e.target.value)}
-                          className={inputClass}
-                        />
-                      </div>
-                    </div>
-
+  
+                  {/* Purchaser */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
-                      <label className={labelClass}>{t('occasion_label', 'Occasion (optional)')}</label>
-                      <select
-                        value={occasion}
-                        onChange={(e) => setOccasion(e.target.value)}
-                        className={inputClass}
-                      >
-                        <option value="" />
-                        {OCCASIONS.map((o) => (
-                          <option key={o} value={o}>
-                            {t(OCCASION_LABEL_KEY[o], o)}
-                          </option>
-                        ))}
-                      </select>
-                    </div>
-
-                    <div>
-                      <label className={labelClass}>
-                        {t('message_label', 'Personal message (optional)')}
-                      </label>
-                      <textarea
-                        rows={3}
-                        value={personalMessage}
-                        onChange={(e) => setPersonalMessage(e.target.value)}
-                        placeholder={t('message_placeholder', 'Write a short note...')}
+                      <label className={labelClass}>{t('your_name', 'Your name')}</label>
+                      <input
+                        type="text"
+                        required
+                        value={purchaserName}
+                        onChange={(e) => setPurchaserName(e.target.value)}
                         className={inputClass}
                       />
                     </div>
-
                     <div>
-                      <label className="flex items-center gap-2 font-jost text-sm text-gray-800 cursor-pointer">
-                        <input
-                          type="checkbox"
-                          checked={scheduleEnabled}
-                          onChange={(e) => setScheduleEnabled(e.target.checked)}
-                          className="w-4 h-4"
-                        />
-                        {t('schedule_toggle', 'Send on a future date')}
-                      </label>
-                      {scheduleEnabled && (
-                        <input
-                          type="date"
-                          required={scheduleEnabled}
-                          min={tomorrowIso()}
-                          value={scheduledDate}
-                          onChange={(e) => setScheduledDate(e.target.value)}
-                          className={`${inputClass} mt-3`}
-                          aria-label={t('schedule_date_label', 'Delivery date')}
-                        />
-                      )}
+                      <label className={labelClass}>{t('your_email', 'Your email')}</label>
+                      <input
+                        type="email"
+                        required
+                        value={purchaserEmail}
+                        onChange={(e) => setPurchaserEmail(e.target.value)}
+                        className={inputClass}
+                      />
                     </div>
-                  </>
-                )}
-
-                <p className="font-jost text-xs text-gray-500">
-                  {t('validity_note', 'Valid for 1 year from the date of purchase')}
-                </p>
-
-                {error && (
-                  <div className="bg-red-50 border border-red-200 p-3">
-                    <p className="text-red-600 font-jost text-sm">{error}</p>
                   </div>
-                )}
-
-                <button
-                  type="submit"
-                  disabled={!selectedAmount || submitting}
-                  className="w-full bg-[#495D4D] text-white py-4 px-6 text-base font-bold tracking-wide hover:bg-[#3d5a3d] transition uppercase font-jost disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  {submitting
-                    ? t('submit_button_loading', 'Redirecting...')
-                    : t('submit_button', 'Continue to payment')}
-                </button>
-              </form>
+  
+                  {/* Recipient + occasion + message + schedule - gift only */}
+                  {isGift && (
+                    <>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                          <label className={labelClass}>
+                            {t('recipient_name', "Recipient's name")}
+                          </label>
+                          <input
+                            type="text"
+                            required={isGift}
+                            value={recipientName}
+                            onChange={(e) => setRecipientName(e.target.value)}
+                            className={inputClass}
+                          />
+                        </div>
+                        <div>
+                          <label className={labelClass}>
+                            {t('recipient_email', "Recipient's email")}
+                          </label>
+                          <input
+                            type="email"
+                            required={isGift}
+                            value={recipientEmail}
+                            onChange={(e) => setRecipientEmail(e.target.value)}
+                            className={inputClass}
+                          />
+                        </div>
+                      </div>
+  
+                      <div>
+                        <label className={labelClass}>{t('occasion_label', 'Occasion (optional)')}</label>
+                        <select
+                          value={occasion}
+                          onChange={(e) => setOccasion(e.target.value)}
+                          className={inputClass}
+                        >
+                          <option value="" />
+                          {OCCASIONS.map((o) => (
+                            <option key={o} value={o}>
+                              {t(OCCASION_LABEL_KEY[o], o)}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+  
+                      <div>
+                        <label className={labelClass}>
+                          {t('message_label', 'Personal message (optional)')}
+                        </label>
+                        <textarea
+                          rows={3}
+                          value={personalMessage}
+                          onChange={(e) => setPersonalMessage(e.target.value)}
+                          placeholder={t('message_placeholder', 'Write a short note...')}
+                          className={inputClass}
+                        />
+                      </div>
+  
+                      <div>
+                        <label className="flex items-center gap-2 font-jost text-sm text-gray-800 cursor-pointer">
+                          <input
+                            type="checkbox"
+                            checked={scheduleEnabled}
+                            onChange={(e) => setScheduleEnabled(e.target.checked)}
+                            className="w-4 h-4"
+                          />
+                          {t('schedule_toggle', 'Send on a future date')}
+                        </label>
+                        {scheduleEnabled && (
+                          <input
+                            type="date"
+                            required={scheduleEnabled}
+                            min={tomorrowIso()}
+                            value={scheduledDate}
+                            onChange={(e) => setScheduledDate(e.target.value)}
+                            className={`${inputClass} mt-3`}
+                            aria-label={t('schedule_date_label', 'Delivery date')}
+                          />
+                        )}
+                      </div>
+                    </>
+                  )}
+  
+                  <p className="font-jost text-xs text-gray-500">
+                    {t('validity_note', 'Valid for 1 year from the date of purchase')}
+                  </p>
+  
+                  {error && (
+                    <div className="bg-red-50 border border-red-200 p-3">
+                      <p className="text-red-600 font-jost text-sm">{error}</p>
+                    </div>
+                  )}
+  
+                  <button
+                    type="submit"
+                    disabled={!selectedAmount || submitting}
+                    className="w-full bg-[#495D4D] text-white py-4 px-6 text-base font-bold tracking-wide hover:bg-[#3d5a3d] transition uppercase font-jost disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    {submitting
+                      ? t('submit_button_loading', 'Redirecting...')
+                      : t('submit_button', 'Continue to payment')}
+                  </button>
+                </form>
+              </div>
             </div>
           </div>
         </div>
