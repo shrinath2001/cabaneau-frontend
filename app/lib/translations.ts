@@ -10,7 +10,7 @@ export async function getTranslations(
   locale: string
 ): Promise<Record<string, string>> {
   const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
-  const namespaces = 'navigation,booking,common,search,cabin,errors,homepage,activities,services,footer,blog';
+  const namespaces = 'navigation,booking,common,search,cabin,errors,homepage,activities,services,footer,blog,gift_voucher';
 
   try {
     const res = await fetch(
