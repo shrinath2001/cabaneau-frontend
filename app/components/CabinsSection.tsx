@@ -1,7 +1,6 @@
 'use client';
-import { useRef, useState, useEffect, useCallback } from 'react';
+import { useRef, useState, useEffect } from 'react';
 import CabinCard from './CabinCard';
-import { apiFetch } from '@/app/lib/api';
 import { useTranslations } from '@/app/providers/TranslationsProvider';
 
 interface AmenityInfo {
@@ -24,6 +23,27 @@ interface CabinData {
   price: string;
   nights?: number;
   featuredAmenities?: AmenityInfo[];
+}
+
+/** Raw shape from GET /cabins/homepage, fetched server-side by the page. */
+interface RawCabin {
+  lodgifyId?: string;
+  slug?: string;
+  featuredImage?: string;
+  images?: Array<string | { url: string }>;
+  name?: string;
+  title?: string;
+  rating?: number;
+  squareMeters?: string | number;
+  area?: string;
+  capacity?: number | string;
+  nextAvailableDate?: string;
+  availability?: string;
+  nightlyRate?: number;
+  basePrice?: string | number;
+  price?: string;
+  featuredAmenities?: AmenityInfo[];
+  nights?: number;
 }
 
 // Locale map for date formatting
@@ -50,7 +70,7 @@ const sectionTranslations: Record<string, {
 /**
  * Extract image URLs from cabin, ensuring featured image is first
  */
-function getCabinImageUrls(cabin: any): string[] {
+function getCabinImageUrls(cabin: RawCabin): string[] {
   const imageUrls: string[] = [];
 
   // Add featured image first if it exists
@@ -77,10 +97,13 @@ function getCabinImageUrls(cabin: any): string[] {
   return imageUrls;
 }
 
-const CabinsSection = () => {
+/**
+ * cabins arrives already fetched server-side (app/[locale]/page.tsx), so
+ * this renders real cabin markup on the very first paint - no fetch, no
+ * loading state, nothing for a crawler to catch mid-spinner.
+ */
+const CabinsSection = ({ cabins: rawCabins }: { cabins: RawCabin[] }) => {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
-  const [cabins, setCabins] = useState<CabinData[]>([]);
-  const [loading, setLoading] = useState(true);
   // Whether the row of cards is wider than its container. `justify-center`
   // must only apply while everything fits - centering an overflowing flex
   // row makes the browser start the scroll position mid-way, clipping the
@@ -91,15 +114,8 @@ const CabinsSection = () => {
   // Get hardcoded translations for current locale
   const st = sectionTranslations[locale] || sectionTranslations.en;
 
-  // Format nightly rate as "225 €/night" (Euro symbol after amount)
-  const formatNightlyRate = useCallback((rate?: number, currency = 'EUR'): string => {
-    if (!rate) return '';
-    const symbol = currency === 'EUR' ? '€' : currency;
-    return `${Math.round(rate)} ${symbol}${st.perNight}`;
-  }, [st.perNight]);
-
   // Format date string with locale support
-  const formatAvailabilityDate = useCallback((dateStr?: string): string => {
+  const formatAvailabilityDate = (dateStr?: string): string => {
     if (!dateStr) return st.available;
 
     const date = new Date(dateStr);
@@ -114,63 +130,39 @@ const CabinsSection = () => {
     // Format as "Jan 15" in the user's locale
     const dateLocale = localeMap[locale] || 'en-US';
     return date.toLocaleDateString(dateLocale, { month: 'short', day: 'numeric' });
-  }, [locale, st.available, st.availableNow]);
+  };
 
   // Format capacity with translation
-  const formatCapacity = useCallback((capacity?: number | string): string => {
+  const formatCapacity = (capacity?: number | string): string => {
     if (!capacity) return `2 ${st.persons}`;
     const maxCapacity = typeof capacity === 'string' ? parseInt(capacity) : capacity;
     return `2-${maxCapacity} ${st.persons}`;
-  }, [st.persons]);
+  };
 
-  useEffect(() => {
-    const fetchCabins = async () => {
-      try {
-        // Use the new homepage endpoint with availability and pricing
-        const response = await apiFetch('/api/cabins/homepage');
-        const result = await response.json();
+  const cabins: CabinData[] = rawCabins.map((cabin, index) => ({
+    id: cabin.lodgifyId ? parseInt(cabin.lodgifyId) : index + 1,
+    slug: cabin.slug || `cabin-${index + 1}`,
+    images: getCabinImageUrls(cabin),
+    title: cabin.name || cabin.title || cabin.slug?.replace(/-/g, ' ').toUpperCase() || `Cabin ${index + 1}`,
+    rating: cabin.rating ?? 5,
+    area: cabin.squareMeters ? `${cabin.squareMeters}m²` : cabin.area || '',
+    capacity: formatCapacity(cabin.capacity),
+    // Use nextAvailableDate from Lodgify if present
+    availability: formatAvailabilityDate(cabin.nextAvailableDate) || cabin.availability || st.available,
+    // Use nightlyRate from Lodgify if present, fallback to basePrice
+    // Note: CabinCard handles "from X €/night" formatting with priceType="perNight" (default)
+    price: cabin.nightlyRate
+           ? `${Math.round(cabin.nightlyRate)} €`
+           : cabin.basePrice
+             ? `${Math.round(Number(cabin.basePrice))} €`
+             : cabin.price || '',
+    // Include featured amenities from API
+    featuredAmenities: cabin.featuredAmenities,
+    // Default to 2 nights for homepage display (minimum stay)
+    nights: cabin.nights || 2,
+  }));
 
-        // Handle both API response format and static fallback format
-        const cabinArray = result?.data ?? result;
-
-        if (Array.isArray(cabinArray)) {
-          const transformedCabins: CabinData[] = cabinArray.map((cabin: any, index: number) => ({
-            id: cabin.lodgifyId ? parseInt(cabin.lodgifyId) : index + 1,
-            slug: cabin.slug || `cabin-${index + 1}`,
-            images: getCabinImageUrls(cabin),
-            title: cabin.name || cabin.title || cabin.slug?.replace(/-/g, ' ').toUpperCase() || `Cabin ${index + 1}`,
-            rating: cabin.rating ?? 5,
-            area: cabin.squareMeters ? `${cabin.squareMeters}m²` : cabin.area || '',
-            capacity: formatCapacity(cabin.capacity),
-            // Use nextAvailableDate from Lodgify if present
-            availability: formatAvailabilityDate(cabin.nextAvailableDate) || cabin.availability || st.available,
-            // Use nightlyRate from Lodgify if present, fallback to basePrice
-            // Note: CabinCard handles "from X €/night" formatting with priceType="perNight" (default)
-            price: cabin.nightlyRate
-                   ? `${Math.round(cabin.nightlyRate)} €`
-                   : cabin.basePrice
-                     ? `${Math.round(Number(cabin.basePrice))} €`
-                     : cabin.price || '',
-            // Include featured amenities from API
-            featuredAmenities: cabin.featuredAmenities,
-            // Default to 2 nights for homepage display (minimum stay)
-            nights: cabin.nights || 2,
-          }));
-          setCabins(transformedCabins);
-        }
-      } catch (error) {
-        console.error('Error fetching cabins:', error);
-        setCabins([]);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchCabins();
-  }, [formatAvailabilityDate, formatCapacity, formatNightlyRate, st.available]);
-
-  // Re-measured on resize and whenever the card count changes (cards render
-  // async after the fetch above resolves).
+  // Re-measured on resize and whenever the card count changes.
   useEffect(() => {
     const rail = scrollContainerRef.current;
     if (!rail) return;
@@ -181,7 +173,10 @@ const CabinsSection = () => {
     const observer = new ResizeObserver(measure);
     observer.observe(rail);
     return () => observer.disconnect();
-  }, [cabins]);
+    // cabins is recomputed fresh every render now (no longer state), so
+    // depend on its length rather than its reference to avoid tearing the
+    // observer down and recreating it on unrelated re-renders.
+  }, [cabins.length]);
 
   return (
     <>
@@ -213,11 +208,7 @@ const CabinsSection = () => {
 
             {/* Cabins Carousel or Centered Grid */}
             <div className="w-full">
-              {loading ? (
-                <div className="text-center py-12">
-                  <p className="text-gray-600">{t('cabins_section.loading', 'Loading cabins...')}</p>
-                </div>
-              ) : cabins.length === 0 ? (
+              {cabins.length === 0 ? (
                 <div className="text-center py-12">
                   <p className="text-gray-500">{t('cabins_section.empty', 'No cabins available at the moment. Please check back later.')}</p>
                 </div>
@@ -243,7 +234,7 @@ const CabinsSection = () => {
                     style={{ scrollSnapType: 'x mandatory' }}
                   >
                     <div className="flex-shrink-0 w-[10px] md:w-0"></div>
-                    {cabins.map((cabin, index) => (
+                    {cabins.map((cabin) => (
                       <div key={cabin.id} className="flex-shrink-0" style={{ scrollSnapAlign: 'center' }}>
                         <CabinCard {...cabin} />
                       </div>
