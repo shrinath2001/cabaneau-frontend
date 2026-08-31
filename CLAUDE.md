@@ -163,3 +163,22 @@ Lodgify controls complex booking rules that are hard to replicate:
 - Guest policies (adults only, pets allowed, etc.)
 
 By using their widget, we get all validation for free while keeping users on our site.
+
+## Git Commit Convention
+
+Applies to both this repo and the backend repo (`cabaneau-backend`).
+
+Going forward, every commit's subject line ends with an estimated
+man-hours figure in brackets, e.g. `(0.5h)`, `(1h)`, `(3h)`:
+
+```
+cabaneau-frontend: fix review score NaN (0.5h)
+```
+
+The figure is the **human-hours estimate assuming a 60% human / 40%
+AI-assisted split** - i.e. estimate the realistic total effort a
+developer would need to design, implement, and verify the change
+working solo, then record 60% of that as the man-hours figure (the
+other 40% represents work the AI assistance absorbed). This is a
+retention rule for new commits, not something to retroactively add to
+already-merged history.
