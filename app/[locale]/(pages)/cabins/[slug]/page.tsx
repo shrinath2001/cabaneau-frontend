@@ -1,14 +1,9 @@
-"use client";
-
-import { useState, useEffect } from "react";
-import Link from "next/link";
-import { useParams, notFound } from "next/navigation";
-import { useBookingDates } from "@/app/providers/BookingDatesProvider";
-import PhotoGalleryModal from "./components/PhotoGalleryModal";
-import MobileCarouselModal from "./components/MobileCarouselModal";
+import type { Metadata } from "next";
+import { notFound } from "next/navigation";
+import { getTranslations } from "@/app/lib/translations";
 import BookingSection from "@/app/components/booking/BookingSection";
 import AvailabilityCalendar from "@/app/components/booking/AvailabilityCalendar";
-import ImageGallery from "./components/ImageGallery";
+import CabinGallery from "./components/CabinGallery";
 import AmenitiesSection from "./components/AmenitiesSection";
 import ExtraServicesSection from "./components/ExtraServicesSection";
 import SleepingAreasSection from "./components/SleepingAreasSection";
@@ -16,8 +11,6 @@ import ThingsToKnow from "./components/ThingsToKnow";
 import CabinMapSection from "./components/CabinMapSection";
 import OtherCabinsSection from "./components/OtherCabinsSection";
 import ReviewsSection from "@/app/components/ReviewsSection";
-import { apiFetch } from "@/app/lib/api";
-import { useTranslations } from "@/app/providers/TranslationsProvider";
 
 interface AmenityInfo {
   id: string;
@@ -93,129 +86,204 @@ interface CabinDetails {
   thingsToKnow?: ThingsToKnowSection[];
 }
 
-const SingleCabinPage = () => {
-  const params = useParams();
-  const slug = params.slug as string;
-  const locale = (params.locale as string) || "en";
-  const { t } = useTranslations("cabin");
+interface ReviewData {
+  id: string;
+  reviewerName: string;
+  reviewerAvatar?: string;
+  content: string;
+  rating: number;
+  channel: 'AIRBNB' | 'BOOKING_COM' | 'CASAPILOT' | 'WEBSITE';
+  reviewDate?: string;
+  externalUrl?: string;
+  cabin?: { name: string; slug: string };
+}
 
-  const [cabin, setCabin] = useState<CabinDetails | null>(null);
-  const [imageTags, setImageTags] = useState<ImageTag[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [showPhotoGallery, setShowPhotoGallery] = useState(false);
-  const [showMobileCarousel, setShowMobileCarousel] = useState(false);
-  const [mobileCarouselIndex, setMobileCarouselIndex] = useState(0);
-  const [mobileCarouselImages, setMobileCarouselImages] = useState<string[]>([]);
-  const [carouselKey, setCarouselKey] = useState(0);
-  const [reviewSummary, setReviewSummary] = useState<{
-    average: number;
-    count: number;
-  } | null>(null);
-  // Image the photo tour should open on, set when a hero image is tapped.
-  const [galleryTargetImage, setGalleryTargetImage] = useState<string | null>(
-    null
-  );
+async function getCabin(slug: string, locale: string): Promise<CabinDetails | null> {
+  const apiKey = process.env.API_KEY;
+  const apiBaseUrl = process.env.API_BASE_URL || 'http://localhost:3000/api/v1';
 
-  // Selected dates from the shared booking store (used by the Things to Know
-  // panel for display). The booking widgets read the store directly.
-  const { arrival, departure } = useBookingDates();
+  try {
+    const response = await fetch(`${apiBaseUrl}/cabins/slug/${slug}`, {
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': apiKey || '',
+        'Accept-Language': locale || 'en',
+      },
+      next: { revalidate: 60 },
+    });
 
-  useEffect(() => {
-    const fetchCabin = async () => {
-      try {
-        setLoading(true);
-        setError(null);
-
-        // Fetch cabin and image tags in parallel
-        // Pass locale from URL to get localized content
-        console.log("🔍 Fetching cabin with slug:", slug, "locale:", locale);
-        const fetchOptions = {
-          headers: { "x-language": locale },
-        };
-        const [cabinResponse, imageTagsResponse] = await Promise.all([
-          apiFetch(`/api/cabins/slug/${slug}`, fetchOptions),
-          apiFetch("/api/image-tags", fetchOptions),
-        ]);
-
-        // Process image tags (non-blocking - don't fail if tags API fails)
-        // The API returns localized names based on Accept-Language header
-        if (imageTagsResponse.ok) {
-          const tagsData = await imageTagsResponse.json();
-          setImageTags(
-            tagsData.map(
-              (tag: { slug: string; name: string; displayOrder: number }) => ({
-                slug: tag.slug,
-                name: tag.name,
-                displayOrder: tag.displayOrder,
-              })
-            )
-          );
-        }
-
-        const response = cabinResponse;
-
-        console.log("📥 Response status:", response.status);
-
-        if (!response.ok) {
-          const errorData = await response
-            .json()
-            .catch(() => ({ error: "Unknown error" }));
-          console.error("❌ API Error:", errorData);
-
-          if (response.status === 404) {
-            notFound();
-          }
-          throw new Error(
-            errorData.error || `Failed to fetch cabin (${response.status})`
-          );
-        }
-
-        const data = await response.json();
-        console.log("✅ Cabin data received:", data);
-        setCabin(data);
-      } catch (err) {
-        const errorMessage =
-          err instanceof Error ? err.message : "An error occurred";
-        console.error("Error fetching cabin:", errorMessage, err);
-        setError(errorMessage);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    if (slug) {
-      fetchCabin();
+    if (response.status === 404) return null;
+    if (!response.ok) {
+      console.error('Failed to fetch cabin:', response.status);
+      return null;
     }
-  }, [slug, locale]);
 
-  if (loading) {
-    return (
-      <div className="container mx-auto px-4 py-16">
-        <div className="flex justify-center items-center py-16">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900"></div>
-        </div>
-      </div>
-    );
+    return await response.json();
+  } catch (error) {
+    console.error('Error fetching cabin:', error);
+    return null;
+  }
+}
+
+async function getImageTags(locale: string): Promise<ImageTag[]> {
+  const apiKey = process.env.API_KEY;
+  const apiBaseUrl = process.env.API_BASE_URL || 'http://localhost:3000/api/v1';
+
+  try {
+    const response = await fetch(`${apiBaseUrl}/image-tags`, {
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': apiKey || '',
+        'Accept-Language': locale || 'en',
+      },
+      next: { revalidate: 300 },
+    });
+    if (!response.ok) return [];
+    const data = await response.json();
+    return (data || []).map((tag: { slug: string; name: string; displayOrder: number }) => ({
+      slug: tag.slug,
+      name: tag.name,
+      displayOrder: tag.displayOrder,
+    }));
+  } catch (error) {
+    console.error('Error fetching image tags:', error);
+    return [];
+  }
+}
+
+// Transform relative upload paths to full URLs - same helper used on the
+// homepage (app/[locale]/page.tsx) for the same endpoint.
+const transformImageUrl = (url: string | null | undefined, mediaBaseUrl: string): string | null => {
+  if (!url) return null;
+  if (url.startsWith('http')) return url;
+  if (url.startsWith('/uploads')) return `${mediaBaseUrl}${url}`;
+  return url;
+};
+
+async function getOtherCabins(currentSlug: string, locale: string): Promise<Record<string, unknown>[]> {
+  const apiKey = process.env.API_KEY;
+  const apiBaseUrl = process.env.API_BASE_URL || 'http://localhost:3000/api/v1';
+  const mediaBaseUrl = apiBaseUrl.replace('/api/v1', '');
+
+  try {
+    // Same endpoint the homepage grid uses - it carries Lodgify pricing and
+    // next-availability alongside the cabin record.
+    const response = await fetch(`${apiBaseUrl}/cabins/homepage`, {
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': apiKey || '',
+        'Accept-Language': locale || 'en',
+      },
+      next: { revalidate: 60 },
+    });
+    if (!response.ok) return [];
+    const result = await response.json();
+    const rows = result?.data ?? result ?? [];
+    if (!Array.isArray(rows)) return [];
+
+    return rows
+      .filter((cabin: { slug?: string }) => cabin.slug !== currentSlug)
+      .map((cabin: { featuredImage?: string; images?: (string | { url: string })[] }) => ({
+        ...cabin,
+        featuredImage: transformImageUrl(cabin.featuredImage, mediaBaseUrl),
+        images: (cabin.images || []).map((img) =>
+          typeof img === 'string' ? transformImageUrl(img, mediaBaseUrl) : { ...img, url: transformImageUrl(img.url, mediaBaseUrl) }
+        ),
+      }));
+  } catch (error) {
+    console.error('Error fetching other cabins:', error);
+    return [];
+  }
+}
+
+async function getCabinReviews(cabinId: string, locale: string): Promise<ReviewData[]> {
+  const apiKey = process.env.API_KEY;
+  const apiBaseUrl = process.env.API_BASE_URL || 'http://localhost:3000/api/v1';
+
+  try {
+    const response = await fetch(`${apiBaseUrl}/reviews?limit=50&cabinId=${cabinId}`, {
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': apiKey || '',
+        'Accept-Language': locale || 'en',
+      },
+      next: { revalidate: 300 },
+    });
+    if (!response.ok) return [];
+    const data = await response.json();
+    return data?.data || [];
+  } catch (error) {
+    console.error('Error fetching cabin reviews:', error);
+    return [];
+  }
+}
+
+interface PageParams {
+  locale: string;
+  slug: string;
+}
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<PageParams>;
+}): Promise<Metadata> {
+  const { slug, locale } = await params;
+  const cabin = await getCabin(slug, locale);
+
+  if (!cabin) {
+    return { title: 'Cabin not found - Cabaneau' };
   }
 
-  if (error || !cabin) {
-    return (
-      <div className="container mx-auto px-4 py-16">
-        <div className="text-center">
-          <p className="text-red-600">
-            {t("detail.error_loading", "Error loading cabin details")}
-          </p>
-          <Link
-            href="/cabins"
-            className="text-blue-600 hover:underline mt-4 inline-block"
-          >
-            {t("detail.back_to_cabins", "Back to all cabins")}
-          </Link>
-        </div>
-      </div>
-    );
+  const description = (cabin.shortDescription || cabin.description || '')
+    .replace(/\s+/g, ' ')
+    .trim()
+    .slice(0, 160);
+
+  return {
+    title: `${cabin.name} - Cabaneau Treehouse Resort`,
+    description: description || undefined,
+    openGraph: {
+      title: `${cabin.name} - Cabaneau`,
+      description: description || undefined,
+      images: cabin.featuredImage ? [cabin.featuredImage] : undefined,
+    },
+  };
+}
+
+export default async function CabinDetailPage({
+  params,
+}: {
+  params: Promise<PageParams>;
+}) {
+  const { slug, locale } = await params;
+
+  const cabin = await getCabin(slug, locale);
+  if (!cabin) {
+    notFound();
   }
+
+  const [imageTags, otherCabins, reviews, translations] = await Promise.all([
+    getImageTags(locale),
+    getOtherCabins(cabin.slug, locale),
+    getCabinReviews(cabin.id, locale),
+    getTranslations(locale),
+  ]);
+
+  const t = (key: string, fallback: string): string => translations[`cabin.${key}`] || fallback;
+
+  // The API sends rating as a decimal string ("5.0"), so coerce before
+  // summing - adding it raw concatenates and yields NaN.
+  const ratings = reviews
+    .map((review) => Number(review.rating))
+    .filter((rating) => Number.isFinite(rating) && rating > 0);
+  const reviewSummary =
+    ratings.length > 0
+      ? {
+          average: ratings.reduce((sum, rating) => sum + rating, 0) / ratings.length,
+          count: reviews.length,
+        }
+      : null;
 
   return (
     <div className="bg-white min-h-screen pt-0 md:pt-4 pb-0 md:pb-5 px-0 md:px-8 lg:px-20 -mt-2 md:mt-0">
@@ -228,20 +296,15 @@ const SingleCabinPage = () => {
           {cabin.name?.toUpperCase() || "CABIN"}
         </h1>
 
-        {/* Image Gallery Component */}
-        <ImageGallery
+        {/* Image Gallery - CabinGallery owns the photo-tour/carousel modal
+            state; the images themselves are already fetched above, so the
+            gallery renders real markup on first paint regardless. */}
+        <CabinGallery
           images={cabin.images || []}
           featuredImage={cabin.featuredImage}
           heroVideo={cabin.heroVideo}
           heroVideoPoster={cabin.heroVideoPoster}
-          onShowAllClick={() => {
-            setGalleryTargetImage(null);
-            setShowPhotoGallery(true);
-          }}
-          onMobileImageClick={(imageUrl) => {
-            setGalleryTargetImage(imageUrl);
-            setShowPhotoGallery(true);
-          }}
+          imageTags={imageTags}
         />
 
         {/* Cabin Name - Mobile Only */}
@@ -280,16 +343,13 @@ const SingleCabinPage = () => {
                 }`}
               </h2>
 
-              {/* Review score - scrolls to the guest reviews section */}
+              {/* Review score - plain anchor to the guest reviews section
+                  below (no JS needed to jump there; smooth scroll is a CSS
+                  progressive enhancement via scroll-mt-24 + browser default). */}
               {reviewSummary && (
-                <button
-                  type="button"
-                  onClick={() =>
-                    document
-                      .getElementById("guest-reviews")
-                      ?.scrollIntoView({ behavior: "smooth", block: "start" })
-                  }
-                  className="flex items-center gap-1.5 mb-3 md:mb-4 text-[13px] md:text-[15px] text-gray-800 hover:text-black transition-colors"
+                <a
+                  href="#guest-reviews"
+                  className="flex items-center gap-1.5 mb-3 md:mb-4 text-[13px] md:text-[15px] text-gray-800 hover:text-black transition-colors w-fit"
                 >
                   <svg
                     className="w-4 h-4"
@@ -309,7 +369,7 @@ const SingleCabinPage = () => {
                       ? t("detail.review_singular", "review")
                       : t("detail.review_plural", "reviews")}
                   </span>
-                </button>
+                </a>
               )}
 
               {/* Quick Amenities Icons Row - Show featured amenities */}
@@ -390,11 +450,7 @@ const SingleCabinPage = () => {
 
             {/* Guest Reviews */}
             <div id="guest-reviews" className="scroll-mt-24">
-              <ReviewsSection
-                cabinId={cabin.id}
-                inline
-                onSummary={setReviewSummary}
-              />
+              <ReviewsSection reviews={reviews} inline />
             </div>
 
             {/* Map - driven by the lat/long set in the CMS */}
@@ -407,10 +463,9 @@ const SingleCabinPage = () => {
               cabinName={cabin.name}
             />
 
-            {/* Things to Know Section */}
+            {/* Things to Know Section - reads the selected dates itself from
+                the shared booking store (see ThingsToKnow.tsx) */}
             <ThingsToKnow
-              checkIn={arrival}
-              checkOut={departure}
               capacity={cabin.capacity}
               locale={locale}
               thingsToKnow={cabin.thingsToKnow}
@@ -435,34 +490,9 @@ const SingleCabinPage = () => {
         {/* Other cabins - full width, outside the two-column grid so it isn't
             squeezed into the left column alongside the booking sidebar */}
         <div className="px-4 md:px-0">
-          <OtherCabinsSection currentSlug={cabin.slug} />
+          <OtherCabinsSection cabins={otherCabins} />
         </div>
       </div>
-
-      {/* Photo Gallery Modal Component (Desktop) */}
-      <PhotoGalleryModal
-        isOpen={showPhotoGallery}
-        onClose={() => setShowPhotoGallery(false)}
-        images={cabin.images || []}
-        featuredImage={cabin.featuredImage}
-        imageTags={imageTags}
-        scrollToImageUrl={galleryTargetImage}
-        onImageClick={(index, orderedImages) => {
-          setMobileCarouselImages(orderedImages);
-          setMobileCarouselIndex(index);
-          setCarouselKey(k => k + 1);
-          setShowMobileCarousel(true);
-        }}
-      />
-
-      {/* Mobile Carousel Modal Component */}
-      <MobileCarouselModal
-        key={carouselKey}
-        isOpen={showMobileCarousel}
-        onClose={() => setShowMobileCarousel(false)}
-        images={mobileCarouselImages.length > 0 ? mobileCarouselImages : (cabin.images || [])}
-        initialIndex={mobileCarouselIndex}
-      />
 
       {/* Mobile Booking Section - Fixed sticky bar and bottom sheet */}
       <div className="lg:hidden">
@@ -482,6 +512,4 @@ const SingleCabinPage = () => {
       <div className="h-36 lg:hidden" />
     </div>
   );
-};
-
-export default SingleCabinPage;
+}

@@ -2,7 +2,7 @@
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { usePathname, useParams, useRouter, useSearchParams } from 'next/navigation';
+import { usePathname, useParams, useRouter } from 'next/navigation';
 import { FlagIcon, getLanguageDisplayName, getLanguageLabel } from './FlagIcon';
 import { useTranslations } from '@/app/providers/TranslationsProvider';
 import { locales, switchLocale, localizedPath, type Locale } from '@/app/lib/i18n';
@@ -30,7 +30,6 @@ const Header2 = () => {
   const { t, locale } = useTranslations('navigation');
   const pathname = usePathname();
   const router = useRouter();
-  const searchParams = useSearchParams();
 
   // Fetch languages from API
   useEffect(() => {
@@ -75,7 +74,7 @@ const Header2 = () => {
   // Navigate to same page with different locale (preserving query params)
   const handleLanguageChange = (code: string) => {
     const newPath = switchLocale(pathname, code as Locale);
-    const queryString = searchParams.toString();
+    const queryString = window.location.search.slice(1);
     const fullPath = queryString ? `${newPath}?${queryString}` : newPath;
     setLanguage(code);
     setIsLanguageOpen(false);
@@ -92,18 +91,26 @@ const Header2 = () => {
     return pathname === localizedHref || pathname.startsWith(localizedHref + '/');
   };
 
-  // Build home link - preserve search params when coming from search or cabin pages
-  const getHomeLink = () => {
+  // Home link, preserving search params when coming from search or cabin
+  // pages. Starts as the plain path (matches what the server renders, so
+  // there's no hydration mismatch) and is enhanced with the query string
+  // client-side after mount - reading window.location directly rather than
+  // useSearchParams(), which forces this whole header (real, crawlable nav
+  // markup) into Next's CSR-bailout fallback when the route is statically
+  // generated, since search params can't be resolved at prerender time.
+  const [homeLink, setHomeLink] = useState(() => link('/'));
+  useEffect(() => {
     const basePath = link('/');
-    // If we're on a search or cabin detail page and have search params, preserve them
     if (pathname.includes('/search') || pathname.includes('/cabins/')) {
-      const queryString = searchParams.toString();
+      const queryString = window.location.search.slice(1);
       if (queryString) {
-        return `${basePath}?${queryString}`;
+        setHomeLink(`${basePath}?${queryString}`);
+        return;
       }
     }
-    return basePath;
-  };
+    setHomeLink(basePath);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pathname, locale]);
 
   return (
     <header
@@ -114,7 +121,7 @@ const Header2 = () => {
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between py-4">
           <div className="flex items-center">
-            <Link href={getHomeLink()} scroll={true}>
+            <Link href={homeLink} scroll={true}>
               {/* Logo: 150x50 (feat branch) | Revert to: width={170} height={57} className="w-[130px] md:w-[170px] h-auto" */}
               <Image
                 src="/assets/cabaneau-logo-dark.svg"

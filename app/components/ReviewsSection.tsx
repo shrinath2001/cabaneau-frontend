@@ -1,8 +1,6 @@
 'use client';
 
-import { useRef, useState, useEffect } from 'react';
-import Image from 'next/image';
-import { apiFetch } from '@/app/lib/api';
+import { useRef } from 'react';
 import { useTranslations } from '@/app/providers/TranslationsProvider';
 
 interface ReviewData {
@@ -31,11 +29,11 @@ interface StatsData {
 interface ReviewsSectionProps {
   title?: string;
   backgroundColor?: string;
-  cabinId?: string;
   /** When true, renders as an inline content block (no outer section padding, heading matches cabin detail style) */
   inline?: boolean;
-  /** Reports the aggregate score once reviews load, so the cabin header can show it. */
-  onSummary?: (summary: { average: number; count: number }) => void;
+  /** Fetched server-side by the page (homepage or cabin detail) - see getReviews() there. */
+  reviews: ReviewData[];
+  stats?: StatsData | null;
 }
 
 const CHANNEL_CONFIG: Record<string, { label: string; color: string }> = {
@@ -156,73 +154,16 @@ function ChannelBadge({ channel }: { channel: string }) {
   return <img src={logo.src} alt={logo.alt} className={`${logo.className} grayscale opacity-60`} />;
 }
 
-const ReviewsSection = ({ title, backgroundColor, cabinId, inline = false, onSummary }: ReviewsSectionProps) => {
+/**
+ * reviews/stats arrive already fetched server-side (the homepage or cabin
+ * detail page), so this renders real review content on the very first
+ * paint - no fetch, no loading state.
+ */
+const ReviewsSection = ({ title, backgroundColor, inline = false, reviews, stats }: ReviewsSectionProps) => {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
-  // Held in a ref because the fetch effect runs once and must not re-run when
-  // the parent re-renders with a new callback identity.
-  const onSummaryRef = useRef(onSummary);
-  onSummaryRef.current = onSummary;
-  const [reviews, setReviews] = useState<ReviewData[]>([]);
-  const [stats, setStats] = useState<StatsData | null>(null);
-  const [loading, setLoading] = useState(true);
   const { t } = useTranslations('homepage');
 
   const displayTitle = title || t('reviews_section.title', 'GUEST REVIEWS');
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const reviewsUrl = cabinId
-          ? `/api/reviews?limit=50&cabinId=${cabinId}`
-          : '/api/reviews?limit=50';
-
-        const [reviewsRes, statsRes] = await Promise.all([
-          apiFetch(reviewsUrl),
-          cabinId ? Promise.resolve(null) : apiFetch('/api/reviews/stats'),
-        ]);
-
-        const reviewsData = await reviewsRes.json();
-        const statsData = statsRes ? await statsRes.json() : null;
-
-        const reviewItems: ReviewData[] = reviewsData?.data || [];
-        setReviews(reviewItems);
-
-        // Report the aggregate score to the parent (cabin detail header).
-        // The API sends rating as a decimal string ("5.0"), so coerce before
-        // summing - adding it raw concatenates and yields NaN.
-        const ratings = reviewItems
-          .map((review) => Number(review.rating))
-          .filter((rating) => Number.isFinite(rating) && rating > 0);
-
-        if (ratings.length > 0) {
-          onSummaryRef.current?.({
-            average: ratings.reduce((sum, rating) => sum + rating, 0) / ratings.length,
-            count: reviewItems.length,
-          });
-        }
-
-        // All channel ratings are already normalized to /5 by the backend
-        if (statsData?.channels) {
-          const totalCount = statsData.channels.reduce((sum: number, ch: ChannelStat) => sum + ch.count, 0);
-          const weightedSum = statsData.channels.reduce((sum: number, ch: ChannelStat) => sum + ch.averageRating * ch.count, 0);
-          const overallAvg = totalCount > 0 ? weightedSum / totalCount : 0;
-
-          setStats({
-            channels: statsData.channels,
-            overall: { averageRating: overallAvg, count: totalCount },
-          });
-        } else {
-          setStats(statsData);
-        }
-      } catch (error) {
-        console.error('Error fetching reviews:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchData();
-  }, []);
 
   const scrollLeft = () => {
     if (scrollContainerRef.current) {
@@ -235,17 +176,6 @@ const ReviewsSection = ({ title, backgroundColor, cabinId, inline = false, onSum
       scrollContainerRef.current.scrollBy({ left: 380, behavior: 'smooth' });
     }
   };
-
-  if (loading) {
-    if (inline) return null;
-    return (
-      <section className="py-6 md:py-5" style={backgroundColor ? { backgroundColor } : {}}>
-        <div className="max-w-[1390px] mx-auto px-4 md:px-20 text-center py-12">
-          <p className="text-gray-400 font-jost font-light">{t('reviews_section.loading', 'Loading reviews...')}</p>
-        </div>
-      </section>
-    );
-  }
 
   if (reviews.length === 0) {
     return null;

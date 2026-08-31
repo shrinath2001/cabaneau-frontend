@@ -1,8 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
 import CabinCard from '@/app/components/CabinCard';
-import { apiFetch } from '@/app/lib/api';
 import { useTranslations } from '@/app/providers/TranslationsProvider';
 
 interface AmenityInfo {
@@ -26,9 +24,25 @@ interface OtherCabin {
   featuredAmenities?: AmenityInfo[];
 }
 
+/** Raw shape from GET /cabins/homepage, fetched server-side by the page. */
+interface RawOtherCabin {
+  lodgifyId?: string;
+  slug?: string;
+  name?: string;
+  rating?: number;
+  squareMeters?: number;
+  capacity?: number;
+  nextAvailableDate?: string;
+  nightlyRate?: number;
+  basePrice?: number | string;
+  featuredImage?: string;
+  images?: Array<string | { url?: string }>;
+  featuredAmenities?: AmenityInfo[];
+}
+
 interface OtherCabinsSectionProps {
-  /** Slug of the cabin being viewed, so it is left out of the list. */
-  currentSlug: string;
+  /** Already fetched server-side and filtered to exclude the current cabin. */
+  cabins: RawOtherCabin[];
 }
 
 /** Featured image first, then the gallery, skipping duplicates. */
@@ -45,85 +59,39 @@ function collectImageUrls(cabin: {
   return urls;
 }
 
-const OtherCabinsSection = ({ currentSlug }: OtherCabinsSectionProps) => {
+/**
+ * cabins arrives already fetched server-side (the cabin detail page), so
+ * this renders real cross-sell links on the first paint.
+ */
+const OtherCabinsSection = ({ cabins: rawCabins }: OtherCabinsSectionProps) => {
   const { t, locale } = useTranslations('cabin');
-  const [cabins, setCabins] = useState<OtherCabin[]>([]);
-  const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    let cancelled = false;
-
-    const fetchCabins = async () => {
-      try {
-        // Same endpoint the homepage grid uses - it carries Lodgify pricing
-        // and next-availability alongside the cabin record.
-        const response = await apiFetch('/api/cabins/homepage', {
-          headers: { 'x-language': locale },
-        });
-        const result = await response.json();
-        const rows = result?.data ?? result ?? [];
-        if (cancelled || !Array.isArray(rows)) return;
-
-        const others = rows
-          .filter((cabin: { slug?: string }) => cabin.slug !== currentSlug)
-          .map(
-            (
-              cabin: {
-                lodgifyId?: string;
-                slug?: string;
-                name?: string;
-                rating?: number;
-                squareMeters?: number;
-                capacity?: number;
-                nextAvailableDate?: string;
-                nightlyRate?: number;
-                basePrice?: number | string;
-                featuredImage?: string;
-                images?: Array<string | { url?: string }>;
-                featuredAmenities?: AmenityInfo[];
-              },
-              index: number
-            ) => ({
-              id: cabin.lodgifyId ? parseInt(cabin.lodgifyId, 10) : index + 1,
-              slug: cabin.slug || '',
-              images: collectImageUrls(cabin),
-              title: cabin.name || cabin.slug || '',
-              rating: cabin.rating ?? 5,
-              area: cabin.squareMeters ? `${cabin.squareMeters}m²` : '',
-              capacity: cabin.capacity
-                ? `2-${cabin.capacity} ${t('detail.persons', 'Persons')}`
-                : '',
-              availability: cabin.nextAvailableDate
-                ? new Date(cabin.nextAvailableDate).toLocaleDateString(
-                    locale === 'en' ? 'en-GB' : locale,
-                    { day: 'numeric', month: 'short' }
-                  )
-                : t('detail.available_today', 'Today'),
-              price: cabin.nightlyRate
-                ? `${Math.round(cabin.nightlyRate)} €`
-                : cabin.basePrice
-                  ? `${Math.round(Number(cabin.basePrice))} €`
-                  : '',
-              featuredAmenities: cabin.featuredAmenities,
-            })
-          );
-
-        setCabins(others);
-      } catch (error) {
-        console.error('Error fetching other cabins:', error);
-      } finally {
-        if (!cancelled) setLoading(false);
-      }
-    };
-
-    fetchCabins();
-    return () => {
-      cancelled = true;
-    };
-  }, [currentSlug, locale, t]);
+  const cabins: OtherCabin[] = rawCabins.map((cabin, index) => ({
+    id: cabin.lodgifyId ? parseInt(cabin.lodgifyId, 10) : index + 1,
+    slug: cabin.slug || '',
+    images: collectImageUrls(cabin),
+    title: cabin.name || cabin.slug || '',
+    rating: cabin.rating ?? 5,
+    area: cabin.squareMeters ? `${cabin.squareMeters}m²` : '',
+    capacity: cabin.capacity
+      ? `2-${cabin.capacity} ${t('detail.persons', 'Persons')}`
+      : '',
+    availability: cabin.nextAvailableDate
+      ? new Date(cabin.nextAvailableDate).toLocaleDateString(
+          locale === 'en' ? 'en-GB' : locale,
+          { day: 'numeric', month: 'short' }
+        )
+      : t('detail.available_today', 'Today'),
+    price: cabin.nightlyRate
+      ? `${Math.round(cabin.nightlyRate)} €`
+      : cabin.basePrice
+        ? `${Math.round(Number(cabin.basePrice))} €`
+        : '',
+    featuredAmenities: cabin.featuredAmenities,
+  }));
 
   // Nothing to cross-sell to - stay quiet rather than render an empty band.
-  if (loading || cabins.length === 0) return null;
+  if (cabins.length === 0) return null;
 
   return (
     <div className="mt-8 sm:mt-12 mb-8 sm:mb-12">

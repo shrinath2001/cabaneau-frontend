@@ -2,7 +2,7 @@
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import SearchWidget from './search/SearchWidget';
 import { FlagIcon, getLanguageDisplayName, getLanguageLabel } from './FlagIcon';
 import { useTranslations } from '@/app/providers/TranslationsProvider';
@@ -39,7 +39,6 @@ const Header = ({ heroSettings: initialHeroSettings }: { heroSettings?: HeroSett
   const { t: tHome } = useTranslations('homepage');
   const pathname = usePathname();
   const router = useRouter();
-  const searchParams = useSearchParams();
 
 
   // Hero section settings (SSR for mobile video autoplay)
@@ -132,10 +131,15 @@ const Header = ({ heroSettings: initialHeroSettings }: { heroSettings?: HeroSett
     fetchCabins();
   }, []);
 
-  // Navigate to same page with different locale (preserving query params)
+  // Navigate to same page with different locale (preserving query params).
+  // Reads window.location directly rather than useSearchParams() - that
+  // hook forces this whole component (including the server-renderable
+  // hero title) into Next's CSR-bailout Suspense fallback when the route
+  // is statically generated, since search params can't be resolved at
+  // prerender time. Query params are only needed here, at click time.
   const handleLanguageChange = (code: string) => {
     const newPath = switchLocale(pathname, code as Locale);
-    const queryString = searchParams.toString();
+    const queryString = typeof window !== 'undefined' ? window.location.search.slice(1) : '';
     const fullPath = queryString ? `${newPath}?${queryString}` : newPath;
     setLanguage(code);
     setIsLanguageOpen(false);

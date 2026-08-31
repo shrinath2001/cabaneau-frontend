@@ -1,7 +1,5 @@
-'use client';
-
-import { useState, useEffect } from 'react';
-import { useParams, notFound } from 'next/navigation';
+import type { Metadata } from 'next';
+import { notFound } from 'next/navigation';
 import Link from 'next/link';
 
 interface Page {
@@ -14,85 +12,66 @@ interface Page {
   updatedAt?: string;
 }
 
-export default function StaticPage() {
-  const params = useParams();
-  const slug = params.slug as string;
-  const locale = (params?.locale as string) || 'en';
+async function getPage(slug: string, locale: string): Promise<Page | null> {
+  const apiKey = process.env.API_KEY;
+  const apiBaseUrl = process.env.API_BASE_URL || 'http://localhost:3000/api/v1';
 
-  const [page, setPage] = useState<Page | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  try {
+    const response = await fetch(`${apiBaseUrl}/pages/slug/${slug}`, {
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': apiKey || '',
+        'Accept-Language': locale || 'en',
+      },
+      next: { revalidate: 300 },
+    });
 
-  useEffect(() => {
-    const fetchPage = async () => {
-      if (!slug) return;
+    if (response.status === 404) return null;
+    if (!response.ok) {
+      console.error('Failed to fetch page:', response.status);
+      return null;
+    }
 
-      try {
-        const response = await fetch(`/api/pages/slug/${slug}`, {
-          headers: {
-            'x-language': locale,
-          },
-        });
+    return await response.json();
+  } catch (error) {
+    console.error('Error fetching page:', error);
+    return null;
+  }
+}
 
-        if (!response.ok) {
-          if (response.status === 404) {
-            setError('Page not found');
-          } else {
-            setError('Failed to load page');
-          }
-          return;
-        }
+interface PageParams {
+  locale: string;
+  slug: string;
+}
 
-        const data = await response.json();
-        setPage(data);
-      } catch (err) {
-        console.error('Error fetching page:', err);
-        setError('Failed to load page');
-      } finally {
-        setLoading(false);
-      }
-    };
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<PageParams>;
+}): Promise<Metadata> {
+  const { slug, locale } = await params;
+  const page = await getPage(slug, locale);
 
-    fetchPage();
-  }, [slug, locale]);
-
-  if (loading) {
-    return (
-      <main>
-        <section className="py-20 bg-white">
-          <div className="container mx-auto px-4 max-w-4xl text-center">
-            <div className="animate-pulse">
-              <div className="h-8 bg-gray-200 w-1/2 mx-auto mb-4"></div>
-              <div className="space-y-3">
-                <div className="h-4 bg-gray-200 w-3/4 mx-auto"></div>
-                <div className="h-4 bg-gray-200 w-2/3 mx-auto"></div>
-                <div className="h-4 bg-gray-200 w-4/5 mx-auto"></div>
-              </div>
-            </div>
-          </div>
-        </section>
-      </main>
-    );
+  if (!page) {
+    return { title: 'Page not found - Cabaneau' };
   }
 
-  if (error || !page) {
-    return (
-      <main>
-        <section className="py-20 bg-white">
-          <div className="container mx-auto px-4 max-w-4xl text-center">
-            <h1 className="text-2xl font-logga text-[#495D4D] mb-4">
-              {error || 'Page not found'}
-            </h1>
-            <Link
-              href={`/${locale}`}
-              className="inline-block bg-[#F49A4A] text-white px-6 py-3 hover:bg-[#e08c3c] transition-colors font-jost"
-            >
-              Back to Home
-            </Link>
-          </div>
-        </section>
-      </main>
-    );
+  return {
+    title: page.metaTitle || `${page.title} - Cabaneau`,
+    description: page.metaDescription || undefined,
+  };
+}
+
+export default async function StaticPage({
+  params,
+}: {
+  params: Promise<PageParams>;
+}) {
+  const { slug, locale } = await params;
+  const page = await getPage(slug, locale);
+
+  if (!page) {
+    notFound();
   }
 
   return (
@@ -138,8 +117,10 @@ export default function StaticPage() {
         </div>
       </section>
 
-      {/* Content Styling */}
-      <style jsx global>{`
+      {/* Content Styling - plain <style> (not styled-jsx's `jsx global`,
+          which needs client runtime) since this is a Server Component;
+          the CSS itself is unchanged, just how it's emitted. */}
+      <style>{`
         .page-content h1,
         .page-content h2,
         .page-content h3,

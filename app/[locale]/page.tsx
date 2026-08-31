@@ -23,6 +23,55 @@ interface HomepageSection {
   backgroundColor?: string;
 }
 
+// Transform relative upload paths to full URLs - mirrors the same helper in
+// app/api/cabins/homepage/route.ts (the client-side proxy this page used to
+// go through before cabin data moved to a server-side fetch below).
+const transformImageUrl = (url: string | null | undefined, mediaBaseUrl: string): string | null => {
+  if (!url) return null;
+  if (url.startsWith('http')) return url;
+  if (url.startsWith('/uploads')) return `${mediaBaseUrl}${url}`;
+  return url;
+};
+
+async function getHomepageCabins(locale: string): Promise<Record<string, unknown>[]> {
+  const apiKey = process.env.API_KEY;
+  const apiBaseUrl = process.env.API_BASE_URL || 'http://localhost:3000/api/v1';
+  const mediaBaseUrl = apiBaseUrl.replace('/api/v1', '');
+
+  try {
+    const response = await fetch(`${apiBaseUrl}/cabins/homepage`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': apiKey || '',
+        'Accept-Language': locale || 'en',
+      },
+      next: { revalidate: 60 },
+    });
+
+    if (!response.ok) {
+      console.error('Failed to fetch homepage cabins:', response.status);
+      return [];
+    }
+
+    const result = await response.json();
+    const cabins = result?.data ?? result ?? [];
+
+    return cabins.map((cabin: { featuredImage?: string; images?: (string | { url: string; thumbnailUrl?: string })[] }) => ({
+      ...cabin,
+      featuredImage: transformImageUrl(cabin.featuredImage, mediaBaseUrl),
+      images: (cabin.images || []).map((img) =>
+        typeof img === 'string'
+          ? transformImageUrl(img, mediaBaseUrl)
+          : { ...img, url: transformImageUrl(img.url, mediaBaseUrl), thumbnailUrl: transformImageUrl(img.thumbnailUrl, mediaBaseUrl) }
+      ),
+    }));
+  } catch (error) {
+    console.error('Error fetching homepage cabins:', error);
+    return [];
+  }
+}
+
 async function getHomepageSections(locale: string): Promise<HomepageSection[]> {
   const apiKey = process.env.API_KEY;
   const apiBaseUrl = process.env.API_BASE_URL || 'http://localhost:3000/api/v1';
@@ -54,7 +103,55 @@ async function getHomepageSections(locale: string): Promise<HomepageSection[]> {
   }
 }
 
-function renderSection(section: HomepageSection) {
+interface ReviewData {
+  id: string;
+  reviewerName: string;
+  reviewerAvatar?: string;
+  content: string;
+  rating: number;
+  channel: 'AIRBNB' | 'BOOKING_COM' | 'CASAPILOT' | 'WEBSITE';
+  reviewDate?: string;
+  externalUrl?: string;
+  cabin?: { name: string; slug: string };
+}
+
+interface ReviewStats {
+  channels: Array<{ channel: string; averageRating: number; count: number }>;
+  overall: { averageRating: number; count: number };
+}
+
+async function getReviews(locale: string): Promise<{ reviews: ReviewData[]; stats: ReviewStats | null }> {
+  const apiKey = process.env.API_KEY;
+  const apiBaseUrl = process.env.API_BASE_URL || 'http://localhost:3000/api/v1';
+  const headers = {
+    'Content-Type': 'application/json',
+    'x-api-key': apiKey || '',
+    'Accept-Language': locale || 'en',
+  };
+
+  try {
+    const [reviewsRes, statsRes] = await Promise.all([
+      fetch(`${apiBaseUrl}/reviews?limit=50`, { headers, next: { revalidate: 300 } }),
+      fetch(`${apiBaseUrl}/reviews/stats`, { headers, next: { revalidate: 300 } }),
+    ]);
+
+    const reviewsData = reviewsRes.ok ? await reviewsRes.json() : null;
+    const statsData = statsRes.ok ? await statsRes.json() : null;
+
+    return {
+      reviews: reviewsData?.data || [],
+      stats: statsData ?? null,
+    };
+  } catch (error) {
+    console.error('Error fetching reviews:', error);
+    return { reviews: [], stats: null };
+  }
+}
+
+function renderSection(
+  section: HomepageSection,
+  reviewsData: { reviews: ReviewData[]; stats: ReviewStats | null }
+) {
   const { sectionType, title, subtitle, config, buttonText, buttonLink, backgroundColor } = section;
 
   switch (sectionType) {
@@ -133,6 +230,8 @@ function renderSection(section: HomepageSection) {
           key={section.id}
           title={title}
           backgroundColor={backgroundColor}
+          reviews={reviewsData.reviews}
+          stats={reviewsData.stats}
         />
       );
 
@@ -158,14 +257,18 @@ interface PageProps {
 
 export default async function Home({ params }: PageProps) {
   const { locale } = await params;
-  const sections = await getHomepageSections(locale);
+  const [sections, cabins, reviewsData] = await Promise.all([
+    getHomepageSections(locale),
+    getHomepageCabins(locale),
+    getReviews(locale),
+  ]);
 
   return (
     <div>
       <main>
         <LogoSlider />
-        <CabinsSection />
-        {sections.map((section) => renderSection(section))}
+        <CabinsSection cabins={cabins} />
+        {sections.map((section) => renderSection(section, reviewsData))}
       </main>
       <Footer />
     </div>
