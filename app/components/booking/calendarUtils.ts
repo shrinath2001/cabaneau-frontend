@@ -75,3 +75,8 @@ export function monthYearLabel(monthStart: string, bcp47: string): string {
 export function nightsBetween(checkIn: string, checkOut: string): number {
   return Math.round((toDate(checkOut).getTime() - toDate(checkIn).getTime()) / 86400000);
 }
+
+/** True when the given ISO date falls on a Sunday (UTC, matching toDate()). */
+export function isSunday(d: string): boolean {
+  return toDate(d).getUTCDay() === 0;
+}
