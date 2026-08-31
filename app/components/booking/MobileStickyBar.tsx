@@ -1,7 +1,9 @@
 'use client';
 
-import { QuoteResponse, formatCurrency, formatDateRange } from './hooks/useQuote';
+import { useState } from 'react';
+import { QuoteResponse, formatCurrency, formatDateRange, translateLineItem } from './hooks/useQuote';
 import { useTranslations } from '@/app/providers/TranslationsProvider';
+import { isSunday } from './calendarUtils';
 
 interface MobileStickyBarProps {
   hasDateParams: boolean;
@@ -30,6 +32,7 @@ export default function MobileStickyBar({
   minStayWarning,
 }: MobileStickyBarProps) {
   const { t } = useTranslations('booking');
+  const [showPriceDetails, setShowPriceDetails] = useState(false);
 
   // Mode 1: No dates selected - show "Check Availability"
   if (!hasDateParams) {
@@ -102,9 +105,100 @@ export default function MobileStickyBar({
   if (quote?.available && quote.pricingAvailable && quote.pricing) {
     const { pricing, checkIn, checkOut } = quote;
     const hasDiscount = !!pricing.discount;
+    const isSundayCheckout = !!checkOut && isSunday(checkOut);
 
     return (
       <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-300 shadow-[0_-2px_10px_rgba(0,0,0,0.1)] z-40 lg:hidden">
+        {/* Price details popup - anchored above the bar via bottom-full, so
+            it opens upward regardless of how little space is below it. */}
+        {showPriceDetails && (
+          <>
+            <div
+              className="fixed inset-0 z-10"
+              onClick={() => setShowPriceDetails(false)}
+              aria-hidden="true"
+            />
+            <div
+              role="dialog"
+              aria-label={t('price_details', 'Price details')}
+              className="absolute bottom-full left-4 right-4 mb-2 z-20 bg-white border border-gray-300 shadow-[0_-4px_16px_rgba(0,0,0,0.12)] max-h-[60vh] overflow-y-auto"
+            >
+              <div className="flex items-center justify-between px-4 py-3 border-b border-gray-200">
+                <span className="text-sm font-jost font-semibold text-gray-800">
+                  {t('price_details', 'Price details')}
+                </span>
+                <button
+                  onClick={() => setShowPriceDetails(false)}
+                  aria-label={t('close', 'Close')}
+                  className="text-gray-400 hover:text-gray-700 p-1"
+                >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
+              <div className="px-4 py-3 space-y-2">
+                <div className="flex justify-between items-center">
+                  <span className="text-sm font-jost font-light text-gray-600">
+                    {formatCurrency(pricing.nightlyRate, pricing.currency)} ×{' '}
+                    {pricing.nights} {pricing.nights !== 1 ? t('nights_plural', 'nights') : t('night_singular', 'night')}
+                  </span>
+                  <span className="text-sm font-jost font-light text-gray-800">
+                    {formatCurrency(pricing.subtotal, pricing.currency)}
+                  </span>
+                </div>
+
+                {pricing.fees
+                  .filter((fee) => fee.amount >= 0)
+                  .map((fee, index) => (
+                    <div key={index} className="flex justify-between items-center">
+                      <span className="text-sm font-jost font-light text-gray-600">
+                        {translateLineItem(fee.name, t)}
+                      </span>
+                      <span className="text-sm font-jost font-light text-gray-800">
+                        {formatCurrency(fee.amount, pricing.currency)}
+                      </span>
+                    </div>
+                  ))}
+
+                {isSundayCheckout && (
+                  <div className="flex justify-between items-center">
+                    <span className="text-sm font-jost font-light text-gray-600">
+                      {t('line_item.lazy_sunday_checkout', 'Lazy Sunday check-out (16:00)')}
+                    </span>
+                    <span className="text-sm font-jost font-light text-gray-800">
+                      {t('line_item.free', 'Free')}
+                    </span>
+                  </div>
+                )}
+
+                {hasDiscount && (
+                  <div className="flex justify-between items-center bg-green-50 -mx-4 px-4 py-2">
+                    <span className="text-sm font-jost text-green-700 font-medium">
+                      {translateLineItem(pricing.discount!.name, t)}
+                      {pricing.discount!.percentage && (
+                        <span className="text-green-600 ml-1">(-{pricing.discount!.percentage}%)</span>
+                      )}
+                    </span>
+                    <span className="text-sm font-jost text-green-700 font-medium">
+                      -{formatCurrency(pricing.discount!.amount, pricing.currency)}
+                    </span>
+                  </div>
+                )}
+
+                <div className="flex justify-between items-center pt-2 mt-1 border-t border-gray-200">
+                  <span className="font-jost font-semibold text-sm text-gray-800">
+                    {t('total', 'Total')}
+                  </span>
+                  <span className="font-jost font-bold text-base text-gray-800">
+                    {formatCurrency(pricing.total, pricing.currency)}
+                  </span>
+                </div>
+              </div>
+            </div>
+          </>
+        )}
+
         {minStayWarning && (
           <div className="flex items-center gap-1.5 px-5 py-1.5 bg-amber-50 border-b border-amber-200">
             <svg className="w-3.5 h-3.5 text-amber-600 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
@@ -124,6 +218,15 @@ export default function MobileStickyBar({
                   -{pricing.discount!.percentage || Math.round((pricing.discount!.amount / pricing.subtotal) * 100)}%
                 </span>
               )}
+              <button
+                onClick={() => setShowPriceDetails(true)}
+                aria-label={t('price_details', 'Price details')}
+                className="text-gray-400 hover:text-gray-600 -m-1 p-1"
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+              </button>
             </div>
             <span className="text-sm font-jost font-light text-gray-500">
               {t('for', 'For')} {pricing.nights} {pricing.nights !== 1 ? t('nights_plural', 'nights') : t('night_singular', 'night')} · {formatDateRange(checkIn, checkOut)}

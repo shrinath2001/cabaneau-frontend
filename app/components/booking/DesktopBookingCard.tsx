@@ -2,6 +2,7 @@
 
 import { QuoteResponse, formatCurrency, localeToIntl, translateLineItem } from './hooks/useQuote';
 import { useTranslations } from '@/app/providers/TranslationsProvider';
+import { isSunday } from './calendarUtils';
 
 interface CabinInfo {
   slug: string;
@@ -74,6 +75,8 @@ export default function DesktopBookingCard({
   };
 
   const totalGuests = adults;
+
+  const isSundayCheckout = !!checkOut && isSunday(checkOut);
 
   return (
     <div
@@ -209,6 +212,20 @@ export default function DesktopBookingCard({
                     </span>
                   </div>
                 ))}
+
+              {/* Sunday check-out perk - not a Lodgify fee, so it's not part
+                  of pricing.fees; shown right after the fees list (City Tax
+                  etc.) whenever the stay happens to check out on a Sunday. */}
+              {isSundayCheckout && (
+                <div className="flex justify-between items-center">
+                  <span className="text-sm font-jost font-light text-gray-600">
+                    {t('line_item.lazy_sunday_checkout', 'Lazy Sunday check-out (16:00)')}
+                  </span>
+                  <span className="text-sm font-jost font-light text-gray-800">
+                    {t('line_item.free', 'Free')}
+                  </span>
+                </div>
+              )}
 
               {/* Discount (special styling) */}
               {quote.pricing.discount && (
