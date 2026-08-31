@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useTranslations } from '@/app/providers/TranslationsProvider';
+import { useBookingDates } from '@/app/providers/BookingDatesProvider';
 import ThingsToKnowSlidePanel from './ThingsToKnowSlidePanel';
 import ThingsToKnowModal from './ThingsToKnowModal';
 import {
@@ -11,8 +12,6 @@ import {
 } from './thingsToKnowContent';
 
 interface ThingsToKnowProps {
-  checkIn?: string;
-  checkOut?: string;
   capacity?: number;
   locale?: string;
   thingsToKnow?: CMSThingsToKnowSection[];
@@ -25,8 +24,16 @@ interface RowConfig {
   previewLines: string[];
 }
 
-const ThingsToKnow = ({ checkIn, checkOut, capacity = 6, locale = 'en', thingsToKnow }: ThingsToKnowProps) => {
+/**
+ * Reads the selected check-in date from the shared booking store itself
+ * (rather than taking it as a prop) - the parent cabin page is now a
+ * Server Component and can't call useBookingDates(), which is fine since
+ * this data is genuinely client-only/interactive (the user's in-progress
+ * date selection), not SEO content.
+ */
+const ThingsToKnow = ({ capacity = 6, locale = 'en', thingsToKnow }: ThingsToKnowProps) => {
   const { t } = useTranslations('cabin');
+  const { arrival: checkIn } = useBookingDates();
   const [activePanel, setActivePanel] = useState<string | null>(null);
   const [activeModal, setActiveModal] = useState<string | null>(null);
 
