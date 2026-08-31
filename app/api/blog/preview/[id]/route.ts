@@ -12,13 +12,20 @@ export async function GET(
     const apiBaseUrl = process.env.API_BASE_URL || 'http://localhost:3002/api/v1';
     const language = getLanguageFromRequest(request);
     const { id } = await params;
+    const token = request.nextUrl.searchParams.get('token');
 
     if (!id) {
       return NextResponse.json({ error: 'ID is required' }, { status: 400 });
     }
 
-    // Use the public preview endpoint (no JWT needed, just API key)
-    const apiUrl = `${apiBaseUrl}/blog/preview/${id}`;
+    if (!token) {
+      return NextResponse.json({ error: 'Preview token is required' }, { status: 403 });
+    }
+
+    // Public endpoint, but gated by a short-lived per-post token minted by
+    // the CMS "Preview" button - the shared API key alone is not enough,
+    // since this can return unpublished content.
+    const apiUrl = `${apiBaseUrl}/blog/preview/${id}?token=${encodeURIComponent(token)}`;
     const response = await fetch(apiUrl, {
       method: 'GET',
       headers: {
@@ -29,10 +36,13 @@ export async function GET(
     });
 
     if (!response.ok) {
-      return NextResponse.json(
-        { error: response.status === 404 ? 'Post not found' : 'API error' },
-        { status: response.status }
-      );
+      const message =
+        response.status === 404
+          ? 'Post not found'
+          : response.status === 403
+            ? 'Preview link is invalid or has expired'
+            : 'API error';
+      return NextResponse.json({ error: message }, { status: response.status });
     }
 
     const data = await response.json();

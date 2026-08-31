@@ -39,8 +39,16 @@ export default function BlogPreviewPage() {
   useEffect(() => {
     const fetchPost = async () => {
       if (!id) return;
+      // Read directly from window.location rather than useSearchParams(),
+      // which would force this page into a Suspense boundary.
+      const token = new URLSearchParams(window.location.search).get('token');
+      if (!token) {
+        setError('This preview link is missing its token.');
+        setLoading(false);
+        return;
+      }
       try {
-        const response = await fetch(`/api/blog/preview/${id}`, {
+        const response = await fetch(`/api/blog/preview/${id}?token=${encodeURIComponent(token)}`, {
           headers: { 'x-language': locale },
         });
         if (!response.ok) {
