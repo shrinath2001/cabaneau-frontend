@@ -1,11 +1,8 @@
-'use client';
-
-import { useState, useEffect } from 'react';
-import { useParams, useRouter } from 'next/navigation';
-import Image from 'next/image';
+import type { Metadata } from 'next';
+import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import BlogSidebarCabin from '@/app/components/BlogSidebarCabin';
-import { useTranslations } from '@/app/providers/TranslationsProvider';
+import { getTranslations } from '@/app/lib/translations';
 
 interface BlogPost {
   id: string;
@@ -25,97 +22,91 @@ interface BlogPost {
   metaDescription?: string;
 }
 
-export default function BlogPostPage() {
-  const params = useParams();
-  const router = useRouter();
-  const slug = params.slug as string;
-  const locale = (params?.locale as string) || 'en';
-  const { t } = useTranslations('blog');
+async function getBlogPost(slug: string, locale: string): Promise<BlogPost | null> {
+  const apiKey = process.env.API_KEY;
+  const apiBaseUrl = process.env.API_BASE_URL || 'http://localhost:3000/api/v1';
 
-  const [post, setPost] = useState<BlogPost | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    const fetchPost = async () => {
-      if (!slug) return;
-
-      try {
-        const response = await fetch(`/api/blog/slug/${slug}`, {
-          headers: {
-            'x-language': locale,
-          },
-        });
-
-        if (!response.ok) {
-          if (response.status === 404) {
-            setError('Blog post not found');
-          } else {
-            setError('Failed to load blog post');
-          }
-          return;
-        }
-
-        const data = await response.json();
-        setPost(data);
-      } catch (err) {
-        console.error('Error fetching blog post:', err);
-        setError('Failed to load blog post');
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchPost();
-  }, [slug, locale]);
-
-  // Locale-aware date formatting
-  const formatDate = (dateString?: string) => {
-    if (!dateString) return '';
-    const localeMap: Record<string, string> = {
-      en: 'en-GB',
-      fr: 'fr-FR',
-      de: 'de-DE',
-      nl: 'nl-NL',
-    };
-    return new Date(dateString).toLocaleDateString(localeMap[locale] || 'en-GB', {
-      day: 'numeric',
-      month: 'long',
-      year: 'numeric',
+  try {
+    const response = await fetch(`${apiBaseUrl}/blog/slug/${slug}`, {
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': apiKey || '',
+        'Accept-Language': locale || 'en',
+      },
+      next: { revalidate: 300 },
     });
+
+    if (response.status === 404) return null;
+    if (!response.ok) {
+      console.error('Failed to fetch blog post:', response.status);
+      return null;
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error('Error fetching blog post:', error);
+    return null;
+  }
+}
+
+// Locale-aware date formatting
+function formatDate(dateString: string | undefined, locale: string): string {
+  if (!dateString) return '';
+  const localeMap: Record<string, string> = {
+    en: 'en-GB',
+    fr: 'fr-FR',
+    de: 'de-DE',
+    nl: 'nl-NL',
   };
+  return new Date(dateString).toLocaleDateString(localeMap[locale] || 'en-GB', {
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric',
+  });
+}
 
-  if (loading) {
-    return (
-      <main>
-        <section className="py-20 bg-white">
-          <div className="container mx-auto px-4 max-w-4xl text-center">
-            <p className="text-gray-600 font-jost font-light">{t("detail_loading", "Loading...")}</p>
-          </div>
-        </section>
-      </main>
-    );
+interface PageParams {
+  locale: string;
+  slug: string;
+}
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<PageParams>;
+}): Promise<Metadata> {
+  const { slug, locale } = await params;
+  const post = await getBlogPost(slug, locale);
+
+  if (!post) {
+    return { title: 'Blog post not found - Cabaneau' };
   }
 
-  if (error || !post) {
-    return (
-      <main>
-        <section className="py-20 bg-white">
-          <div className="container mx-auto px-4 max-w-4xl text-center">
-            <h1 className="text-2xl font-logga text-[#495D4D] mb-4">
-              {error || t("post_not_found", "Blog post not found")}
-            </h1>
-            <Link
-              href={`/${locale}/blog`}
-              className="inline-block bg-[#F49A4A] text-white px-6 py-3 hover:bg-[#e08c3c] transition-colors font-jost"
-            >
-              {t('back_to_blog', 'Back to Blog')}
-            </Link>
-          </div>
-        </section>
-      </main>
-    );
+  return {
+    title: post.metaTitle || `${post.title} - Cabaneau Blog`,
+    description: post.metaDescription || post.excerpt || undefined,
+    openGraph: {
+      title: post.metaTitle || post.title,
+      description: post.metaDescription || post.excerpt || undefined,
+      images: post.featuredImage ? [post.featuredImage] : undefined,
+    },
+  };
+}
+
+export default async function BlogPostPage({
+  params,
+}: {
+  params: Promise<PageParams>;
+}) {
+  const { slug, locale } = await params;
+  const post = await getBlogPost(slug, locale);
+
+  if (!post) {
+    notFound();
   }
+
+  const translations = await getTranslations(locale);
+  const t = (key: string, fallback: string): string => translations[`blog.${key}`] || fallback;
 
   return (
     <main>
@@ -141,7 +132,7 @@ export default function BlogPostPage() {
             {post.title}
           </h1>
           <p className="text-white/80 text-sm font-jost font-light">
-            {formatDate(post.publishedAt)}
+            {formatDate(post.publishedAt, locale)}
           </p>
         </div>
       </section>
@@ -171,7 +162,7 @@ export default function BlogPostPage() {
               {/* Tags */}
               {post.tags && post.tags.length > 0 && (
                 <div className="mt-8 pt-8 border-t border-gray-200">
-                  <h4 className="text-sm font-logga text-[#495D4D] mb-3">{t("tags", "Tags:")}</h4>
+                  <h4 className="text-sm font-logga text-[#495D4D] mb-3">{t('tags', 'Tags:')}</h4>
                   <div className="flex flex-wrap gap-2">
                     {post.tags.map((tag, index) => (
                       <span
