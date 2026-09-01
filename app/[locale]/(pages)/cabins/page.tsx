@@ -23,6 +23,7 @@ interface CabinFromAPI {
   images: string[];
   squareMeters?: number;
   capacity: number;
+  shortDescription?: string;
   basePrice?: string;
   nextAvailableDate?: string;
   nightlyRate?: number;
@@ -132,6 +133,7 @@ export default async function CabinsPage() {
     rating: 5,
     area: cabin.squareMeters ? `${cabin.squareMeters}m²` : '',
     capacity: cabin.capacity ? `2-${cabin.capacity} Persons` : '2 Persons',
+    shortDescription: cabin.shortDescription,
     availability: formatAvailabilityDate(cabin.nextAvailableDate),
     price: cabin.nightlyRate
            ? `${Math.round(cabin.nightlyRate)} €`

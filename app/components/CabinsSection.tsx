@@ -19,6 +19,7 @@ interface CabinData {
   rating: number;
   area: string;
   capacity: string;
+  shortDescription?: string;
   availability: string;
   price: string;
   nights?: number;
@@ -37,6 +38,7 @@ interface RawCabin {
   squareMeters?: string | number;
   area?: string;
   capacity?: number | string;
+  shortDescription?: string;
   nextAvailableDate?: string;
   availability?: string;
   nightlyRate?: number;
@@ -147,6 +149,7 @@ const CabinsSection = ({ cabins: rawCabins }: { cabins: RawCabin[] }) => {
     rating: cabin.rating ?? 5,
     area: cabin.squareMeters ? `${cabin.squareMeters}m²` : cabin.area || '',
     capacity: formatCapacity(cabin.capacity),
+    shortDescription: cabin.shortDescription,
     // Use nextAvailableDate from Lodgify if present
     availability: formatAvailabilityDate(cabin.nextAvailableDate) || cabin.availability || st.available,
     // Use nightlyRate from Lodgify if present, fallback to basePrice

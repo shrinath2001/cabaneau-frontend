@@ -30,6 +30,7 @@ interface CabinCardProps {
   rating: number;
   area: string;
   capacity: string;
+  shortDescription?: string;
   availability: string;
   price: string;
   originalPrice?: string;
@@ -125,6 +126,7 @@ const CabinCard: React.FC<CabinCardProps> = ({
   rating,
   area,
   capacity,
+  shortDescription,
   availability,
   price,
   originalPrice,
@@ -137,7 +139,7 @@ const CabinCard: React.FC<CabinCardProps> = ({
   warningMessage,
 }) => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
-  const { locale } = useTranslations('cabins');
+  const { t, locale } = useTranslations('cabin');
 
   // Get hardcoded translations for current locale
   const ct = cardTranslations[locale] || cardTranslations.en;
@@ -172,7 +174,7 @@ const CabinCard: React.FC<CabinCardProps> = ({
   };
 
   return (
-    <Link href={buildCabinUrl()} className="block group bg-white w-[85vw] max-w-[380px] sm:w-[380px] h-[491px] shrink-0 flex flex-col overflow-hidden shadow-[0_1px_3px_rgba(0,0,0,0.08),0_6px_16px_-6px_rgba(0,0,0,0.12)] transition-all duration-300 hover:-translate-y-2 hover:shadow-[0_4px_6px_-1px_rgba(0,0,0,0.1),0_10px_15px_-3px_rgba(0,0,0,0.1),0_20px_25px_-5px_rgba(0,0,0,0.1)] cursor-pointer">
+    <Link href={buildCabinUrl()} className="block group bg-white w-[85vw] max-w-[380px] sm:w-[380px] h-[547px] shrink-0 flex flex-col overflow-hidden shadow-[0_1px_3px_rgba(0,0,0,0.08),0_6px_16px_-6px_rgba(0,0,0,0.12)] transition-all duration-300 hover:-translate-y-2 hover:shadow-[0_4px_6px_-1px_rgba(0,0,0,0.1),0_10px_15px_-3px_rgba(0,0,0,0.1),0_20px_25px_-5px_rgba(0,0,0,0.1)] cursor-pointer">
       {/* Image Section - full bleed to the card edges */}
       <div className="relative w-full h-[248px] bg-gray-100">
         <Image
@@ -224,7 +226,7 @@ const CabinCard: React.FC<CabinCardProps> = ({
       <div className="px-[15px] pb-[15px] pt-4 flex flex-col justify-between flex-1">
         {/* Title and Rating */}
         <div className="flex justify-between items-center mb-3">
-          <h3 className="font-logga text-2xl text-black">{title}</h3>
+          <p className="font-logga text-2xl text-black">{title}</p>
           <div className="flex gap-0.5">
             {Array.from({ length: 5 }).map((_, i) => (
               <svg
@@ -265,6 +267,16 @@ const CabinCard: React.FC<CabinCardProps> = ({
             </div>
           )}
         </div>
+
+        {/* Short Description */}
+        {shortDescription && (
+          <p
+            className="font-jost font-normal text-[16px] leading-snug mb-3 line-clamp-2"
+            style={{ color: '#5F5F5F' }}
+          >
+            {shortDescription}
+          </p>
+        )}
 
         {/* Availability and Price */}
         <div className="flex justify-between items-center mb-3">
@@ -336,7 +348,7 @@ const CabinCard: React.FC<CabinCardProps> = ({
 
         {/* Book Now Button */}
         <div className="w-full py-2.5 px-4 border border-black text-black text-sm font-medium tracking-wider text-center group-hover:bg-[#F49A4A] group-hover:text-white group-hover:border-[#F49A4A] transition-all duration-300">
-          {ct.bookNow}
+          {t('card.book_now', ct.bookNow)}
         </div>
       </div>
     </Link>
