@@ -688,6 +688,7 @@ function SearchResults() {
                         rating={5} // Default rating since API doesn't provide it
                         area={cabin.squareMeters ? `${cabin.squareMeters}m²` : ''}
                         capacity={formatCapacity(cabin.capacity)}
+                        shortDescription={cabin.shortDescription}
                         availability={searchDates}
                         price={displayPrice}
                         originalPrice={originalPrice}

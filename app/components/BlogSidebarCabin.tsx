@@ -21,6 +21,7 @@ interface CabinData {
   rating: number;
   area: string;
   capacity: string;
+  shortDescription?: string;
   availability: string;
   price: string;
   featuredAmenities?: AmenityInfo[];
@@ -106,6 +107,7 @@ const BlogSidebarCabin = () => {
             rating: cabin.rating ?? 5,
             area: cabin.squareMeters ? `${cabin.squareMeters}m²` : cabin.area || '',
             capacity: formatCapacity(cabin.capacity),
+            shortDescription: cabin.shortDescription,
             availability: formatAvailabilityDate(cabin.nextAvailableDate) || cabin.availability || t.available,
             price: cabin.nightlyRate
                    ? formatNightlyRate(cabin.nightlyRate, cabin.currency)

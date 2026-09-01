@@ -6,6 +6,7 @@ import ServiceCard from './ServiceCard';
 interface SectionItem {
   image: string;
   title: string;
+  subtitle?: string;
   link?: string;
 }
 
@@ -52,6 +53,7 @@ const CustomCardsSection = ({
                 key={index}
                 imageSrc={item.image}
                 serviceName={item.title}
+                subtitle={item.subtitle}
               />
             ))}
           </div>

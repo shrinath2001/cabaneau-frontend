@@ -10,6 +10,7 @@ interface LocationConfig {
 
 interface LocationSectionProps {
   title?: string;
+  subtitle?: string;
   config?: LocationConfig;
   buttonText?: string;
   buttonLink?: string;
@@ -18,6 +19,7 @@ interface LocationSectionProps {
 
 const LocationSection = ({
   title,
+  subtitle,
   config,
   buttonText,
   buttonLink,
@@ -37,9 +39,14 @@ const LocationSection = ({
     <section className="bg-white py-6 md:py-5 px-4 md:px-20 md:mt-12" style={bgStyle}>
       <div className="container mx-auto">
         <div className="max-w-[1390px] mx-auto">
-          <h2 className="font-logga text-[28px] md:text-[42px] font-semibold md:font-normal text-center pt-6 md:pt-10 mb-10 md:mb-20">
+          <h2 className={`font-logga text-[28px] md:text-[42px] font-semibold md:font-normal text-center pt-6 md:pt-10 ${subtitle ? 'mb-3 md:mb-4' : 'mb-10 md:mb-20'}`}>
             {displayTitle}
           </h2>
+          {subtitle && (
+            <p className="text-center text-gray-600 text-base md:text-lg mb-10 md:mb-20">
+              {subtitle}
+            </p>
+          )}
           <div className="relative h-[200px] md:h-[273px] w-full">
             <iframe
               src={displayMapUrl}

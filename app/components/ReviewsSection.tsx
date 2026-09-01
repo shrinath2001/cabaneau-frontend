@@ -28,6 +28,7 @@ interface StatsData {
 
 interface ReviewsSectionProps {
   title?: string;
+  subtitle?: string;
   backgroundColor?: string;
   /** When true, renders as an inline content block (no outer section padding, heading matches cabin detail style) */
   inline?: boolean;
@@ -159,7 +160,7 @@ function ChannelBadge({ channel }: { channel: string }) {
  * detail page), so this renders real review content on the very first
  * paint - no fetch, no loading state.
  */
-const ReviewsSection = ({ title, backgroundColor, inline = false, reviews, stats }: ReviewsSectionProps) => {
+const ReviewsSection = ({ title, subtitle, backgroundColor, inline = false, reviews, stats }: ReviewsSectionProps) => {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const { t } = useTranslations('homepage');
 
@@ -269,9 +270,14 @@ const ReviewsSection = ({ title, backgroundColor, inline = false, reviews, stats
       <section className="py-6 md:py-5 md:mt-12" style={bgStyle}>
         <div className="max-w-[1390px] mx-auto px-4 md:px-20">
           {/* Section Title */}
-          <h2 className="font-logga text-[28px] md:text-[42px] font-semibold md:font-normal text-center pt-6 md:pt-10 mb-8 md:mb-12">
+          <h2 className={`font-logga text-[28px] md:text-[42px] font-semibold md:font-normal text-center pt-6 md:pt-10 ${subtitle ? 'mb-3 md:mb-4' : 'mb-8 md:mb-12'}`}>
             {displayTitle}
           </h2>
+          {subtitle && (
+            <p className="text-center text-gray-600 text-base md:text-lg mb-8 md:mb-12">
+              {subtitle}
+            </p>
+          )}
         </div>
 
           {/* Channel Stats Bar */}

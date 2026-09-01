@@ -8,11 +8,13 @@ import { useTranslations } from '@/app/providers/TranslationsProvider';
 interface SectionItem {
   image: string;
   title: string;
+  subtitle?: string;
   link?: string;
 }
 
 interface ServicesSectionProps {
   title?: string;
+  subtitle?: string;
   items?: SectionItem[];
   buttonText?: string;
   buttonLink?: string;
@@ -21,6 +23,7 @@ interface ServicesSectionProps {
 
 const ServicesSection = ({
   title,
+  subtitle,
   items,
   buttonText,
   buttonLink,
@@ -38,9 +41,14 @@ const ServicesSection = ({
     <section className="py-6 md:py-5 px-4 md:px-20 bg-tint md:mt-12" style={bgStyle}>
       <div className="container mx-auto">
         <div className="max-w-[1390px] mx-auto">
-          <h2 className="font-logga text-[28px] md:text-[42px] font-semibold md:font-normal text-center pt-6 md:pt-10 mb-10 md:mb-20">
+          <h2 className={`font-logga text-[28px] md:text-[42px] font-semibold md:font-normal text-center pt-6 md:pt-10 ${subtitle ? 'mb-3 md:mb-4' : 'mb-10 md:mb-20'}`}>
             {displayTitle}
           </h2>
+          {subtitle && (
+            <p className="text-center text-gray-600 text-base md:text-lg mb-10 md:mb-20">
+              {subtitle}
+            </p>
+          )}
           {items && items.length > 0 ? (
             <CardSlider label="services">
               {items.map((item, index) => (
@@ -48,6 +56,7 @@ const ServicesSection = ({
                   key={index}
                   imageSrc={item.image}
                   serviceName={item.title}
+                  subtitle={item.subtitle}
                   link={item.link}
                 />
               ))}

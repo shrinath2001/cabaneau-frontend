@@ -19,6 +19,7 @@ interface OtherCabin {
   rating: number;
   area: string;
   capacity: string;
+  shortDescription?: string;
   availability: string;
   price: string;
   featuredAmenities?: AmenityInfo[];
@@ -32,6 +33,7 @@ interface RawOtherCabin {
   rating?: number;
   squareMeters?: number;
   capacity?: number;
+  shortDescription?: string;
   nextAvailableDate?: string;
   nightlyRate?: number;
   basePrice?: number | string;
@@ -76,6 +78,7 @@ const OtherCabinsSection = ({ cabins: rawCabins }: OtherCabinsSectionProps) => {
     capacity: cabin.capacity
       ? `2-${cabin.capacity} ${t('detail.persons', 'Persons')}`
       : '',
+    shortDescription: cabin.shortDescription,
     availability: cabin.nextAvailableDate
       ? new Date(cabin.nextAvailableDate).toLocaleDateString(
           locale === 'en' ? 'en-GB' : locale,

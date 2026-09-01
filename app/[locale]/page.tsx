@@ -160,7 +160,8 @@ function renderSection(
         <ServicesSection
           key={section.id}
           title={title}
-          items={(config?.items as Array<{ image: string; title: string; link?: string }>) || undefined}
+          subtitle={subtitle}
+          items={(config?.items as Array<{ image: string; title: string; subtitle?: string; link?: string }>) || undefined}
           buttonText={buttonText}
           buttonLink={buttonLink}
           backgroundColor={backgroundColor}
@@ -172,7 +173,8 @@ function renderSection(
         <ActivitiesSection
           key={section.id}
           title={title}
-          items={(config?.items as Array<{ image: string; title: string; link?: string }>) || undefined}
+          subtitle={subtitle}
+          items={(config?.items as Array<{ image: string; title: string; subtitle?: string; link?: string }>) || undefined}
           buttonText={buttonText}
           buttonLink={buttonLink}
           backgroundColor={backgroundColor}
@@ -185,6 +187,7 @@ function renderSection(
         <HostsSection
           key={section.id}
           title={title}
+          subtitle={subtitle}
           config={
             config as {
               names?: string;
@@ -204,6 +207,7 @@ function renderSection(
         <LocationSection
           key={section.id}
           title={title}
+          subtitle={subtitle}
           config={config as { mapEmbedUrl?: string; address?: string }}
           buttonText={buttonText}
           buttonLink={buttonLink}
@@ -217,7 +221,7 @@ function renderSection(
           key={section.id}
           title={title}
           subtitle={subtitle}
-          items={(config?.items as Array<{ image: string; title: string; link?: string }>) || undefined}
+          items={(config?.items as Array<{ image: string; title: string; subtitle?: string; link?: string }>) || undefined}
           buttonText={buttonText}
           buttonLink={buttonLink}
           backgroundColor={backgroundColor}
@@ -229,6 +233,7 @@ function renderSection(
         <ReviewsSection
           key={section.id}
           title={title}
+          subtitle={subtitle}
           backgroundColor={backgroundColor}
           reviews={reviewsData.reviews}
           stats={reviewsData.stats}
@@ -240,6 +245,7 @@ function renderSection(
         <ImageSliderSection
           key={section.id}
           title={title}
+          subtitle={subtitle}
           topSliderImages={(config?.topSliderImages as Array<{ image: string }>) || []}
           bottomSliderImages={(config?.bottomSliderImages as Array<{ image: string }>) || []}
           backgroundColor={backgroundColor}

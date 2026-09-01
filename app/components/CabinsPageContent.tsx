@@ -19,6 +19,7 @@ interface Cabin {
   rating: number;
   area: string;
   capacity: string;
+  shortDescription?: string;
   availability: string;
   price: string;
   featuredAmenities?: AmenityInfo[];

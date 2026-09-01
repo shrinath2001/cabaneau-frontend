@@ -8,6 +8,7 @@ interface SliderImage {
 
 interface ImageSliderSectionProps {
   title?: string;
+  subtitle?: string;
   topSliderImages: SliderImage[];
   bottomSliderImages: SliderImage[];
   backgroundColor?: string;
@@ -15,6 +16,7 @@ interface ImageSliderSectionProps {
 
 export default function ImageSliderSection({
   title,
+  subtitle,
   topSliderImages,
   bottomSliderImages,
   backgroundColor,
@@ -29,9 +31,14 @@ export default function ImageSliderSection({
       style={{ backgroundColor: backgroundColor || undefined }}
     >
       {title && (
-        <h2 className="font-logga text-[28px] md:text-[42px] font-semibold md:font-normal text-center pt-6 md:pt-10 mb-10 md:mb-14">
+        <h2 className={`font-logga text-[28px] md:text-[42px] font-semibold md:font-normal text-center pt-6 md:pt-10 ${subtitle ? 'mb-3 md:mb-4' : 'mb-10 md:mb-14'}`}>
           {title}
         </h2>
+      )}
+      {subtitle && (
+        <p className="text-center text-gray-600 text-base md:text-lg px-4 mb-10 md:mb-14">
+          {subtitle}
+        </p>
       )}
 
       {topSliderImages.length > 0 && (
