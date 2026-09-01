@@ -70,7 +70,7 @@ async function getEatDrinkData(locale: string): Promise<{
 
   try {
     const [servicesRes, pageRes] = await Promise.all([
-      fetch(`${apiBaseUrl}/eat-drink`, { headers, next: { revalidate: 60 } }),
+      fetch(`${apiBaseUrl}/services`, { headers, next: { revalidate: 60 } }),
       fetch(`${apiBaseUrl}/pages/slug/eat-drink`, { headers, next: { revalidate: 300 } }),
     ]);
 
