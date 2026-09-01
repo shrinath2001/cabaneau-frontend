@@ -15,12 +15,14 @@ interface HostsConfig {
 
 interface HostsSectionProps {
   title?: string;
+  subtitle?: string;
   config?: HostsConfig;
   backgroundColor?: string;
 }
 
 const HostsSection = ({
   title,
+  subtitle,
   config,
   backgroundColor,
 }: HostsSectionProps) => {
@@ -41,9 +43,14 @@ const HostsSection = ({
     <section className="py-6 md:py-5 px-4 md:px-20 bg-tint md:mt-12" style={bgStyle}>
       <div className="container mx-auto">
         <div className="max-w-[1390px] mx-auto">
-          <h2 className="font-logga text-[28px] md:text-[42px] font-semibold md:font-normal text-left pt-6 md:pt-10 mb-10 md:mb-16">
+          <h2 className={`font-logga text-[28px] md:text-[42px] font-semibold md:font-normal text-left pt-6 md:pt-10 ${subtitle ? 'mb-3 md:mb-4' : 'mb-10 md:mb-16'}`}>
             {displayTitle}
           </h2>
+          {subtitle && (
+            <p className="text-left text-gray-600 text-base md:text-lg mb-10 md:mb-16">
+              {subtitle}
+            </p>
+          )}
 
           <div className="flex flex-col md:flex-row gap-8 md:gap-12">
             {/* Image Section */}
