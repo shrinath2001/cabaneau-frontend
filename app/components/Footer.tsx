@@ -6,15 +6,7 @@ import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { useTranslations } from '@/app/providers/TranslationsProvider';
 import { localizedPath, type Locale } from '@/app/lib/i18n';
-
-// Types for footer sections
-interface FooterSection {
-  id: string;
-  sectionType: 'LOGO_DESCRIPTION' | 'LINK_COLUMN' | 'CTA_BUTTONS' | 'SOCIAL_LINKS' | 'CONTACT_INFO' | 'BOTTOM_BAR';
-  title?: string;
-  config: Record<string, unknown>;
-  displayOrder: number;
-}
+import type { FooterSection } from '@/app/lib/footer';
 
 interface FooterLink {
   label: string;
@@ -71,11 +63,18 @@ const SocialIcon = ({ platform }: { platform: string }) => {
   return icons[platform] || icons.facebook;
 };
 
-const Footer = () => {
+/**
+ * sections arrives already fetched server-side (see app/lib/footer.ts's
+ * getFooterSections, called from the homepage and the (pages) layout), so
+ * this renders the real CMS footer on first paint - no client fetch, no
+ * loading state, nothing for a crawler (or a user on a slow connection) to
+ * catch mid-fallback.
+ */
+const Footer = ({ sections: initialSections }: { sections?: FooterSection[] } = {}) => {
   const pathname = usePathname();
   const { t, locale } = useTranslations('footer');
-  const [sections, setSections] = useState<FooterSection[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [sections, setSections] = useState<FooterSection[]>(initialSections || []);
+  const [isLoading, setIsLoading] = useState(!initialSections);
 
   // Helper to create localized link
   const link = (path: string) => localizedPath(locale as Locale, path);
@@ -99,8 +98,12 @@ const Footer = () => {
     return isExactMatch || isPrefixMatch;
   })();
 
-  // Fetch footer sections - MUST be before any conditional returns
+  // Footer sections come from the server component parent for SSR - see the
+  // comment above. Fallback: fetch client-side only if not provided (e.g. a
+  // page that hasn't been updated to pass it yet), same pattern as
+  // Header.tsx's hero settings. MUST be before any conditional returns.
   useEffect(() => {
+    if (initialSections) return;
     const fetchSections = async () => {
       try {
         const response = await fetch('/api/footer-sections', {
@@ -119,7 +122,7 @@ const Footer = () => {
       }
     };
     fetchSections();
-  }, [locale]);
+  }, [locale, initialSections]);
 
   // Early return for pages that don't show footer - AFTER all hooks
   if (shouldHideFooter) {
