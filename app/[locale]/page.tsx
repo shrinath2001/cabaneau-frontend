@@ -1,4 +1,5 @@
 import Footer from "../components/Footer";
+import { getFooterSections } from "../lib/footer";
 import CabinsSection from "../components/CabinsSection";
 import ServicesSection from "../components/ServicesSection";
 import ActivitiesSection from "../components/ActivitiesSection";
@@ -263,10 +264,11 @@ interface PageProps {
 
 export default async function Home({ params }: PageProps) {
   const { locale } = await params;
-  const [sections, cabins, reviewsData] = await Promise.all([
+  const [sections, cabins, reviewsData, footerSections] = await Promise.all([
     getHomepageSections(locale),
     getHomepageCabins(locale),
     getReviews(locale),
+    getFooterSections(locale),
   ]);
 
   return (
@@ -276,7 +278,7 @@ export default async function Home({ params }: PageProps) {
         <CabinsSection cabins={cabins} />
         {sections.map((section) => renderSection(section, reviewsData))}
       </main>
-      <Footer />
+      <Footer sections={footerSections} />
     </div>
   );
 }

@@ -58,6 +58,7 @@ interface CabinDetails {
   id: string;
   lodgifyId: string;
   name: string; // API returns localized string
+  longName?: string; // API returns localized string; falls back to name when unset
   slug: string;
   description?: string; // API returns localized string
   shortDescription?: string; // API returns localized string
@@ -79,6 +80,8 @@ interface CabinDetails {
   postalCode?: string;
   latitude?: number;
   longitude?: number;
+  metaTitle?: string; // API returns localized string
+  metaDescription?: string; // API returns localized string
   isActive: boolean;
   featuredAmenities?: AmenityInfo[];
   additionalAmenities?: AmenityInfo[];
@@ -235,16 +238,19 @@ export async function generateMetadata({
     return { title: 'Cabin not found - Cabaneau' };
   }
 
-  const description = (cabin.shortDescription || cabin.description || '')
+  const title = cabin.metaTitle || `${cabin.name} - Cabaneau Treehouse Resort`;
+  const description = (
+    cabin.metaDescription || cabin.shortDescription || cabin.description || ''
+  )
     .replace(/\s+/g, ' ')
     .trim()
     .slice(0, 160);
 
   return {
-    title: `${cabin.name} - Cabaneau Treehouse Resort`,
+    title,
     description: description || undefined,
     openGraph: {
-      title: `${cabin.name} - Cabaneau`,
+      title,
       description: description || undefined,
       images: cabin.featuredImage ? [cabin.featuredImage] : undefined,
     },
@@ -288,12 +294,12 @@ export default async function CabinDetailPage({
   return (
     <div className="bg-white min-h-screen pt-0 md:pt-4 pb-0 md:pb-5 px-0 md:px-8 lg:px-20 -mt-2 md:mt-0">
       <div className="max-w-[1400px] mx-auto px-0 md:px-6 py-0 md:py-2">
-        {/* Cabin Name - Desktop only, left aligned above the gallery */}
+        {/* Cabin Long Name (falls back to Name) - Desktop only, left aligned above the gallery */}
         <h1
           className="hidden md:block font-logga font-medium text-[28px] lg:text-[32px] uppercase tracking-wide mb-3"
           style={{ color: "#212121" }}
         >
-          {cabin.name?.toUpperCase() || "CABIN"}
+          {(cabin.longName || cabin.name)?.toUpperCase() || "CABIN"}
         </h1>
 
         {/* Image Gallery - CabinGallery owns the photo-tour/carousel modal

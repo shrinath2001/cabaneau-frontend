@@ -274,7 +274,7 @@ const ReviewsSection = ({ title, subtitle, backgroundColor, inline = false, revi
             {displayTitle}
           </h2>
           {subtitle && (
-            <p className="text-center text-gray-600 text-base md:text-lg mb-8 md:mb-12">
+            <p className="font-jost font-light text-center text-gray-600 text-base md:text-lg mb-8 md:mb-12">
               {subtitle}
             </p>
           )}

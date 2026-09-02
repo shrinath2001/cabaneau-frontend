@@ -20,19 +20,28 @@ interface Cabin {
   name: string;
 }
 
-const Header2 = () => {
+const Header2 = ({
+  languages: initialLanguages,
+  cabins: initialCabins,
+}: {
+  languages?: Language[];
+  cabins?: Cabin[];
+} = {}) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isLanguageOpen, setIsLanguageOpen] = useState(false);
   const [isCabinsOpen, setIsCabinsOpen] = useState(false);
   const [isMobileCabinsOpen, setIsMobileCabinsOpen] = useState(false);
-  const [languages, setLanguages] = useState<Language[]>([]);
-  const [cabins, setCabins] = useState<Cabin[]>([]);
+  const [languages, setLanguages] = useState<Language[]>(initialLanguages || []);
+  const [cabins, setCabins] = useState<Cabin[]>(initialCabins || []);
   const { t, locale } = useTranslations('navigation');
   const pathname = usePathname();
   const router = useRouter();
 
-  // Fetch languages from API
+  // Languages and cabins come from the server component parent for SSR (see
+  // app/lib/nav.ts) so the nav dropdowns render real links on first paint.
+  // Fallback: fetch client-side only if not provided.
   useEffect(() => {
+    if (initialLanguages) return;
     const fetchLanguages = async () => {
       try {
         const response = await fetch('/api/languages');
@@ -53,9 +62,10 @@ const Header2 = () => {
     };
 
     fetchLanguages();
-  }, []);
+  }, [initialLanguages]);
 
   useEffect(() => {
+    if (initialCabins) return;
     const fetchCabins = async () => {
       try {
         const response = await fetch('/api/cabins');
@@ -69,7 +79,7 @@ const Header2 = () => {
       }
     };
     fetchCabins();
-  }, []);
+  }, [initialCabins]);
 
   // Navigate to same page with different locale (preserving query params)
   const handleLanguageChange = (code: string) => {

@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { getLanguageFromRequest } from '@/app/lib/server-language';
 
 const API_BASE_URL = process.env.API_BASE_URL || 'http://localhost:3002/api/v1';
 const API_KEY = process.env.API_KEY || '';
@@ -15,10 +16,12 @@ export const dynamic = 'force-dynamic';
 
 export async function GET(request: NextRequest) {
   try {
+    const language = getLanguageFromRequest(request);
     const url = API_BASE_URL + '/site-settings/hero-section';
     const response = await fetch(url, {
       headers: {
         'x-api-key': API_KEY,
+        'Accept-Language': language,
       },
       next: { revalidate: 30 },
     });

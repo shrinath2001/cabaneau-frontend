@@ -5,6 +5,7 @@ import { jost, raleway, logga } from '../fonts';
 import { TranslationsProvider } from '../providers/TranslationsProvider';
 import { BookingDatesProvider } from '../providers/BookingDatesProvider';
 import { getTranslations } from '../lib/translations';
+import { getNavLanguages, getNavCabins } from '../lib/nav';
 import { isValidLocale, locales, type Locale } from '../lib/i18n';
 import ConditionalHeader from '../components/ConditionalHeader';
 import PromoBanner from '../components/PromoBanner';
@@ -16,15 +17,20 @@ interface HeroSettings {
   backgroundUrl: string;
   overlayColor: string;
   overlayOpacity: number;
+  subtitle?: string;
+  titleSleep?: string;
+  titleHighlight?: string;
+  titleAbove?: string;
+  description?: string;
 }
 
-async function getHeroSettings(): Promise<HeroSettings> {
+async function getHeroSettings(locale: string): Promise<HeroSettings> {
   const apiKey = process.env.API_KEY || '';
   const apiBaseUrl = process.env.API_BASE_URL || 'http://localhost:3002/api/v1';
   const defaults: HeroSettings = { backgroundType: 'image', backgroundUrl: '', overlayColor: '#000000', overlayOpacity: 50 };
   try {
     const res = await fetch(`${apiBaseUrl}/site-settings/hero-section`, {
-      headers: { 'x-api-key': apiKey },
+      headers: { 'x-api-key': apiKey, 'Accept-Language': locale },
       next: { revalidate: 30 },
     });
     if (!res.ok) return defaults;
@@ -61,9 +67,13 @@ export default async function LocaleLayout({
     notFound();
   }
 
-  // Fetch translations and hero settings
-  const translations = await getTranslations(locale);
-  const heroSettings = await getHeroSettings();
+  // Fetch translations, hero settings, and global nav data
+  const [translations, heroSettings, navLanguages, navCabins] = await Promise.all([
+    getTranslations(locale),
+    getHeroSettings(locale),
+    getNavLanguages(),
+    getNavCabins(locale),
+  ]);
 
   return (
     <html lang={locale} className={`${jost.variable} ${raleway.variable} ${logga.variable}`}>
@@ -82,7 +92,7 @@ export default async function LocaleLayout({
               <PromoBanner />
             </Suspense>
             <Suspense fallback={null}>
-              <ConditionalHeader heroSettings={heroSettings} />
+              <ConditionalHeader heroSettings={heroSettings} languages={navLanguages} cabins={navCabins} />
             </Suspense>
             <main>
               {children}

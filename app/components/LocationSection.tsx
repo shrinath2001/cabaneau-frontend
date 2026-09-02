@@ -43,7 +43,7 @@ const LocationSection = ({
             {displayTitle}
           </h2>
           {subtitle && (
-            <p className="text-center text-gray-600 text-base md:text-lg mb-10 md:mb-20">
+            <p className="font-jost font-light text-center text-gray-600 text-base md:text-lg mb-10 md:mb-20">
               {subtitle}
             </p>
           )}
