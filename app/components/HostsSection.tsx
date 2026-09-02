@@ -47,7 +47,7 @@ const HostsSection = ({
             {displayTitle}
           </h2>
           {subtitle && (
-            <p className="text-left text-gray-600 text-base md:text-lg mb-10 md:mb-16">
+            <p className="font-jost font-light text-left text-gray-600 text-base md:text-lg mb-10 md:mb-16">
               {subtitle}
             </p>
           )}

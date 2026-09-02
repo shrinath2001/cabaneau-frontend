@@ -43,7 +43,7 @@ const CustomCardsSection = ({
             </h2>
           )}
           {subtitle && (
-            <p className="text-center text-gray-600 text-base md:text-lg mb-8 md:mb-16">
+            <p className="font-jost font-light text-center text-gray-600 text-base md:text-lg mb-8 md:mb-16">
               {subtitle}
             </p>
           )}

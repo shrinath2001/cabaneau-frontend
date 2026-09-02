@@ -36,7 +36,7 @@ export default function ImageSliderSection({
         </h2>
       )}
       {subtitle && (
-        <p className="text-center text-gray-600 text-base md:text-lg px-4 mb-10 md:mb-14">
+        <p className="font-jost font-light text-center text-gray-600 text-base md:text-lg px-4 mb-10 md:mb-14">
           {subtitle}
         </p>
       )}
