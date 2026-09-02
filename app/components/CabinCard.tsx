@@ -174,7 +174,7 @@ const CabinCard: React.FC<CabinCardProps> = ({
   };
 
   return (
-    <Link href={buildCabinUrl()} className="block group bg-white w-[85vw] max-w-[380px] sm:w-[380px] h-[547px] shrink-0 flex flex-col overflow-hidden shadow-[0_1px_3px_rgba(0,0,0,0.08),0_6px_16px_-6px_rgba(0,0,0,0.12)] transition-all duration-300 hover:-translate-y-2 hover:shadow-[0_4px_6px_-1px_rgba(0,0,0,0.1),0_10px_15px_-3px_rgba(0,0,0,0.1),0_20px_25px_-5px_rgba(0,0,0,0.1)] cursor-pointer">
+    <Link href={buildCabinUrl()} className="block group bg-white w-[85vw] max-w-[380px] sm:w-[380px] min-h-[547px] shrink-0 flex flex-col overflow-hidden shadow-[0_1px_3px_rgba(0,0,0,0.08),0_6px_16px_-6px_rgba(0,0,0,0.12)] transition-all duration-300 hover:-translate-y-2 hover:shadow-[0_4px_6px_-1px_rgba(0,0,0,0.1),0_10px_15px_-3px_rgba(0,0,0,0.1),0_20px_25px_-5px_rgba(0,0,0,0.1)] cursor-pointer">
       {/* Image Section - full bleed to the card edges */}
       <div className="relative w-full h-[248px] bg-gray-100">
         <Image
@@ -271,7 +271,7 @@ const CabinCard: React.FC<CabinCardProps> = ({
         {/* Short Description */}
         {shortDescription && (
           <p
-            className="font-jost font-normal text-[16px] leading-snug mb-3 line-clamp-2"
+            className="font-jost font-normal text-[16px] leading-snug mb-3"
             style={{ color: '#5F5F5F' }}
           >
             {shortDescription}
