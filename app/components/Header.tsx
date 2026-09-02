@@ -26,28 +26,35 @@ interface HeroSettings {
   backgroundUrl: string;
   overlayColor: string;
   overlayOpacity: number;
+  subtitle?: string;
+  titleSleep?: string;
+  titleHighlight?: string;
+  titleAbove?: string;
+  description?: string;
 }
 
-const Header = ({ heroSettings: initialHeroSettings }: { heroSettings?: HeroSettings }) => {
+const Header = ({
+  heroSettings: initialHeroSettings,
+  languages: initialLanguages,
+  cabins: initialCabins,
+}: {
+  heroSettings?: HeroSettings;
+  languages?: Language[];
+  cabins?: Cabin[];
+}) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isLanguageOpen, setIsLanguageOpen] = useState(false);
   const [isCabinsOpen, setIsCabinsOpen] = useState(false);
   const [isMobileCabinsOpen, setIsMobileCabinsOpen] = useState(false);
-  const [languages, setLanguages] = useState<Language[]>([]);
-  const [cabins, setCabins] = useState<Cabin[]>([]);
+  const [languages, setLanguages] = useState<Language[]>(initialLanguages || []);
+  const [cabins, setCabins] = useState<Cabin[]>(initialCabins || []);
   const { t, locale } = useTranslations('navigation');
-  const { t: tHome } = useTranslations('homepage');
   const pathname = usePathname();
   const router = useRouter();
 
 
   // Hero section settings (SSR for mobile video autoplay)
-  const [heroSettings, setHeroSettings] = useState<{
-    backgroundType: string;
-    backgroundUrl: string;
-    overlayColor: string;
-    overlayOpacity: number;
-  } | null>(initialHeroSettings || null);
+  const [heroSettings, setHeroSettings] = useState<HeroSettings | null>(initialHeroSettings || null);
 
   // Scroll to top when homepage loads (fixes SPA navigation scroll issue).
   // A hash means we were sent here to reach a specific section (e.g. the
@@ -91,8 +98,11 @@ const Header = ({ heroSettings: initialHeroSettings }: { heroSettings?: HeroSett
     fetchHeroSettings();
   }, [initialHeroSettings]);
 
-  // Fetch languages from API
+  // Languages and cabins come from the server component parent for SSR (see
+  // app/lib/nav.ts) so the nav dropdowns render real links on first paint.
+  // Fallback: fetch client-side only if not provided.
   useEffect(() => {
+    if (initialLanguages) return;
     const fetchLanguages = async () => {
       try {
         const response = await fetch('/api/languages');
@@ -113,9 +123,10 @@ const Header = ({ heroSettings: initialHeroSettings }: { heroSettings?: HeroSett
     };
 
     fetchLanguages();
-  }, []);
+  }, [initialLanguages]);
 
   useEffect(() => {
+    if (initialCabins) return;
     const fetchCabins = async () => {
       try {
         const response = await fetch('/api/cabins');
@@ -129,7 +140,7 @@ const Header = ({ heroSettings: initialHeroSettings }: { heroSettings?: HeroSett
       }
     };
     fetchCabins();
-  }, []);
+  }, [initialCabins]);
 
   // Navigate to same page with different locale (preserving query params).
   // Reads window.location directly rather than useSearchParams() - that
@@ -490,13 +501,13 @@ const Header = ({ heroSettings: initialHeroSettings }: { heroSettings?: HeroSett
         </div>
       </header>
       <div className="absolute inset-0 flex flex-col items-center justify-start md:justify-center text-white text-center px-6 md:px-4 z-10 mt-[180px] md:mt-0 pt-6 md:pt-0 pb-16 md:pb-0">
-        <h1 className="font-jost font-normal text-[15px] md:text-[24px] uppercase mb-3 md:mb-6" style={{ letterSpacing: '0.15px' }}>{tHome('hero.subtitle', 'Luxury Cabines with Private Wellness')}</h1>
+        <h1 className="font-jost font-normal text-[15px] md:text-[24px] uppercase mb-3 md:mb-6" style={{ letterSpacing: '0.15px' }}>{heroSettings?.subtitle || 'Luxury Cabines with Private Wellness'}</h1>
         <p className="font-logga font-normal text-[32px] md:text-[68px] uppercase leading-tight">
-          {tHome('hero.title_sleep', 'Sleep,')} <span className="text-customyellow">{tHome('hero.title_highlight', 'Eat & Relax')}</span><br />
-          {tHome('hero.title_above', 'Above the Trees')}
+          {heroSettings?.titleSleep || 'Sleep,'} <span className="text-customyellow">{heroSettings?.titleHighlight || 'Eat & Relax'}</span><br />
+          {heroSettings?.titleAbove || 'Above the Trees'}
         </p>
         <p className="font-jost font-normal text-[14px] md:text-[18px] max-w-xl mt-4 mb-6 md:mt-6 md:mb-16" style={{ letterSpacing: '0.15px' }}>
-          {tHome('hero.description', 'Experience luxury treehouse living above the forest canopy in the Belgian Ardennes.')}
+          {heroSettings?.description || 'Experience luxury treehouse living above the forest canopy in the Belgian Ardennes.'}
         </p>
 
         {/* Custom search widget (date range + guests) */}

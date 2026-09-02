@@ -11,9 +11,34 @@ interface HeroSettings {
   backgroundUrl: string;
   overlayColor: string;
   overlayOpacity: number;
+  subtitle?: string;
+  titleSleep?: string;
+  titleHighlight?: string;
+  titleAbove?: string;
+  description?: string;
 }
 
-export default function ConditionalHeader({ heroSettings }: { heroSettings?: HeroSettings }) {
+interface NavLanguage {
+  code: string;
+  name: string;
+  isDefault: boolean;
+}
+
+interface NavCabin {
+  id: string;
+  slug: string;
+  name: string;
+}
+
+export default function ConditionalHeader({
+  heroSettings,
+  languages,
+  cabins,
+}: {
+  heroSettings?: HeroSettings;
+  languages?: NavLanguage[];
+  cabins?: NavCabin[];
+}) {
   const pathname = usePathname();
   // Home page is now at /{locale} (e.g., /en, /fr, /de, /nl)
   const isHomePage = pathname === '/' || locales.some(locale => pathname === `/${locale}`);
@@ -56,13 +81,13 @@ export default function ConditionalHeader({ heroSettings }: { heroSettings?: Her
 
   // On other pages, always show Header2
   if (!isHomePage) {
-    return <Header2 />;
+    return <Header2 languages={languages} cabins={cabins} />;
   }
 
   // On homepage, show both: Header always (for hero), and Header2 on top when scrolled
   return (
     <>
-      <Header heroSettings={heroSettings} />
+      <Header heroSettings={heroSettings} languages={languages} cabins={cabins} />
       <div
         className={`transition-opacity duration-300 ease-in-out ${
           showHeader2
@@ -70,7 +95,7 @@ export default function ConditionalHeader({ heroSettings }: { heroSettings?: Her
             : 'opacity-0 pointer-events-none'
         }`}
       >
-        <Header2 />
+        <Header2 languages={languages} cabins={cabins} />
       </div>
     </>
   );
