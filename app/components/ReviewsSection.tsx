@@ -40,7 +40,7 @@ interface ReviewsSectionProps {
 const CHANNEL_CONFIG: Record<string, { label: string; color: string }> = {
   AIRBNB: { label: 'Airbnb', color: '#FF5A5F' },
   BOOKING_COM: { label: 'Booking.com', color: '#003580' },
-  CASAPILOT: { label: 'CasaPilot', color: '#2c3e50' },
+  CASAPILOT: { label: 'Casapilot', color: '#2c3e50' },
   WEBSITE: { label: 'Cabaneau', color: '#495D4D' },
 };
 
@@ -70,7 +70,7 @@ function ChannelLogo({ channel, size = 32 }: { channel: string; size?: number })
       return (
         <img
           src="/assets/casapilot-symbol.png"
-          alt="CasaPilot"
+          alt="Casapilot"
           width={size}
           height={size}
           className="object-contain"
@@ -148,7 +148,7 @@ function ChannelBadge({ channel }: { channel: string }) {
   const logos: Record<string, { src: string; alt: string; className: string }> = {
     AIRBNB: { src: '/assets/airbnb-logo.svg', alt: 'Airbnb', className: 'h-5 w-auto object-contain' },
     BOOKING_COM: { src: '/assets/booking-logo.svg', alt: 'Booking.com', className: 'h-3.5 w-auto object-contain' },
-    CASAPILOT: { src: '/assets/casapilot-logo.svg', alt: 'CasaPilot', className: 'h-5 w-auto object-contain' },
+    CASAPILOT: { src: '/assets/casapilot-logo.svg', alt: 'Casapilot', className: 'h-5 w-auto object-contain' },
     WEBSITE: { src: '/assets/cabaneau-logo-dark.svg', alt: 'Cabaneau', className: 'h-5 w-auto object-contain' },
   };
   const logo = logos[channel] || logos.WEBSITE;
@@ -164,7 +164,7 @@ const ReviewsSection = ({ title, subtitle, backgroundColor, inline = false, revi
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const { t } = useTranslations('homepage');
 
-  const displayTitle = title || t('reviews_section.title', 'GUEST REVIEWS');
+  const displayTitle = title;
 
   const scrollLeft = () => {
     if (scrollContainerRef.current) {
@@ -192,7 +192,7 @@ const ReviewsSection = ({ title, subtitle, backgroundColor, inline = false, revi
           .reviews-no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
         `}</style>
         <div className="mt-8 sm:mt-12 mb-8 sm:mb-12">
-          <h2 className="font-logga font-semibold text-[18px] md:text-[20px] mb-6 uppercase tracking-wide text-gray-800 p-4 md:p-6" style={{ backgroundColor: '#F1FAF7' }}>
+          <h2 className="font-logga font-semibold text-[18px] md:text-[20px] mb-6 uppercase tracking-wide text-gray-800 px-4 md:px-6 pt-[11px] pb-2" style={{ backgroundColor: '#F1FAF7' }}>
             {displayTitle}
           </h2>
 
@@ -267,8 +267,8 @@ const ReviewsSection = ({ title, subtitle, backgroundColor, inline = false, revi
           scrollbar-width: none;
         }
       `}</style>
-      <section className="py-6 md:py-5 md:mt-12" style={bgStyle}>
-        <div className="max-w-[1390px] mx-auto px-4 md:px-20">
+      <section className="py-6 md:py-5 px-0 md:px-20 bg-white md:mt-12" style={bgStyle}>
+        <div className="max-w-[1390px] mx-auto px-4 md:px-0">
           {/* Section Title */}
           <h2 className={`font-logga text-[28px] md:text-[42px] font-semibold md:font-normal text-center pt-6 md:pt-10 ${subtitle ? 'mb-3 md:mb-4' : 'mb-8 md:mb-12'}`}>
             {displayTitle}
@@ -292,7 +292,7 @@ const ReviewsSection = ({ title, subtitle, backgroundColor, inline = false, revi
                       {stats.overall.averageRating.toFixed(1)}
                     </div>
                     <div className="text-left">
-                      <div className="font-jost text-[13px] font-medium">{t('reviews_section.overall', 'Overall')}</div>
+                      <div className="font-jost text-[13px] font-medium">{t('reviews_section.overall')}</div>
                       <div className="flex items-center gap-1">
                         <StarRating rating={stats.overall.averageRating} size="sm" />
                         <span className="font-jost text-[11px] opacity-70">({stats.overall.count})</span>
@@ -362,11 +362,11 @@ const ReviewsSection = ({ title, subtitle, backgroundColor, inline = false, revi
                       {stats.overall.averageRating.toFixed(1)}
                     </div>
                     <div>
-                      <div className="font-jost font-medium text-[14px]">{t('reviews_section.overall', 'Overall')}</div>
+                      <div className="font-jost font-medium text-[14px]">{t('reviews_section.overall')}</div>
                       <div className="flex items-center gap-1.5">
                         <StarRating rating={stats.overall.averageRating} size="sm" />
                         <span className="font-jost text-[13px] opacity-80">
-                          ({stats.overall.count} {t('reviews_section.reviews', 'reviews')})
+                          ({stats.overall.count} {t('reviews_section.reviews')})
                         </span>
                       </div>
                     </div>
