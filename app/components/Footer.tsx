@@ -81,21 +81,14 @@ const Footer = ({ sections: initialSections }: { sections?: FooterSection[] } = 
 
   // Hide footer on specific pages (booking flow)
   const shouldHideFooter = (() => {
-    // Exact matches: /cabins, /search (with optional locale prefix)
+    // Exact matches: /search (with optional locale prefix)
     const exactPatterns = ['/search'];
     const isExactMatch = exactPatterns.some(pattern => {
       const regex = new RegExp(`^(/[a-z]{2})?${pattern}$`);
       return regex.test(pathname);
     });
 
-    // Prefix matches: /cabins/* (cabin detail pages)
-    const prefixPatterns = ['/cabins/'];
-    const isPrefixMatch = prefixPatterns.some(pattern => {
-      const regex = new RegExp(`^(/[a-z]{2})?${pattern}`);
-      return regex.test(pathname);
-    });
-
-    return isExactMatch || isPrefixMatch;
+    return isExactMatch;
   })();
 
   // Footer sections come from the server component parent for SSR - see the
@@ -138,13 +131,13 @@ const Footer = ({ sections: initialSections }: { sections?: FooterSection[] } = 
     const section = getSection('LOGO_DESCRIPTION');
     const config = section?.config || {};
     const logoUrl = (config.logoUrl as string) || '/assets/Group 1.png';
-    const description = (config.description as string) || t('description_line1', 'Luxury Cabines with private wellness.') + '\n' + t('description_line2', 'Eat, sleep & relax above the trees in Eupen, Belgium.');
+    const description = (config.description as string) || '';
     const lines = description.split('\n');
 
     return (
       <div className="w-[240px] flex-shrink-0">
         <Image src={logoUrl} alt="Cabanéau Logo" width={150} height={50} className="mb-3" />
-        <p className="text-[13px] font-jost font-light leading-[1.4] text-white">
+        <p className="text-[14px] font-jost font-light leading-[1.4] text-white">
           {lines.map((line, i) => (
             <span key={i}>{line}{i < lines.length - 1 && <br/>}</span>
           ))}
@@ -158,8 +151,8 @@ const Footer = ({ sections: initialSections }: { sections?: FooterSection[] } = 
     const links = (section.config.links as FooterLink[]) || [];
     return (
       <div key={section.id}>
-        <h3 className="font-logga text-[16px] mb-3 text-customyellow">{section.title}</h3>
-        <ul className="space-y-1.5 font-jost font-light text-[13px] text-gray-100">
+        <h3 className="font-logga text-[17px] mb-3 text-customyellow">{section.title}</h3>
+        <ul className="space-y-1.5 font-jost font-light text-[14px] text-gray-100">
           {links.map((linkItem, index) => (
             <li key={index}>
               {linkItem.isExternal ? (
@@ -191,8 +184,8 @@ const Footer = ({ sections: initialSections }: { sections?: FooterSection[] } = 
 
     return (
       <div>
-        <h3 className="font-logga text-[16px] mb-3 text-customyellow">{section.title || t('section_contact_us', 'Contact Us')}</h3>
-        <ul className="space-y-2 font-jost font-light text-[13px] text-gray-100">
+        <h3 className="font-logga text-[17px] mb-3 text-customyellow">{section.title}</h3>
+        <ul className="space-y-2 font-jost font-light text-[14px] text-gray-100">
           {phone && (
             <li className="flex items-start gap-2">
               <svg className="w-3.5 h-3.5 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
@@ -362,7 +355,7 @@ const Footer = ({ sections: initialSections }: { sections?: FooterSection[] } = 
 
               return (
                 <>
-                  <h3 className="font-logga text-[18px] mb-4 text-customyellow">{section.title || t('section_contact_us', 'Contact Us')}</h3>
+                  <h3 className="font-logga text-[18px] mb-4 text-customyellow">{section.title}</h3>
                   <ul className="space-y-3 font-jost font-light text-[13px] text-gray-100">
                     {phone && (
                       <li className="flex items-start gap-2">
@@ -457,7 +450,7 @@ const Footer = ({ sections: initialSections }: { sections?: FooterSection[] } = 
               const section = getSection('LOGO_DESCRIPTION');
               const config = section?.config || {};
               const logoUrl = (config.logoUrl as string) || '/assets/Group 1.png';
-              const description = (config.description as string) || t('description_line1', 'Luxury Cabines with private wellness.') + '\n' + t('description_line2', 'Eat, sleep & relax above the trees in Eupen, Belgium.');
+              const description = (config.description as string) || '';
               const lines = description.split('\n');
 
               return (
@@ -504,7 +497,7 @@ const Footer = ({ sections: initialSections }: { sections?: FooterSection[] } = 
 };
 
 // Static fallback component when API fails or loading
-const FooterFallback = ({ t, link }: { t: (key: string, fallback: string) => string; link: (path: string) => string }) => (
+const FooterFallback = ({ t, link }: { t: (key: string) => string; link: (path: string) => string }) => (
   <footer className="bg-[#1a1a1a] text-white m-2 md:m-5">
     <div className="max-w-[1920px] mx-auto px-4 md:px-8 lg:px-20 py-8 md:py-12">
       {/* Mobile Layout */}
@@ -514,32 +507,32 @@ const FooterFallback = ({ t, link }: { t: (key: string, fallback: string) => str
             <Image src="/assets/Group 1.png" alt="Cabanéau Logo" width={150} height={50} className="max-w-full" />
           </div>
           <p className="text-[16px] font-jost font-light leading-relaxed text-gray-100 max-w-[354px]">
-            {t('description_line1', 'Luxury Cabines with private wellness.')}<br/>
-            {t('description_line2', 'Eat, sleep & relax above the trees in Eupen, Belgium.')}
+            {t('description_line1')}<br/>
+            {t('description_line2')}
           </p>
         </div>
 
         <div className="flex gap-3 mb-6">
           <Link href={link('/search')} className="bg-[#495D4D] font-heading text-white flex-1 h-[43px] flex items-center justify-center text-sm font-medium tracking-wider hover:bg-[#3d5a3d] transition whitespace-nowrap">
-            {t('button_book_now', 'BOOK NOW')}
+            {t('button_book_now')}
           </Link>
           <Link href={link('/gift-voucher')} className="bg-[#939D92] font-heading text-white flex-1 h-[43px] flex items-center justify-center text-sm font-medium tracking-wider hover:bg-[#7d8d7d] transition whitespace-nowrap">
-            {t('button_gift_voucher', 'GIFT VOUCHER')}
+            {t('button_gift_voucher')}
           </Link>
         </div>
 
         <div className="grid grid-cols-2 gap-6 mb-8">
           <div>
-            <h3 className="font-logga text-[18px] mb-4 text-customyellow">{t('section_our_cabins', 'Our Cabins')}</h3>
+            <h3 className="font-logga text-[18px] mb-4 text-customyellow">{t('section_our_cabins')}</h3>
             <ul className="space-y-2 font-jost font-light text-[13px] text-gray-100">
-              <li><Link href={link('/cabins')} className="hover:text-white transition">{t('menu_all_cabins', 'View All Cabins')}</Link></li>
+              <li><Link href={link('/cabins')} className="hover:text-white transition">{t('menu_all_cabins')}</Link></li>
             </ul>
           </div>
           <div>
-            <h3 className="font-logga text-[18px] mb-4 text-customyellow">{t('section_contact_us', 'Contact Us')}</h3>
+            <h3 className="font-logga text-[18px] mb-4 text-customyellow">{t('section_contact_us')}</h3>
             <ul className="space-y-3 font-jost font-light text-[13px] text-gray-100">
               <li>
-                <a href="mailto:hello@cabaneau.com" className="hover:text-white transition">{t('contact_email', 'hello@cabaneau.com')}</a>
+                <a href="mailto:hello@cabaneau.com" className="hover:text-white transition">{t('contact_email')}</a>
               </li>
             </ul>
           </div>
@@ -551,23 +544,23 @@ const FooterFallback = ({ t, link }: { t: (key: string, fallback: string) => str
         <div className="w-[240px] flex-shrink-0">
           <Image src="/assets/Group 1.png" alt="Cabanéau Logo" width={150} height={50} className="mb-3" />
           <p className="text-[13px] font-jost font-light leading-[1.4] text-white">
-            {t('description_line1', 'Luxury Cabines with private wellness.')}<br/>
-            {t('description_line2', 'Eat, sleep & relax above the trees in Eupen, Belgium.')}
+            {t('description_line1')}<br/>
+            {t('description_line2')}
           </p>
         </div>
 
         <div className="flex gap-12 lg:gap-16 xl:gap-20">
           <div>
-            <h3 className="font-logga text-[16px] mb-3 text-customyellow">{t('section_our_cabins', 'Our Cabins')}</h3>
+            <h3 className="font-logga text-[16px] mb-3 text-customyellow">{t('section_our_cabins')}</h3>
             <ul className="space-y-1.5 font-jost font-light text-[13px] text-gray-100">
-              <li><Link href={link('/cabins')} className="hover:text-white transition">{t('menu_all_cabins', 'View All Cabins')}</Link></li>
+              <li><Link href={link('/cabins')} className="hover:text-white transition">{t('menu_all_cabins')}</Link></li>
             </ul>
           </div>
           <div>
-            <h3 className="font-logga text-[16px] mb-3 text-customyellow">{t('section_contact_us', 'Contact Us')}</h3>
+            <h3 className="font-logga text-[16px] mb-3 text-customyellow">{t('section_contact_us')}</h3>
             <ul className="space-y-2 font-jost font-light text-[13px] text-gray-100">
               <li>
-                <a href="mailto:hello@cabaneau.com" className="hover:text-white transition">{t('contact_email', 'hello@cabaneau.com')}</a>
+                <a href="mailto:hello@cabaneau.com" className="hover:text-white transition">{t('contact_email')}</a>
               </li>
             </ul>
           </div>
@@ -575,10 +568,10 @@ const FooterFallback = ({ t, link }: { t: (key: string, fallback: string) => str
 
         <div className="flex flex-col gap-2.5 flex-shrink-0">
           <Link href={link('/search')} className="bg-[#495D4D] font-heading text-white w-[134px] h-[40px] flex items-center justify-center text-[13px] font-medium tracking-wider hover:bg-[#3d5a3d] transition whitespace-nowrap">
-            {t('button_book_now', 'BOOK NOW')}
+            {t('button_book_now')}
           </Link>
           <Link href={link('/gift-voucher')} className="bg-[#939D92] font-heading text-white w-[134px] h-[40px] flex items-center justify-center text-[13px] font-medium tracking-wider hover:bg-[#7d8d7d] transition whitespace-nowrap">
-            {t('button_gift_voucher', 'GIFT VOUCHER')}
+            {t('button_gift_voucher')}
           </Link>
         </div>
       </div>
@@ -588,10 +581,10 @@ const FooterFallback = ({ t, link }: { t: (key: string, fallback: string) => str
           <p className="text-[13px] font-jost font-light text-gray-100">{new Date().getFullYear()} Cabaneau All Rights Reserved.</p>
           <div className="flex items-center gap-4 md:gap-6">
             <Link href={link('/terms')} className="text-[13px] font-jost font-light text-gray-100 hover:text-white transition">
-              {t('link_terms', 'Terms & Conditions')}
+              {t('link_terms')}
             </Link>
             <Link href={link('/privacy')} className="text-[13px] font-jost font-light text-gray-100 hover:text-white transition">
-              {t('link_privacy', 'Privacy Policy')}
+              {t('link_privacy')}
             </Link>
           </div>
         </div>
