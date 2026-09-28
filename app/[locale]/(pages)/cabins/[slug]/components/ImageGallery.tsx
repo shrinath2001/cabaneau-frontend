@@ -16,7 +16,7 @@ interface ImageGalleryProps {
   images: (string | CabinImage)[];
   featuredImage?: string;
   onShowAllClick: () => void;
-  /** Called with the tapped image URL so the photo tour can open on it. */
+  /** Called with the clicked image URL (mobile tap or desktop thumbnail) so the photo tour can open on it. */
   onMobileImageClick?: (imageUrl: string) => void;
   /** When set, the large tile becomes a playable video instead of a photo. */
   heroVideo?: string;
@@ -26,6 +26,78 @@ interface ImageGalleryProps {
 // Helper to extract URL from either string or CabinImage
 const getImageUrl = (img: string | CabinImage): string => {
   return typeof img === 'string' ? img : img.url;
+};
+
+/**
+ * Playable hero video with a brand-colored play button overlay, shared by
+ * the desktop and mobile layouts. The triangle's own points are chosen so
+ * its centroid sits exactly on the icon's center (a plain centered glyph
+ * looks off - the flat edge reads as "heavier" than the point, so the path
+ * is shifted right to compensate) rather than nudging it with margin.
+ */
+const HeroVideoTile = ({
+  src,
+  poster,
+  heightClass,
+  label,
+  onViewAllClick,
+  viewAllLabel,
+}: {
+  src: string;
+  poster?: string;
+  heightClass: string;
+  label: string;
+  onViewAllClick?: () => void;
+  viewAllLabel?: string;
+}) => {
+  const [isPlaying, setIsPlaying] = useState(false);
+  const videoRef = useRef<HTMLVideoElement>(null);
+
+  return (
+    <div className={`relative bg-black w-full ${heightClass}`}>
+      <video
+        ref={videoRef}
+        src={src}
+        poster={poster}
+        controls
+        playsInline
+        preload="metadata"
+        className="w-full h-full object-cover"
+        onPlay={() => setIsPlaying(true)}
+        onPause={() => setIsPlaying(false)}
+        onEnded={() => setIsPlaying(false)}
+      />
+      {!isPlaying && (
+        <button
+          type="button"
+          onClick={() => videoRef.current?.play()}
+          aria-label={label}
+          className="absolute inset-0 flex items-center justify-center group"
+        >
+          <span
+            className="flex items-center justify-center w-16 h-16 rounded-full shadow-lg transition-transform group-hover:scale-110"
+            style={{ backgroundColor: '#F49A4A' }}
+          >
+            <svg className="w-6 h-6 text-white" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M7 5v14l15-7z" />
+            </svg>
+          </span>
+        </button>
+      )}
+      {onViewAllClick && (
+        <button
+          type="button"
+          onClick={(e) => {
+            e.stopPropagation();
+            onViewAllClick();
+          }}
+          className="absolute bottom-3 right-3 bg-white/90 text-black px-3 py-1 text-sm font-medium hover:bg-white transition"
+        >
+          {viewAllLabel}
+        </button>
+      )}
+    </div>
+  );
 };
 
 const ImageGallery = ({ images, featuredImage, onShowAllClick, onMobileImageClick, heroVideo, heroVideoPoster }: ImageGalleryProps) => {
@@ -49,6 +121,17 @@ const ImageGallery = ({ images, featuredImage, onShowAllClick, onMobileImageClic
   ];
 
   const totalImages = allImages.length || 1;
+
+  // Opens the photo tour scrolled to the clicked thumbnail rather than the
+  // default position - falls back to the generic "show all" entry point if
+  // no click-specific handler was passed in.
+  const openGalleryAt = (imageUrl: string) => {
+    if (onMobileImageClick) {
+      onMobileImageClick(imageUrl);
+    } else {
+      onShowAllClick();
+    }
+  };
 
   const nextImage = () => {
     setCurrentImageIndex((prev) => (prev + 1) % totalImages);
@@ -90,8 +173,18 @@ const ImageGallery = ({ images, featuredImage, onShowAllClick, onMobileImageClic
 
   return (
     <>
-      {/* Mobile View - Single Carousel */}
+      {/* Mobile View - Video (when set) or Single Carousel */}
       <div className="block md:hidden relative mb-6">
+        {heroVideo ? (
+          <HeroVideoTile
+            src={heroVideo}
+            poster={heroVideoPoster || displayImages[0]}
+            heightClass="h-[300px]"
+            label={t('gallery.play_video')}
+            onViewAllClick={onShowAllClick}
+            viewAllLabel={t('gallery.view_all')}
+          />
+        ) : (
         <div
           className="relative bg-gray-200 h-[300px] w-full cursor-pointer touch-pan-y"
           onTouchStart={handleTouchStart}
@@ -148,10 +241,11 @@ const ImageGallery = ({ images, featuredImage, onShowAllClick, onMobileImageClic
               }}
               className="bg-white/90 text-black px-3 py-1 text-sm font-medium hover:bg-white transition"
             >
-              {t('gallery.view_all', 'View all')}
+              {t('gallery.view_all')}
             </button>
           </div>
         </div>
+        )}
       </div>
 
       {/* Desktop View - Grid Layout */}
@@ -159,20 +253,16 @@ const ImageGallery = ({ images, featuredImage, onShowAllClick, onMobileImageClic
         {/* Large main tile - LEFT SIDE. Playable video when one is set,
             otherwise the first photo. */}
         {heroVideo ? (
-          <div className="relative bg-black h-[440px]">
-            <video
-              src={heroVideo}
-              poster={heroVideoPoster || displayImages[0]}
-              controls
-              playsInline
-              preload="metadata"
-              className="w-full h-full object-cover"
-            />
-          </div>
+          <HeroVideoTile
+            src={heroVideo}
+            poster={heroVideoPoster || displayImages[0]}
+            heightClass="h-[440px]"
+            label={t('gallery.play_video')}
+          />
         ) : (
           <div
             className="relative bg-gray-200 h-[440px] cursor-pointer"
-            onClick={() => onShowAllClick()}
+            onClick={() => openGalleryAt(displayImages[0])}
           >
             <Image
               src={displayImages[0]}
@@ -189,7 +279,7 @@ const ImageGallery = ({ images, featuredImage, onShowAllClick, onMobileImageClic
           {/* Top left */}
           <div
             className="relative bg-gray-200 cursor-pointer"
-            onClick={() => onShowAllClick()}
+            onClick={() => openGalleryAt(displayImages[1])}
           >
             <Image
               src={displayImages[1]}
@@ -203,7 +293,7 @@ const ImageGallery = ({ images, featuredImage, onShowAllClick, onMobileImageClic
           {/* Top right */}
           <div
             className="relative bg-gray-200 cursor-pointer"
-            onClick={() => onShowAllClick()}
+            onClick={() => openGalleryAt(displayImages[2])}
           >
             <Image
               src={displayImages[2]}
@@ -217,7 +307,7 @@ const ImageGallery = ({ images, featuredImage, onShowAllClick, onMobileImageClic
           {/* Bottom left */}
           <div
             className="relative bg-gray-200 cursor-pointer"
-            onClick={() => onShowAllClick()}
+            onClick={() => openGalleryAt(displayImages[3])}
           >
             <Image
               src={displayImages[3]}
@@ -231,7 +321,7 @@ const ImageGallery = ({ images, featuredImage, onShowAllClick, onMobileImageClic
           {/* Bottom right with "SHOW ALL PICTURES" button */}
           <div
             className="relative bg-gray-200 cursor-pointer"
-            onClick={() => onShowAllClick()}
+            onClick={() => openGalleryAt(displayImages[4])}
           >
             <Image
               src={displayImages[4]}
@@ -249,7 +339,7 @@ const ImageGallery = ({ images, featuredImage, onShowAllClick, onMobileImageClic
                 }}
                 className="bg-white px-6 py-3 text-sm font-semibold hover:bg-gray-50 transition shadow-lg border border-gray-200"
               >
-                {t('gallery.show_all_pictures', 'SHOW ALL PICTURES')}
+                {t('gallery.show_all_pictures')}
               </button>
             </div>
           </div>
