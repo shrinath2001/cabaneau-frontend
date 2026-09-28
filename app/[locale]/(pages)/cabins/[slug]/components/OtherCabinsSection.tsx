@@ -76,7 +76,7 @@ const OtherCabinsSection = ({ cabins: rawCabins }: OtherCabinsSectionProps) => {
     rating: cabin.rating ?? 5,
     area: cabin.squareMeters ? `${cabin.squareMeters}m²` : '',
     capacity: cabin.capacity
-      ? `2-${cabin.capacity} ${t('detail.persons', 'Persons')}`
+      ? `2-${cabin.capacity} ${t('detail.persons')}`
       : '',
     shortDescription: cabin.shortDescription,
     availability: cabin.nextAvailableDate
@@ -84,7 +84,7 @@ const OtherCabinsSection = ({ cabins: rawCabins }: OtherCabinsSectionProps) => {
           locale === 'en' ? 'en-GB' : locale,
           { day: 'numeric', month: 'short' }
         )
-      : t('detail.available_today', 'Today'),
+      : t('detail.available_today'),
     price: cabin.nightlyRate
       ? `${Math.round(cabin.nightlyRate)} €`
       : cabin.basePrice
@@ -99,10 +99,10 @@ const OtherCabinsSection = ({ cabins: rawCabins }: OtherCabinsSectionProps) => {
   return (
     <div className="mt-8 sm:mt-12 mb-8 sm:mb-12">
       <h2
-        className="font-logga font-semibold text-[18px] md:text-[20px] mb-6 uppercase tracking-wide text-gray-800 p-4 md:p-6"
+        className="font-logga font-semibold text-[18px] md:text-[20px] mb-6 uppercase tracking-wide text-gray-800 px-4 md:px-6 pt-[11px] pb-2"
         style={{ backgroundColor: '#F1FAF7' }}
       >
-        {t('detail.other_cabins', 'OTHER CABINS')}
+        {t('detail.other_cabins')}
       </h2>
 
       <div className="flex gap-4 overflow-x-auto py-8 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden snap-x">

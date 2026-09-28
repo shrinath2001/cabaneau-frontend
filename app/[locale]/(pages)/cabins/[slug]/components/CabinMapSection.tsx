@@ -52,10 +52,10 @@ const CabinMapSection = ({
   return (
     <div className="mt-8 sm:mt-12 mb-8 sm:mb-12">
       <h2
-        className="font-logga font-semibold text-[18px] md:text-[20px] mb-6 uppercase tracking-wide text-gray-800 p-4 md:p-6"
+        className="font-logga font-semibold text-[18px] md:text-[20px] mb-6 uppercase tracking-wide text-gray-800 px-4 md:px-6 pt-[11px] pb-2"
         style={{ backgroundColor: '#F1FAF7' }}
       >
-        {t('detail.where_youll_be', "WHERE YOU'LL BE")}
+        {t('detail.where_youll_be')}
       </h2>
 
       <div className="relative w-full h-[280px] sm:h-[380px] lg:h-[420px] bg-gray-200 overflow-hidden">
@@ -63,8 +63,8 @@ const CabinMapSection = ({
           src={mapSrc}
           title={
             cabinName
-              ? `${cabinName} ${t('detail.map_title', 'location map')}`
-              : t('detail.map_title', 'location map')
+              ? `${cabinName} ${t('detail.map_title')}`
+              : t('detail.map_title')
           }
           className="w-full h-full border-0"
           loading="lazy"
@@ -84,7 +84,7 @@ const CabinMapSection = ({
             rel="noopener noreferrer"
             className="font-jost font-medium text-[14px] text-[#495D4D] underline hover:text-[#3d5a3d] transition-colors"
           >
-            {t('detail.get_directions', 'Get directions')}
+            {t('detail.get_directions')}
           </a>
         </div>
       )}

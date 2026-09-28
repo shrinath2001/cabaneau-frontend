@@ -2,6 +2,7 @@
 
 import Image from 'next/image';
 import { useTranslations } from '@/app/providers/TranslationsProvider';
+import { stripPastedFormatting } from '@/app/lib/richText';
 
 interface HostsConfig {
   names?: string;
@@ -28,10 +29,10 @@ const HostsSection = ({
 }: HostsSectionProps) => {
   const { t } = useTranslations('homepage');
 
-  const displayTitle = title || t('hosts_section.title', 'THE HOSTS');
-  const displayNames = config?.names || t('hosts_section.names', 'DANIEL & YANNICK');
+  const displayTitle = title;
+  const displayNames = config?.names;
   const displayImage = config?.image || '/assets/d206536ef067f64b29cad184324fe360bb763e30.jpg';
-  const displayDescription = config?.description || t('hosts_section.description', 'Welcome to our treehouse retreat. We look forward to hosting you in our unique accommodations.');
+  const displayDescription = config?.description || '';
   const phone = config?.phone;
   const email = config?.email;
   const instagram = config?.instagram;
@@ -40,14 +41,14 @@ const HostsSection = ({
   const bgStyle = backgroundColor ? { backgroundColor } : {};
 
   return (
-    <section className="py-6 md:py-5 px-4 md:px-20 bg-tint md:mt-12" style={bgStyle}>
+    <section className="pt-6 md:pt-10 pb-12 md:pb-20 px-4 md:px-20 bg-tint md:mt-12" style={bgStyle}>
       <div className="container mx-auto">
         <div className="max-w-[1390px] mx-auto">
-          <h2 className={`font-logga text-[28px] md:text-[42px] font-semibold md:font-normal text-left pt-6 md:pt-10 ${subtitle ? 'mb-3 md:mb-4' : 'mb-10 md:mb-16'}`}>
+          <h2 className={`font-logga text-[28px] md:text-[42px] font-semibold md:font-normal text-center pt-6 md:pt-10 ${subtitle ? 'mb-3 md:mb-4' : 'mb-10 md:mb-16'}`}>
             {displayTitle}
           </h2>
           {subtitle && (
-            <p className="font-jost font-light text-left text-gray-600 text-base md:text-lg mb-10 md:mb-16">
+            <p className="font-jost font-light text-center text-gray-600 text-base md:text-lg mb-10 md:mb-16">
               {subtitle}
             </p>
           )}
@@ -72,14 +73,14 @@ const HostsSection = ({
                 {displayNames}
               </h3>
               <div
-                className="font-jost font-light text-[16px] md:text-[18px] leading-relaxed"
+                className="font-jost font-light text-[14px] md:text-[16px] leading-relaxed [&_*]:font-jost! [&_*]:text-inherit! [&_*]:text-[14px]! md:[&_*]:text-[16px]!"
                 style={{ color: '#706C6C' }}
-                dangerouslySetInnerHTML={{ __html: displayDescription }}
+                dangerouslySetInnerHTML={{ __html: stripPastedFormatting(displayDescription) }}
               />
               {hasContactDetails && (
                 <div className="mt-6 md:mt-8">
                   <h4 className="font-heading font-medium text-[16px] md:text-[18px] tracking-widest uppercase mb-4 text-[#495D4D]">
-                    {t('hosts_section.get_in_touch', 'GET IN TOUCH')}
+                    {t('hosts_section.get_in_touch')}
                   </h4>
                   <ul className="flex flex-col gap-3 font-jost font-light text-[16px] md:text-[18px]">
                     {phone && (

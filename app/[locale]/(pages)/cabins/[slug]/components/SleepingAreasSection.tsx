@@ -6,9 +6,10 @@ import Image from 'next/image';
 interface SleepingAreasSectionProps {
   locationImage?: string | null;
   cabinName?: string;
+  sleepingAreaDescription?: string;
 }
 
-const SleepingAreasSection = ({ locationImage, cabinName }: SleepingAreasSectionProps) => {
+const SleepingAreasSection = ({ locationImage, cabinName, sleepingAreaDescription }: SleepingAreasSectionProps) => {
   const { t } = useTranslations('cabin');
 
   // Use locationImage if available, otherwise fall back to default map
@@ -16,9 +17,15 @@ const SleepingAreasSection = ({ locationImage, cabinName }: SleepingAreasSection
 
   return (
     <div className="mt-8 sm:mt-12 mb-8 sm:mb-12">
-      <h2 className="font-logga font-semibold text-[18px] md:text-[20px] mb-6 uppercase tracking-wide text-gray-800 p-4 md:p-6" style={{ backgroundColor: '#F1FAF7' }}>
-        {t('detail.where_you_sleep', 'WHERE YOU WILL SLEEP')}
+      <h2 className="font-logga font-semibold text-[18px] md:text-[20px] mb-6 uppercase tracking-wide text-gray-800 px-4 md:px-6 pt-[11px] pb-2" style={{ backgroundColor: '#F1FAF7' }}>
+        {t('detail.where_you_sleep')}
       </h2>
+
+      {sleepingAreaDescription && (
+        <p className="font-jost font-light text-[15px] text-gray-800 mb-4 px-4 md:px-0">
+          {sleepingAreaDescription}
+        </p>
+      )}
 
       <div className="relative w-full h-[250px] sm:h-[350px] lg:h-[400px] bg-gray-200 overflow-hidden">
         {locationImage ? (

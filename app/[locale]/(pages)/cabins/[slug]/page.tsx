@@ -9,8 +9,12 @@ import ExtraServicesSection from "./components/ExtraServicesSection";
 import SleepingAreasSection from "./components/SleepingAreasSection";
 import ThingsToKnow from "./components/ThingsToKnow";
 import CabinMapSection from "./components/CabinMapSection";
+import AreaInfoSection from "./components/AreaInfoSection";
 import OtherCabinsSection from "./components/OtherCabinsSection";
+import CabinDescription from "./components/CabinDescription";
 import ReviewsSection from "@/app/components/ReviewsSection";
+import JsonLd from "@/app/components/JsonLd";
+import { buildProductOfferSchema, buildBreadcrumbSchema, getSiteUrl } from "@/app/lib/structured-data";
 
 interface AmenityInfo {
   id: string;
@@ -61,6 +65,7 @@ interface CabinDetails {
   longName?: string; // API returns localized string; falls back to name when unset
   slug: string;
   description?: string; // API returns localized string
+  descriptionTitle?: string; // API returns localized string
   shortDescription?: string; // API returns localized string
   capacity: number;
   addOns?: { babyAddOnId?: number | null; dogAddOnId?: number | null } | null;
@@ -72,6 +77,7 @@ interface CabinDetails {
   images: string[];
   floorPlan?: string;
   locationImage?: string;
+  sleepingAreaDescription?: string; // API returns localized string
   virtualTour?: string;
   heroVideo?: string;
   heroVideoPoster?: string;
@@ -199,6 +205,84 @@ async function getOtherCabins(currentSlug: string, locale: string): Promise<Reco
   }
 }
 
+/**
+ * Fetches the same nightly-rate figure shown as "from X €/night" on the
+ * homepage/cabins-list cards for this cabin (see CabinsSection.tsx's
+ * `cabin.nightlyRate ?? cabin.basePrice` mapping). The cabin detail page
+ * itself has no static visible price (BookingSection is client-side and
+ * date-dependent), so this is the closest available live figure - not a
+ * value literally rendered as text on this page. See the JSON-LD plan's
+ * price-parity caveat before treating this as fully rich-results-safe.
+ */
+async function getCabinNightlyRate(slug: string, locale: string): Promise<number | null> {
+  const apiKey = process.env.API_KEY;
+  const apiBaseUrl = process.env.API_BASE_URL || 'http://localhost:3000/api/v1';
+
+  try {
+    const response = await fetch(`${apiBaseUrl}/cabins/homepage`, {
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': apiKey || '',
+        'Accept-Language': locale || 'en',
+      },
+      next: { revalidate: 60 },
+    });
+    if (!response.ok) return null;
+    const result = await response.json();
+    const rows: Array<{ slug?: string; nightlyRate?: number; basePrice?: number }> = result?.data ?? result ?? [];
+    const match = Array.isArray(rows) ? rows.find((c) => c.slug === slug) : undefined;
+    if (!match) return null;
+    return match.nightlyRate ?? (match.basePrice != null ? Number(match.basePrice) : null);
+  } catch (error) {
+    console.error('Error fetching cabin nightly rate:', error);
+    return null;
+  }
+}
+
+interface AreaInfoItem {
+  name: string;
+  distance: string;
+}
+
+interface AreaInfoCategory {
+  icon: string;
+  title: string;
+  items: AreaInfoItem[];
+}
+
+/**
+ * Same "Area Info" panel on every cabin page - fetched here rather than
+ * passed down, since it isn't part of the cabin record itself (see the CMS
+ * "Area Info" screen, packages/cms/src/routes/area-info.js).
+ */
+async function getAreaInfo(locale: string): Promise<AreaInfoCategory[]> {
+  const apiKey = process.env.API_KEY;
+  const apiBaseUrl = process.env.API_BASE_URL || 'http://localhost:3000/api/v1';
+
+  try {
+    const response = await fetch(`${apiBaseUrl}/site-settings/area-info`, {
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': apiKey || '',
+        'Accept-Language': locale || 'en',
+      },
+      next: { revalidate: 300 },
+    });
+    if (!response.ok) return [];
+    return await response.json();
+  } catch (error) {
+    console.error('Error fetching area info:', error);
+    return [];
+  }
+}
+
+const BREADCRUMB_LABELS: Record<string, { home: string; cabins: string }> = {
+  en: { home: 'Home', cabins: 'Cabins' },
+  fr: { home: 'Accueil', cabins: 'Chalets' },
+  de: { home: 'Startseite', cabins: 'Hütten' },
+  nl: { home: 'Home', cabins: 'Hutten' },
+};
+
 async function getCabinReviews(cabinId: string, locale: string): Promise<ReviewData[]> {
   const apiKey = process.env.API_KEY;
   const apiBaseUrl = process.env.API_BASE_URL || 'http://localhost:3000/api/v1';
@@ -269,14 +353,19 @@ export default async function CabinDetailPage({
     notFound();
   }
 
-  const [imageTags, otherCabins, reviews, translations] = await Promise.all([
+  const [imageTags, otherCabins, reviews, translations, nightlyRate, areaInfo] = await Promise.all([
     getImageTags(locale),
     getOtherCabins(cabin.slug, locale),
     getCabinReviews(cabin.id, locale),
     getTranslations(locale),
+    getCabinNightlyRate(cabin.slug, locale),
+    getAreaInfo(locale),
   ]);
 
-  const t = (key: string, fallback: string): string => translations[`cabin.${key}`] || fallback;
+  const breadcrumbLabels = BREADCRUMB_LABELS[locale] || BREADCRUMB_LABELS.en;
+  const siteUrl = getSiteUrl();
+
+  const t = (key: string): string => translations[`cabin.${key}`] || '';
 
   // The API sends rating as a decimal string ("5.0"), so coerce before
   // summing - adding it raw concatenates and yields NaN.
@@ -293,13 +382,36 @@ export default async function CabinDetailPage({
 
   return (
     <div className="bg-white min-h-screen pt-0 md:pt-4 pb-0 md:pb-5 px-0 md:px-8 lg:px-20 -mt-2 md:mt-0">
+      <JsonLd
+        data={buildProductOfferSchema(
+          {
+            slug: cabin.slug,
+            name: cabin.longName || cabin.name,
+            description: cabin.shortDescription || cabin.description,
+            featuredImage: cabin.featuredImage,
+            images: cabin.images,
+            nightlyRate,
+          },
+          locale
+        )}
+      />
+      <JsonLd
+        data={buildBreadcrumbSchema(
+          [
+            { name: breadcrumbLabels.home, url: `${siteUrl}/${locale}` },
+            { name: breadcrumbLabels.cabins, url: `${siteUrl}/${locale}/cabins` },
+            { name: cabin.longName || cabin.name, url: `${siteUrl}/${locale}/cabins/${cabin.slug}` },
+          ],
+          locale
+        )}
+      />
       <div className="max-w-[1400px] mx-auto px-0 md:px-6 py-0 md:py-2">
         {/* Cabin Long Name (falls back to Name) - Desktop only, left aligned above the gallery */}
         <h1
           className="hidden md:block font-logga font-medium text-[28px] lg:text-[32px] uppercase tracking-wide mb-3"
           style={{ color: "#212121" }}
         >
-          {(cabin.longName || cabin.name)?.toUpperCase() || "CABIN"}
+          {(cabin.longName || cabin.name)?.toUpperCase()}
         </h1>
 
         {/* Image Gallery - CabinGallery owns the photo-tour/carousel modal
@@ -319,7 +431,7 @@ export default async function CabinDetailPage({
             className="font-logga font-medium text-[22px] uppercase tracking-wide"
             style={{ color: "#212121" }}
           >
-            {cabin.name?.toUpperCase() || "CABIN"}
+            {cabin.name?.toUpperCase()}
           </h1>
         </div>
 
@@ -336,16 +448,16 @@ export default async function CabinDetailPage({
                 className="font-jost font-medium text-[16px] md:text-[20px] lg:text-[24px] mb-3 md:mb-4 uppercase tracking-wide"
                 style={{ color: "#212121" }}
               >
-                {`${cabin.capacity} ${t("detail.guests", "GUESTS")} · ${
+                {`${cabin.capacity} ${t("detail.guests")} · ${
                   cabin.bedrooms
                 } ${
                   cabin.bedrooms > 1
-                    ? t("detail.bedrooms", "BEDROOMS")
-                    : t("detail.bedroom", "BEDROOM")
+                    ? t("detail.bedrooms")
+                    : t("detail.bedroom")
                 } · ${cabin.bathrooms} ${
                   cabin.bathrooms > 1
-                    ? t("detail.bathrooms", "BATHROOMS")
-                    : t("detail.bathroom", "BATHROOM")
+                    ? t("detail.bathrooms")
+                    : t("detail.bathroom")
                 }`}
               </h2>
 
@@ -372,8 +484,8 @@ export default async function CabinDetailPage({
                   <span className="font-jost font-light underline">
                     {reviewSummary.count}{" "}
                     {reviewSummary.count === 1
-                      ? t("detail.review_singular", "review")
-                      : t("detail.review_plural", "reviews")}
+                      ? t("detail.review_singular")
+                      : t("detail.review_plural")}
                   </span>
                 </a>
               )}
@@ -427,9 +539,10 @@ export default async function CabinDetailPage({
                 )}
 
               {/* Description */}
-              <p className="font-jost font-light leading-relaxed text-[15px] md:text-[16px] mb-6 md:mb-8 text-gray-700">
-                {cabin.description || cabin.shortDescription}
-              </p>
+              <CabinDescription
+                title={cabin.descriptionTitle}
+                description={cabin.description || cabin.shortDescription}
+              />
             </div>
 
             {/* Amenities Section Component */}
@@ -452,11 +565,12 @@ export default async function CabinDetailPage({
             <SleepingAreasSection
               locationImage={cabin.locationImage}
               cabinName={cabin.name || cabin.slug}
+              sleepingAreaDescription={cabin.sleepingAreaDescription}
             />
 
             {/* Guest Reviews */}
             <div id="guest-reviews" className="scroll-mt-24">
-              <ReviewsSection reviews={reviews} inline />
+              <ReviewsSection reviews={reviews} inline title={t('detail.guest_reviews')} />
             </div>
 
             {/* Map - driven by the lat/long set in the CMS */}
@@ -468,6 +582,10 @@ export default async function CabinDetailPage({
               city={cabin.city}
               cabinName={cabin.name}
             />
+
+            {/* Area Info - same content on every cabin, edited from the CMS
+                "Area Info" screen rather than per-cabin */}
+            <AreaInfoSection title={t('detail.area_info_title')} categories={areaInfo} />
 
             {/* Things to Know Section - reads the selected dates itself from
                 the shared booking store (see ThingsToKnow.tsx) */}

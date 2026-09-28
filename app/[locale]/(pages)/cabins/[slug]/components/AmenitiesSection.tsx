@@ -11,34 +11,6 @@ interface AmenityCategory {
   displayOrder: number;
 }
 
-// Translations for amenities section
-const amenitiesTranslations: Record<string, {
-  title: string;
-  showAll: string;
-  showAllCount: (count: number) => string;
-}> = {
-  en: {
-    title: 'WHAT THIS CABIN OFFERS',
-    showAll: 'SHOW ALL AMENITIES',
-    showAllCount: (count) => `SHOW ALL ${count} AMENITIES`,
-  },
-  fr: {
-    title: 'CE QUE CETTE CABANE OFFRE',
-    showAll: 'VOIR TOUS LES ÉQUIPEMENTS',
-    showAllCount: (count) => `VOIR TOUS LES ${count} ÉQUIPEMENTS`,
-  },
-  de: {
-    title: 'WAS DIESE HÜTTE BIETET',
-    showAll: 'ALLE AUSSTATTUNGEN ANZEIGEN',
-    showAllCount: (count) => `ALLE ${count} AUSSTATTUNGEN ANZEIGEN`,
-  },
-  nl: {
-    title: 'WAT DEZE HUT BIEDT',
-    showAll: 'ALLE VOORZIENINGEN TONEN',
-    showAllCount: (count) => `ALLE ${count} VOORZIENINGEN TONEN`,
-  },
-};
-
 interface AmenityInfo {
   id: string;
   name: string;
@@ -65,8 +37,7 @@ const AmenityIcon = ({ icon }: { icon?: string }) => {
 
 const AmenitiesSection = ({ additionalAmenities, featuredAmenities }: AmenitiesSectionProps) => {
   const [showModal, setShowModal] = useState(false);
-  const { locale } = useTranslations();
-  const t = amenitiesTranslations[locale] || amenitiesTranslations.en;
+  const { t, locale } = useTranslations('cabin');
   const [categories, setCategories] = useState<AmenityCategory[]>([]);
   const [categoryMap, setCategoryMap] = useState<Record<string, string>>({});
 
@@ -102,8 +73,8 @@ const AmenitiesSection = ({ additionalAmenities, featuredAmenities }: AmenitiesS
 
   return (
     <div className="mb-8 sm:mb-12">
-      <h2 className="font-logga font-semibold text-[18px] md:text-[20px] mb-6 uppercase tracking-wide text-gray-800 p-4 md:p-6" style={{ backgroundColor: '#F1FAF7' }}>
-        {t.title}
+      <h2 className="font-logga font-semibold text-[18px] md:text-[20px] mb-6 uppercase tracking-wide text-gray-800 px-4 md:px-6 pt-[11px] pb-2" style={{ backgroundColor: '#F1FAF7' }}>
+        {t('detail.what_this_cabin_offers')}
       </h2>
       <div className="grid grid-cols-2 gap-x-6 md:gap-x-16 gap-y-4">
         {gridAmenities.map((amenity) => (
@@ -123,7 +94,10 @@ const AmenitiesSection = ({ additionalAmenities, featuredAmenities }: AmenitiesS
           className="mt-6 md:mt-8 px-6 py-3 text-white font-jost font-medium text-[14px] md:text-[16px] hover:opacity-90 transition uppercase"
           style={{ backgroundColor: '#939D92' }}
         >
-          {t.showAllCount(allAmenities.length)}
+          {t('detail.show_all_amenities_count').replace(
+            '{count}',
+            String(allAmenities.length)
+          )}
         </button>
       )}
 
