@@ -243,17 +243,13 @@ const CabinCard: React.FC<CabinCardProps> = ({
 
         {/* Info Row with Icons */}
         <div className="flex justify-between items-start mb-4">
-          <div className="flex flex-col gap-1 font-jost font-normal text-[16px]" style={{ color: '#5F5F5F' }}>
+          <div className="flex flex-row items-center gap-3 font-jost font-normal text-[16px]" style={{ color: '#5F5F5F' }}>
             <div className="flex items-center gap-1.5">
-              <svg className="w-3 h-3" viewBox="0 0 20 20" fill="currentColor">
-                <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-              </svg>
+              <i className="fa-solid fa-expand text-[11px]"></i>
               <span>{formatArea(area)}</span>
             </div>
             <div className="flex items-center gap-1.5">
-              <svg className="w-3 h-3" viewBox="0 0 20 20" fill="currentColor">
-                <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-              </svg>
+              <i className="fa-solid fa-users text-[11px]"></i>
               <span>{formatCapacity(capacity)}</span>
             </div>
           </div>
@@ -348,7 +344,7 @@ const CabinCard: React.FC<CabinCardProps> = ({
 
         {/* Book Now Button */}
         <div className="w-full py-2.5 px-4 border border-black text-black text-sm font-medium tracking-wider text-center group-hover:bg-[#F49A4A] group-hover:text-white group-hover:border-[#F49A4A] transition-all duration-300">
-          {t('card.book_now', ct.bookNow)}
+          {t('card.book_now')}
         </div>
       </div>
     </Link>
