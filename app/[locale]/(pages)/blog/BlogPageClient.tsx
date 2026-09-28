@@ -189,9 +189,42 @@ export default function BlogPageClient({
           <div className="absolute inset-0" style={{ backgroundColor: 'rgba(0, 0, 0, 0.50)' }}></div>
         </div>
         <h1 className="relative z-10 text-white text-4xl md:text-5xl lg:text-6xl font-logga text-center px-4">
-          {t('hero_title', 'BLOG')}
+          {t('hero_title')}
         </h1>
       </section>
+
+      {/* Category Tabs */}
+      {categories.length > 0 && (
+        <section className="bg-white border-b border-gray-200 relative z-30">
+          <div className="container mx-auto px-4 max-w-6xl">
+            <div className="flex justify-center gap-6 sm:gap-12 overflow-x-auto py-2">
+              <button
+                onClick={() => handleCategoryChange(null)}
+                className="py-2 px-2 text-[16px] md:text-[18px] font-medium font-heading uppercase tracking-wider transition-colors relative whitespace-nowrap"
+                style={{ color: !selectedCategory ? '#F49A4A' : '#495D4D' }}
+              >
+                {t('all_categories')}
+                {!selectedCategory && (
+                  <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#F49A4A]"></span>
+                )}
+              </button>
+              {categories.map((cat) => (
+                <button
+                  key={cat.id}
+                  onClick={() => handleCategoryChange(cat.id)}
+                  className="py-2 px-2 text-[16px] md:text-[18px] font-medium font-heading uppercase tracking-wider transition-colors relative whitespace-nowrap"
+                  style={{ color: selectedCategory === cat.id ? '#F49A4A' : '#495D4D' }}
+                >
+                  {cat.name}
+                  {selectedCategory === cat.id && (
+                    <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#F49A4A]"></span>
+                  )}
+                </button>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* Blog Content */}
       <section className="py-12 bg-white">
@@ -201,7 +234,7 @@ export default function BlogPageClient({
             <div className="relative">
               <input
                 type="text"
-                placeholder={t('search_placeholder', 'Search articles...')}
+                placeholder={t('search_placeholder')}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="w-full px-4 py-3 border border-gray-300 focus:border-[#495D4D] focus:outline-none font-jost font-light"
@@ -228,11 +261,11 @@ export default function BlogPageClient({
             <div className="flex-1">
               {loading ? (
                 <div className="text-center py-12">
-                  <p className="text-gray-600 font-jost font-light">{t('loading', 'Loading posts...')}</p>
+                  <p className="text-gray-600 font-jost font-light">{t('loading')}</p>
                 </div>
               ) : posts.length === 0 ? (
                 <div className="text-center py-12">
-                  <p className="text-gray-600 text-lg font-jost font-light">{t('no_posts', 'No blog posts found.')}</p>
+                  <p className="text-gray-600 text-lg font-jost font-light">{t('no_posts')}</p>
                   {(searchQuery || selectedCategory) && (
                     <button
                       onClick={() => {
@@ -241,7 +274,7 @@ export default function BlogPageClient({
                       }}
                       className="mt-4 text-[#F49A4A] hover:underline font-jost"
                     >
-                      {t('clear_filters', 'Clear filters')}
+                      {t('clear_filters')}
                     </button>
                   )}
                 </div>
@@ -306,7 +339,7 @@ export default function BlogPageClient({
                                 </p>
                               )}
                               <span className="text-[#F49A4A] font-jost font-medium text-sm">
-                                {t('read_more', 'Read more →')}
+                                {t('read_more')}
                               </span>
                             </div>
                           </div>
@@ -323,7 +356,7 @@ export default function BlogPageClient({
                         disabled={currentPage === 1}
                         className="px-4 py-2 border border-gray-300 text-gray-700 hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed font-jost font-light"
                       >
-                        {t('previous', 'Previous')}
+                        {t('previous')}
                       </button>
                       <div className="flex items-center gap-1">
                         {Array.from({ length: totalPages }, (_, i) => i + 1)
@@ -363,14 +396,14 @@ export default function BlogPageClient({
                         disabled={currentPage === totalPages}
                         className="px-4 py-2 border border-gray-300 text-gray-700 hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed font-jost font-light"
                       >
-                        {t('next', 'Next')}
+                        {t('next')}
                       </button>
                     </div>
                   )}
 
                   {/* Results info */}
                   <p className="mt-4 text-center text-sm text-gray-500 font-jost font-light">
-                    {t('showing_posts', 'Showing')} {(currentPage - 1) * POSTS_PER_PAGE + 1} - {Math.min(currentPage * POSTS_PER_PAGE, totalPosts)} {t('of_posts', 'of')} {totalPosts} {t('posts_label', 'posts')}
+                    {t('showing_posts')} {(currentPage - 1) * POSTS_PER_PAGE + 1} - {Math.min(currentPage * POSTS_PER_PAGE, totalPosts)} {t('of_posts')} {totalPosts} {t('posts_label')}
                   </p>
                 </>
               )}
@@ -383,11 +416,11 @@ export default function BlogPageClient({
             <aside className="hidden lg:block lg:w-[420px] flex-shrink-0 lg:sticky lg:top-24 lg:self-start">
               {/* Search */}
               <div className="bg-gray-50 p-6 mb-6">
-                <h3 className="text-lg font-logga text-[#495D4D] mb-4">{t('search_title', 'Search')}</h3>
+                <h3 className="text-lg font-logga text-[#495D4D] mb-4">{t('search_title')}</h3>
                 <div className="relative">
                   <input
                     type="text"
-                    placeholder={t('search_placeholder', 'Search articles...')}
+                    placeholder={t('search_placeholder')}
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     className="w-full px-4 py-3 border border-gray-300 focus:border-[#495D4D] focus:outline-none font-jost font-light"
