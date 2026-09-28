@@ -24,14 +24,6 @@ interface AmenitiesModalProps {
   categoryMap?: Record<string, string>;
 }
 
-// Translations for modal
-const modalTranslations: Record<string, { title: string }> = {
-  en: { title: 'What this place offers' },
-  fr: { title: 'Ce que ce lieu offre' },
-  de: { title: 'Was dieser Ort bietet' },
-  nl: { title: 'Wat deze plek biedt' },
-};
-
 // Render Font Awesome 6 icon from CMS
 // Icon stored as full class e.g., "fa-solid fa-bath" or legacy "fa-bath"
 const AmenityIcon = ({ icon }: { icon?: string }) => {
@@ -44,8 +36,7 @@ const AmenityIcon = ({ icon }: { icon?: string }) => {
 };
 
 const AmenitiesModal = ({ isOpen, onClose, amenities, categories = [], categoryMap = {} }: AmenitiesModalProps) => {
-  const { locale } = useTranslations();
-  const t = modalTranslations[locale] || modalTranslations.en;
+  const { t } = useTranslations('cabin');
 
   if (!isOpen) return null;
 
@@ -108,7 +99,7 @@ const AmenitiesModal = ({ isOpen, onClose, amenities, categories = [], categoryM
 
         {/* Content */}
         <div className="overflow-y-auto px-6 py-8">
-          <h2 className="text-[22px] font-logga font-semibold mb-6">{t.title}</h2>
+          <h2 className="text-[22px] font-logga font-semibold mb-6">{t('detail.what_this_place_offers')}</h2>
 
           {/* Amenities by Category */}
           <div className="space-y-6">

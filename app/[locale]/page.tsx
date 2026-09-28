@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Footer from "../components/Footer";
 import { getFooterSections } from "../lib/footer";
 import CabinsSection from "../components/CabinsSection";
@@ -8,12 +9,15 @@ import LocationSection from "../components/LocationSection";
 import CustomCardsSection from "../components/CustomCardsSection";
 import ReviewsSection from "../components/ReviewsSection";
 import ImageSliderSection from "../components/ImageSliderSection";
+import ImageTextSection from "../components/ImageTextSection";
 import LogoSlider from "../components/LogoSlider";
+import JsonLd from "../components/JsonLd";
+import { buildWebsiteSchema } from "../lib/structured-data";
 
 interface HomepageSection {
   id: string;
   identifier: string;
-  sectionType: 'SERVICES' | 'ACTIVITIES' | 'HOSTS' | 'LOCATION' | 'CUSTOM_CARDS' | 'REVIEWS' | 'IMAGE_SLIDER';
+  sectionType: 'SERVICES' | 'ACTIVITIES' | 'HOSTS' | 'LOCATION' | 'CUSTOM_CARDS' | 'REVIEWS' | 'IMAGE_SLIDER' | 'IMAGE_TEXT';
   title?: string;
   subtitle?: string;
   config?: Record<string, unknown>;
@@ -253,13 +257,65 @@ function renderSection(
         />
       );
 
+    case 'IMAGE_TEXT':
+      return (
+        <ImageTextSection
+          key={section.id}
+          title={title}
+          subtitle={subtitle}
+          config={config as { image?: string; content?: string }}
+          buttonText={buttonText}
+          buttonLink={buttonLink}
+          backgroundColor={backgroundColor}
+        />
+      );
+
     default:
       return null;
   }
 }
 
+interface HomepageSeo {
+  metaTitle?: string;
+  metaDescription?: string;
+}
+
+async function getHomepageSeo(locale: string): Promise<HomepageSeo> {
+  const apiKey = process.env.API_KEY || '';
+  const apiBaseUrl = process.env.API_BASE_URL || 'http://localhost:3000/api/v1';
+
+  try {
+    const res = await fetch(`${apiBaseUrl}/site-settings/homepage-seo`, {
+      headers: { 'x-api-key': apiKey, 'Accept-Language': locale || 'en' },
+      next: { revalidate: 30 },
+    });
+    if (!res.ok) return {};
+    return await res.json();
+  } catch (error) {
+    console.error('Error fetching homepage SEO:', error);
+    return {};
+  }
+}
+
 interface PageProps {
   params: Promise<{ locale: string }>;
+}
+
+export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+  const { locale } = await params;
+  const seo = await getHomepageSeo(locale);
+
+  const title = seo.metaTitle || 'Cabaneau - Luxury Cabin Rentals with Private Wellness';
+  const description = seo.metaDescription || 'Experience luxury cabins with private wellness facilities, saunas, and stunning natural surroundings. Perfect for romantic getaways and peaceful retreats.';
+
+  return {
+    title,
+    description,
+    openGraph: {
+      title,
+      description,
+    },
+  };
 }
 
 export default async function Home({ params }: PageProps) {
@@ -273,6 +329,7 @@ export default async function Home({ params }: PageProps) {
 
   return (
     <div>
+      <JsonLd data={buildWebsiteSchema(locale)} />
       <main>
         <LogoSlider />
         <CabinsSection cabins={cabins} />

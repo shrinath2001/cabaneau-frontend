@@ -85,8 +85,8 @@ const ActivitiesSection = ({
     ? items.map(item => ({ imageSrc: item.image, activityName: item.title, subtitle: item.subtitle, link: item.link }))
     : activities;
 
-  const displayTitle = title || t('activities_section.title', 'ACTIVITIES IN THE REGION');
-  const displayButtonText = buttonText || t('activities_section.button', 'DISCOVER ALL ACTIVITIES');
+  const displayTitle = title;
+  const displayButtonText = buttonText;
   const displayButtonLink = buttonLink || '/activities';
 
   const bgStyle = backgroundColor ? { backgroundColor } : {};
@@ -105,11 +105,11 @@ const ActivitiesSection = ({
           )}
           {loading ? (
             <div className="text-center py-12">
-              <p className="text-gray-600">{t('activities_section.loading', 'Loading activities...')}</p>
+              <p className="text-gray-600">{t('activities_section.loading')}</p>
             </div>
           ) : displayItems.length === 0 ? (
             <div className="text-center py-12">
-              <p className="text-gray-600 text-lg">{t('activities_section.not_found', 'Activities not found')}</p>
+              <p className="text-gray-600 text-lg">{t('activities_section.not_found')}</p>
             </div>
           ) : (
             <CardSlider label="activities">

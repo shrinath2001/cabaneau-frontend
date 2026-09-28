@@ -8,16 +8,18 @@ export interface Activity {
   subtitle: string;
   description: string;
   image: string;
-  detailImage?: string;
-  icons: string[];
+  /** Photo credit shown small in the corner of the image. Hidden when unset. */
+  imageCredit?: string;
   phone: string;
   email: string;
   website: string;
-  // Optional extended properties for detail modal
-  duration?: string;
-  startLocation?: string;
-  tags?: string[];
-  scheduleAvailability?: string;
+  // TypeORM decimal columns serialize as strings over JSON.
+  price?: number | string;
+  priceUnit?: string;
+  /** "Read More" button URL. Button is hidden when unset. */
+  readMoreUrl?: string;
+  /** "Book Now" button URL. Button is hidden when unset. */
+  bookNowUrl?: string;
 }
 
 export interface EatDrinkItem {

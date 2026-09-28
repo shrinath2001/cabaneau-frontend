@@ -51,7 +51,7 @@ export default function LogoSlider() {
           >
             <img
               src={logo.url}
-              alt={logo.alt || `Partner logo ${index + 1}`}
+              alt={logo.alt || ''}
               className="h-14 md:h-16 w-auto object-contain grayscale hover:grayscale-0 transition-all duration-300"
             />
           </div>

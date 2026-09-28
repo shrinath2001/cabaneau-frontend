@@ -164,7 +164,7 @@ const PhotoGalleryModal = ({ isOpen, onClose, images, featuredImage, imageTags, 
         .sort((a, b) => a.displayOrder - b.displayOrder)
         .map(tag => ({
           tag: tag.slug,
-          name: tag.slug === 'other' ? t('gallery.additional_photos', 'Additional photos') : tag.name,
+          name: tag.slug === 'other' ? t('gallery.additional_photos') : tag.name,
         }))
     : DEFAULT_CATEGORY_CONFIG;
 
@@ -205,7 +205,7 @@ const PhotoGalleryModal = ({ isOpen, onClose, images, featuredImage, imageTags, 
   // If no active categories, show all images under "Photos"
   if (activeCategories.length === 0 && normalizedImages.length > 0) {
     imagesByTag['other'] = normalizedImages;
-    activeCategories.push({ tag: 'other', name: t('gallery.photos', 'Photos') });
+    activeCategories.push({ tag: 'other', name: t('gallery.photos') });
   }
 
   // Build flat ordered image URL array in category display order
@@ -249,7 +249,7 @@ const PhotoGalleryModal = ({ isOpen, onClose, images, featuredImage, imageTags, 
         <button
           onClick={onClose}
           className="flex items-center text-gray-700 hover:text-black transition"
-          aria-label={t('gallery.close_gallery', 'Close photo gallery')}
+          aria-label={t('gallery.close_gallery')}
         >
           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
@@ -259,7 +259,7 @@ const PhotoGalleryModal = ({ isOpen, onClose, images, featuredImage, imageTags, 
 
       <div className="max-w-7xl mx-auto px-6 md:px-20 py-8">
         {/* Photo Tour Title */}
-        <h2 className="text-3xl font-logga font-semibold mb-8">{t('gallery.photo_tour', 'Photo tour')}</h2>
+        <h2 className="text-3xl font-logga font-semibold mb-8">{t('gallery.photo_tour')}</h2>
 
         {/* Category Thumbnails Grid - Only show categories with images */}
         {activeCategories.length > 1 && (

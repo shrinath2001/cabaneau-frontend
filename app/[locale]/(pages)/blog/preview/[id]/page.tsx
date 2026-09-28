@@ -148,7 +148,7 @@ export default function BlogPreviewPage() {
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-4 h-4 mr-2">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18" />
                 </svg>
-                {t('back_to_blog', 'Back to Blog')}
+                {t('back_to_blog')}
               </Link>
 
               <article className="blog-content">
@@ -157,7 +157,7 @@ export default function BlogPreviewPage() {
 
               {post.tags && post.tags.length > 0 && (
                 <div className="mt-8 pt-8 border-t border-gray-200">
-                  <h4 className="text-sm font-logga text-[#495D4D] mb-3">{t('tags', 'Tags:')}</h4>
+                  <h4 className="text-sm font-logga text-[#495D4D] mb-3">{t('tags')}</h4>
                   <div className="flex flex-wrap gap-2">
                     {post.tags.map((tag, index) => (
                       <span key={index} className="bg-gray-100 text-gray-600 text-sm px-3 py-1 font-jost font-light">

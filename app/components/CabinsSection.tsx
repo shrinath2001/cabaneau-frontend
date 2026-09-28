@@ -145,7 +145,7 @@ const CabinsSection = ({ cabins: rawCabins }: { cabins: RawCabin[] }) => {
     id: cabin.lodgifyId ? parseInt(cabin.lodgifyId) : index + 1,
     slug: cabin.slug || `cabin-${index + 1}`,
     images: getCabinImageUrls(cabin),
-    title: cabin.name || cabin.title || cabin.slug?.replace(/-/g, ' ').toUpperCase() || `Cabin ${index + 1}`,
+    title: cabin.name || cabin.title || cabin.slug?.replace(/-/g, ' ').toUpperCase() || '',
     rating: cabin.rating ?? 5,
     area: cabin.squareMeters ? `${cabin.squareMeters}m²` : cabin.area || '',
     capacity: formatCapacity(cabin.capacity),
@@ -205,7 +205,7 @@ const CabinsSection = ({ cabins: rawCabins }: { cabins: RawCabin[] }) => {
             {/* Header with Title */}
             <div className="flex justify-center items-center pt-6 md:pt-10 mb-10 md:mb-10 px-4 md:px-0">
               <h2 className="font-logga text-[28px] md:text-[42px] font-semibold md:font-normal text-center">
-                {t('cabins_section.title', 'OUR CABINES')}
+                {t('cabins_section.title')}
               </h2>
             </div>
 
@@ -213,7 +213,7 @@ const CabinsSection = ({ cabins: rawCabins }: { cabins: RawCabin[] }) => {
             <div className="w-full">
               {cabins.length === 0 ? (
                 <div className="text-center py-12">
-                  <p className="text-gray-500">{t('cabins_section.empty', 'No cabins available at the moment. Please check back later.')}</p>
+                  <p className="text-gray-500">{t('cabins_section.empty')}</p>
                 </div>
               ) : cabins.length > 1 ? (
                 // Carousel layout - centered while everything fits; once it

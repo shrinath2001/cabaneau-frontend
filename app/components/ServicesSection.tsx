@@ -31,8 +31,8 @@ const ServicesSection = ({
 }: ServicesSectionProps) => {
   const { t } = useTranslations('homepage');
 
-  const displayTitle = title || t('services_section.title', 'OUR SERVICES');
-  const displayButtonText = buttonText || t('services_section.button', 'DISCOVER ALL SERVICES');
+  const displayTitle = title;
+  const displayButtonText = buttonText;
   const displayButtonLink = buttonLink || '/services';
 
   const bgStyle = backgroundColor ? { backgroundColor } : {};
@@ -63,7 +63,7 @@ const ServicesSection = ({
             </CardSlider>
           ) : (
             <div className="text-center py-12">
-              <p className="text-gray-500">{t('services_section.empty', 'No services available at the moment.')}</p>
+              <p className="text-gray-500">{t('services_section.empty')}</p>
             </div>
           )}
           {displayButtonLink && (

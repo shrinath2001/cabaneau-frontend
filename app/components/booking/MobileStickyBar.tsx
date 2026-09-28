@@ -41,14 +41,14 @@ export default function MobileStickyBar({
         <div className="flex items-center justify-between px-5 py-4">
           <div className="flex flex-col">
             <span className="text-sm font-jost font-light text-gray-600">
-              {t('add_dates_for_prices', 'Add dates for prices')}
+              {t('add_dates_for_prices')}
             </span>
           </div>
           <button
             onClick={onCheckAvailability}
             className="bg-[#F49A4A] hover:bg-[#e08a3a] text-white text-sm font-jost font-bold tracking-wide uppercase py-3 px-5 transition"
           >
-            {t('check_availability', 'Check Availability')}
+            {t('check_availability')}
           </button>
         </div>
       </div>
@@ -84,17 +84,17 @@ export default function MobileStickyBar({
         <div className="flex items-center justify-between px-5 py-4">
           <div className="flex flex-col">
             <span className="text-base font-jost font-medium text-red-600">
-              {t('not_available', 'Not Available')}
+              {t('not_available')}
             </span>
             <span className="text-sm font-jost font-light text-gray-500">
-              {quote?.unavailableReason || error || t('dates_not_available', 'Selected dates are not available')}
+              {quote?.unavailableReason || error || t('dates_not_available')}
             </span>
           </div>
           <button
             onClick={onCheckAvailability}
             className="bg-gray-400 text-white text-sm font-jost font-bold tracking-wide uppercase py-3 px-5"
           >
-            {t('change_dates', 'Change Dates')}
+            {t('change_dates')}
           </button>
         </div>
       </div>
@@ -120,16 +120,16 @@ export default function MobileStickyBar({
             />
             <div
               role="dialog"
-              aria-label={t('price_details', 'Price details')}
+              aria-label={t('price_details')}
               className="absolute bottom-full left-4 right-4 mb-2 z-20 bg-white border border-gray-300 shadow-[0_-4px_16px_rgba(0,0,0,0.12)] max-h-[60vh] overflow-y-auto"
             >
               <div className="flex items-center justify-between px-4 py-3 border-b border-gray-200">
                 <span className="text-sm font-jost font-semibold text-gray-800">
-                  {t('price_details', 'Price details')}
+                  {t('price_details')}
                 </span>
                 <button
                   onClick={() => setShowPriceDetails(false)}
-                  aria-label={t('close', 'Close')}
+                  aria-label={t('close')}
                   className="text-gray-400 hover:text-gray-700 p-1"
                 >
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -141,7 +141,7 @@ export default function MobileStickyBar({
                 <div className="flex justify-between items-center">
                   <span className="text-sm font-jost font-light text-gray-600">
                     {formatCurrency(pricing.nightlyRate, pricing.currency)} ×{' '}
-                    {pricing.nights} {pricing.nights !== 1 ? t('nights_plural', 'nights') : t('night_singular', 'night')}
+                    {pricing.nights} {pricing.nights !== 1 ? t('nights_plural') : t('night_singular')}
                   </span>
                   <span className="text-sm font-jost font-light text-gray-800">
                     {formatCurrency(pricing.subtotal, pricing.currency)}
@@ -164,10 +164,10 @@ export default function MobileStickyBar({
                 {isSundayCheckout && (
                   <div className="flex justify-between items-center">
                     <span className="text-sm font-jost font-light text-gray-600">
-                      {t('line_item.lazy_sunday_checkout', 'Lazy Sunday check-out (16:00)')}
+                      {t('line_item.lazy_sunday_checkout')}
                     </span>
                     <span className="text-sm font-jost font-light text-gray-800">
-                      {t('line_item.free', 'Free')}
+                      {t('line_item.free')}
                     </span>
                   </div>
                 )}
@@ -188,7 +188,7 @@ export default function MobileStickyBar({
 
                 <div className="flex justify-between items-center pt-2 mt-1 border-t border-gray-200">
                   <span className="font-jost font-semibold text-sm text-gray-800">
-                    {t('total', 'Total')}
+                    {t('total')}
                   </span>
                   <span className="font-jost font-bold text-base text-gray-800">
                     {formatCurrency(pricing.total, pricing.currency)}
@@ -220,7 +220,7 @@ export default function MobileStickyBar({
               )}
               <button
                 onClick={() => setShowPriceDetails(true)}
-                aria-label={t('price_details', 'Price details')}
+                aria-label={t('price_details')}
                 className="text-gray-400 hover:text-gray-600 -m-1 p-1"
               >
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -229,14 +229,14 @@ export default function MobileStickyBar({
               </button>
             </div>
             <span className="text-sm font-jost font-light text-gray-500">
-              {t('for', 'For')} {pricing.nights} {pricing.nights !== 1 ? t('nights_plural', 'nights') : t('night_singular', 'night')} · {formatDateRange(checkIn, checkOut)}
+              {t('for')} {pricing.nights} {pricing.nights !== 1 ? t('nights_plural') : t('night_singular')} · {formatDateRange(checkIn, checkOut)}
             </span>
             {onChangeDates && (
               <button
                 onClick={onChangeDates}
                 className="text-xs font-jost text-[#495D4D] hover:text-[#3d5a3d] underline text-left mt-1"
               >
-                {t('change_dates', 'Change dates')}
+                {t('change_dates')}
               </button>
             )}
           </div>
@@ -244,7 +244,7 @@ export default function MobileStickyBar({
             onClick={handleReserve}
             className="bg-[#495D4D] hover:bg-[#3d5a3d] text-white text-sm font-jost font-bold tracking-wide uppercase py-3 px-5 transition"
           >
-            {t('reserve', 'Reserve')}
+            {t('reserve')}
           </button>
         </div>
       </div>
@@ -268,15 +268,15 @@ export default function MobileStickyBar({
             {quote.minPrice ? (
               <>
                 <span className="text-lg font-jost font-bold text-gray-900">
-                  {t('from', 'From')} {formatCurrency(quote.minPrice, quote.currency || 'EUR')}/{t('night_singular', 'night')}
+                  {t('from')} {formatCurrency(quote.minPrice, quote.currency || 'EUR')}/{t('night_singular')}
                 </span>
                 <span className="text-sm font-jost font-light text-gray-500">
-                  {t('final_price_on_booking', 'Final price on booking page')}
+                  {t('final_price_on_booking')}
                 </span>
               </>
             ) : (
               <span className="text-sm font-jost font-light text-gray-600">
-                {t('view_pricing', 'View pricing')}
+                {t('view_pricing')}
               </span>
             )}
             {onChangeDates && (
@@ -284,7 +284,7 @@ export default function MobileStickyBar({
                 onClick={onChangeDates}
                 className="text-xs font-jost text-[#495D4D] hover:text-[#3d5a3d] underline text-left mt-1"
               >
-                {t('change_dates', 'Change dates')}
+                {t('change_dates')}
               </button>
             )}
           </div>
@@ -292,7 +292,7 @@ export default function MobileStickyBar({
             onClick={handleReserve}
             className="bg-[#F49A4A] hover:bg-[#e08a3a] text-white text-sm font-jost font-bold tracking-wide uppercase py-3 px-5 transition"
           >
-            {t('book_now', 'Book Now')}
+            {t('book_now')}
           </button>
         </div>
       </div>

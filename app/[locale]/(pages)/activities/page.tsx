@@ -24,9 +24,15 @@ interface APIActivity {
   tagline?: string;
   description: string;
   featuredImage?: string;
+  imageCredit?: string;
   images?: string[];
   category: string;
+  // TypeORM decimal columns serialize as strings over JSON.
+  price?: number | string;
+  priceUnit?: string;
   externalLink?: string;
+  readMoreUrl?: string;
+  bookNowUrl?: string;
   contactPhone?: string;
   contactEmail?: string;
   displayOrder: number;
@@ -47,11 +53,14 @@ function transformActivity(apiActivity: APIActivity, index: number): Activity {
     subtitle: apiActivity.tagline || "",
     description: apiActivity.description,
     image: apiActivity.featuredImage || "/assets/d206536ef067f64b29cad184324fe360bb763e30.jpg",
-    detailImage: apiActivity.images?.[0],
-    icons: [],
+    imageCredit: apiActivity.imageCredit,
     phone: apiActivity.contactPhone || "",
     email: apiActivity.contactEmail || "",
     website: apiActivity.externalLink || "",
+    price: apiActivity.price,
+    priceUnit: apiActivity.priceUnit,
+    readMoreUrl: apiActivity.readMoreUrl,
+    bookNowUrl: apiActivity.bookNowUrl,
   };
 }
 

@@ -10,6 +10,8 @@ import { isValidLocale, locales, type Locale } from '../lib/i18n';
 import ConditionalHeader from '../components/ConditionalHeader';
 import PromoBanner from '../components/PromoBanner';
 import WhatsAppWidget from '../components/WhatsAppWidget';
+import JsonLd from '../components/JsonLd';
+import { buildOrganizationSchema, type BusinessSchemaData } from '../lib/structured-data';
 
 
 interface HeroSettings {
@@ -35,6 +37,35 @@ async function getHeroSettings(locale: string): Promise<HeroSettings> {
     });
     if (!res.ok) return defaults;
     return await res.json();
+  } catch {
+    return defaults;
+  }
+}
+
+async function getBusinessSchemaData(): Promise<BusinessSchemaData> {
+  const apiKey = process.env.API_KEY || '';
+  const apiBaseUrl = process.env.API_BASE_URL || 'http://localhost:3002/api/v1';
+  const defaults: BusinessSchemaData = {
+    legalName: '',
+    logoUrl: '',
+    telephone: '',
+    streetAddress: '',
+    addressLocality: '',
+    postalCode: '',
+    addressCountry: 'BE',
+    latitude: null,
+    longitude: null,
+    priceRange: '',
+    sameAs: [],
+    supportedLanguages: [],
+  };
+  try {
+    const res = await fetch(`${apiBaseUrl}/site-settings/business-schema`, {
+      headers: { 'x-api-key': apiKey },
+      next: { revalidate: 300 },
+    });
+    if (!res.ok) return defaults;
+    return { ...defaults, ...(await res.json()) };
   } catch {
     return defaults;
   }
@@ -67,12 +98,15 @@ export default async function LocaleLayout({
     notFound();
   }
 
-  // Fetch translations, hero settings, and global nav data
-  const [translations, heroSettings, navLanguages, navCabins] = await Promise.all([
+  // Fetch translations, hero settings, global nav data, and the business
+  // structured-data settings (CMS-editable, powers the site-wide Organization
+  // JSON-LD block below)
+  const [translations, heroSettings, navLanguages, navCabins, businessSchema] = await Promise.all([
     getTranslations(locale),
     getHeroSettings(locale),
     getNavLanguages(),
     getNavCabins(locale),
+    getBusinessSchemaData(),
   ]);
 
   return (
@@ -84,6 +118,10 @@ export default async function LocaleLayout({
           crossOrigin="anonymous"
           strategy="beforeInteractive"
         />
+        {/* Site-wide Organization/LodgingBusiness JSON-LD - other pages
+            reference this by @id instead of repeating it (see
+            buildWebsiteSchema/buildProductOfferSchema/buildBlogPostingSchema) */}
+        <JsonLd data={buildOrganizationSchema(businessSchema, locale)} />
       </head>
       <body className="font-raleway antialiased">
         <TranslationsProvider initialTranslations={translations} locale={locale}>

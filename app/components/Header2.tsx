@@ -157,7 +157,7 @@ const Header2 = ({
                 }}
                 className={`font-heading font-medium text-[18px] hover:text-[#F49A4A] transition-colors uppercase flex items-center gap-1 ${isActive('/cabins') ? 'text-[#F49A4A]' : 'text-[#495D4D]'}`}
               >
-                {t('link.our_cabins', 'Our Cabins')}
+                {t('link.our_cabins')}
                 <svg className={`w-4 h-4 transition-transform ${isCabinsOpen ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                 </svg>
@@ -177,13 +177,13 @@ const Header2 = ({
               )}
             </div>
             <Link href={link('/activities')} className={`font-heading font-medium text-[18px] hover:text-[#F49A4A] transition-colors uppercase ${isActive('/activities') ? 'text-[#F49A4A]' : 'text-[#495D4D]'}`}>
-              {t('link.activities', 'Activities')}
+              {t('link.activities')}
             </Link>
             <Link href={link('/eat-drink')} className={`font-heading font-medium text-[18px] hover:text-[#F49A4A] transition-colors uppercase ${isActive('/eat-drink') ? 'text-[#F49A4A]' : 'text-[#495D4D]'}`}>
-              {t('link.eat_drink', 'Eat & Drink')}
+              {t('link.eat_drink')}
             </Link>
             <Link href={link('/blog')} className={`font-heading font-medium text-[18px] hover:text-[#F49A4A] transition-colors uppercase ${isActive('/blog') ? 'text-[#F49A4A]' : 'text-[#495D4D]'}`}>
-              {t('link.blog', 'Blog')}
+              {t('link.blog')}
             </Link>
           </nav>
           <div className="hidden lg:flex items-center space-x-3 lg:space-x-4">
@@ -191,13 +191,13 @@ const Header2 = ({
               href={link('/gift-voucher')}
               className="text-white w-[134px] h-[50px] flex items-center justify-center font-heading font-medium text-sm bg-[#939D92] hover:bg-[#7d8d7d] transition uppercase"
             >
-              {t('button.gift_voucher', 'Gift Voucher')}
+              {t('button.gift_voucher')}
             </Link>
             <Link
               href={link('/search')}
               className="bg-[#495D4D] text-white w-[134px] h-[50px] flex items-center justify-center font-heading font-medium text-sm hover:bg-[#3d5a3d] transition uppercase"
             >
-              {t('button.book_now', 'Book Now')}
+              {t('button.book_now')}
             </Link>
             {/* Language Selector */}
             <div className="relative">
@@ -237,7 +237,7 @@ const Header2 = ({
               href={link('/search')}
               className="bg-[#495D4D] text-white px-3 py-2 flex items-center justify-center font-heading font-medium text-xs hover:bg-[#3d5a3d] transition uppercase"
             >
-              {t('button.book_now', 'Book Now')}
+              {t('button.book_now')}
             </Link>
 
             {/* Language Selector */}
@@ -362,7 +362,7 @@ const Header2 = ({
                 onClick={() => setIsMobileCabinsOpen(!isMobileCabinsOpen)}
                 className={`font-heading font-medium text-center py-4 text-[16px] tracking-wider uppercase flex items-center justify-center gap-2 ${isActive('/cabins') ? 'text-[#F49A4A]' : 'text-[#495D4D]'}`}
               >
-                {t('link.our_cabins', 'Our Cabins')}
+                {t('link.our_cabins')}
                 <svg className={`w-4 h-4 transition-transform ${isMobileCabinsOpen ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                 </svg>
@@ -386,21 +386,21 @@ const Header2 = ({
                 onClick={() => setIsMenuOpen(false)}
                 className={`font-heading font-medium text-center py-4 text-[16px] tracking-wider uppercase ${isActive('/activities') ? 'text-[#F49A4A]' : 'text-[#495D4D]'}`}
               >
-                {t('link.activities', 'Activities')}
+                {t('link.activities')}
               </Link>
               <Link
                 href={link('/eat-drink')}
                 onClick={() => setIsMenuOpen(false)}
                 className={`font-heading font-medium text-center py-4 text-[16px] tracking-wider uppercase ${isActive('/eat-drink') ? 'text-[#F49A4A]' : 'text-[#495D4D]'}`}
               >
-                {t('link.eat_drink', 'Eat & Drink')}
+                {t('link.eat_drink')}
               </Link>
               <Link
                 href={link('/blog')}
                 onClick={() => setIsMenuOpen(false)}
                 className={`font-heading font-medium text-center py-4 text-[16px] tracking-wider uppercase ${isActive('/blog') ? 'text-[#F49A4A]' : 'text-[#495D4D]'}`}
               >
-                {t('link.blog', 'Blog')}
+                {t('link.blog')}
               </Link>
 
               {/* Buttons */}
@@ -410,14 +410,14 @@ const Header2 = ({
                   onClick={() => setIsMenuOpen(false)}
                   className="block text-white text-center py-3 bg-[#939D92] hover:bg-[#7d8d7d] transition font-heading font-medium text-[14px] tracking-wider uppercase"
                 >
-                  {t('button.gift_voucher', 'Gift Voucher')}
+                  {t('button.gift_voucher')}
                 </Link>
                 <Link
                   href={link('/search')}
                   onClick={() => setIsMenuOpen(false)}
                   className="block bg-[#495D4D] text-white text-center py-3 hover:bg-[#3d5a3d] transition font-heading font-medium text-[14px] tracking-wider uppercase"
                 >
-                  {t('button.book_now', 'Book Now')}
+                  {t('button.book_now')}
                 </Link>
               </div>
             </nav>

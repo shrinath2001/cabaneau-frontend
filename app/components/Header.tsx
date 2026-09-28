@@ -226,7 +226,7 @@ const Header = ({
                   }}
                   className="font-heading font-medium text-[18px] text-white hover:text-[#F49A4A] transition-colors uppercase flex items-center gap-1"
                 >
-                  {t('link.our_cabins', 'Our Cabins')}
+                  {t('link.our_cabins')}
                   <svg className={`w-4 h-4 transition-transform ${isCabinsOpen ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                   </svg>
@@ -246,13 +246,13 @@ const Header = ({
                 )}
               </div>
               <Link href={link('/activities')} className="font-heading font-medium text-[18px] text-white hover:text-[#F49A4A] transition-colors uppercase">
-                {t('link.activities', 'Activities')}
+                {t('link.activities')}
               </Link>
               <Link href={link('/eat-drink')} className="font-heading font-medium text-[18px] text-white hover:text-[#F49A4A] transition-colors uppercase">
-                {t('link.eat_drink', 'Eat & Drink')}
+                {t('link.eat_drink')}
               </Link>
               <Link href={link('/blog')} className="font-heading font-medium text-[18px] text-white hover:text-[#F49A4A] transition-colors uppercase">
-                {t('link.blog', 'Blog')}
+                {t('link.blog')}
               </Link>
             </nav>
             <div className="hidden lg:flex items-center space-x-3 lg:space-x-4">
@@ -260,13 +260,13 @@ const Header = ({
                 href={link('/gift-voucher')}
                 className="text-white w-[134px] h-[50px] flex items-center justify-center font-heading font-medium text-sm bg-[#939D92] hover:bg-[#7d8d7d] transition uppercase"
               >
-                {t('button.gift_voucher', 'Gift Voucher')}
+                {t('button.gift_voucher')}
               </Link>
               <Link
                 href={link('/search')}
                 className="bg-[#495D4D] text-white w-[134px] h-[50px] flex items-center justify-center font-heading font-medium text-sm hover:bg-[#3d5a3d] transition uppercase"
               >
-                {t('button.book_now', 'Book Now')}
+                {t('button.book_now')}
               </Link>
               {/* Language Selector */}
               <div className="relative">
@@ -306,7 +306,7 @@ const Header = ({
                 href={link('/search')}
                 className="bg-white text-[#495D4D] px-3 py-2 flex items-center justify-center font-heading font-medium text-xs hover:bg-gray-100 transition uppercase"
               >
-                {t('button.book_now', 'Book Now')}
+                {t('button.book_now')}
               </Link>
 
               {/* Language Selector */}
@@ -437,7 +437,7 @@ const Header = ({
                   onClick={() => setIsMobileCabinsOpen(!isMobileCabinsOpen)}
                   className="text-[#F49A4A] font-heading font-medium text-center py-4 text-[16px] tracking-wider uppercase flex items-center justify-center gap-2"
                 >
-                  {t('link.our_cabins', 'Our Cabins')}
+                  {t('link.our_cabins')}
                   <svg className={`w-4 h-4 transition-transform ${isMobileCabinsOpen ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                   </svg>
@@ -461,21 +461,21 @@ const Header = ({
                   onClick={() => setIsMenuOpen(false)}
                   className="text-[#495D4D] font-heading font-medium text-center py-4 text-[16px] tracking-wider uppercase"
                 >
-                  {t('link.activities', 'Activities')}
+                  {t('link.activities')}
                 </Link>
                 <Link
                   href={link('/eat-drink')}
                   onClick={() => setIsMenuOpen(false)}
                   className="text-[#495D4D] font-heading font-medium text-center py-4 text-[16px] tracking-wider uppercase"
                 >
-                  {t('link.eat_drink', 'Eat & Drink')}
+                  {t('link.eat_drink')}
                 </Link>
                 <Link
                   href={link('/blog')}
                   onClick={() => setIsMenuOpen(false)}
                   className="text-[#495D4D] font-heading font-medium text-center py-4 text-[16px] tracking-wider uppercase"
                 >
-                  {t('link.blog', 'Blog')}
+                  {t('link.blog')}
                 </Link>
 
                 {/* Buttons */}
@@ -485,14 +485,14 @@ const Header = ({
                     onClick={() => setIsMenuOpen(false)}
                     className="block text-white text-center py-3 bg-[#939D92] hover:bg-[#7d8d7d] transition font-heading font-medium text-[14px] tracking-wider uppercase"
                   >
-                    {t('button.gift_voucher', 'Gift Voucher')}
+                    {t('button.gift_voucher')}
                   </Link>
                   <Link
                     href={link('/search')}
                     onClick={() => setIsMenuOpen(false)}
                     className="block bg-[#495D4D] text-white text-center py-3 hover:bg-[#3d5a3d] transition font-heading font-medium text-[14px] tracking-wider uppercase"
                   >
-                    {t('button.book_now', 'Book Now')}
+                    {t('button.book_now')}
                   </Link>
                 </div>
               </nav>
@@ -501,13 +501,13 @@ const Header = ({
         </div>
       </header>
       <div className="absolute inset-0 flex flex-col items-center justify-start md:justify-center text-white text-center px-6 md:px-4 z-10 mt-[180px] md:mt-0 pt-6 md:pt-0 pb-16 md:pb-0">
-        <h1 className="font-jost font-normal text-[15px] md:text-[24px] uppercase mb-3 md:mb-6" style={{ letterSpacing: '0.15px' }}>{heroSettings?.subtitle || 'Luxury Cabines with Private Wellness'}</h1>
+        <h1 className="font-jost font-normal text-[15px] md:text-[24px] uppercase mb-3 md:mb-6" style={{ letterSpacing: '0.15px' }}>{heroSettings?.subtitle}</h1>
         <p className="font-logga font-normal text-[32px] md:text-[68px] uppercase leading-tight">
-          {heroSettings?.titleSleep || 'Sleep,'} <span className="text-customyellow">{heroSettings?.titleHighlight || 'Eat & Relax'}</span><br />
-          {heroSettings?.titleAbove || 'Above the Trees'}
+          {heroSettings?.titleSleep} <span className="text-customyellow">{heroSettings?.titleHighlight}</span><br />
+          {heroSettings?.titleAbove}
         </p>
         <p className="font-jost font-normal text-[14px] md:text-[18px] max-w-xl mt-4 mb-6 md:mt-6 md:mb-16" style={{ letterSpacing: '0.15px' }}>
-          {heroSettings?.description || 'Experience luxury treehouse living above the forest canopy in the Belgian Ardennes.'}
+          {heroSettings?.description}
         </p>
 
         {/* Custom search widget (date range + guests) */}

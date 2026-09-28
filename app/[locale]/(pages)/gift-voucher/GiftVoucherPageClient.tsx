@@ -85,14 +85,14 @@ export default function GiftVoucherPageClient() {
       const data = await res.json();
 
       if (!res.ok || !data.checkoutUrl) {
-        setError(data.message || t('error_generic', 'Something went wrong. Please try again.'));
+        setError(data.message || t('error_generic'));
         setSubmitting(false);
         return;
       }
 
       window.location.href = data.checkoutUrl;
     } catch {
-      setError(t('error_generic', 'Something went wrong. Please try again.'));
+      setError(t('error_generic'));
       setSubmitting(false);
     }
   };
@@ -112,7 +112,7 @@ export default function GiftVoucherPageClient() {
                 className="font-logga text-[28px] md:text-[42px] font-semibold mb-6 md:mb-8"
                 style={{ color: '#212121' }}
               >
-                {t('page_title', 'GIFT VOUCHER').toUpperCase()}
+                {t('page_title').toUpperCase()}
               </h1>
               <div className="font-jost font-light text-[16px] md:text-[18px] leading-relaxed text-gray-700 space-y-4">
                 <p>{t('intro_p1')}</p>
@@ -125,7 +125,7 @@ export default function GiftVoucherPageClient() {
               <div className="border border-gray-300">
                 <Image
                   src="/assets/gift-card.png"
-                  alt={t('page_title', 'Gift Voucher')}
+                  alt={t('page_title')}
                   width={576}
                   height={384}
                   className="w-full h-auto"
@@ -134,7 +134,7 @@ export default function GiftVoucherPageClient() {
                 <form onSubmit={handleSubmit} className="p-6 md:p-8 space-y-6">
                   {/* Amount */}
                   <div>
-                    <label className={labelClass}>{t('amount_label', 'Choose an amount')}</label>
+                    <label className={labelClass}>{t('amount_label')}</label>
                     <select
                       required
                       value={selectedAmount ?? ''}
@@ -161,7 +161,7 @@ export default function GiftVoucherPageClient() {
                           : 'border-gray-300 text-gray-800 hover:border-[#495D4D]'
                       }`}
                     >
-                      {t('for_myself', 'For myself')}
+                      {t('for_myself')}
                     </button>
                     <button
                       type="button"
@@ -172,14 +172,14 @@ export default function GiftVoucherPageClient() {
                           : 'border-gray-300 text-gray-800 hover:border-[#495D4D]'
                       }`}
                     >
-                      {t('as_a_gift', 'As a gift')}
+                      {t('as_a_gift')}
                     </button>
                   </div>
   
                   {/* Purchaser */}
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
-                      <label className={labelClass}>{t('your_name', 'Your name')}</label>
+                      <label className={labelClass}>{t('your_name')}</label>
                       <input
                         type="text"
                         required
@@ -189,7 +189,7 @@ export default function GiftVoucherPageClient() {
                       />
                     </div>
                     <div>
-                      <label className={labelClass}>{t('your_email', 'Your email')}</label>
+                      <label className={labelClass}>{t('your_email')}</label>
                       <input
                         type="email"
                         required
@@ -206,7 +206,7 @@ export default function GiftVoucherPageClient() {
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div>
                           <label className={labelClass}>
-                            {t('recipient_name', "Recipient's name")}
+                            {t('recipient_name')}
                           </label>
                           <input
                             type="text"
@@ -218,7 +218,7 @@ export default function GiftVoucherPageClient() {
                         </div>
                         <div>
                           <label className={labelClass}>
-                            {t('recipient_email', "Recipient's email")}
+                            {t('recipient_email')}
                           </label>
                           <input
                             type="email"
@@ -231,7 +231,7 @@ export default function GiftVoucherPageClient() {
                       </div>
   
                       <div>
-                        <label className={labelClass}>{t('occasion_label', 'Occasion (optional)')}</label>
+                        <label className={labelClass}>{t('occasion_label')}</label>
                         <select
                           value={occasion}
                           onChange={(e) => setOccasion(e.target.value)}
@@ -240,7 +240,7 @@ export default function GiftVoucherPageClient() {
                           <option value="" />
                           {OCCASIONS.map((o) => (
                             <option key={o} value={o}>
-                              {t(OCCASION_LABEL_KEY[o], o)}
+                              {t(OCCASION_LABEL_KEY[o])}
                             </option>
                           ))}
                         </select>
@@ -248,13 +248,13 @@ export default function GiftVoucherPageClient() {
   
                       <div>
                         <label className={labelClass}>
-                          {t('message_label', 'Personal message (optional)')}
+                          {t('message_label')}
                         </label>
                         <textarea
                           rows={3}
                           value={personalMessage}
                           onChange={(e) => setPersonalMessage(e.target.value)}
-                          placeholder={t('message_placeholder', 'Write a short note...')}
+                          placeholder={t('message_placeholder')}
                           className={inputClass}
                         />
                       </div>
@@ -267,7 +267,7 @@ export default function GiftVoucherPageClient() {
                             onChange={(e) => setScheduleEnabled(e.target.checked)}
                             className="w-4 h-4"
                           />
-                          {t('schedule_toggle', 'Send on a future date')}
+                          {t('schedule_toggle')}
                         </label>
                         {scheduleEnabled && (
                           <input
@@ -277,7 +277,7 @@ export default function GiftVoucherPageClient() {
                             value={scheduledDate}
                             onChange={(e) => setScheduledDate(e.target.value)}
                             className={`${inputClass} mt-3`}
-                            aria-label={t('schedule_date_label', 'Delivery date')}
+                            aria-label={t('schedule_date_label')}
                           />
                         )}
                       </div>
@@ -285,7 +285,7 @@ export default function GiftVoucherPageClient() {
                   )}
   
                   <p className="font-jost text-xs text-gray-500">
-                    {t('validity_note', 'Valid for 1 year from the date of purchase')}
+                    {t('validity_note')}
                   </p>
   
                   {error && (
@@ -300,8 +300,8 @@ export default function GiftVoucherPageClient() {
                     className="w-full bg-[#495D4D] text-white py-4 px-6 text-base font-bold tracking-wide hover:bg-[#3d5a3d] transition uppercase font-jost disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     {submitting
-                      ? t('submit_button_loading', 'Redirecting...')
-                      : t('submit_button', 'Continue to payment')}
+                      ? t('submit_button_loading')
+                      : t('submit_button')}
                   </button>
                 </form>
               </div>

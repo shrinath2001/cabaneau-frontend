@@ -30,19 +30,16 @@ function GiftVoucherSuccessContent() {
           </svg>
         </div>
         <h1 className="font-logga text-[28px] md:text-[36px] font-semibold mb-4" style={{ color: '#212121' }}>
-          {t('success_heading', 'Thank you!')}
+          {t('success_heading')}
         </h1>
         <p className="font-jost font-light text-[16px] leading-relaxed text-gray-700 mb-8">
-          {t(
-            'success_body',
-            'Your gift card is on its way. Check your email for the confirmation and printable voucher.'
-          )}
+          {t('success_body')}
         </p>
         <Link
           href={`/${locale}/gift-voucher`}
           className="inline-block bg-[#495D4D] text-white py-3 px-8 text-sm font-bold tracking-wide hover:bg-[#3d5a3d] transition uppercase font-jost"
         >
-          {t('success_back_link', 'Back to gift vouchers')}
+          {t('success_back_link')}
         </Link>
       </div>
     </div>

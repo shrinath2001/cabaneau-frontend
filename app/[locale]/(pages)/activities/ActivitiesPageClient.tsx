@@ -3,7 +3,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { Activity } from '@/app/types/content';
 import ActivityListCard from '@/app/components/ActivityListCard';
-import ActivityDetailModal from '@/app/components/ActivityDetailModal';
 import { useTranslations } from '@/app/providers/TranslationsProvider';
 
 interface DiscoverSlot {
@@ -43,8 +42,6 @@ interface ActivitiesPageClientProps {
 export default function ActivitiesPageClient({ activities, categories, pageData }: ActivitiesPageClientProps) {
   const { t, locale } = useTranslations('activities');
   const [activeTab, setActiveTab] = useState<string>(categories[0]?.slug || '');
-  const [selectedActivity, setSelectedActivity] = useState<Activity | null>(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
   const [isTabsSticky, setIsTabsSticky] = useState(true);
   const discoverSectionRef = useRef<HTMLElement>(null);
 
@@ -95,16 +92,6 @@ export default function ActivitiesPageClient({ activities, categories, pageData 
       window.removeEventListener('resize', handleScroll);
     };
   }, []);
-
-  const handleReadMore = (activity: Activity) => {
-    setSelectedActivity(activity);
-    setIsModalOpen(true);
-  };
-
-  const handleCloseModal = () => {
-    setIsModalOpen(false);
-    setTimeout(() => setSelectedActivity(null), 300);
-  };
 
   const currentItems = activeTab
     ? activities.filter((item) => item.categorySlug === activeTab)
@@ -160,13 +147,13 @@ export default function ActivitiesPageClient({ activities, categories, pageData 
           {currentItems.length === 0 ? (
             <div className="text-center py-12">
               <p className="text-gray-600 text-lg">
-                {t('page.activities_not_found', 'Activities not found')}
+                {t('page.activities_not_found')}
               </p>
             </div>
           ) : (
             <div className="space-y-6">
               {currentItems.map((item) => (
-                <ActivityListCard key={item.id} activity={item} onReadMore={handleReadMore} />
+                <ActivityListCard key={item.id} activity={item} />
               ))}
             </div>
           )}
@@ -220,9 +207,6 @@ export default function ActivitiesPageClient({ activities, categories, pageData 
           );
         })()}
       </section>
-
-      {/* Activity Detail Modal */}
-      <ActivityDetailModal activity={selectedActivity} isOpen={isModalOpen} onClose={handleCloseModal} />
     </main>
   );
 }

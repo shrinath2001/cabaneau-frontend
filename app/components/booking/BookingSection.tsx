@@ -203,13 +203,13 @@ export default function BookingSection({ cabin, mode }: BookingSectionProps) {
 
         <div className="p-4 md:p-6 space-y-4">
           <p className="text-sm font-jost font-light text-gray-600">
-            {t('select_dates_message', 'Select your dates to see availability and pricing')}
+            {t('select_dates_message')}
           </p>
           <button
             onClick={() => setShowDesktopModal(true)}
             className="w-full bg-[#495D4D] text-white py-4 px-6 text-base font-bold tracking-wide hover:bg-[#3d5a3d] transition uppercase font-jost"
           >
-            {t('check_availability', 'Check Availability')}
+            {t('check_availability')}
           </button>
         </div>
       </div>

@@ -129,7 +129,7 @@ export default async function CabinsPage() {
     id: cabin.id || index + 1,
     slug: cabin.slug || `cabin-${index + 1}`,
     images: displayImages,
-    title: cabin.name || `Cabin ${index + 1}`,
+    title: cabin.name || '',
     rating: 5,
     area: cabin.squareMeters ? `${cabin.squareMeters}m²` : '',
     capacity: cabin.capacity ? `2-${cabin.capacity} Persons` : '2 Persons',

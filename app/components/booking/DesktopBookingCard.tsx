@@ -99,7 +99,7 @@ export default function DesktopBookingCard({
               className="px-3 py-2.5 border-r border-gray-400 cursor-pointer hover:bg-gray-50 transition-colors"
             >
               <div className="text-[10px] font-jost font-medium text-gray-700 uppercase tracking-wide">
-                {t('arrival', 'Arrival')}
+                {t('arrival')}
               </div>
               <div className="text-sm font-jost font-light text-gray-900">
                 {formatDateForDisplay(checkIn)}
@@ -110,7 +110,7 @@ export default function DesktopBookingCard({
               className="px-3 py-2.5 cursor-pointer hover:bg-gray-50 transition-colors"
             >
               <div className="text-[10px] font-jost font-medium text-gray-700 uppercase tracking-wide">
-                {t('departure', 'Departure')}
+                {t('departure')}
               </div>
               <div className="text-sm font-jost font-light text-gray-900">
                 {formatDateForDisplay(checkOut)}
@@ -123,11 +123,11 @@ export default function DesktopBookingCard({
           >
             <div>
               <div className="text-[10px] font-jost font-medium text-gray-700 uppercase tracking-wide">
-                {t('guests_label', 'Guests')}
+                {t('guests_label')}
               </div>
               <div className="text-sm font-jost font-light text-gray-900">
                 {totalGuests}{' '}
-                {totalGuests === 1 ? t('guest_singular', 'guest') : t('guest_plural', 'guests')}
+                {totalGuests === 1 ? t('guest_singular') : t('guest_plural')}
               </div>
             </div>
             <svg
@@ -172,14 +172,14 @@ export default function DesktopBookingCard({
           <div className="border-t border-gray-300 pt-4">
             <div className="bg-red-50 border border-red-200 p-4 mb-4">
               <p className="text-red-600 font-jost font-medium text-sm">
-                {quote?.unavailableReason || error || t('dates_not_available', 'Selected dates are not available')}
+                {quote?.unavailableReason || error || t('dates_not_available')}
               </p>
             </div>
             <button
               onClick={onChangeDates}
               className="w-full bg-gray-400 text-white py-4 px-6 text-base font-bold tracking-wide uppercase font-jost"
             >
-              {t('select_different_dates', 'SELECT DIFFERENT DATES')}
+              {t('select_different_dates')}
             </button>
           </div>
         )}
@@ -192,7 +192,7 @@ export default function DesktopBookingCard({
               <div className="flex justify-between items-center">
                 <span className="text-sm font-jost font-light text-gray-600">
                   {formatCurrency(quote.pricing.nightlyRate, quote.pricing.currency)} ×{' '}
-                  {quote.pricing.nights} {quote.pricing.nights !== 1 ? t('nights_plural', 'nights') : t('night_singular', 'night')}
+                  {quote.pricing.nights} {quote.pricing.nights !== 1 ? t('nights_plural') : t('night_singular')}
                 </span>
                 <span className="text-sm font-jost font-light text-gray-800">
                   {formatCurrency(quote.pricing.subtotal, quote.pricing.currency)}
@@ -219,10 +219,10 @@ export default function DesktopBookingCard({
               {isSundayCheckout && (
                 <div className="flex justify-between items-center">
                   <span className="text-sm font-jost font-light text-gray-600">
-                    {t('line_item.lazy_sunday_checkout', 'Lazy Sunday check-out (16:00)')}
+                    {t('line_item.lazy_sunday_checkout')}
                   </span>
                   <span className="text-sm font-jost font-light text-gray-800">
-                    {t('line_item.free', 'Free')}
+                    {t('line_item.free')}
                   </span>
                 </div>
               )}
@@ -248,7 +248,7 @@ export default function DesktopBookingCard({
             {/* Total */}
             <div className="flex justify-between items-center py-3 border-t border-gray-200">
               <span className="font-jost font-semibold text-base text-gray-800">
-                {t('total', 'Total')}
+                {t('total')}
               </span>
               <span className="font-jost font-bold text-lg text-gray-800">
                 {formatCurrency(quote.pricing.total, quote.pricing.currency)}
@@ -259,7 +259,7 @@ export default function DesktopBookingCard({
             {freeCancellationDate && (
               <div className="bg-green-50 px-3 py-2 mt-3">
                 <p className="font-jost text-xs text-green-800 text-center">
-                  {t('cancel_free_before', 'Cancel for free before {{date}}').replace(
+                  {t('cancel_free_before').replace(
                     '{{date}}',
                     freeCancellationDate
                   )}
@@ -272,7 +272,7 @@ export default function DesktopBookingCard({
               onClick={handleBooking}
               className="w-full bg-[#495D4D] text-white py-4 px-6 text-base font-bold tracking-wide hover:bg-[#3d5a3d] transition uppercase font-jost mt-3"
             >
-              {t('book_your_stay', 'BOOK YOUR STAY')}
+              {t('book_your_stay')}
             </button>
           </div>
         )}
@@ -284,14 +284,14 @@ export default function DesktopBookingCard({
             <div className="space-y-2 mb-4">
               {quote.minPrice && (
                 <div className="flex justify-between items-center">
-                  <span className="text-sm font-jost font-light text-gray-600">{t('starting_from', 'Starting from')}</span>
+                  <span className="text-sm font-jost font-light text-gray-600">{t('starting_from')}</span>
                   <span className="text-sm font-jost text-gray-800 font-medium">
-                    {formatCurrency(quote.minPrice, quote.currency || 'EUR')}/{t('night_singular', 'night')}
+                    {formatCurrency(quote.minPrice, quote.currency || 'EUR')}/{t('night_singular')}
                   </span>
                 </div>
               )}
               <p className="text-xs font-jost font-light text-gray-500">
-                {t('final_price_on_booking', 'Final price will be shown on the booking page')}
+                {t('final_price_on_booking')}
               </p>
             </div>
 
@@ -300,7 +300,7 @@ export default function DesktopBookingCard({
               onClick={handleBooking}
               className="w-full bg-[#495D4D] text-white py-4 px-6 text-base font-bold tracking-wide hover:bg-[#3d5a3d] transition uppercase font-jost mt-4"
             >
-              {t('view_pricing_book', 'VIEW PRICING & BOOK')}
+              {t('view_pricing_book')}
             </button>
           </div>
         )}

@@ -58,10 +58,10 @@ export default function EatDrinkPageClient({ dining, breakfast, drinks, pageData
     if (!price) return '';
 
     const unitMap: Record<string, string> = {
-      'PER_PERSON': t('price_unit.per_person', '/PERSON'),
-      'PER_GROUP': t('price_unit.per_group', '/GROUP'),
-      'PER_HOUR': t('price_unit.per_hour', '/HOUR'),
-      'PER_DAY': t('price_unit.per_day', '/DAY'),
+      'PER_PERSON': t('price_unit.per_person'),
+      'PER_GROUP': t('price_unit.per_group'),
+      'PER_HOUR': t('price_unit.per_hour'),
+      'PER_DAY': t('price_unit.per_day'),
     };
 
     const unit = priceUnit ? unitMap[priceUnit] || '' : '';
@@ -175,7 +175,7 @@ export default function EatDrinkPageClient({ dining, breakfast, drinks, pageData
               className="py-2 px-2 text-[16px] md:text-[18px] font-medium font-heading uppercase tracking-wider transition-colors relative whitespace-nowrap"
               style={{ color: activeTab === 'breakfast' ? '#F49A4A' : '#495D4D' }}
             >
-              {t('eat_drink.tabs.breakfast', 'BREAKFAST')}
+              {t('eat_drink.tabs.breakfast')}
               {activeTab === 'breakfast' && (
                 <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#F49A4A]"></span>
               )}
@@ -185,7 +185,7 @@ export default function EatDrinkPageClient({ dining, breakfast, drinks, pageData
               className="py-2 px-2 text-[16px] md:text-[18px] font-medium font-heading uppercase tracking-wider transition-colors relative whitespace-nowrap"
               style={{ color: activeTab === 'dining' ? '#F49A4A' : '#495D4D' }}
             >
-              {t('eat_drink.tabs.dining', 'DINING')}
+              {t('eat_drink.tabs.dining')}
               {activeTab === 'dining' && (
                 <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#F49A4A]"></span>
               )}
@@ -195,7 +195,7 @@ export default function EatDrinkPageClient({ dining, breakfast, drinks, pageData
               className="py-2 px-2 text-[16px] md:text-[18px] font-medium font-heading uppercase tracking-wider transition-colors relative whitespace-nowrap"
               style={{ color: activeTab === 'drinks' ? '#F49A4A' : '#495D4D' }}
             >
-              {t('eat_drink.tabs.drinks', 'DRINKS')}
+              {t('eat_drink.tabs.drinks')}
               {activeTab === 'drinks' && (
                 <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#F49A4A]"></span>
               )}
@@ -210,9 +210,9 @@ export default function EatDrinkPageClient({ dining, breakfast, drinks, pageData
           {currentItems.length === 0 ? (
             <div className="text-center py-12">
               <p className="text-gray-600 text-lg">
-                {activeTab === 'dining' && t('eat_drink.dining_not_found', 'Dining options not found')}
-                {activeTab === 'breakfast' && t('eat_drink.breakfast_not_found', 'Breakfast options not found')}
-                {activeTab === 'drinks' && t('eat_drink.drinks_not_found', 'Drinks options not found')}
+                {activeTab === 'dining' && t('eat_drink.dining_not_found')}
+                {activeTab === 'breakfast' && t('eat_drink.breakfast_not_found')}
+                {activeTab === 'drinks' && t('eat_drink.drinks_not_found')}
               </p>
             </div>
           ) : (

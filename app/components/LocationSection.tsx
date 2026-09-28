@@ -1,7 +1,6 @@
 'use client';
 
 import Link from 'next/link';
-import { useTranslations } from '@/app/providers/TranslationsProvider';
 
 interface LocationConfig {
   mapEmbedUrl?: string;
@@ -25,11 +24,9 @@ const LocationSection = ({
   buttonLink,
   backgroundColor,
 }: LocationSectionProps) => {
-  const { t } = useTranslations('homepage');
-
-  const displayTitle = title || t('location_section.title', 'WHERE WE ARE');
+  const displayTitle = title;
   const displayMapUrl = config?.mapEmbedUrl || 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2519.394400349409!2d4.35169971574599!3d50.84655797953239!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x47c3c48d1f2d1f1f%3A0x4009999999999999!2sBrussels%2C%20Belgium!5e0!3m2!1sen!2sus!4v1678912345678!5m2!1sen!2sus';
-  const displayButtonText = buttonText || t('location_section.button', 'GET DIRECTIONS');
+  const displayButtonText = buttonText;
   // Only show button if buttonLink has actual content (not empty string)
   const hasButtonLink = buttonLink && buttonLink.trim() !== '';
 

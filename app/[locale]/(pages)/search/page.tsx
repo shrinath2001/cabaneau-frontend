@@ -806,7 +806,7 @@ function SearchResults() {
                             <div className="relative w-20 h-20 md:w-24 md:h-24 overflow-hidden flex-shrink-0">
                               <Image
                                 src={imgUrl}
-                                alt={cabin.name || 'Cabin'}
+                                alt={cabin.name || ''}
                                 fill
                                 style={{ objectFit: 'cover' }}
                                 sizes="96px"

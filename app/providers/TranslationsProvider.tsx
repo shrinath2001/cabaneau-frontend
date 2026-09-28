@@ -3,7 +3,7 @@
 import { createContext, useContext, useCallback, ReactNode } from 'react';
 
 type TranslationsContextType = {
-  t: (key: string, fallback?: string) => string;
+  t: (key: string) => string;
   locale: string;
 };
 
@@ -20,9 +20,11 @@ export function TranslationsProvider({
   initialTranslations,
   locale,
 }: TranslationsProviderProps) {
+  // CMS-managed text only: if the key has no row in the Translations table,
+  // render blank rather than a hardcoded fallback or the raw key.
   const t = useCallback(
-    (key: string, fallback?: string): string => {
-      return initialTranslations[key] || fallback || key;
+    (key: string): string => {
+      return initialTranslations[key] || '';
     },
     [initialTranslations]
   );
@@ -48,9 +50,9 @@ export function useTranslations(namespace?: string) {
   const { locale } = context;
 
   const t = useCallback(
-    (key: string, fallback?: string): string => {
+    (key: string): string => {
       const fullKey = namespace ? `${namespace}.${key}` : key;
-      return context.t(fullKey, fallback);
+      return context.t(fullKey);
     },
     [context, namespace]
   );

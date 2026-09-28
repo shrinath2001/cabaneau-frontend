@@ -3,6 +3,8 @@ import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import BlogSidebarCabin from '@/app/components/BlogSidebarCabin';
 import { getTranslations } from '@/app/lib/translations';
+import JsonLd from '@/app/components/JsonLd';
+import { buildBlogPostingSchema } from '@/app/lib/structured-data';
 
 interface BlogPost {
   id: string;
@@ -106,10 +108,22 @@ export default async function BlogPostPage({
   }
 
   const translations = await getTranslations(locale);
-  const t = (key: string, fallback: string): string => translations[`blog.${key}`] || fallback;
+  const t = (key: string): string => translations[`blog.${key}`] || '';
 
   return (
     <main>
+      <JsonLd
+        data={buildBlogPostingSchema(
+          {
+            slug: post.slug,
+            title: post.title,
+            excerpt: post.excerpt,
+            featuredImage: post.featuredImage,
+            publishedAt: post.publishedAt,
+          },
+          locale
+        )}
+      />
       {/* Hero Section */}
       <section className="relative h-[300px] md:h-[400px] lg:h-[500px] flex items-center justify-center">
         <div
@@ -151,7 +165,7 @@ export default async function BlogPostPage({
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-4 h-4 mr-2">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18" />
                 </svg>
-                {t('back_to_blog', 'Back to Blog')}
+                {t('back_to_blog')}
               </Link>
 
               {/* Content */}
@@ -162,7 +176,7 @@ export default async function BlogPostPage({
               {/* Tags */}
               {post.tags && post.tags.length > 0 && (
                 <div className="mt-8 pt-8 border-t border-gray-200">
-                  <h4 className="text-sm font-logga text-[#495D4D] mb-3">{t('tags', 'Tags:')}</h4>
+                  <h4 className="text-sm font-logga text-[#495D4D] mb-3">{t('tags')}</h4>
                   <div className="flex flex-wrap gap-2">
                     {post.tags.map((tag, index) => (
                       <span
