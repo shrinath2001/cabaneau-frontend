@@ -41,7 +41,9 @@ interface MobileBottomSheetProps {
 
 /**
  * MobileBottomSheet - Slide-up sheet wrapping the custom DateRangePicker.
- * Mirrors DesktopBookingModal behaviour for the mobile layout.
+ * Combines dates + guests in one sheet for the mobile layout (desktop
+ * splits these into two separate popovers - see DesktopDatesPopover /
+ * DesktopGuestsPopover).
  */
 export default function MobileBottomSheet({
   isOpen,

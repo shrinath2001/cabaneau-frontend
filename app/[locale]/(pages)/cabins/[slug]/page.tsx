@@ -439,7 +439,7 @@ export default async function CabinDetailPage({
         {/* minmax(0,1fr) so the left column can shrink below its content's
             min-content width - a plain 1fr lets wide content push the booking
             card past the container's right edge. */}
-        <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_464px] gap-4 sm:gap-8 mt-0 md:mt-8 px-4 md:px-0">
+        <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_380px] gap-4 sm:gap-8 mt-0 md:mt-8 px-4 md:px-0">
           {/* Left Column - Cabin Details */}
           <div>
             {/* Cabin Details Title */}

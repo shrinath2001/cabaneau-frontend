@@ -5,9 +5,11 @@ import { useQuote } from './hooks/useQuote';
 import MobileStickyBar from './MobileStickyBar';
 import MobileBottomSheet from './MobileBottomSheet';
 import DesktopBookingCard from './DesktopBookingCard';
-import DesktopBookingModal from './DesktopBookingModal';
 import { useTranslations } from '@/app/providers/TranslationsProvider';
 import { useBookingDates } from '@/app/providers/BookingDatesProvider';
+import type { GuestCounts } from '../search/GuestSteppers';
+
+type GuestField = keyof GuestCounts;
 
 interface CabinInfo {
   slug: string;
@@ -32,10 +34,9 @@ interface BookingSectionProps {
  * useQuote is keyed on the dates, so the price refreshes automatically.
  */
 export default function BookingSection({ cabin, mode }: BookingSectionProps) {
-  const { t, locale } = useTranslations('booking');
-  const { arrival, departure, adults, children, infants, pets, setDates } = useBookingDates();
+  const { locale } = useTranslations('booking');
+  const { arrival, departure, adults, children, infants, pets, setDates, clearDates } = useBookingDates();
   const [showBottomSheet, setShowBottomSheet] = useState(false);
-  const [showDesktopModal, setShowDesktopModal] = useState(false);
   const [minStayAdjusted, setMinStayAdjusted] = useState(false);
 
   // Dates from context are already ISO (YYYY-MM-DD).
@@ -114,8 +115,18 @@ export default function BookingSection({ cabin, mode }: BookingSectionProps) {
       infants: params.infants,
       pets: params.pets,
     });
-    setShowDesktopModal(false);
     setShowBottomSheet(false);
+  };
+
+  // Desktop popovers apply changes live to the shared store - no explicit
+  // save step (matches Airbnb: picking a checkout date updates the card
+  // immediately, "Close" just dismisses the popover).
+  const handleDesktopDatesChange = (newCheckIn: string, newCheckOut: string) => {
+    setDates({ arrival: newCheckIn, departure: newCheckOut });
+  };
+
+  const handleDesktopGuestsChange = (field: GuestField, next: number) => {
+    setDates({ [field]: next });
   };
 
   // MOBILE VIEW
@@ -151,81 +162,25 @@ export default function BookingSection({ cabin, mode }: BookingSectionProps) {
     );
   }
 
-  // DESKTOP VIEW
-  if (hasDateParams) {
-    // Desktop with dates selected - show custom booking card + modal for changing dates
-    return (
-      <>
-        <DesktopBookingCard
-          cabin={cabin}
-          checkIn={checkIn!}
-          checkOut={checkOut!}
-          adults={adults}
-          quote={quote}
-          loading={loading}
-          error={error}
-          onChangeDates={() => setShowDesktopModal(true)}
-          minStayWarning={minStayWarning}
-        />
-
-        {/* Desktop Modal for changing dates */}
-        <DesktopBookingModal
-          isOpen={showDesktopModal}
-          onClose={() => setShowDesktopModal(false)}
-          cabin={cabin}
-          initialCheckIn={checkIn}
-          initialCheckOut={checkOut}
-          initialAdults={adults}
-          initialChildren={children}
-          initialInfants={infants}
-          initialPets={pets}
-          allowDogs={cabin.allowDogs}
-          onSave={handleSaveFromWidget}
-        />
-      </>
-    );
-  }
-
-  // Desktop without dates - show Check Availability button + modal
+  // DESKTOP VIEW - the card itself renders the empty ("Add date") state when
+  // no dates are selected yet, so there's no separate placeholder card.
   return (
-    <>
-      {/* Check Availability Card */}
-      <div
-        className="bg-white border-2 border-gray-300 w-full md:w-[464px] md:sticky md:top-24"
-        style={{ maxHeight: 'calc(100vh - 100px)' }}
-      >
-        {/* Cabin Name Header */}
-        <div className="px-6 py-4 border-b border-gray-300">
-          <h2 className="font-logga font-semibold text-[18px] md:text-[20px] uppercase text-gray-800">
-            {cabin.name}
-          </h2>
-        </div>
-
-        <div className="p-4 md:p-6 space-y-4">
-          <p className="text-sm font-jost font-light text-gray-600">
-            {t('select_dates_message')}
-          </p>
-          <button
-            onClick={() => setShowDesktopModal(true)}
-            className="w-full bg-[#495D4D] text-white py-4 px-6 text-base font-bold tracking-wide hover:bg-[#3d5a3d] transition uppercase font-jost"
-          >
-            {t('check_availability')}
-          </button>
-        </div>
-      </div>
-
-      {/* Desktop Modal with custom date-range picker */}
-      <DesktopBookingModal
-        isOpen={showDesktopModal}
-        onClose={() => setShowDesktopModal(false)}
-        cabin={cabin}
-        initialAdults={adults}
-        initialChildren={children}
-        initialInfants={infants}
-        initialPets={pets}
-        allowDogs={cabin.allowDogs}
-        onSave={handleSaveFromWidget}
-      />
-    </>
+    <DesktopBookingCard
+      cabin={cabin}
+      checkIn={checkIn}
+      checkOut={checkOut}
+      adults={adults}
+      children={children}
+      infants={infants}
+      pets={pets}
+      quote={quote}
+      loading={loading}
+      error={error}
+      locale={locale}
+      onDatesChange={handleDesktopDatesChange}
+      onGuestsChange={handleDesktopGuestsChange}
+      onClearDates={clearDates}
+      minStayWarning={minStayWarning}
+    />
   );
 }

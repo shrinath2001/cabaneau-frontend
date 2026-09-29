@@ -1,54 +1,71 @@
 'use client';
 
+import { useState } from 'react';
 import { QuoteResponse, formatCurrency, localeToIntl, translateLineItem } from './hooks/useQuote';
 import { useTranslations } from '@/app/providers/TranslationsProvider';
 import { isSunday } from './calendarUtils';
+import DesktopDatesPopover from './DesktopDatesPopover';
+import DesktopGuestsPopover from './DesktopGuestsPopover';
+import type { GuestCounts } from '../search/GuestSteppers';
+
+type GuestField = keyof GuestCounts;
 
 interface CabinInfo {
   slug: string;
   name: string;
   lodgifyId: string;
   capacity?: number;
+  allowDogs?: boolean;
 }
 
 interface DesktopBookingCardProps {
   cabin: CabinInfo;
-  checkIn: string;
-  checkOut: string;
+  checkIn?: string;
+  checkOut?: string;
   adults: number;
+  children: number;
+  infants: number;
+  pets: number;
   quote: QuoteResponse | null;
   loading: boolean;
   error: string | null;
-  onChangeDates: () => void;
+  locale: string;
+  onDatesChange: (checkIn: string, checkOut: string) => void;
+  onGuestsChange: (field: GuestField, next: number) => void;
+  onClearDates: () => void;
   minStayWarning?: string;
 }
 
 /**
- * DesktopBookingCard - Custom booking card for desktop when dates are selected
+ * DesktopBookingCard - compact booking card for desktop.
  *
- * Displays:
- * - Cabin name header
- * - Arrival/Departure dates
- * - Guest count
- * - Price breakdown from Quote API
- * - "Book Your Stay" button → Lodgify checkout
+ * A date/guest field that opens two independent popovers (calendar-only,
+ * guests-only - matching Airbnb's split rather than one combined modal),
+ * the price breakdown from the Quote API, and a "Reserve" button ->
+ * Lodgify checkout. Square corners and no separate price headline, by
+ * design - kept narrower than Airbnb's own widget to leave more room for
+ * the cabin's own content column.
  */
 export default function DesktopBookingCard({
   cabin,
   checkIn,
   checkOut,
   adults,
+  children,
+  infants,
+  pets,
   quote,
   loading,
   error,
-  onChangeDates,
+  locale,
+  onDatesChange,
+  onGuestsChange,
+  onClearDates,
   minStayWarning,
 }: DesktopBookingCardProps) {
-  const { t, locale } = useTranslations('booking');
+  const { t } = useTranslations('booking');
+  const [openPopover, setOpenPopover] = useState<'dates' | 'guests' | null>(null);
 
-  // Only surfaced while the stay is still fully refundable - a partial-refund
-  // notice reads as a warning and puts people off. The window comes from the
-  // backend policy, so changing the rule there changes this with no code edit.
   const freeCancellationDate =
     quote?.cancellation?.isFreeNow && quote.cancellation.freeUntil
       ? new Date(`${quote.cancellation.freeUntil}T00:00:00`).toLocaleDateString(
@@ -57,90 +74,121 @@ export default function DesktopBookingCard({
         )
       : null;
 
-  // Format dates for display
-  const formatDateForDisplay = (dateStr: string): string => {
+  const formatDateForDisplay = (dateStr?: string): string => {
+    if (!dateStr) return t('add_date');
     const date = new Date(dateStr);
-    return date.toLocaleDateString('en-GB', {
-      day: '2-digit',
-      month: '2-digit',
-      year: 'numeric',
-    });
+    return date.toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' });
   };
 
-  // Handle booking - redirect to checkout
   const handleBooking = () => {
     if (quote?.checkoutUrl) {
       window.location.href = quote.checkoutUrl;
     }
   };
 
-  const totalGuests = adults;
-
+  const hasDates = !!checkIn && !!checkOut;
+  const totalGuests = adults + children;
   const isSundayCheckout = !!checkOut && isSunday(checkOut);
+  const hasPricing = hasDates && !loading && !error && quote?.available && quote.pricingAvailable && quote.pricing;
 
   return (
     <div
-      className="bg-white shadow-[0_1px_3px_rgba(0,0,0,0.08),0_8px_24px_-6px_rgba(0,0,0,0.14)] w-full md:w-[464px] md:sticky md:top-24"
+      className="bg-white shadow-[0_1px_3px_rgba(0,0,0,0.08),0_8px_24px_-6px_rgba(0,0,0,0.14)] w-full md:w-[380px] md:sticky md:top-24"
       style={{ maxHeight: 'calc(100vh - 100px)' }}
     >
       {/* Cabin Name Header */}
-      <div className="px-6 py-4 border-b border-gray-300">
+      <div className="px-5 py-3 border-b border-gray-300">
         <h2 className="font-logga font-semibold text-[18px] md:text-[20px] uppercase text-gray-800">
           {cabin.name}
         </h2>
       </div>
 
-      <div className="p-4 md:p-6 space-y-4">
-        {/* Date + guests box - one bordered block with square edges (Airbnb style) */}
-        <div className="border border-gray-400">
-          <div className="grid grid-cols-2">
-            <div
-              onClick={onChangeDates}
-              className="px-3 py-2.5 border-r border-gray-400 cursor-pointer hover:bg-gray-50 transition-colors"
-            >
-              <div className="text-[10px] font-jost font-medium text-gray-700 uppercase tracking-wide">
-                {t('arrival')}
+      <div className="p-4 md:p-5 space-y-3">
+        {/* Date + guests box */}
+        <div className="border border-gray-400 overflow-visible">
+          <div className="relative">
+            <div className="grid grid-cols-2">
+              <div
+                onClick={() => setOpenPopover(openPopover === 'dates' ? null : 'dates')}
+                className="px-3 py-2 border-r border-gray-400 cursor-pointer hover:bg-gray-50 transition-colors"
+              >
+                <div className="text-[10px] font-jost font-medium text-gray-700 uppercase tracking-wide">
+                  {t('arrival')}
+                </div>
+                <div className={`text-sm font-jost font-light ${checkIn ? 'text-gray-900' : 'text-gray-400'}`}>
+                  {formatDateForDisplay(checkIn)}
+                </div>
               </div>
-              <div className="text-sm font-jost font-light text-gray-900">
-                {formatDateForDisplay(checkIn)}
+              <div
+                onClick={() => setOpenPopover(openPopover === 'dates' ? null : 'dates')}
+                className="px-3 py-2 cursor-pointer hover:bg-gray-50 transition-colors"
+              >
+                <div className="text-[10px] font-jost font-medium text-gray-700 uppercase tracking-wide">
+                  {t('departure')}
+                </div>
+                <div className={`text-sm font-jost font-light ${checkOut ? 'text-gray-900' : 'text-gray-400'}`}>
+                  {formatDateForDisplay(checkOut)}
+                </div>
               </div>
             </div>
-            <div
-              onClick={onChangeDates}
-              className="px-3 py-2.5 cursor-pointer hover:bg-gray-50 transition-colors"
-            >
-              <div className="text-[10px] font-jost font-medium text-gray-700 uppercase tracking-wide">
-                {t('departure')}
-              </div>
-              <div className="text-sm font-jost font-light text-gray-900">
-                {formatDateForDisplay(checkOut)}
-              </div>
-            </div>
+
+            <DesktopDatesPopover
+              slug={cabin.slug}
+              locale={locale}
+              isOpen={openPopover === 'dates'}
+              onClose={() => setOpenPopover(null)}
+              initialCheckIn={checkIn}
+              initialCheckOut={checkOut}
+              onDatesChange={onDatesChange}
+              onClear={onClearDates}
+            />
           </div>
-          <div
-            onClick={onChangeDates}
-            className="px-3 py-2.5 border-t border-gray-400 flex items-center justify-between cursor-pointer hover:bg-gray-50 transition-colors"
-          >
-            <div>
-              <div className="text-[10px] font-jost font-medium text-gray-700 uppercase tracking-wide">
-                {t('guests_label')}
-              </div>
-              <div className="text-sm font-jost font-light text-gray-900">
-                {totalGuests}{' '}
-                {totalGuests === 1 ? t('guest_singular') : t('guest_plural')}
-              </div>
-            </div>
-            <svg
-              className="w-4 h-4 text-gray-500"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth={2}
-              viewBox="0 0 24 24"
+
+          <div className="relative">
+            <div
+              onClick={() => setOpenPopover(openPopover === 'guests' ? null : 'guests')}
+              className="px-3 py-2 border-t border-gray-400 flex items-center justify-between cursor-pointer hover:bg-gray-50 transition-colors"
             >
-              <polyline points="6 9 12 15 18 9" />
-            </svg>
+              <div>
+                <div className="text-[10px] font-jost font-medium text-gray-700 uppercase tracking-wide">
+                  {t('guests_label')}
+                </div>
+                <div className="text-sm font-jost font-light text-gray-900">
+                  {totalGuests} {totalGuests === 1 ? t('guest_singular') : t('guest_plural')}
+                </div>
+              </div>
+              <svg
+                className={`w-4 h-4 text-gray-500 transition-transform ${openPopover === 'guests' ? 'rotate-180' : ''}`}
+                fill="none"
+                stroke="currentColor"
+                strokeWidth={2}
+                viewBox="0 0 24 24"
+              >
+                <polyline points="6 9 12 15 18 9" />
+              </svg>
+            </div>
+
+            <DesktopGuestsPopover
+              isOpen={openPopover === 'guests'}
+              onClose={() => setOpenPopover(null)}
+              value={{ adults, children, infants, pets }}
+              onChange={onGuestsChange}
+              locale={locale}
+              peopleCap={Math.max(1, cabin.capacity || 1)}
+              allowDogs={cabin.allowDogs}
+            />
           </div>
         </div>
+
+        {/* Free-cancellation notice - right under the box, ahead of the
+            price breakdown, matching where it reads best. */}
+        {hasPricing && freeCancellationDate && (
+          <div className="bg-gray-100 px-4 py-2">
+            <p className="font-jost text-xs text-gray-700 text-center">
+              {t('cancel_free_before').replace('{{date}}', freeCancellationDate)}
+            </p>
+          </div>
+        )}
 
         {/* Min Stay Warning */}
         {minStayWarning && (
@@ -152,8 +200,24 @@ export default function DesktopBookingCard({
           </div>
         )}
 
+        {/* No dates selected yet - fields above are empty ("Add date"),
+            guests still work independently of dates. */}
+        {!hasDates && (
+          <div className="border-t border-gray-300 pt-4">
+            <p className="text-sm font-jost font-light text-gray-600 mb-4">
+              {t('select_dates_message')}
+            </p>
+            <button
+              onClick={() => setOpenPopover('dates')}
+              className="w-full bg-[#495D4D] hover:bg-[#3d4d3f] text-white py-3 px-6 text-base font-bold tracking-wide transition uppercase font-jost"
+            >
+              {t('check_availability')}
+            </button>
+          </div>
+        )}
+
         {/* Loading State */}
-        {loading && (
+        {hasDates && loading && (
           <div className="border-t border-gray-300 pt-4 space-y-3">
             <div className="flex justify-between items-center">
               <div className="h-4 w-24 bg-gray-200 animate-pulse" />
@@ -168,7 +232,7 @@ export default function DesktopBookingCard({
         )}
 
         {/* Error State */}
-        {!loading && (error || (quote && !quote.available)) && (
+        {hasDates && !loading && (error || (quote && !quote.available)) && (
           <div className="border-t border-gray-300 pt-4">
             <div className="bg-red-50 border border-red-200 p-4 mb-4">
               <p className="text-red-600 font-jost font-medium text-sm">
@@ -176,8 +240,8 @@ export default function DesktopBookingCard({
               </p>
             </div>
             <button
-              onClick={onChangeDates}
-              className="w-full bg-gray-400 text-white py-4 px-6 text-base font-bold tracking-wide uppercase font-jost"
+              onClick={() => setOpenPopover('dates')}
+              className="w-full bg-gray-400 text-white py-3 px-6 text-base font-bold tracking-wide uppercase font-jost"
             >
               {t('select_different_dates')}
             </button>
@@ -185,7 +249,7 @@ export default function DesktopBookingCard({
         )}
 
         {/* Success State with Full Pricing */}
-        {!loading && !error && quote?.available && quote.pricingAvailable && quote.pricing && (
+        {hasPricing && quote.pricing && (
           <div className="border-t border-gray-300 pt-4">
             {/* Price Breakdown */}
             <div className="space-y-2 mb-4">
@@ -199,7 +263,6 @@ export default function DesktopBookingCard({
                 </span>
               </div>
 
-              {/* Fees (excluding discounts) */}
               {quote.pricing.fees
                 .filter((fee) => fee.amount >= 0)
                 .map((fee, index) => (
@@ -213,9 +276,6 @@ export default function DesktopBookingCard({
                   </div>
                 ))}
 
-              {/* Sunday check-out perk - not a Lodgify fee, so it's not part
-                  of pricing.fees; shown right after the fees list (City Tax
-                  etc.) whenever the stay happens to check out on a Sunday. */}
               {isSundayCheckout && (
                 <div className="flex justify-between items-center">
                   <span className="text-sm font-jost font-light text-gray-600">
@@ -227,7 +287,6 @@ export default function DesktopBookingCard({
                 </div>
               )}
 
-              {/* Discount (special styling) */}
               {quote.pricing.discount && (
                 <div className="flex justify-between items-center bg-green-50 -mx-4 px-4 py-2">
                   <span className="text-sm font-jost text-green-700 font-medium">
@@ -247,40 +306,28 @@ export default function DesktopBookingCard({
 
             {/* Total */}
             <div className="flex justify-between items-center py-3 border-t border-gray-200">
-              <span className="font-jost font-semibold text-base text-gray-800">
-                {t('total')}
-              </span>
+              <span className="font-jost font-semibold text-base text-gray-800">{t('total')}</span>
               <span className="font-jost font-bold text-lg text-gray-800">
                 {formatCurrency(quote.pricing.total, quote.pricing.currency)}
               </span>
             </div>
 
-            {/* Free-cancellation notice, only while that window is open */}
-            {freeCancellationDate && (
-              <div className="bg-green-50 px-3 py-2 mt-3">
-                <p className="font-jost text-xs text-green-800 text-center">
-                  {t('cancel_free_before').replace(
-                    '{{date}}',
-                    freeCancellationDate
-                  )}
-                </p>
-              </div>
-            )}
-
-            {/* Book Button */}
+            {/* Reserve Button - brand green, consistent with the calendar */}
             <button
               onClick={handleBooking}
-              className="w-full bg-[#495D4D] text-white py-4 px-6 text-base font-bold tracking-wide hover:bg-[#3d5a3d] transition uppercase font-jost mt-3"
+              className="w-full bg-[#495D4D] hover:bg-[#3d4d3f] text-white py-3 px-6 text-base font-bold tracking-wide transition uppercase font-jost mt-3"
             >
               {t('book_your_stay')}
             </button>
+            <p className="text-center text-xs font-jost font-light text-gray-500 mt-2">
+              {t('not_charged_yet')}
+            </p>
           </div>
         )}
 
         {/* Available but Pricing Not Available - Show minPrice fallback */}
-        {!loading && !error && quote?.available && !quote.pricingAvailable && (
+        {hasDates && !loading && !error && quote?.available && !quote.pricingAvailable && (
           <div className="border-t border-gray-300 pt-4">
-            {/* Minimum Price Info */}
             <div className="space-y-2 mb-4">
               {quote.minPrice && (
                 <div className="flex justify-between items-center">
@@ -290,18 +337,18 @@ export default function DesktopBookingCard({
                   </span>
                 </div>
               )}
-              <p className="text-xs font-jost font-light text-gray-500">
-                {t('final_price_on_booking')}
-              </p>
+              <p className="text-xs font-jost font-light text-gray-500">{t('final_price_on_booking')}</p>
             </div>
 
-            {/* Book Button */}
             <button
               onClick={handleBooking}
-              className="w-full bg-[#495D4D] text-white py-4 px-6 text-base font-bold tracking-wide hover:bg-[#3d5a3d] transition uppercase font-jost mt-4"
+              className="w-full bg-[#495D4D] hover:bg-[#3d4d3f] text-white py-3 px-6 text-base font-bold tracking-wide transition uppercase font-jost mt-4"
             >
               {t('view_pricing_book')}
             </button>
+            <p className="text-center text-xs font-jost font-light text-gray-500 mt-2">
+              {t('not_charged_yet')}
+            </p>
           </div>
         )}
       </div>
