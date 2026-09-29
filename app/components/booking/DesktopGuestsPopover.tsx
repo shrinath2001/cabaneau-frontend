@@ -57,7 +57,7 @@ export default function DesktopGuestsPopover({
   return (
     <div
       ref={popoverRef}
-      className="absolute z-50 top-full right-0 mt-2 w-full bg-white shadow-xl border border-gray-200 rounded-xl p-5"
+      className="absolute z-50 top-full right-0 mt-2 w-full bg-white shadow-xl border border-gray-200 p-5"
     >
       <DesktopGuestSteppers
         value={value}

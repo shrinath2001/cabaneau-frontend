@@ -103,7 +103,7 @@ export default function DesktopGuestSteppers({
                 aria-label={`${t.decrease} ${label}`}
                 disabled={v <= MIN[field]}
                 onClick={() => onChange(field, Math.max(MIN[field], v - 1))}
-                className="w-8 h-8 rounded-full border border-gray-400 flex items-center justify-center text-gray-600 disabled:text-gray-300 disabled:border-gray-200 hover:border-gray-900 hover:text-gray-900 transition-colors"
+                className="w-8 h-8 border border-gray-400 flex items-center justify-center text-gray-600 disabled:text-gray-300 disabled:border-gray-200 hover:border-gray-900 hover:text-gray-900 transition-colors"
               >
                 <span className="text-lg leading-none">−</span>
               </button>
@@ -113,7 +113,7 @@ export default function DesktopGuestSteppers({
                 aria-label={`${t.increase} ${label}`}
                 disabled={atMax}
                 onClick={() => onChange(field, v + 1)}
-                className="w-8 h-8 rounded-full border border-gray-400 flex items-center justify-center text-gray-600 disabled:text-gray-300 disabled:border-gray-200 hover:border-gray-900 hover:text-gray-900 transition-colors"
+                className="w-8 h-8 border border-gray-400 flex items-center justify-center text-gray-600 disabled:text-gray-300 disabled:border-gray-200 hover:border-gray-900 hover:text-gray-900 transition-colors"
               >
                 <span className="text-lg leading-none">+</span>
               </button>
