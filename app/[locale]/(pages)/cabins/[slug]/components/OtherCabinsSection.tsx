@@ -1,5 +1,6 @@
 'use client';
 
+import { useEffect, useRef, useState } from 'react';
 import CabinCard from '@/app/components/CabinCard';
 import { useTranslations } from '@/app/providers/TranslationsProvider';
 
@@ -68,6 +69,27 @@ function collectImageUrls(cabin: {
 const OtherCabinsSection = ({ cabins: rawCabins }: OtherCabinsSectionProps) => {
   const { t, locale } = useTranslations('cabin');
 
+  // This section sits in the left column of a grid that shares the row with
+  // a 380px booking sidebar, so it isn't symmetrically centered like the
+  // homepage's own carousel - the CSS-only "(100% - 100vw)/2" bleed trick
+  // used there would undershoot the true viewport edge here. Measuring the
+  // element's actual left offset gives the exact width needed to bleed the
+  // right edge out to the viewport, at any breakpoint.
+  const bleedRef = useRef<HTMLDivElement>(null);
+  const [bleedWidth, setBleedWidth] = useState<string | undefined>(undefined);
+
+  useEffect(() => {
+    const updateBleedWidth = () => {
+      if (bleedRef.current) {
+        const left = bleedRef.current.getBoundingClientRect().left;
+        setBleedWidth(`calc(100vw - ${left}px)`);
+      }
+    };
+    updateBleedWidth();
+    window.addEventListener('resize', updateBleedWidth);
+    return () => window.removeEventListener('resize', updateBleedWidth);
+  }, []);
+
   const cabins: OtherCabin[] = rawCabins.map((cabin, index) => ({
     id: cabin.lodgifyId ? parseInt(cabin.lodgifyId, 10) : index + 1,
     slug: cabin.slug || '',
@@ -105,7 +127,11 @@ const OtherCabinsSection = ({ cabins: rawCabins }: OtherCabinsSectionProps) => {
         {t('detail.other_cabins')}
       </h2>
 
-      <div className="flex gap-4 overflow-x-auto py-8 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden snap-x">
+      <div
+        ref={bleedRef}
+        className="flex gap-4 overflow-x-auto py-8 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden snap-x"
+        style={bleedWidth ? { width: bleedWidth } : undefined}
+      >
         {cabins.map((cabin) => (
           <div key={cabin.slug} className="snap-start">
             <CabinCard {...cabin} />
