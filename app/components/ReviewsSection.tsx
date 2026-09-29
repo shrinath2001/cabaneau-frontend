@@ -267,10 +267,10 @@ const ReviewsSection = ({ title, subtitle, backgroundColor, inline = false, revi
           scrollbar-width: none;
         }
       `}</style>
-      <section className="py-6 md:py-5 px-0 md:px-20 bg-white md:mt-12" style={bgStyle}>
+      <section className="py-6 md:pt-[34px] md:pb-5 px-0 md:px-20 bg-white" style={bgStyle}>
         <div className="max-w-[1390px] mx-auto px-4 md:px-0">
           {/* Section Title */}
-          <h2 className={`font-logga text-[28px] md:text-[42px] font-semibold md:font-normal text-center pt-6 md:pt-10 ${subtitle ? 'mb-3 md:mb-4' : 'mb-8 md:mb-12'}`}>
+          <h2 className={`font-logga text-[28px] md:text-[42px] font-semibold md:font-normal text-center pt-6 md:pt-5 ${subtitle ? 'mb-3 md:mb-4' : 'mb-8 md:mb-12'}`}>
             {displayTitle}
           </h2>
           {subtitle && (

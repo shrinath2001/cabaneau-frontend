@@ -34,7 +34,7 @@ const CustomCardsSection = ({
   }
 
   return (
-    <section className="py-6 md:py-5 px-4 md:px-20 bg-white md:mt-12" style={bgStyle}>
+    <section className="py-6 md:pt-[34px] md:pb-5 px-4 md:px-20 bg-white" style={bgStyle}>
       <div className="container mx-auto">
         <div className="max-w-[1390px] mx-auto">
           {title && (
