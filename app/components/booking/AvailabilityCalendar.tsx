@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useRatesCalendar, nightsBetween } from './hooks/useRatesCalendar';
 import { useBookingDates } from '@/app/providers/BookingDatesProvider';
 
@@ -130,13 +130,23 @@ export default function AvailabilityCalendar({
     firstOfMonth(arrival || helpers.today)
   );
 
+  // Set right before this calendar writes its own selection to the shared
+  // store, so the sync effect below can tell "I just wrote this" apart from
+  // a genuinely external change (sidebar popover, session restore) - only
+  // the latter should re-center the view. Otherwise picking a check-out in
+  // the second displayed month jumps that month into the first position.
+  const isOwnUpdate = useRef(false);
+
   // Keep the calendar's selection in sync with the shared store, so a change
   // made elsewhere (modal, another page) is reflected here. Mid-selection (only
   // check-in chosen) doesn't write to the store, so it's preserved.
   useEffect(() => {
     setCheckIn(arrival);
     setCheckOut(departure);
-    if (arrival) setViewMonth(firstOfMonth(arrival));
+    if (arrival && !isOwnUpdate.current) {
+      setViewMonth(firstOfMonth(arrival));
+    }
+    isOwnUpdate.current = false;
   }, [arrival, departure]);
 
   const minMonth = firstOfMonth(helpers.today);
@@ -190,6 +200,7 @@ export default function AvailabilityCalendar({
       setCheckOut(date);
       // Auto-apply: push the range to the shared store. Reactive, NO reload, the
       // booking card/sticky/quote update and the URL is mirrored shallowly.
+      isOwnUpdate.current = true;
       setDates({ arrival: checkIn, departure: date });
     } else {
       setMessage(t.notAvailable);
