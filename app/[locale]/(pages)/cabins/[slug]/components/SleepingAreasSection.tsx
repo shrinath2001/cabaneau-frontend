@@ -2,6 +2,7 @@
 
 import { useTranslations } from '@/app/providers/TranslationsProvider';
 import Image from 'next/image';
+import { stripPastedFormatting } from '@/app/lib/richText';
 
 interface SleepingAreasSectionProps {
   locationImage?: string | null;
@@ -22,9 +23,10 @@ const SleepingAreasSection = ({ locationImage, cabinName, sleepingAreaDescriptio
       </h2>
 
       {sleepingAreaDescription && (
-        <p className="font-jost font-light text-[15px] text-gray-800 mb-4 px-4 md:px-0">
-          {sleepingAreaDescription}
-        </p>
+        <div
+          className="font-jost font-light text-[15px] text-gray-800 mb-4 px-4 md:px-0 [&_p]:mb-2 [&_p:last-child]:mb-0 [&_ul]:list-disc [&_ol]:list-decimal [&_ul]:pl-5 [&_ol]:pl-5 [&_a]:underline [&_strong]:font-medium [&_b]:font-medium"
+          dangerouslySetInnerHTML={{ __html: stripPastedFormatting(sleepingAreaDescription) }}
+        />
       )}
 
       <div className="relative w-full h-[250px] sm:h-[350px] lg:h-[400px] bg-gray-200 overflow-hidden">
