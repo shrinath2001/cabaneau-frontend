@@ -167,7 +167,7 @@ const BlogSidebarCabin = () => {
             <div className="flex gap-1.5">
               <button
                 onClick={scrollLeft}
-                className="w-8 h-8 rounded-full border-2 border-[#F0E8C6] bg-white flex items-center justify-center hover:bg-[#F0E8C6] transition-all duration-300 text-[#F0E8C6] hover:text-white"
+                className="w-8 h-8 border-2 border-[#F0E8C6] bg-white flex items-center justify-center hover:bg-[#F0E8C6] transition-all duration-300 text-[#F0E8C6] hover:text-white"
                 aria-label={tc('aria.previous_cabin')}
               >
                 <svg className="w-3 h-2.5" fill="currentColor" viewBox="0 0 20 16">
@@ -176,7 +176,7 @@ const BlogSidebarCabin = () => {
               </button>
               <button
                 onClick={scrollRight}
-                className="w-8 h-8 rounded-full border-2 border-[#495D4D] bg-white flex items-center justify-center hover:bg-[#495D4D] transition-all duration-300 text-[#495D4D] hover:text-white"
+                className="w-8 h-8 border-2 border-[#495D4D] bg-white flex items-center justify-center hover:bg-[#495D4D] transition-all duration-300 text-[#495D4D] hover:text-white"
                 aria-label={tc('aria.next_cabin')}
               >
                 <svg className="w-3 h-2.5" fill="currentColor" viewBox="0 0 20 16">

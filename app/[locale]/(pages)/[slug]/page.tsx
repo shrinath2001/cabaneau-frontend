@@ -201,7 +201,7 @@ export default async function StaticPage({
         .page-content img {
           max-width: 100%;
           height: auto;
-          border-radius: 0.5rem;
+          border-radius: 0;
           margin: 1.5em 0;
         }
       `}</style>

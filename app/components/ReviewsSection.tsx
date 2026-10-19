@@ -134,8 +134,8 @@ function BookingRatingBar({ rating, size = 'sm' }: { rating: number; size?: 'sm'
 
   return (
     <span className="inline-flex items-center gap-1.5">
-      <span className={`${barW} ${barH} rounded-full bg-[#e0e5ec] overflow-hidden`}>
-        <span className={`block ${barH} rounded-full bg-[#003580]`} style={{ width: `${pct}%` }} />
+      <span className={`${barW} ${barH} bg-[#e0e5ec] overflow-hidden`}>
+        <span className={`block ${barH} bg-[#003580]`} style={{ width: `${pct}%` }} />
       </span>
       <span className={`font-jost font-semibold ${size === 'md' ? 'text-[14px]' : 'text-[11px]'} text-[#003580]`}>
         {score10.toFixed(1)}
@@ -200,7 +200,7 @@ const ReviewsSection = ({ title, subtitle, backgroundColor, inline = false, revi
           {/* Reviews Carousel */}
           <div className="relative">
             {reviews.length > 2 && (
-              <button onClick={scrollLeft} className="hidden md:flex absolute left-0 top-1/2 -translate-y-1/2 z-10 w-8 h-8 bg-white shadow-md rounded-full items-center justify-center hover:bg-gray-50 transition-colors" aria-label={tc('aria.scroll_left')}>
+              <button onClick={scrollLeft} className="hidden md:flex absolute left-0 top-1/2 -translate-y-1/2 z-10 w-8 h-8 bg-white shadow-md items-center justify-center hover:bg-gray-50 transition-colors" aria-label={tc('aria.scroll_left')}>
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#495D4D" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M15 18l-6-6 6-6" /></svg>
               </button>
             )}
@@ -247,7 +247,7 @@ const ReviewsSection = ({ title, subtitle, backgroundColor, inline = false, revi
               ))}
             </div>
             {reviews.length > 2 && (
-              <button onClick={scrollRight} className="hidden md:flex absolute right-0 top-1/2 -translate-y-1/2 z-10 w-8 h-8 bg-white shadow-md rounded-full items-center justify-center hover:bg-gray-50 transition-colors" aria-label={tc('aria.scroll_right')}>
+              <button onClick={scrollRight} className="hidden md:flex absolute right-0 top-1/2 -translate-y-1/2 z-10 w-8 h-8 bg-white shadow-md items-center justify-center hover:bg-gray-50 transition-colors" aria-label={tc('aria.scroll_right')}>
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#495D4D" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 18l6-6-6-6" /></svg>
               </button>
             )}
@@ -359,7 +359,7 @@ const ReviewsSection = ({ title, subtitle, backgroundColor, inline = false, revi
                 {/* Overall - desktop */}
                 {stats.overall.count > 0 && (
                   <div className="flex flex-1 items-center justify-center gap-3 px-4 py-3 bg-[#495D4D] text-white">
-                    <div className="w-8 h-8 rounded-full bg-[#F49A4A] flex items-center justify-center text-white text-[12px] font-bold flex-shrink-0">
+                    <div className="w-8 h-8 bg-[#F49A4A] flex items-center justify-center text-white text-[12px] font-bold flex-shrink-0">
                       {stats.overall.averageRating.toFixed(1)}
                     </div>
                     <div>
@@ -383,7 +383,7 @@ const ReviewsSection = ({ title, subtitle, backgroundColor, inline = false, revi
             {reviews.length > 3 && (
               <button
                 onClick={scrollLeft}
-                className="hidden md:flex absolute left-6 top-1/2 -translate-y-1/2 z-10 w-10 h-10 bg-white shadow-md rounded-full items-center justify-center hover:bg-gray-50 transition-colors"
+                className="hidden md:flex absolute left-6 top-1/2 -translate-y-1/2 z-10 w-10 h-10 bg-white shadow-md items-center justify-center hover:bg-gray-50 transition-colors"
                 aria-label={tc('aria.scroll_left')}
               >
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#495D4D" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -457,7 +457,7 @@ const ReviewsSection = ({ title, subtitle, backgroundColor, inline = false, revi
             {reviews.length > 3 && (
               <button
                 onClick={scrollRight}
-                className="hidden md:flex absolute right-6 top-1/2 -translate-y-1/2 z-10 w-10 h-10 bg-white shadow-md rounded-full items-center justify-center hover:bg-gray-50 transition-colors"
+                className="hidden md:flex absolute right-6 top-1/2 -translate-y-1/2 z-10 w-10 h-10 bg-white shadow-md items-center justify-center hover:bg-gray-50 transition-colors"
                 aria-label={tc('aria.scroll_right')}
               >
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#495D4D" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">

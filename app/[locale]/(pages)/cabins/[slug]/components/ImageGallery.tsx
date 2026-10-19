@@ -78,7 +78,7 @@ const HeroVideoTile = ({
           className="absolute inset-0 flex items-center justify-center group"
         >
           <span
-            className="flex items-center justify-center w-16 h-16 rounded-full shadow-lg transition-transform group-hover:scale-110"
+            className="flex items-center justify-center w-16 h-16 shadow-lg transition-transform group-hover:scale-110"
             style={{ backgroundColor: '#F49A4A' }}
           >
             <svg className="w-6 h-6 text-white" viewBox="0 0 24 24" fill="currentColor">
@@ -221,7 +221,7 @@ const ImageGallery = ({ images, featuredImage, onShowAllClick, onMobileImageClic
               e.stopPropagation();
               prevImage();
             }}
-            className="absolute left-3 top-1/2 -translate-y-1/2 w-8 h-8 flex items-center justify-center bg-white/80 hover:bg-white rounded-full transition"
+            className="absolute left-3 top-1/2 -translate-y-1/2 w-8 h-8 flex items-center justify-center bg-white/80 hover:bg-white transition"
             aria-label={tc('aria.previous_image')}
           >
             <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
@@ -233,7 +233,7 @@ const ImageGallery = ({ images, featuredImage, onShowAllClick, onMobileImageClic
               e.stopPropagation();
               nextImage();
             }}
-            className="absolute right-3 top-1/2 -translate-y-1/2 w-8 h-8 flex items-center justify-center bg-white/80 hover:bg-white rounded-full transition"
+            className="absolute right-3 top-1/2 -translate-y-1/2 w-8 h-8 flex items-center justify-center bg-white/80 hover:bg-white transition"
             aria-label={tc('aria.next_image')}
           >
             <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">

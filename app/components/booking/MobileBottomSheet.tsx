@@ -84,7 +84,7 @@ export default function MobileBottomSheet({
       <div className="fixed bottom-0 left-0 right-0 bg-white z-[70] lg:hidden transform transition-transform duration-300 ease-out max-h-[90vh] overflow-hidden flex flex-col">
         {/* Drag handle */}
         <div className="flex justify-center py-3 flex-shrink-0">
-          <div className="w-12 h-1.5 bg-gray-300 rounded-full" />
+          <div className="w-12 h-1.5 bg-gray-300" />
         </div>
 
         {/* Header */}

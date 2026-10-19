@@ -99,7 +99,7 @@ const ThingsToKnowModal = ({
               </p>
               <div className="mb-3">
                 <span
-                  className={`inline-block px-3 py-1.5 rounded-full font-jost font-medium text-sm ${
+                  className={`inline-block px-3 py-1.5 font-jost font-medium text-sm ${
                     tierIndex === 0
                       ? 'bg-[#E8F5E9] text-[#2E7D32]'
                       : 'bg-[#FFEBEE] text-[#C62828]'

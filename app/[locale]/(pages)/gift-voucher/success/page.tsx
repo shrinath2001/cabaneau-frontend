@@ -18,7 +18,7 @@ function GiftVoucherSuccessContent() {
   return (
     <div className="min-h-screen bg-white flex items-center justify-center px-4">
       <div className="max-w-lg text-center py-20">
-        <div className="w-16 h-16 mx-auto mb-6 rounded-full bg-[#EFF2EA] flex items-center justify-center">
+        <div className="w-16 h-16 mx-auto mb-6 bg-[#EFF2EA] flex items-center justify-center">
           <svg
             className="w-8 h-8 text-[#495D4D]"
             fill="none"

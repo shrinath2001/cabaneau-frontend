@@ -680,7 +680,7 @@ function SearchResults() {
                               {statusMessage && (
                                 <div className="mt-1.5">
                                   <span className={"inline-flex items-center text-xs font-medium font-jost px-2 py-0.5 " + statusColor}>
-                                    <span className={"w-1.5 h-1.5 rounded-full mr-1.5 " + dotColor}></span>
+                                    <span className={"w-1.5 h-1.5 mr-1.5 " + dotColor}></span>
                                     {statusMessage}
                                   </span>
                                 </div>
