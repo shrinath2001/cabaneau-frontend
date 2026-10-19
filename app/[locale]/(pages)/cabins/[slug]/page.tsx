@@ -431,7 +431,7 @@ export default async function CabinDetailPage({
         {/* Cabin Long Name (falls back to Name) - the page's only H1, same text
             on every screen size (Google mobile-first indexing). */}
         <h1
-          className="font-logga font-medium text-[22px] md:text-[28px] lg:text-[32px] uppercase tracking-wide px-4 pt-3 pb-2 md:px-0 md:pt-0 md:pb-0 md:mb-3"
+          className="font-logga font-medium text-[22px] md:text-[28px] lg:text-[32px] uppercase tracking-wide px-4 py-3 md:px-0 md:py-0 md:mb-3"
           style={{ color: "#212121" }}
         >
           {(cabin.longName || cabin.name)?.toUpperCase()}

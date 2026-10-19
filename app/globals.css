@@ -39,6 +39,28 @@
   .text-customyellow { color: var(--text-customyellow); }
 }
 
+/* The logo marquee and the off-screen side panels reach a few pixels past the
+   page edge, which showed a horizontal scrollbar on desktop. clip (unlike
+   hidden) does not make the page a scroll container, so sticky headers keep working. */
+html,
+body {
+  overflow-x: clip;
+}
+
+/*
+ * The Logga font carries blank space above its capitals and below its
+ * baseline, so a 55px margin around a title looks like 65px or more. Trim that
+ * space from the first and last line of every Logga title (down to the cap
+ * height and the baseline) so the margins set around a title are exactly the
+ * visible space. Browsers without text-box support keep the old look.
+ */
+@supports (text-box: trim-both cap alphabetic) {
+  :is(h1, h2, h3, h4, h5, h6, p, div).font-logga,
+  :is(h1, h2, h3, h4, h5, h6, p, div).font-custom {
+    text-box: trim-both cap alphabetic;
+  }
+}
+
 
 :root {
   --background: #ffffff;

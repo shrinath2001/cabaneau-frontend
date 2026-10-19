@@ -73,7 +73,7 @@ const ThingsToKnow = ({ capacity = 6, locale = 'en', thingsToKnow }: ThingsToKno
 
   return (
     <div className="mt-8 sm:mt-12 mb-8 sm:mb-12">
-      <h2 className="font-logga font-semibold text-[18px] md:text-[20px] mb-6 uppercase tracking-wide text-gray-800 px-4 md:px-6 pt-[11px] pb-2" style={{ backgroundColor: '#F1FAF7' }}>
+      <h2 className="font-logga font-semibold text-[18px] md:text-[20px] mb-6 uppercase tracking-wide text-gray-800 px-4 md:px-6 py-[17px]" style={{ backgroundColor: '#F1FAF7' }}>
         {t('detail.things_to_know')}
       </h2>
 
