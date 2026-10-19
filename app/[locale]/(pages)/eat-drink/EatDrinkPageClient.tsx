@@ -16,14 +16,17 @@ interface DiscoverSlot {
 interface PageData {
   heroImage?: string;
   heroText?: string;
-  discoverSection?: {
-    dining?: DiscoverSlot;
-    breakfast?: DiscoverSlot;
-    drinks?: DiscoverSlot;
-  };
+  // One slot per food category, keyed by the category slug
+  discoverSection?: Record<string, DiscoverSlot>;
 }
 
-type TabType = 'breakfast' | 'dining' | 'drinks';
+// Tab of the page, managed in the CMS (Food Categories)
+interface FoodCategory {
+  id: string;
+  slug: string;
+  name: string;
+  displayOrder: number;
+}
 
 // Extended interface to store raw price data for localized formatting
 interface EatDrinkItemWithPrice extends EatDrinkItem {
@@ -32,22 +35,21 @@ interface EatDrinkItemWithPrice extends EatDrinkItem {
 }
 
 interface EatDrinkPageClientProps {
-  dining: EatDrinkItemWithPrice[];
-  breakfast: EatDrinkItemWithPrice[];
-  drinks: EatDrinkItemWithPrice[];
+  categories: FoodCategory[];
+  itemsByCategory: Record<string, EatDrinkItemWithPrice[]>;
   pageData: PageData;
 }
 
 /**
- * Owns the tab/modal/sticky-scroll interactivity. dining/breakfast/drinks/
+ * Owns the tab/modal/sticky-scroll interactivity. categories/itemsByCategory/
  * pageData arrive already fetched server-side (see page.tsx), so every
  * item's text is present in the server HTML regardless of which tab is
  * visually active - the tab state below only filters what's already
  * rendered, it doesn't gate the fetch.
  */
-export default function EatDrinkPageClient({ dining, breakfast, drinks, pageData }: EatDrinkPageClientProps) {
+export default function EatDrinkPageClient({ categories, itemsByCategory, pageData }: EatDrinkPageClientProps) {
   const { t, locale } = useTranslations('services');
-  const [activeTab, setActiveTab] = useState<TabType>('breakfast');
+  const [activeTab, setActiveTab] = useState<string>(categories[0]?.slug || '');
   const [selectedItem, setSelectedItem] = useState<EatDrinkItemWithPrice | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isTabsSticky, setIsTabsSticky] = useState(true);
@@ -71,8 +73,8 @@ export default function EatDrinkPageClient({ dining, breakfast, drinks, pageData
   // Handle URL hash for tab navigation
   useEffect(() => {
     const handleHashChange = () => {
-      const hash = window.location.hash.replace('#', '') as TabType;
-      if (hash && ['breakfast', 'dining', 'drinks'].includes(hash)) {
+      const hash = window.location.hash.replace('#', '');
+      if (hash && categories.some((category) => category.slug === hash)) {
         setActiveTab(hash);
       }
     };
@@ -83,10 +85,10 @@ export default function EatDrinkPageClient({ dining, breakfast, drinks, pageData
     // Listen for hash changes
     window.addEventListener('hashchange', handleHashChange);
     return () => window.removeEventListener('hashchange', handleHashChange);
-  }, []);
+  }, [categories]);
 
   // Update URL hash when tab changes
-  const handleTabChange = (tab: TabType) => {
+  const handleTabChange = (tab: string) => {
     setActiveTab(tab);
     window.history.replaceState(null, '', `#${tab}`);
   };
@@ -119,7 +121,7 @@ export default function EatDrinkPageClient({ dining, breakfast, drinks, pageData
 
   const handleReadMore = (item: EatDrinkItem) => {
     // Find the original item with raw price data
-    const originalItem = [...dining, ...breakfast, ...drinks].find((i) => i.id === item.id);
+    const originalItem = Object.values(itemsByCategory).flat().find((i) => i.id === item.id);
     if (originalItem) {
       setSelectedItem({
         ...originalItem,
@@ -134,20 +136,10 @@ export default function EatDrinkPageClient({ dining, breakfast, drinks, pageData
     setTimeout(() => setSelectedItem(null), 300);
   };
 
-  const getCurrentItems = () => {
-    switch (activeTab) {
-      case 'dining':
-        return dining;
-      case 'breakfast':
-        return breakfast;
-      case 'drinks':
-        return drinks;
-      default:
-        return dining;
-    }
-  };
+  const currentItems = itemsByCategory[activeTab] || [];
 
-  const currentItems = getCurrentItems();
+  // The two categories promoted in the "discover more" banners: the first two other than the active one
+  const promotedCategories = categories.filter((category) => category.slug !== activeTab).slice(0, 2);
 
   return (
     <main>
@@ -170,36 +162,19 @@ export default function EatDrinkPageClient({ dining, breakfast, drinks, pageData
       <section className={`bg-white border-b border-gray-200 ${isTabsSticky ? 'sticky top-[58px] md:top-[82px]' : 'relative'} z-40`}>
         <div className="container mx-auto px-4 max-w-6xl">
           <div className="flex justify-center gap-4 sm:gap-8 md:gap-12 overflow-x-auto py-2">
-            <button
-              onClick={() => handleTabChange('breakfast')}
-              className="py-2 px-2 text-[16px] md:text-[18px] font-medium font-heading uppercase tracking-wider transition-colors relative whitespace-nowrap"
-              style={{ color: activeTab === 'breakfast' ? '#F49A4A' : '#495D4D' }}
-            >
-              {t('eat_drink.tabs.breakfast')}
-              {activeTab === 'breakfast' && (
-                <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#F49A4A]"></span>
-              )}
-            </button>
-            <button
-              onClick={() => handleTabChange('dining')}
-              className="py-2 px-2 text-[16px] md:text-[18px] font-medium font-heading uppercase tracking-wider transition-colors relative whitespace-nowrap"
-              style={{ color: activeTab === 'dining' ? '#F49A4A' : '#495D4D' }}
-            >
-              {t('eat_drink.tabs.dining')}
-              {activeTab === 'dining' && (
-                <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#F49A4A]"></span>
-              )}
-            </button>
-            <button
-              onClick={() => handleTabChange('drinks')}
-              className="py-2 px-2 text-[16px] md:text-[18px] font-medium font-heading uppercase tracking-wider transition-colors relative whitespace-nowrap"
-              style={{ color: activeTab === 'drinks' ? '#F49A4A' : '#495D4D' }}
-            >
-              {t('eat_drink.tabs.drinks')}
-              {activeTab === 'drinks' && (
-                <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#F49A4A]"></span>
-              )}
-            </button>
+            {categories.map((category) => (
+              <button
+                key={category.slug}
+                onClick={() => handleTabChange(category.slug)}
+                className="py-2 px-2 text-[16px] md:text-[18px] font-medium font-heading uppercase tracking-wider transition-colors relative whitespace-nowrap"
+                style={{ color: activeTab === category.slug ? '#F49A4A' : '#495D4D' }}
+              >
+                {category.name}
+                {activeTab === category.slug && (
+                  <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#F49A4A]"></span>
+                )}
+              </button>
+            ))}
           </div>
         </div>
       </section>
@@ -209,11 +184,7 @@ export default function EatDrinkPageClient({ dining, breakfast, drinks, pageData
         <div className="container mx-auto px-4 max-w-6xl">
           {currentItems.length === 0 ? (
             <div className="text-center py-12">
-              <p className="text-gray-600 text-lg">
-                {activeTab === 'dining' && t('eat_drink.dining_not_found')}
-                {activeTab === 'breakfast' && t('eat_drink.breakfast_not_found')}
-                {activeTab === 'drinks' && t('eat_drink.drinks_not_found')}
-              </p>
+              <p className="text-gray-600 text-lg">{t('eat_drink.no_items')}</p>
             </div>
           ) : (
             <div className="space-y-6">
@@ -233,86 +204,46 @@ export default function EatDrinkPageClient({ dining, breakfast, drinks, pageData
         </div>
       </section>
 
-      {/* Discover More Section */}
-      <section ref={discoverSectionRef} className="grid grid-cols-1 md:grid-cols-2">
-        {/* First slot: cross-promotes dining↔breakfast based on active tab */}
-        {(() => {
-          const slot1Key = (activeTab === 'dining' ? 'breakfast' : 'dining') as 'breakfast' | 'dining';
-          const slot1 = pageData.discoverSection?.[slot1Key];
-          const slot1Text = slot1?.text?.[locale] || slot1?.text?.en;
-          const slot1BtnText = slot1?.buttonText?.[locale] || slot1?.buttonText?.en;
-          const slot1BtnLink = slot1?.buttonLink;
-          const slot1Image = slot1?.image;
-          const slot1FallbackTab: TabType = activeTab === 'dining' ? 'breakfast' : 'dining';
-          return (
-            <div className="relative h-[300px] md:h-[400px] flex flex-col items-center justify-center">
-              <div className="absolute inset-0 bg-cover bg-center bg-[#495D4D]" style={{ backgroundImage: slot1Image ? `url(${slot1Image})` : undefined }}>
-                <div className="absolute inset-0" style={{ backgroundColor: 'rgba(0, 0, 0, 0.50)' }}></div>
+      {/* Discover More Section: banners promoting the other categories (image, text and button set in CMS > Pages > Eat & Drink) */}
+      {promotedCategories.length > 0 && (
+        <section ref={discoverSectionRef} className={`grid grid-cols-1 ${promotedCategories.length > 1 ? 'md:grid-cols-2' : ''}`}>
+          {promotedCategories.map((category) => {
+            const slot = pageData.discoverSection?.[category.slug];
+            const slotText = slot?.text?.[locale] || slot?.text?.en;
+            const slotBtnText = slot?.buttonText?.[locale] || slot?.buttonText?.en;
+            const slotBtnLink = slot?.buttonLink;
+            const slotImage = slot?.image;
+            return (
+              <div key={category.slug} className="relative h-[300px] md:h-[400px] flex flex-col items-center justify-center">
+                <div className="absolute inset-0 bg-cover bg-center bg-[#495D4D]" style={{ backgroundImage: slotImage ? `url(${slotImage})` : undefined }}>
+                  <div className="absolute inset-0" style={{ backgroundColor: 'rgba(0, 0, 0, 0.50)' }}></div>
+                </div>
+                {slotText && (
+                  <h2 className="relative z-10 text-white text-4xl md:text-5xl lg:text-6xl font-custom text-center px-4 mb-6">
+                    {slotText}
+                  </h2>
+                )}
+                {slotBtnText && (
+                  <button
+                    onClick={() => {
+                      if (slotBtnLink) {
+                        window.location.href = slotBtnLink;
+                      } else {
+                        handleTabChange(category.slug);
+                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                      }
+                    }}
+                    className="relative z-10 px-8 py-3 text-white font-heading tracking-wider transition-all hover:bg-hoverorange"
+                    style={{ backgroundColor: '#939D92', fontSize: '18px', fontWeight: 500 }}
+                  >
+                    {slotBtnText}
+                  </button>
+                )}
               </div>
-              {slot1Text && (
-                <h2 className="relative z-10 text-white text-4xl md:text-5xl lg:text-6xl font-custom text-center px-4 mb-6">
-                  {slot1Text}
-                </h2>
-              )}
-              {slot1BtnText && (
-                <button
-                  onClick={() => {
-                    if (slot1BtnLink) {
-                      window.location.href = slot1BtnLink;
-                    } else {
-                      handleTabChange(slot1FallbackTab);
-                      window.scrollTo({ top: 0, behavior: 'smooth' });
-                    }
-                  }}
-                  className="relative z-10 px-8 py-3 text-white font-heading tracking-wider transition-all hover:bg-hoverorange"
-                  style={{ backgroundColor: '#939D92', fontSize: '18px', fontWeight: 500 }}
-                >
-                  {slot1BtnText}
-                </button>
-              )}
-            </div>
-          );
-        })()}
-
-        {/* Second slot: always promotes drinks (or breakfast when on drinks tab) */}
-        {(() => {
-          const slot2Key = (activeTab === 'drinks' ? 'breakfast' : 'drinks') as 'breakfast' | 'drinks';
-          const slot2 = pageData.discoverSection?.[slot2Key];
-          const slot2Text = slot2?.text?.[locale] || slot2?.text?.en;
-          const slot2BtnText = slot2?.buttonText?.[locale] || slot2?.buttonText?.en;
-          const slot2BtnLink = slot2?.buttonLink;
-          const slot2Image = slot2?.image;
-          const slot2FallbackTab: TabType = activeTab === 'drinks' ? 'breakfast' : 'drinks';
-          return (
-            <div className="relative h-[300px] md:h-[400px] flex flex-col items-center justify-center">
-              <div className="absolute inset-0 bg-cover bg-center bg-[#495D4D]" style={{ backgroundImage: slot2Image ? `url(${slot2Image})` : undefined }}>
-                <div className="absolute inset-0" style={{ backgroundColor: 'rgba(0, 0, 0, 0.50)' }}></div>
-              </div>
-              {slot2Text && (
-                <h2 className="relative z-10 text-white text-4xl md:text-5xl lg:text-6xl font-custom text-center px-4 mb-6">
-                  {slot2Text}
-                </h2>
-              )}
-              {slot2BtnText && (
-                <button
-                  onClick={() => {
-                    if (slot2BtnLink) {
-                      window.location.href = slot2BtnLink;
-                    } else {
-                      handleTabChange(slot2FallbackTab);
-                      window.scrollTo({ top: 0, behavior: 'smooth' });
-                    }
-                  }}
-                  className="relative z-10 px-8 py-3 text-white font-heading tracking-wider transition-all hover:bg-hoverorange"
-                  style={{ backgroundColor: '#939D92', fontSize: '18px', fontWeight: 500 }}
-                >
-                  {slot2BtnText}
-                </button>
-              )}
-            </div>
-          );
-        })()}
-      </section>
+            );
+          })}
+        </section>
+      )}
 
       {/* Detail Modal */}
       <EatDrinkDetailModal item={selectedItem} isOpen={isModalOpen} onClose={handleCloseModal} />

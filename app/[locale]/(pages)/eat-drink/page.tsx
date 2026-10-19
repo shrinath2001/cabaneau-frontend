@@ -12,11 +12,16 @@ interface DiscoverSlot {
 interface PageData {
   heroImage?: string;
   heroText?: string;
-  discoverSection?: {
-    dining?: DiscoverSlot;
-    breakfast?: DiscoverSlot;
-    drinks?: DiscoverSlot;
-  };
+  // One slot per food category, keyed by the category slug
+  discoverSection?: Record<string, DiscoverSlot>;
+}
+
+// Tab of the page, managed in the CMS (Food Categories)
+interface FoodCategory {
+  id: string;
+  slug: string;
+  name: string;
+  displayOrder: number;
 }
 
 interface APIService {
@@ -28,6 +33,8 @@ interface APIService {
   featuredImage?: string;
   images?: string[];
   category: string;
+  // Slug of the food category (tab) the service belongs to; none = not on this page
+  foodCategory?: string;
   price?: number;
   priceUnit?: string;
   displayOrder: number;
@@ -55,9 +62,8 @@ function transformService(service: APIService): EatDrinkItemWithPrice {
 }
 
 async function getEatDrinkData(locale: string): Promise<{
-  dining: EatDrinkItemWithPrice[];
-  breakfast: EatDrinkItemWithPrice[];
-  drinks: EatDrinkItemWithPrice[];
+  categories: FoodCategory[];
+  itemsByCategory: Record<string, EatDrinkItemWithPrice[]>;
   pageData: PageData;
 }> {
   const apiKey = process.env.API_KEY;
@@ -69,17 +75,22 @@ async function getEatDrinkData(locale: string): Promise<{
   };
 
   try {
-    const [servicesRes, pageRes] = await Promise.all([
+    const [servicesRes, pageRes, categoriesRes] = await Promise.all([
       fetch(`${apiBaseUrl}/services`, { headers, next: { revalidate: 60 } }),
       fetch(`${apiBaseUrl}/pages/slug/eat-drink`, { headers, next: { revalidate: 300 } }),
+      fetch(`${apiBaseUrl}/food-categories`, { headers, next: { revalidate: 300 } }),
     ]);
 
     const servicesResult = servicesRes.ok ? await servicesRes.json() : null;
     const data: APIService[] = servicesResult?.data ?? servicesResult ?? [];
+    const categories: FoodCategory[] = categoriesRes.ok ? await categoriesRes.json() : [];
 
-    const dining = Array.isArray(data) ? data.filter((s) => s.category === 'DINING').map(transformService) : [];
-    const breakfast = Array.isArray(data) ? data.filter((s) => s.category === 'BREAKFAST').map(transformService) : [];
-    const drinks = Array.isArray(data) ? data.filter((s) => s.category === 'DRINKS').map(transformService) : [];
+    const itemsByCategory: Record<string, EatDrinkItemWithPrice[]> = {};
+    for (const category of categories) {
+      itemsByCategory[category.slug] = Array.isArray(data)
+        ? data.filter((s) => s.foodCategory === category.slug).map(transformService)
+        : [];
+    }
 
     let pageData: PageData = {};
     if (pageRes.ok) {
@@ -91,10 +102,10 @@ async function getEatDrinkData(locale: string): Promise<{
       };
     }
 
-    return { dining, breakfast, drinks, pageData };
+    return { categories, itemsByCategory, pageData };
   } catch (error) {
     console.error('Error fetching eat-drink data:', error);
-    return { dining: [], breakfast: [], drinks: [], pageData: {} };
+    return { categories: [], itemsByCategory: {}, pageData: {} };
   }
 }
 
@@ -121,7 +132,7 @@ export default async function EatDrinkPage({
   params: Promise<PageParams>;
 }) {
   const { locale } = await params;
-  const { dining, breakfast, drinks, pageData } = await getEatDrinkData(locale);
+  const { categories, itemsByCategory, pageData } = await getEatDrinkData(locale);
 
-  return <EatDrinkPageClient dining={dining} breakfast={breakfast} drinks={drinks} pageData={pageData} />;
+  return <EatDrinkPageClient categories={categories} itemsByCategory={itemsByCategory} pageData={pageData} />;
 }
