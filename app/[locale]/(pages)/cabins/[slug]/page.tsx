@@ -346,7 +346,7 @@ export async function generateMetadata({
   )
     .replace(/\s+/g, ' ')
     .trim()
-    .slice(0, 160);
+    .slice(0, 190);
 
   return {
     title,
