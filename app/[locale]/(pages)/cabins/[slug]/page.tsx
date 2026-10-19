@@ -276,6 +276,30 @@ async function getAreaInfo(locale: string): Promise<AreaInfoCategory[]> {
   }
 }
 
+/**
+ * Cabin page display options (CMS > Site Settings > Cabin Page). Defaults to
+ * showing the mobile subtitle if the setting can't be fetched.
+ */
+async function getCabinPageSettings(): Promise<{ showMobileSubtitle: boolean }> {
+  const apiKey = process.env.API_KEY;
+  const apiBaseUrl = process.env.API_BASE_URL || 'http://localhost:3000/api/v1';
+
+  try {
+    const response = await fetch(`${apiBaseUrl}/site-settings/cabin-page`, {
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': apiKey || '',
+      },
+      next: { revalidate: 300 },
+    });
+    if (!response.ok) return { showMobileSubtitle: true };
+    return await response.json();
+  } catch (error) {
+    console.error('Error fetching cabin page settings:', error);
+    return { showMobileSubtitle: true };
+  }
+}
+
 const BREADCRUMB_LABELS: Record<string, { home: string; cabins: string }> = {
   en: { home: 'Home', cabins: 'Cabins' },
   fr: { home: 'Accueil', cabins: 'Chalets' },
@@ -353,13 +377,14 @@ export default async function CabinDetailPage({
     notFound();
   }
 
-  const [imageTags, otherCabins, reviews, translations, nightlyRate, areaInfo] = await Promise.all([
+  const [imageTags, otherCabins, reviews, translations, nightlyRate, areaInfo, cabinPageSettings] = await Promise.all([
     getImageTags(locale),
     getOtherCabins(cabin.slug, locale),
     getCabinReviews(cabin.id, locale),
     getTranslations(locale),
     getCabinNightlyRate(cabin.slug, locale),
     getAreaInfo(locale),
+    getCabinPageSettings(),
   ]);
 
   const breadcrumbLabels = BREADCRUMB_LABELS[locale] || BREADCRUMB_LABELS.en;
@@ -406,9 +431,10 @@ export default async function CabinDetailPage({
         )}
       />
       <div className="max-w-[1400px] mx-auto px-0 md:px-6 py-0 md:py-2">
-        {/* Cabin Long Name (falls back to Name) - Desktop only, left aligned above the gallery */}
+        {/* Cabin Long Name (falls back to Name) - the page's only H1, same text
+            on every screen size (Google mobile-first indexing). */}
         <h1
-          className="hidden md:block font-logga font-medium text-[28px] lg:text-[32px] uppercase tracking-wide mb-3"
+          className="font-logga font-medium text-[22px] md:text-[28px] lg:text-[32px] uppercase tracking-wide px-4 pt-3 pb-2 md:px-0 md:pt-0 md:pb-0 md:mb-3"
           style={{ color: "#212121" }}
         >
           {(cabin.longName || cabin.name)?.toUpperCase()}
@@ -425,15 +451,18 @@ export default async function CabinDetailPage({
           imageTags={imageTags}
         />
 
-        {/* Cabin Name - Mobile Only */}
-        <div className="md:hidden px-4 pt-1 pb-2">
-          <h1
-            className="font-logga font-medium text-[22px] uppercase tracking-wide"
-            style={{ color: "#212121" }}
-          >
-            {cabin.name?.toUpperCase()}
-          </h1>
-        </div>
+        {/* Short cabin name - mobile only, an H2 under the gallery. Hidden when
+            switched off in CMS > Site Settings > Cabin Page. */}
+        {cabinPageSettings.showMobileSubtitle && (
+          <div className="md:hidden px-4 pt-1 pb-2">
+            <h2
+              className="font-logga font-medium text-[22px] uppercase tracking-wide"
+              style={{ color: "#212121" }}
+            >
+              {cabin.name?.toUpperCase()}
+            </h2>
+          </div>
+        )}
 
         {/* CONTENT SECTION BELOW IMAGES */}
         {/* minmax(0,1fr) so the left column can shrink below its content's
