@@ -267,14 +267,14 @@ const ReviewsSection = ({ title, subtitle, backgroundColor, inline = false, revi
           scrollbar-width: none;
         }
       `}</style>
-      <section className="py-6 md:pt-[34px] md:pb-5 px-0 md:px-20 bg-white" style={bgStyle}>
+      <section className="pt-8 md:pt-[55px] pb-4 md:pb-[23px] px-0 md:px-20 bg-white" style={bgStyle}>
         <div className="max-w-[1390px] mx-auto px-4 md:px-0">
           {/* Section Title */}
-          <h2 className={`font-logga text-[28px] md:text-[42px] font-semibold md:font-normal text-center pt-6 md:pt-5 ${subtitle ? 'mb-3 md:mb-4' : 'mb-8 md:mb-12'}`}>
+          <h2 className={`font-logga text-[28px] md:text-[42px] font-semibold md:font-normal text-center ${subtitle ? 'mb-4' : 'mb-8 md:mb-[55px]'}`}>
             {displayTitle}
           </h2>
           {subtitle && (
-            <p className="font-jost font-light text-center text-gray-600 text-base md:text-lg mb-8 md:mb-12">
+            <p className="font-jost font-light text-center text-gray-600 text-base md:text-lg mb-8 md:mb-[55px]">
               {subtitle}
             </p>
           )}
@@ -282,7 +282,7 @@ const ReviewsSection = ({ title, subtitle, backgroundColor, inline = false, revi
 
           {/* Channel Stats Bar */}
           {stats && stats.channels.length > 0 && (
-            <div className="mb-8 md:mb-12">
+            <div className="mb-4 md:mb-[23px]">
               {/* Mobile: Compact overall + 2x2 grid for channels */}
               <div className="md:hidden px-4">
                 {/* Overall rating - compact horizontal */}

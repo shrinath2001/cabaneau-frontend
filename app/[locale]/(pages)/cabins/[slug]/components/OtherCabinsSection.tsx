@@ -119,7 +119,7 @@ const OtherCabinsSection = ({ cabins: rawCabins }: OtherCabinsSectionProps) => {
   if (cabins.length === 0) return null;
 
   return (
-    <div className="mt-8 sm:mt-12 mb-8 sm:mb-12">
+    <div className="mt-8 sm:mt-12">
       <h2
         className="font-logga font-semibold text-[18px] md:text-[20px] mb-6 uppercase tracking-wide text-gray-800 px-4 md:px-6 pt-[11px] pb-2"
         style={{ backgroundColor: '#F1FAF7' }}
@@ -129,7 +129,7 @@ const OtherCabinsSection = ({ cabins: rawCabins }: OtherCabinsSectionProps) => {
 
       <div
         ref={bleedRef}
-        className="flex gap-4 overflow-x-auto py-8 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden snap-x"
+        className="flex gap-4 overflow-x-auto pt-8 pb-6 md:pb-8 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden snap-x"
         style={bleedWidth ? { width: bleedWidth } : undefined}
       >
         {cabins.map((cabin) => (

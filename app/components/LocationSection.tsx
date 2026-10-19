@@ -33,14 +33,14 @@ const LocationSection = ({
   const bgStyle = backgroundColor ? { backgroundColor } : {};
 
   return (
-    <section className="bg-white py-6 md:pt-[34px] md:pb-5 px-4 md:px-20" style={bgStyle}>
+    <section className="bg-white py-8 md:py-[55px] px-4 md:px-20" style={bgStyle}>
       <div className="container mx-auto">
         <div className="max-w-[1390px] mx-auto">
-          <h2 className={`font-logga text-[28px] md:text-[42px] font-semibold md:font-normal text-center pt-6 md:pt-5 ${subtitle ? 'mb-3 md:mb-4' : 'mb-10 md:mb-20'}`}>
+          <h2 className={`font-logga text-[28px] md:text-[42px] font-semibold md:font-normal text-center ${subtitle ? 'mb-4' : 'mb-8 md:mb-[55px]'}`}>
             {displayTitle}
           </h2>
           {subtitle && (
-            <p className="font-jost font-light text-center text-gray-600 text-base md:text-lg mb-10 md:mb-20">
+            <p className="font-jost font-light text-center text-gray-600 text-base md:text-lg mb-8 md:mb-[55px]">
               {subtitle}
             </p>
           )}
@@ -54,7 +54,7 @@ const LocationSection = ({
             ></iframe>
           </div>
           {hasButtonLink && (
-            <div className="text-center mt-6 md:mt-10 mb-6 md:mb-8">
+            <div className="text-center mt-8 md:mt-[55px]">
               <Link href={buttonLink!}>
                 <button className="py-3 px-6 bg-[#495D4D] text-white text-base md:text-lg font-heading font-medium tracking-widest hover:bg-[#2d4a2d] transition-colors">
                   {displayButtonText}

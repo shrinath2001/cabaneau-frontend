@@ -381,7 +381,7 @@ export default async function CabinDetailPage({
       : null;
 
   return (
-    <div className="bg-white min-h-screen pt-0 md:pt-4 pb-0 md:pb-5 px-0 md:px-8 lg:px-20 -mt-2 md:mt-0">
+    <div className="bg-white min-h-screen pt-0 md:pt-4 pb-0 md:pb-[3px] px-0 md:px-8 lg:px-20 -mt-2 md:mt-0">
       <JsonLd
         data={buildProductOfferSchema(
           {
@@ -618,8 +618,9 @@ export default async function CabinDetailPage({
         </div>
       </div>
 
-      {/* Mobile Booking Section - Fixed sticky bar and bottom sheet */}
-      <div className="lg:hidden">
+      {/* Mobile Booking Section - Fixed sticky bar and bottom sheet.
+          data-mobile-booking-bar reserves room for the bar below the footer (globals.css) */}
+      <div className="lg:hidden" data-mobile-booking-bar>
         <BookingSection
           mode="mobile"
           cabin={{
@@ -631,9 +632,6 @@ export default async function CabinDetailPage({
           }}
         />
       </div>
-
-      {/* Bottom padding for mobile sticky bar - h-36 covers notice banner height */}
-      <div className="h-36 lg:hidden" />
     </div>
   );
 }

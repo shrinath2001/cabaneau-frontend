@@ -57,6 +57,15 @@
   }
 }
 
+/* The cabin page's fixed mobile booking bar (+ notice banner) covers the
+   bottom 9rem of the viewport. Reserve that space below the footer rather
+   than above it, so it doesn't widen the gap between content and footer. */
+@media (width < 64rem) {
+  body:has([data-mobile-booking-bar]) {
+    padding-bottom: 9rem;
+  }
+}
+
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
