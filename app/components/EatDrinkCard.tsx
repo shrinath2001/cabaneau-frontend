@@ -1,6 +1,7 @@
 'use client';
 
 import { EatDrinkItem } from '@/app/types/content';
+import { useMediaAlt } from '@/app/providers/MediaAltProvider';
 
 interface EatDrinkCardProps {
   item: EatDrinkItem;
@@ -9,6 +10,7 @@ interface EatDrinkCardProps {
 }
 
 const EatDrinkCard: React.FC<EatDrinkCardProps> = ({ item, onReadMore, isReversed = false }) => {
+  const altOf = useMediaAlt();
   return (
     <div className="bg-white border border-black">
       <div className={`flex flex-col md:flex-row p-4 sm:p-6 ${isReversed ? 'md:flex-row-reverse' : ''}`}>
@@ -17,7 +19,7 @@ const EatDrinkCard: React.FC<EatDrinkCardProps> = ({ item, onReadMore, isReverse
           <div className={`w-full md:w-[358px] h-[250px] md:h-[366px] flex-shrink-0 mb-4 md:mb-0 ${isReversed ? 'md:ml-6' : 'md:mr-6'}`}>
             <img
               src={item.image}
-              alt={item.title}
+              alt={altOf(item.image, item.title)}
               className="w-full h-full object-cover"
             />
           </div>

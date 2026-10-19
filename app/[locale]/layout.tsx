@@ -3,6 +3,8 @@ import { notFound } from 'next/navigation';
 import Script from 'next/script';
 import { jost, raleway, logga } from '../fonts';
 import { TranslationsProvider } from '../providers/TranslationsProvider';
+import { MediaAltProvider } from '../providers/MediaAltProvider';
+import { getMediaAltMap } from '../lib/mediaAlt';
 import { BookingDatesProvider } from '../providers/BookingDatesProvider';
 import { getTranslations } from '../lib/translations';
 import { getNavLanguages, getNavCabins } from '../lib/nav';
@@ -101,8 +103,9 @@ export default async function LocaleLayout({
   // Fetch translations, hero settings, global nav data, and the business
   // structured-data settings (CMS-editable, powers the site-wide Organization
   // JSON-LD block below)
-  const [translations, heroSettings, navLanguages, navCabins, businessSchema] = await Promise.all([
+  const [translations, mediaAltMap, heroSettings, navLanguages, navCabins, businessSchema] = await Promise.all([
     getTranslations(locale),
+    getMediaAltMap(locale),
     getHeroSettings(locale),
     getNavLanguages(),
     getNavCabins(locale),
@@ -125,6 +128,7 @@ export default async function LocaleLayout({
       </head>
       <body className="font-raleway antialiased">
         <TranslationsProvider initialTranslations={translations} locale={locale}>
+          <MediaAltProvider altMap={mediaAltMap}>
           <BookingDatesProvider>
             <Suspense fallback={null}>
               <PromoBanner />
@@ -139,6 +143,7 @@ export default async function LocaleLayout({
               <WhatsAppWidget />
             </Suspense>
           </BookingDatesProvider>
+          </MediaAltProvider>
         </TranslationsProvider>
       </body>
     </html>

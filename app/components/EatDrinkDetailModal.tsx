@@ -2,6 +2,7 @@
 
 import { EatDrinkItem } from '@/app/types/content';
 import { useEffect } from 'react';
+import { useMediaAlt } from '@/app/providers/MediaAltProvider';
 
 interface EatDrinkDetailModalProps {
   item: EatDrinkItem | null;
@@ -10,6 +11,7 @@ interface EatDrinkDetailModalProps {
 }
 
 const EatDrinkDetailModal: React.FC<EatDrinkDetailModalProps> = ({ item, isOpen, onClose }) => {
+  const altOf = useMediaAlt();
   useEffect(() => {
     if (isOpen) {
       document.body.style.overflow = 'hidden';
@@ -48,7 +50,7 @@ const EatDrinkDetailModal: React.FC<EatDrinkDetailModalProps> = ({ item, isOpen,
         <div className="w-full h-[280px] relative -mt-[52px]">
           <img
             src={item.detailImage || item.image}
-            alt={item.title}
+            alt={altOf(item.detailImage || item.image, item.title)}
             className="w-full h-full object-cover"
           />
         </div>

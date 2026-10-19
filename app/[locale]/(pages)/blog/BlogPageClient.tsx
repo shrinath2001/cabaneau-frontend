@@ -5,6 +5,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import BlogSidebarCabin from '@/app/components/BlogSidebarCabin';
 import { useTranslations } from '@/app/providers/TranslationsProvider';
+import { useMediaAlt } from '@/app/providers/MediaAltProvider';
 
 interface BlogPost {
   id: string;
@@ -58,6 +59,7 @@ export default function BlogPageClient({
   initialCategories,
   initialAllPosts,
 }: BlogPageClientProps) {
+  const altOf = useMediaAlt();
   const { t, locale } = useTranslations('blog');
   const [posts, setPosts] = useState<BlogPost[]>(initialPosts);
   const [categories, setCategories] = useState<BlogCategory[]>(initialCategories);
@@ -293,7 +295,7 @@ export default function BlogPageClient({
                               {post.featuredImage ? (
                                 <Image
                                   src={post.featuredImage}
-                                  alt={post.title}
+                                  alt={altOf(post.featuredImage, post.title)}
                                   fill
                                   className="object-cover"
                                 />

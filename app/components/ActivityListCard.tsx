@@ -2,12 +2,14 @@
 
 import { Activity } from '@/app/types/content';
 import { useTranslations } from '@/app/providers/TranslationsProvider';
+import { useMediaAlt } from '@/app/providers/MediaAltProvider';
 
 interface ActivityListCardProps {
   activity: Activity;
 }
 
 const ActivityListCard: React.FC<ActivityListCardProps> = ({ activity }) => {
+  const altOf = useMediaAlt();
   const { t } = useTranslations('activities');
   const price = activity.price !== undefined && activity.price !== null && activity.price !== ''
     ? Number(activity.price)
@@ -22,7 +24,7 @@ const ActivityListCard: React.FC<ActivityListCardProps> = ({ activity }) => {
         <div className="relative w-full md:w-[358px] h-[250px] md:h-[366px] flex-shrink-0 mb-4 md:mb-0 md:mr-4">
           <img
             src={activity.image}
-            alt={activity.title}
+            alt={altOf(activity.image, activity.title)}
             className="w-full h-full object-cover"
           />
           {activity.imageCredit && (

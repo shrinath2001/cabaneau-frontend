@@ -3,6 +3,7 @@
 import { useTranslations } from '@/app/providers/TranslationsProvider';
 import Image from 'next/image';
 import { stripPastedFormatting } from '@/app/lib/richText';
+import { useMediaAlt } from '@/app/providers/MediaAltProvider';
 
 interface SleepingAreasSectionProps {
   locationImage?: string | null;
@@ -11,6 +12,7 @@ interface SleepingAreasSectionProps {
 }
 
 const SleepingAreasSection = ({ locationImage, cabinName, sleepingAreaDescription }: SleepingAreasSectionProps) => {
+  const altOf = useMediaAlt();
   const { t } = useTranslations('cabin');
 
   // Use locationImage if available, otherwise fall back to default map
@@ -34,7 +36,7 @@ const SleepingAreasSection = ({ locationImage, cabinName, sleepingAreaDescriptio
           /* Show location image */
           <Image
             src={imageUrl}
-            alt={cabinName ? `${cabinName} location` : 'Cabin location'}
+            alt={altOf(imageUrl, cabinName ? `${cabinName} location` : 'Cabin location')}
             fill
             className="object-cover"
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 70vw"

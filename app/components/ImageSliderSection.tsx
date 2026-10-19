@@ -1,6 +1,7 @@
 "use client";
 
 import Marquee from "react-fast-marquee";
+import { useMediaAlt } from '@/app/providers/MediaAltProvider';
 
 interface SliderImage {
   image: string;
@@ -21,6 +22,7 @@ export default function ImageSliderSection({
   bottomSliderImages,
   backgroundColor,
 }: ImageSliderSectionProps) {
+  const altOf = useMediaAlt();
   if (topSliderImages.length === 0 && bottomSliderImages.length === 0) {
     return null;
   }
@@ -48,7 +50,7 @@ export default function ImageSliderSection({
               <div key={index} className="mx-2">
                 <img
                   src={item.image}
-                  alt=""
+                  alt={altOf(item.image, "")}
                   className="h-[200px] md:h-[280px] w-auto object-cover"
                 />
               </div>
@@ -64,7 +66,7 @@ export default function ImageSliderSection({
               <div key={index} className="mx-2">
                 <img
                   src={item.image}
-                  alt=""
+                  alt={altOf(item.image, "")}
                   className="h-[200px] md:h-[280px] w-auto object-cover"
                 />
               </div>

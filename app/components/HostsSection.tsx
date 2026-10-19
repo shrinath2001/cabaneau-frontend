@@ -3,6 +3,7 @@
 import Image from 'next/image';
 import { useTranslations } from '@/app/providers/TranslationsProvider';
 import { stripPastedFormatting } from '@/app/lib/richText';
+import { useMediaAlt } from '@/app/providers/MediaAltProvider';
 
 interface HostsConfig {
   names?: string;
@@ -27,6 +28,7 @@ const HostsSection = ({
   config,
   backgroundColor,
 }: HostsSectionProps) => {
+  const altOf = useMediaAlt();
   const { t } = useTranslations('homepage');
 
   const displayTitle = title;
@@ -59,7 +61,7 @@ const HostsSection = ({
               <div className="relative w-full md:w-[501px] h-[400px] md:h-[569px]">
                 <Image
                   src={displayImage}
-                  alt={`${displayNames} - Hosts`}
+                  alt={altOf(displayImage, `${displayNames} - Hosts`)}
                   fill
                   style={{ objectFit: 'cover' }}
                   className="object-top"

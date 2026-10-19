@@ -4,6 +4,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useTranslations } from '@/app/providers/TranslationsProvider';
 import { localizedPath, type Locale } from '@/app/lib/i18n';
+import { useMediaAlt } from '@/app/providers/MediaAltProvider';
 
 interface SearchParams {
   arrival?: string;
@@ -138,6 +139,7 @@ const CabinCard: React.FC<CabinCardProps> = ({
   priceType = 'perNight',
   warningMessage,
 }) => {
+  const altOf = useMediaAlt();
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const { t, locale } = useTranslations('cabin');
 
@@ -179,7 +181,7 @@ const CabinCard: React.FC<CabinCardProps> = ({
       <div className="relative w-full h-[248px] bg-gray-100">
         <Image
           src={images[currentImageIndex]}
-          alt={title}
+          alt={altOf(images[currentImageIndex], title)}
           fill
           style={{ objectFit: 'cover' }}
         />

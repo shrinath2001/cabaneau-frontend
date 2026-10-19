@@ -1,6 +1,9 @@
+'use client';
+
 import Image from 'next/image';
 import Link from 'next/link';
 import { stripPastedFormatting } from '@/app/lib/richText';
+import { useMediaAlt } from '@/app/providers/MediaAltProvider';
 
 interface ImageTextConfig {
   image?: string;
@@ -24,6 +27,7 @@ const ImageTextSection = ({
   buttonLink,
   backgroundColor,
 }: ImageTextSectionProps) => {
+  const altOf = useMediaAlt();
   const image = config?.image;
   const content = config?.content;
 
@@ -55,7 +59,7 @@ const ImageTextSection = ({
                 <div className="relative w-full md:w-[501px] h-[400px] md:h-full md:max-h-[569px]">
                   <Image
                     src={image}
-                    alt={title || ''}
+                    alt={altOf(image, title || '')}
                     fill
                     style={{ objectFit: 'cover' }}
                     className="object-top"
