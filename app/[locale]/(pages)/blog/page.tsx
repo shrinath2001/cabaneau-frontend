@@ -33,6 +33,25 @@ interface BlogResponse {
 
 const POSTS_PER_PAGE = 10;
 
+/** Header image and text of the blog overview, managed in the CMS under Pages > Blog. */
+async function getBlogPageHero(locale: string): Promise<{ heroImage?: string; heroText?: string }> {
+  const apiKey = process.env.API_KEY;
+  const apiBaseUrl = process.env.API_BASE_URL || 'http://localhost:3000/api/v1';
+
+  try {
+    const res = await fetch(`${apiBaseUrl}/pages/slug/blog`, {
+      headers: { 'Content-Type': 'application/json', 'x-api-key': apiKey || '', 'Accept-Language': locale },
+      next: { revalidate: 300 },
+    });
+    if (!res.ok) return {};
+    const page = await res.json();
+    return { heroImage: page.heroImage || undefined, heroText: page.heroText || undefined };
+  } catch (error) {
+    console.error('Error fetching blog page header:', error);
+    return {};
+  }
+}
+
 async function getBlogListData(locale: string): Promise<{
   posts: BlogPost[];
   total: number;
@@ -94,7 +113,7 @@ export default async function BlogPage({
   params: Promise<PageParams>;
 }) {
   const { locale } = await params;
-  const { posts, total, categories, allPosts } = await getBlogListData(locale);
+  const [{ posts, total, categories, allPosts }, hero] = await Promise.all([getBlogListData(locale), getBlogPageHero(locale)]);
 
   return (
     <BlogPageClient
@@ -102,6 +121,8 @@ export default async function BlogPage({
       initialTotal={total}
       initialCategories={categories}
       initialAllPosts={allPosts}
+      heroImage={hero.heroImage}
+      heroText={hero.heroText}
     />
   );
 }

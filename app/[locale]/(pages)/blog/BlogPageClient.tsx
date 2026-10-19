@@ -41,6 +41,8 @@ interface BlogPageClientProps {
   initialTotal: number;
   initialCategories: BlogCategory[];
   initialAllPosts: BlogPost[];
+  heroImage?: string;
+  heroText?: string;
 }
 
 const POSTS_PER_PAGE = 10;
@@ -58,6 +60,8 @@ export default function BlogPageClient({
   initialTotal,
   initialCategories,
   initialAllPosts,
+  heroImage,
+  heroText,
 }: BlogPageClientProps) {
   const altOf = useMediaAlt();
   const { t, locale } = useTranslations('blog');
@@ -181,17 +185,17 @@ export default function BlogPageClient({
   return (
     <main>
       {/* Hero Section */}
-      <section className="relative h-[300px] md:h-[400px] flex items-center justify-center">
+      <section className="relative h-[300px] md:h-[400px] flex items-center justify-center bg-[#495D4D]">
         <div
           className="absolute inset-0 bg-cover bg-center"
           style={{
-            backgroundImage: 'url(/assets/d206536ef067f64b29cad184324fe360bb763e30.jpg)',
+            backgroundImage: heroImage ? `url(${heroImage})` : undefined,
           }}
         >
           <div className="absolute inset-0" style={{ backgroundColor: 'rgba(0, 0, 0, 0.50)' }}></div>
         </div>
         <h1 className="relative z-10 text-white text-4xl md:text-5xl lg:text-6xl font-logga text-center px-4">
-          {t('hero_title')}
+          {heroText || t('hero_title')}
         </h1>
       </section>
 
