@@ -3,6 +3,7 @@
 import { useRef, useState } from 'react';
 import Image from 'next/image';
 import { useTranslations } from '@/app/providers/TranslationsProvider';
+import { useMediaAlt } from '@/app/providers/MediaAltProvider';
 
 // Image type that supports both old string[] and new tagged image format
 interface CabinImage {
@@ -107,13 +108,15 @@ const ImageGallery = ({ images, featuredImage, onShowAllClick, onMobileImageClic
   const { t } = useTranslations('cabin');
 
   // Prepare images - extract URLs for display
+  const altOf = useMediaAlt();
   const imageUrls = (images || []).map(getImageUrl);
-  // Alt text set in the CMS media library; falls back to a generic label.
+  // Alt text set in the CMS media library (gallery images carry it already;
+  // the featured image is looked up in the library map); else a generic label.
   const altByUrl = new Map<string, string>();
   (images || []).forEach((img) => {
     if (typeof img !== 'string' && img.alt) altByUrl.set(img.url, img.alt);
   });
-  const altFor = (url: string | undefined, fallback: string) => (url && altByUrl.get(url)) || fallback;
+  const altFor = (url: string | undefined, fallback: string) => (url && altByUrl.get(url)) || altOf(url, fallback);
   const allImages = imageUrls.length > 0 ? [...imageUrls] : [];
   if (featuredImage && !allImages.includes(featuredImage)) {
     allImages.unshift(featuredImage);
