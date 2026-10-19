@@ -15,6 +15,7 @@ import CabinDescription from "./components/CabinDescription";
 import ReviewsSection from "@/app/components/ReviewsSection";
 import JsonLd from "@/app/components/JsonLd";
 import { buildProductOfferSchema, buildBreadcrumbSchema, getSiteUrl } from "@/app/lib/structured-data";
+import { htmlToText } from "@/app/lib/richText";
 
 interface AmenityInfo {
   id: string;
@@ -340,7 +341,7 @@ export async function generateMetadata({
   }
 
   const title = cabin.metaTitle || `${cabin.name} - Cabaneau Treehouse Resort`;
-  const description = (
+  const description = htmlToText(
     cabin.metaDescription || cabin.shortDescription || cabin.description || ''
   )
     .replace(/\s+/g, ' ')
@@ -408,7 +409,7 @@ export default async function CabinDetailPage({
           {
             slug: cabin.slug,
             name: cabin.longName || cabin.name,
-            description: cabin.shortDescription || cabin.description,
+            description: htmlToText(cabin.shortDescription || cabin.description),
             featuredImage: cabin.featuredImage,
             images: cabin.images,
             nightlyRate,
