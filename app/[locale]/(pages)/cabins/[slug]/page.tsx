@@ -442,6 +442,7 @@ export default async function CabinDetailPage({
         <CabinGallery
           images={cabin.images || []}
           featuredImage={cabin.featuredImage}
+          cabinName={cabin.name}
           heroVideo={cabin.heroVideo}
           heroVideoPoster={cabin.heroVideoPoster}
           imageTags={imageTags}

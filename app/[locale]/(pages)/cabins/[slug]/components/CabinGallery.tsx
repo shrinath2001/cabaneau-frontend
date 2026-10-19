@@ -24,6 +24,8 @@ interface CabinGalleryProps {
   heroVideo?: string;
   heroVideoPoster?: string;
   imageTags: ImageTag[];
+  /** Used as alt text for images that have none in the media library. */
+  cabinName?: string;
 }
 
 /**
@@ -34,7 +36,7 @@ interface CabinGalleryProps {
  * component only affects the modals, not whether the visible gallery is
  * present in the server HTML.
  */
-export default function CabinGallery({ images, featuredImage, heroVideo, heroVideoPoster, imageTags }: CabinGalleryProps) {
+export default function CabinGallery({ images, featuredImage, heroVideo, heroVideoPoster, imageTags, cabinName }: CabinGalleryProps) {
   const [showPhotoGallery, setShowPhotoGallery] = useState(false);
   const [showMobileCarousel, setShowMobileCarousel] = useState(false);
   const [mobileCarouselIndex, setMobileCarouselIndex] = useState(0);
@@ -48,6 +50,7 @@ export default function CabinGallery({ images, featuredImage, heroVideo, heroVid
       <ImageGallery
         images={images}
         featuredImage={featuredImage}
+        cabinName={cabinName}
         heroVideo={heroVideo}
         heroVideoPoster={heroVideoPoster}
         onShowAllClick={() => {

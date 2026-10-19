@@ -18,6 +18,8 @@ interface CabinImage {
 interface ImageGalleryProps {
   images: (string | CabinImage)[];
   featuredImage?: string;
+  /** Alt text for images with none in the media library (a name beats "Cabin view 1"). */
+  cabinName?: string;
   onShowAllClick: () => void;
   /** Called with the clicked image URL (mobile tap or desktop thumbnail) so the photo tour can open on it. */
   onMobileImageClick?: (imageUrl: string) => void;
@@ -103,7 +105,7 @@ const HeroVideoTile = ({
   );
 };
 
-const ImageGallery = ({ images, featuredImage, onShowAllClick, onMobileImageClick, heroVideo, heroVideoPoster }: ImageGalleryProps) => {
+const ImageGallery = ({ images, featuredImage, cabinName, onShowAllClick, onMobileImageClick, heroVideo, heroVideoPoster }: ImageGalleryProps) => {
   const { t: tc } = useTranslations('common');
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const { t } = useTranslations('cabin');
@@ -119,7 +121,7 @@ const ImageGallery = ({ images, featuredImage, onShowAllClick, onMobileImageClic
   });
   // Grey placeholder tiles (a cabin without gallery images) are decoration: no alt text
   const altFor = (url: string | undefined, fallback: string) =>
-    !url || url.startsWith('data:') ? '' : altByUrl.get(url) || altOf(url, fallback);
+    !url || url.startsWith('data:') ? '' : altByUrl.get(url) || altOf(url, cabinName || fallback);
   const allImages = imageUrls.length > 0 ? [...imageUrls] : [];
   if (featuredImage && !allImages.includes(featuredImage)) {
     allImages.unshift(featuredImage);
