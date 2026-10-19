@@ -1,6 +1,7 @@
 'use client';
 
 import GuestSteppers, { GuestCounts } from './GuestSteppers';
+import { useTranslations } from '@/app/providers/TranslationsProvider';
 
 export type { GuestCounts };
 
@@ -11,10 +12,9 @@ interface SearchGuestsProps {
   locale: string;
 }
 
-const DONE: Record<string, string> = { en: 'Done', fr: 'Terminé', de: 'Fertig', nl: 'Klaar' };
-
 /** Search-widget guests dropdown: capped steppers (4 people, 1 dog) + Done. */
 export default function SearchGuests({ value, onChange, onDone, locale }: SearchGuestsProps) {
+  const { t } = useTranslations('search');
   return (
     <div>
       <GuestSteppers value={value} onChange={onChange} locale={locale} peopleCap={4} allowDogs />
@@ -23,7 +23,7 @@ export default function SearchGuests({ value, onChange, onDone, locale }: Search
         onClick={onDone}
         className="w-full mt-3 py-3 border border-gray-300 text-gray-800 hover:border-[#495D4D] hover:text-[#495D4D] transition uppercase text-sm tracking-wide"
       >
-        {DONE[locale] || DONE.en}
+        {t('done')}
       </button>
     </div>
   );

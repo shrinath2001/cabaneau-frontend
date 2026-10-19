@@ -49,22 +49,7 @@ interface CabinCardProps {
   warningMessage?: string;
 }
 
-// Hardcoded translations for cabin card (fallback when CMS translations not available)
-const cardTranslations: Record<string, {
-  dates: string;
-  nextAvailability: string;
-  night: string;
-  nights: string;
-  bookNow: string;
-  from: string;
-  forNights: string;
-  perNight: string;
-}> = {
-  en: { dates: 'Dates:', nextAvailability: 'Next Availability:', night: 'night', nights: 'nights', bookNow: 'BOOK NOW', from: 'from', forNights: 'for', perNight: 'per night' },
-  fr: { dates: 'Dates :', nextAvailability: 'Disponibilité :', night: 'nuit', nights: 'nuits', bookNow: 'RÉSERVER', from: 'à partir de', forNights: 'pour', perNight: 'par nuit' },
-  de: { dates: 'Daten:', nextAvailability: 'Verfügbarkeit:', night: 'Nacht', nights: 'Nächte', bookNow: 'JETZT BUCHEN', from: 'ab', forNights: 'für', perNight: 'pro Nacht' },
-  nl: { dates: 'Data:', nextAvailability: 'Beschikbaarheid:', night: 'nacht', nights: 'nachten', bookNow: 'NU BOEKEN', from: 'vanaf', forNights: 'voor', perNight: 'per nacht' },
-};
+
 
 // Format area to remove decimals (30.00m² → 30m²)
 const formatArea = (area: string): string => {
@@ -145,7 +130,17 @@ const CabinCard: React.FC<CabinCardProps> = ({
   const { t, locale } = useTranslations('cabin');
 
   // Get hardcoded translations for current locale
-  const ct = cardTranslations[locale] || cardTranslations.en;
+  const { t: tCabin } = useTranslations('cabin');
+  const ct = {
+    dates: tCabin('card_text.dates'),
+    nextAvailability: tCabin('card_text.next_availability'),
+    night: tCabin('card_text.night'),
+    nights: tCabin('card_text.nights'),
+    bookNow: tCabin('card_text.book_now'),
+    from: tCabin('card_text.from'),
+    forNights: tCabin('card_text.for_nights'),
+    perNight: tCabin('card_text.per_night'),
+  };
 
   // Build cabin URL with search params for pre-filling booking widget
   const buildCabinUrl = () => {

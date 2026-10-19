@@ -34,7 +34,7 @@ interface BookingSectionProps {
  * useQuote is keyed on the dates, so the price refreshes automatically.
  */
 export default function BookingSection({ cabin, mode }: BookingSectionProps) {
-  const { locale } = useTranslations('booking');
+  const { locale, tf } = useTranslations('booking');
   const { arrival, departure, adults, children, infants, pets, setDates, clearDates } = useBookingDates();
   const [showBottomSheet, setShowBottomSheet] = useState(false);
   const [minStayAdjusted, setMinStayAdjusted] = useState(false);
@@ -86,16 +86,9 @@ export default function BookingSection({ cabin, mode }: BookingSectionProps) {
   }, [quote, checkIn, checkOut, loading, setDates]);
 
   // Min-stay warning (shown after an auto-adjust, until a new check-in is picked)
-  const minStayTexts: Record<string, (n: number) => string> = {
-    en: (n) => `This cabin has a ${n}-night minimum stay. We've preselected the best available dates for you.`,
-    fr: (n) => `Ce chalet a un séjour minimum de ${n} nuits. Nous avons présélectionné les meilleures dates pour vous.`,
-    de: (n) => `Diese Hütte hat einen Mindestaufenthalt von ${n} Nächten. Wir haben die besten verfügbaren Daten für Sie vorausgewählt.`,
-    nl: (n) => `Deze hut heeft een minimaal verblijf van ${n} nachten. We hebben de beste beschikbare data voor u voorgeselecteerd.`,
-  };
   let minStayWarning: string | undefined;
   if (minStayAdjusted && quote?.minStay && !loading) {
-    const getText = minStayTexts[locale] || minStayTexts.en;
-    minStayWarning = getText(quote.minStay);
+    minStayWarning = tf('min_stay_warning', { n: quote.minStay });
   }
 
   // Save from the date picker modal/sheet - updates the store, no reload.

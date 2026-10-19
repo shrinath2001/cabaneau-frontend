@@ -3,68 +3,7 @@
 import { useState } from 'react';
 import { useTranslations } from '@/app/providers/TranslationsProvider';
 
-// Translations for booking card
-const bookingTranslations: Record<string, {
-  arrival: string;
-  departure: string;
-  guests: string;
-  bookYourStay: string;
-  pricePerNight: string;
-  night: string;
-  selectDates: string;
-  invalidDates: string;
-  decreaseGuests: string;
-  increaseGuests: string;
-}> = {
-  en: {
-    arrival: 'Arrival',
-    departure: 'Departure',
-    guests: 'Guests',
-    bookYourStay: 'BOOK YOUR STAY',
-    pricePerNight: 'Price per night',
-    night: 'NIGHT',
-    selectDates: 'Please select arrival and departure dates',
-    invalidDates: 'Departure date must be after arrival date',
-    decreaseGuests: 'Decrease guests',
-    increaseGuests: 'Increase guests',
-  },
-  fr: {
-    arrival: 'Arrivée',
-    departure: 'Départ',
-    guests: 'Invités',
-    bookYourStay: 'RÉSERVER',
-    pricePerNight: 'Prix par nuit',
-    night: 'NUIT',
-    selectDates: 'Veuillez sélectionner les dates d\'arrivée et de départ',
-    invalidDates: 'La date de départ doit être après la date d\'arrivée',
-    decreaseGuests: 'Diminuer les invités',
-    increaseGuests: 'Augmenter les invités',
-  },
-  de: {
-    arrival: 'Anreise',
-    departure: 'Abreise',
-    guests: 'Gäste',
-    bookYourStay: 'JETZT BUCHEN',
-    pricePerNight: 'Preis pro Nacht',
-    night: 'NACHT',
-    selectDates: 'Bitte wählen Sie An- und Abreisedatum',
-    invalidDates: 'Das Abreisedatum muss nach dem Anreisedatum liegen',
-    decreaseGuests: 'Gäste verringern',
-    increaseGuests: 'Gäste erhöhen',
-  },
-  nl: {
-    arrival: 'Aankomst',
-    departure: 'Vertrek',
-    guests: 'Gasten',
-    bookYourStay: 'NU BOEKEN',
-    pricePerNight: 'Prijs per nacht',
-    night: 'NACHT',
-    selectDates: 'Selecteer aankomst- en vertrekdatum',
-    invalidDates: 'Vertrekdatum moet na aankomstdatum zijn',
-    decreaseGuests: 'Gasten verminderen',
-    increaseGuests: 'Gasten vermeerderen',
-  },
-};
+
 
 interface BookingCardProps {
   cabinName: string;
@@ -77,7 +16,19 @@ const BookingCard = ({ cabinName, basePrice, capacity }: BookingCardProps) => {
   const [departure, setDeparture] = useState('');
   const [guests, setGuests] = useState(1);
   const { locale } = useTranslations();
-  const t = bookingTranslations[locale] || bookingTranslations.en;
+  const { t: tBooking } = useTranslations('booking');
+  const t = {
+    arrival: tBooking('card.arrival'),
+    departure: tBooking('card.departure'),
+    guests: tBooking('card.guests'),
+    bookYourStay: tBooking('card.book_your_stay'),
+    pricePerNight: tBooking('card.price_per_night'),
+    night: tBooking('card.night'),
+    selectDates: tBooking('card.select_dates'),
+    invalidDates: tBooking('card.invalid_dates'),
+    decreaseGuests: tBooking('card.decrease_guests'),
+    increaseGuests: tBooking('card.increase_guests'),
+  };
 
   const handleGuestsIncrease = () => {
     if (guests < capacity) {

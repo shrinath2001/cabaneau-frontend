@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useRatesCalendar } from './hooks/useRatesCalendar';
+import { useTranslations } from '@/app/providers/TranslationsProvider';
 
 interface DesktopDatesPopoverProps {
   slug: string;
@@ -16,65 +17,7 @@ interface DesktopDatesPopoverProps {
   onClear: () => void;
 }
 
-const STRINGS: Record<
-  string,
-  {
-    selectCheckIn: string;
-    selectCheckOut: string;
-    minStay: (n: number) => string;
-    notAvailable: string;
-    nightsTotal: (n: number) => string;
-    checkIn: string;
-    checkOut: string;
-    clear: string;
-    close: string;
-  }
-> = {
-  en: {
-    selectCheckIn: 'Select your check-in date',
-    selectCheckOut: 'Select your check-out date',
-    minStay: (n) => `Minimum stay: ${n} night${n === 1 ? '' : 's'}`,
-    notAvailable: 'Those dates are not available. Please choose another check-out.',
-    nightsTotal: (n) => `${n} night${n === 1 ? '' : 's'}`,
-    checkIn: 'Check-in',
-    checkOut: 'Checkout',
-    clear: 'Clear dates',
-    close: 'Close',
-  },
-  fr: {
-    selectCheckIn: "Sélectionnez votre date d'arrivée",
-    selectCheckOut: 'Sélectionnez votre date de départ',
-    minStay: (n) => `Séjour minimum : ${n} nuit${n === 1 ? '' : 's'}`,
-    notAvailable: 'Ces dates ne sont pas disponibles. Choisissez un autre départ.',
-    nightsTotal: (n) => `${n} nuit${n === 1 ? '' : 's'}`,
-    checkIn: 'Arrivée',
-    checkOut: 'Départ',
-    clear: 'Effacer les dates',
-    close: 'Fermer',
-  },
-  de: {
-    selectCheckIn: 'Wählen Sie Ihr Anreisedatum',
-    selectCheckOut: 'Wählen Sie Ihr Abreisedatum',
-    minStay: (n) => `Mindestaufenthalt: ${n} Nacht${n === 1 ? '' : 'e'}`,
-    notAvailable: 'Diese Daten sind nicht verfügbar. Bitte wählen Sie eine andere Abreise.',
-    nightsTotal: (n) => `${n} Nacht${n === 1 ? '' : 'e'}`,
-    checkIn: 'Anreise',
-    checkOut: 'Abreise',
-    clear: 'Daten löschen',
-    close: 'Schließen',
-  },
-  nl: {
-    selectCheckIn: 'Selecteer uw aankomstdatum',
-    selectCheckOut: 'Selecteer uw vertrekdatum',
-    minStay: (n) => `Minimaal verblijf: ${n} nacht${n === 1 ? '' : 'en'}`,
-    notAvailable: 'Deze data zijn niet beschikbaar. Kies een andere vertrekdatum.',
-    nightsTotal: (n) => `${n} nacht${n === 1 ? '' : 'en'}`,
-    checkIn: 'Aankomst',
-    checkOut: 'Vertrek',
-    clear: 'Data wissen',
-    close: 'Sluiten',
-  },
-};
+
 
 const BCP47: Record<string, string> = {
   en: 'en-GB',
@@ -83,12 +26,7 @@ const BCP47: Record<string, string> = {
   nl: 'nl-NL',
 };
 
-const ARIA: Record<string, { prevMonth: string; nextMonth: string }> = {
-  en: { prevMonth: 'Previous month', nextMonth: 'Next month' },
-  fr: { prevMonth: 'Mois précédent', nextMonth: 'Mois suivant' },
-  de: { prevMonth: 'Vorheriger Monat', nextMonth: 'Nächster Monat' },
-  nl: { prevMonth: 'Vorige maand', nextMonth: 'Volgende maand' },
-};
+
 
 function toDate(d: string): Date {
   return new Date(`${d}T00:00:00Z`);
@@ -139,8 +77,22 @@ export default function DesktopDatesPopover({
   onDatesChange,
   onClear,
 }: DesktopDatesPopoverProps) {
-  const t = STRINGS[locale] || STRINGS.en;
-  const aria = ARIA[locale] || ARIA.en;
+  const { t: tBooking, tn: tnBooking } = useTranslations('booking');
+  const t = {
+    selectCheckIn: tBooking('popover.select_check_in'),
+    selectCheckOut: tBooking('popover.select_check_out'),
+    minStay: (n: number) => tnBooking('shared.min_stay', n),
+    notAvailable: tBooking('popover.not_available'),
+    nightsTotal: (n: number) => tnBooking('shared.nights', n),
+    checkIn: tBooking('popover.check_in'),
+    checkOut: tBooking('popover.check_out'),
+    clear: tBooking('popover.clear'),
+    close: tBooking('popover.close'),
+  };
+  const aria = {
+    prevMonth: tBooking('popover_aria.prev_month'),
+    nextMonth: tBooking('popover_aria.next_month'),
+  };
   const bcp47 = BCP47[locale] || 'en-GB';
 
   const { loading, error, helpers } = useRatesCalendar({ slug, enabled: isOpen, locale });

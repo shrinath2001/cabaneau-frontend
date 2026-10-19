@@ -35,20 +35,7 @@ const localeMap: Record<string, string> = {
   nl: 'nl-NL',
 };
 
-// Hardcoded translations for cabin section
-const sectionTranslations: Record<string, {
-  title: string;
-  persons: string;
-  available: string;
-  availableNow: string;
-  perNight: string;
-  loading: string;
-}> = {
-  en: { title: 'OUR CABINS', persons: 'Persons', available: 'Available', availableNow: 'Today', perNight: '/night', loading: 'Loading cabins...' },
-  fr: { title: 'NOS CABANES', persons: 'Personnes', available: 'Disponible', availableNow: 'Aujourd\'hui', perNight: '/nuit', loading: 'Chargement...' },
-  de: { title: 'UNSERE HÜTTEN', persons: 'Personen', available: 'Verfügbar', availableNow: 'Heute', perNight: '/Nacht', loading: 'Laden...' },
-  nl: { title: 'ONZE HUTTEN', persons: 'Personen', available: 'Beschikbaar', availableNow: 'Vandaag', perNight: '/nacht', loading: 'Laden...' },
-};
+
 
 const BlogSidebarCabin = () => {
   const { t: tc } = useTranslations('common');
@@ -58,7 +45,15 @@ const BlogSidebarCabin = () => {
   const { locale } = useTranslations();
 
   // Get hardcoded translations for current locale
-  const t = sectionTranslations[locale] || sectionTranslations.en;
+  const { t: tBlog } = useTranslations('blog');
+  const t = {
+    title: tBlog('sidebar_cabin.title'),
+    persons: tBlog('sidebar_cabin.persons'),
+    available: tBlog('sidebar_cabin.available'),
+    availableNow: tBlog('sidebar_cabin.available_now'),
+    perNight: tBlog('sidebar_cabin.per_night'),
+    loading: tBlog('sidebar_cabin.loading'),
+  };
 
   // Format nightly rate as "225 €/night"
   const formatNightlyRate = useCallback((rate?: number, currency = 'EUR'): string => {

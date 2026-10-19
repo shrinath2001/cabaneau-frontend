@@ -36,6 +36,12 @@ export function TranslationsProvider({
   );
 }
 
+/** Replaces {name} placeholders in a CMS text with the given values. */
+function fill(text: string, vars?: Record<string, string | number>): string {
+  if (!text || !vars) return text;
+  return text.replace(/\{(\w+)\}/g, (match, name) => (name in vars ? String(vars[name]) : match));
+}
+
 /**
  * Hook to access translations
  * @param namespace Optional namespace prefix to add to all keys
@@ -57,5 +63,19 @@ export function useTranslations(namespace?: string) {
     [context, namespace]
   );
 
-  return { t, locale };
+  // Text with {placeholders}, e.g. tf('daterange.min_stay', { n: 2 })
+  const tf = useCallback(
+    (key: string, vars?: Record<string, string | number>): string => fill(t(key), vars),
+    [t]
+  );
+
+  // Singular/plural text: reads `<key>_one` when count is 1, else `<key>_other`.
+  // {n} is replaced with the count; extra vars can be passed as well.
+  const tn = useCallback(
+    (key: string, count: number, vars?: Record<string, string | number>): string =>
+      fill(t(count === 1 ? `${key}_one` : `${key}_other`), { n: count, ...vars }),
+    [t]
+  );
+
+  return { t, tf, tn, locale };
 }

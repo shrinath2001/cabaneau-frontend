@@ -17,193 +17,7 @@ const localeMap: Record<string, string> = {
   nl: 'nl-NL',
 };
 
-// Hardcoded translations for search page (fallback when CMS translations not available)
-const searchTranslations: Record<string, {
-  title: string;
-  subtitle: string;
-  cabin: string;
-  cabins: string;
-  available: string;
-  noResults: string;
-  noResultsSubtitle: string;
-  selectDates: string;
-  selectDatesSubtitle: string;
-  persons: string;
-  perNight: string;
-  adult: string;
-  adults: string;
-  child: string;
-  children: string;
-  infant: string;
-  infants: string;
-  pet: string;
-  pets: string;
-  nextAvailable: string;
-  nextAvailableSubtitle: string;
-  nextAvailableWeekends: string;
-  nextAvailableWeekendsSub: string;
-  availableFrom: string;
-  availableNow: string;
-  viewCabin: string;
-  fromPrice: string;
-  perNightShort: string;
-  minStayMessage: string;
-  minStayNights: string;
-  unavailableNextDate: string;
-  unavailableNextWeekend: string;
-  bookNights: string;
-  guest: string;
-  guests: string;
-}> = {
-  en: {
-    title: 'Search Results',
-    subtitle: 'Modify your search below to find available cabins',
-    cabin: 'cabin',
-    cabins: 'cabins',
-    available: 'available',
-    noResults: 'No cabins found',
-    noResultsSubtitle: 'Try adjusting your search dates or number of guests to see more results.',
-    selectDates: 'Please select check-in and check-out dates',
-    selectDatesSubtitle: 'Use the search widget above to select your travel dates and find available cabins.',
-    persons: 'Persons',
-    perNight: '/night',
-    adult: 'Adult',
-    adults: 'Adults',
-    child: 'Child',
-    children: 'Children',
-    infant: 'Infant',
-    infants: 'Infants',
-    pet: 'Pet',
-    pets: 'Pets',
-    nextAvailable: 'Next available cabins',
-    nextAvailableSubtitle: 'These cabins have upcoming availability',
-    nextAvailableWeekends: 'Next available weekends',
-    nextAvailableWeekendsSub: 'You searched for a weekend stay \u2014 here are the next openings',
-    availableFrom: 'Available from',
-    availableNow: 'Available now',
-    viewCabin: 'View',
-    fromPrice: 'from',
-    perNightShort: '/ night',
-    minStayMessage: 'This cabin requires a minimum stay of',
-    minStayNights: 'nights for your selected dates',
-    unavailableNextDate: 'Next available from',
-    unavailableNextWeekend: 'Next weekend from',
-    bookNights: 'nights',
-    guest: 'Guest',
-    guests: 'Guests',
-  },
-  fr: {
-    title: 'Résultats de recherche',
-    subtitle: 'Modifiez votre recherche pour trouver des cabanes disponibles',
-    cabin: 'cabane',
-    cabins: 'cabanes',
-    available: 'disponible(s)',
-    noResults: 'Aucune cabane trouvée',
-    noResultsSubtitle: 'Essayez d\'ajuster vos dates ou le nombre d\'invités.',
-    selectDates: 'Veuillez sélectionner les dates d\'arrivée et de départ',
-    selectDatesSubtitle: 'Utilisez le widget de recherche ci-dessus pour sélectionner vos dates de voyage.',
-    persons: 'Personnes',
-    perNight: '/nuit',
-    adult: 'Adulte',
-    adults: 'Adultes',
-    child: 'Enfant',
-    children: 'Enfants',
-    infant: 'Bébé',
-    infants: 'Bébés',
-    pet: 'Animal',
-    pets: 'Animaux',
-    nextAvailable: 'Prochaines cabanes disponibles',
-    nextAvailableSubtitle: 'Ces cabanes ont une disponibilité prochaine',
-    availableFrom: 'Disponible à partir du',
-    availableNow: 'Disponible maintenant',
-    viewCabin: 'Voir',
-    fromPrice: 'à partir de',
-    perNightShort: '/ nuit',
-    minStayMessage: 'Ce chalet nécessite un séjour minimum de',
-    minStayNights: 'nuits pour les dates sélectionnées',
-    unavailableNextDate: 'Disponible à partir du',
-    unavailableNextWeekend: 'Prochain week-end dès le',
-    bookNights: 'nuits',
-    nextAvailableWeekends: 'Prochains week-ends disponibles',
-    nextAvailableWeekendsSub: 'Vous avez cherché un séjour de week-end — voici les prochaines disponibilités',
-    guest: 'Invité',
-    guests: 'Invités',
-  },
-  de: {
-    title: 'Suchergebnisse',
-    subtitle: 'Passen Sie Ihre Suche an, um verfügbare Hütten zu finden',
-    cabin: 'Hütte',
-    cabins: 'Hütten',
-    available: 'verfügbar',
-    noResults: 'Keine Hütten gefunden',
-    noResultsSubtitle: 'Versuchen Sie, Ihre Daten oder Gästeanzahl anzupassen.',
-    selectDates: 'Bitte wählen Sie An- und Abreisedatum',
-    selectDatesSubtitle: 'Verwenden Sie das Suchwidget oben, um Ihre Reisedaten auszuwählen.',
-    persons: 'Personen',
-    perNight: '/Nacht',
-    adult: 'Erwachsener',
-    adults: 'Erwachsene',
-    child: 'Kind',
-    children: 'Kinder',
-    infant: 'Kleinkind',
-    infants: 'Kleinkinder',
-    pet: 'Haustier',
-    pets: 'Haustiere',
-    nextAvailable: 'Nächste verfügbare Hütten',
-    nextAvailableSubtitle: 'Diese Hütten sind bald verfügbar',
-    availableFrom: 'Verfügbar ab',
-    availableNow: 'Jetzt verfügbar',
-    viewCabin: 'Ansehen',
-    fromPrice: 'ab',
-    perNightShort: '/ Nacht',
-    minStayMessage: 'Diese Hütte erfordert einen Mindestaufenthalt von',
-    minStayNights: 'Nächten für die gewählten Daten',
-    unavailableNextDate: 'Nächste Verfügbarkeit ab',
-    unavailableNextWeekend: 'Nächstes Wochenende ab',
-    bookNights: 'Nächte',
-    nextAvailableWeekends: 'Nächste verfügbare Wochenenden',
-    nextAvailableWeekendsSub: 'Sie haben nach einem Wochenendaufenthalt gesucht — hier sind die nächsten Möglichkeiten',
-    guest: 'Gast',
-    guests: 'Gäste',
-  },
-  nl: {
-    title: 'Zoekresultaten',
-    subtitle: 'Pas uw zoekopdracht aan om beschikbare hutten te vinden',
-    cabin: 'hut',
-    cabins: 'hutten',
-    available: 'beschikbaar',
-    noResults: 'Geen hutten gevonden',
-    noResultsSubtitle: 'Probeer uw data of aantal gasten aan te passen.',
-    selectDates: 'Selecteer in- en uitcheckdatums',
-    selectDatesSubtitle: 'Gebruik de zoekwidget hierboven om uw reisdata te selecteren.',
-    persons: 'Personen',
-    perNight: '/nacht',
-    adult: 'Volwassene',
-    adults: 'Volwassenen',
-    child: 'Kind',
-    children: 'Kinderen',
-    infant: 'Baby',
-    infants: 'Baby\'s',
-    pet: 'Huisdier',
-    pets: 'Huisdieren',
-    nextAvailable: 'Volgende beschikbare hutten',
-    nextAvailableSubtitle: 'Deze hutten zijn binnenkort beschikbaar',
-    nextAvailableWeekends: 'Volgende beschikbare weekenden',
-    nextAvailableWeekendsSub: 'U zocht een weekendverblijf \u2014 hier zijn de volgende mogelijkheden',
-    availableFrom: 'Beschikbaar vanaf',
-    availableNow: 'Nu beschikbaar',
-    viewCabin: 'Bekijk',
-    fromPrice: 'vanaf',
-    perNightShort: '/ nacht',
-    minStayMessage: 'Deze hut vereist een minimaal verblijf van',
-    minStayNights: 'nachten voor de geselecteerde data',
-    unavailableNextDate: 'Volgende beschikbaarheid vanaf',
-    unavailableNextWeekend: 'Volgend weekend vanaf',
-    bookNights: 'nachten',
-    guest: 'Gast',
-    guests: 'Gasten',
-  },
-};
+
 
 interface AmenityInfo {
   id: string;
@@ -391,7 +205,44 @@ function SearchResults() {
   const { locale } = useTranslations('search');
 
   // Get hardcoded translations for current locale
-  const st = searchTranslations[locale] || searchTranslations.en;
+  const { t: tSearch } = useTranslations('search');
+  const st = {
+    title: tSearch('page.title'),
+    subtitle: tSearch('page.subtitle'),
+    cabin: tSearch('page.cabin'),
+    cabins: tSearch('page.cabins'),
+    available: tSearch('page.available'),
+    noResults: tSearch('page.no_results'),
+    noResultsSubtitle: tSearch('page.no_results_subtitle'),
+    selectDates: tSearch('page.select_dates'),
+    selectDatesSubtitle: tSearch('page.select_dates_subtitle'),
+    persons: tSearch('page.persons'),
+    perNight: tSearch('page.per_night'),
+    adult: tSearch('page.adult'),
+    adults: tSearch('page.adults'),
+    child: tSearch('page.child'),
+    children: tSearch('page.children'),
+    infant: tSearch('page.infant'),
+    infants: tSearch('page.infants'),
+    pet: tSearch('page.pet'),
+    pets: tSearch('page.pets'),
+    nextAvailable: tSearch('page.next_available'),
+    nextAvailableSubtitle: tSearch('page.next_available_subtitle'),
+    nextAvailableWeekends: tSearch('page.next_available_weekends'),
+    nextAvailableWeekendsSub: tSearch('page.next_available_weekends_sub'),
+    availableFrom: tSearch('page.available_from'),
+    availableNow: tSearch('page.available_now'),
+    viewCabin: tSearch('page.view_cabin'),
+    fromPrice: tSearch('page.from_price'),
+    perNightShort: tSearch('page.per_night_short'),
+    minStayMessage: tSearch('page.min_stay_message'),
+    minStayNights: tSearch('page.min_stay_nights'),
+    unavailableNextDate: tSearch('page.unavailable_next_date'),
+    unavailableNextWeekend: tSearch('page.unavailable_next_weekend'),
+    bookNights: tSearch('page.book_nights'),
+    guest: tSearch('page.guest'),
+    guests: tSearch('page.guests'),
+  };
 
   // Parse both Lodgify and legacy parameter formats
   const { checkIn, checkOut, guests } = parseSearchParams(searchParams);

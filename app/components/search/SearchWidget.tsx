@@ -14,23 +14,9 @@ interface SearchWidgetProps {
   variant?: 'hero' | 'page';
 }
 
-const LABELS: Record<
-  string,
-  { checkIn: string; checkOut: string; guests: string; search: string; addDates: string }
-> = {
-  en: { checkIn: 'Check-in', checkOut: 'Check-out', guests: 'Guests', search: 'Search', addDates: 'Add dates' },
-  fr: { checkIn: 'Arrivée', checkOut: 'Départ', guests: 'Voyageurs', search: 'Rechercher', addDates: 'Ajouter des dates' },
-  de: { checkIn: 'Anreise', checkOut: 'Abreise', guests: 'Gäste', search: 'Suchen', addDates: 'Datum hinzufügen' },
-  nl: { checkIn: 'Inchecken', checkOut: 'Uitchecken', guests: 'Gasten', search: 'Zoeken', addDates: 'Datum toevoegen' },
-};
 
-// [singular, plural] guest nouns for the trigger summary
-const NOUNS: Record<string, Record<keyof GuestCounts, [string, string]>> = {
-  en: { adults: ['adult', 'adults'], children: ['child', 'children'], infants: ['infant', 'infants'], pets: ['dog', 'dogs'] },
-  fr: { adults: ['adulte', 'adultes'], children: ['enfant', 'enfants'], infants: ['bébé', 'bébés'], pets: ['chien', 'chiens'] },
-  de: { adults: ['Erwachsener', 'Erwachsene'], children: ['Kind', 'Kinder'], infants: ['Kleinkind', 'Kleinkinder'], pets: ['Hund', 'Hunde'] },
-  nl: { adults: ['volwassene', 'volwassenen'], children: ['kind', 'kinderen'], infants: ['baby', "baby's"], pets: ['hond', 'honden'] },
-};
+
+
 
 interface PanelPos {
   left: number;
@@ -65,8 +51,20 @@ export default function SearchWidget({ variant = 'page' }: SearchWidgetProps) {
   const { arrival, departure, adults, children, infants, pets, setDates, clearDates } =
     useBookingDates();
 
-  const L = LABELS[locale] || LABELS.en;
-  const nouns = NOUNS[locale] || NOUNS.en;
+  const { t: tSearch } = useTranslations('search');
+  const L = {
+    checkIn: tSearch('widget.check_in'),
+    checkOut: tSearch('widget.check_out'),
+    guests: tSearch('widget.guests'),
+    search: tSearch('widget.search'),
+    addDates: tSearch('widget.add_dates'),
+  };
+  const nouns = {
+    adults: [tSearch('widget.noun_adults_one'), tSearch('widget.noun_adults_other')],
+    children: [tSearch('widget.noun_children_one'), tSearch('widget.noun_children_other')],
+    infants: [tSearch('widget.noun_infants_one'), tSearch('widget.noun_infants_other')],
+    pets: [tSearch('widget.noun_pets_one'), tSearch('widget.noun_pets_other')],
+  };
   const bcp47 = BCP47[locale] || 'en-GB';
 
   const [open, setOpen] = useState<'cal' | 'guests' | null>(null);

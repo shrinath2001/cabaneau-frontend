@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useRatesCalendar, nightsBetween } from './hooks/useRatesCalendar';
 import { useBookingDates } from '@/app/providers/BookingDatesProvider';
+import { useTranslations } from '@/app/providers/TranslationsProvider';
 
 interface AvailabilityCalendarProps {
   slug: string;
@@ -11,50 +12,7 @@ interface AvailabilityCalendarProps {
   city?: string;
 }
 
-const STRINGS: Record<
-  string,
-  {
-    heading: string;
-    nightsIn: (n: number, city: string) => string;
-    selectPrompt: string;
-    minStay: (n: number) => string;
-    notAvailable: string;
-    clear: string;
-  }
-> = {
-  en: {
-    heading: 'Availability',
-    nightsIn: (n, city) => `${n} night${n === 1 ? '' : 's'}${city ? ` in ${city}` : ''}`,
-    selectPrompt: 'Select your dates to check availability',
-    minStay: (n) => `Minimum stay: ${n} night${n === 1 ? '' : 's'}`,
-    notAvailable: 'Those dates are not available.',
-    clear: 'Clear dates',
-  },
-  fr: {
-    heading: 'Disponibilité',
-    nightsIn: (n, city) => `${n} nuit${n === 1 ? '' : 's'}${city ? ` à ${city}` : ''}`,
-    selectPrompt: 'Sélectionnez vos dates pour voir les disponibilités',
-    minStay: (n) => `Séjour minimum : ${n} nuit${n === 1 ? '' : 's'}`,
-    notAvailable: 'Ces dates ne sont pas disponibles.',
-    clear: 'Effacer les dates',
-  },
-  de: {
-    heading: 'Verfügbarkeit',
-    nightsIn: (n, city) => `${n} Nacht${n === 1 ? '' : 'e'}${city ? ` in ${city}` : ''}`,
-    selectPrompt: 'Wählen Sie Ihre Daten, um die Verfügbarkeit zu prüfen',
-    minStay: (n) => `Mindestaufenthalt: ${n} Nacht${n === 1 ? '' : 'e'}`,
-    notAvailable: 'Diese Daten sind nicht verfügbar.',
-    clear: 'Daten löschen',
-  },
-  nl: {
-    heading: 'Beschikbaarheid',
-    nightsIn: (n, city) => `${n} nacht${n === 1 ? '' : 'en'}${city ? ` in ${city}` : ''}`,
-    selectPrompt: 'Selecteer uw data om de beschikbaarheid te bekijken',
-    minStay: (n) => `Minimaal verblijf: ${n} nacht${n === 1 ? '' : 'en'}`,
-    notAvailable: 'Deze data zijn niet beschikbaar.',
-    clear: 'Data wissen',
-  },
-};
+
 
 const BCP47: Record<string, string> = {
   en: 'en-GB',
@@ -63,12 +21,7 @@ const BCP47: Record<string, string> = {
   nl: 'nl-NL',
 };
 
-const ARIA: Record<string, { prevMonth: string; nextMonth: string }> = {
-  en: { prevMonth: 'Previous month', nextMonth: 'Next month' },
-  fr: { prevMonth: 'Mois précédent', nextMonth: 'Mois suivant' },
-  de: { prevMonth: 'Vorheriger Monat', nextMonth: 'Nächster Monat' },
-  nl: { prevMonth: 'Vorige maand', nextMonth: 'Volgende maand' },
-};
+
 
 // --- pure date helpers (UTC, mirrors DateRangePicker) ---
 function toDate(d: string): Date {
@@ -115,8 +68,19 @@ export default function AvailabilityCalendar({
   locale,
   city,
 }: AvailabilityCalendarProps) {
-  const t = STRINGS[locale] || STRINGS.en;
-  const aria = ARIA[locale] || ARIA.en;
+  const { t: tBooking, tn: tnBooking } = useTranslations('booking');
+  const t = {
+    heading: tBooking('calendar.heading'),
+    nightsIn: (n: number, city: string) => (city ? tnBooking('shared.nights_in_city', n, { city }) : tnBooking('shared.nights', n)),
+    selectPrompt: tBooking('calendar.select_prompt'),
+    minStay: (n: number) => tnBooking('shared.min_stay', n),
+    notAvailable: tBooking('calendar.not_available'),
+    clear: tBooking('calendar.clear'),
+  };
+  const aria = {
+    prevMonth: tBooking('calendar_aria.prev_month'),
+    nextMonth: tBooking('calendar_aria.next_month'),
+  };
   const bcp47 = BCP47[locale] || 'en-GB';
 
   const { loading, error, helpers } = useRatesCalendar({ slug, locale });

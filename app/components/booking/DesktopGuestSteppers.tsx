@@ -1,6 +1,7 @@
 'use client';
 
 import type { GuestCounts } from '../search/GuestSteppers';
+import { useTranslations } from '@/app/providers/TranslationsProvider';
 
 type GuestField = keyof GuestCounts;
 
@@ -14,50 +15,7 @@ interface DesktopGuestSteppersProps {
   allowDogs?: boolean;
 }
 
-const STRINGS: Record<
-  string,
-  {
-    adults: string;
-    adultsSub: string;
-    children: string;
-    childrenSub: string;
-    infants: string;
-    infantsSub: string;
-    dogs: string;
-    decrease: string;
-    increase: string;
-    note: (cap: number, dogs: boolean) => string;
-  }
-> = {
-  en: {
-    adults: 'Adults', adultsSub: 'Ages 13 or above',
-    children: 'Children', childrenSub: 'Ages 2-12',
-    infants: 'Infants', infantsSub: 'Under 2',
-    dogs: 'Dogs', decrease: 'Decrease', increase: 'Increase',
-    note: (c, d) => `This place has a maximum of ${c} guests, not including infants.${d ? ' 1 dog max.' : ' Pets aren’t allowed.'}`,
-  },
-  fr: {
-    adults: 'Adultes', adultsSub: '13 ans et plus',
-    children: 'Enfants', childrenSub: '2 à 12 ans',
-    infants: 'Bébés', infantsSub: 'Moins de 2 ans',
-    dogs: 'Chiens', decrease: 'Diminuer', increase: 'Augmenter',
-    note: (c, d) => `Cet hébergement a une capacité maximale de ${c} personnes, bébés non compris.${d ? ' 1 chien maximum.' : ' Les animaux ne sont pas acceptés.'}`,
-  },
-  de: {
-    adults: 'Erwachsene', adultsSub: 'Ab 13 Jahren',
-    children: 'Kinder', childrenSub: '2 bis 12 Jahre',
-    infants: 'Kleinkinder', infantsSub: 'Unter 2',
-    dogs: 'Hunde', decrease: 'Verringern', increase: 'Erhöhen',
-    note: (c, d) => `Diese Unterkunft bietet Platz für maximal ${c} Gäste, Kleinkinder nicht mitgezählt.${d ? ' Maximal 1 Hund.' : ' Haustiere sind nicht erlaubt.'}`,
-  },
-  nl: {
-    adults: 'Volwassenen', adultsSub: '13 jaar en ouder',
-    children: 'Kinderen', childrenSub: '2 tot 12 jaar',
-    infants: "Baby's", infantsSub: 'Onder 2',
-    dogs: 'Honden', decrease: 'Verminderen', increase: 'Verhogen',
-    note: (c, d) => `Deze accommodatie biedt plaats aan maximaal ${c} gasten, exclusief baby's.${d ? ' Max. 1 hond.' : ' Huisdieren zijn niet toegestaan.'}`,
-  },
-};
+
 
 const MIN: Record<GuestField, number> = { adults: 1, children: 0, infants: 0, pets: 0 };
 const DOG_CAP = 1;
@@ -75,7 +33,19 @@ export default function DesktopGuestSteppers({
   peopleCap = 4,
   allowDogs = true,
 }: DesktopGuestSteppersProps) {
-  const t = STRINGS[locale] || STRINGS.en;
+  const { t: tBooking, tf: tfBooking } = useTranslations('booking');
+  const t = {
+    adults: tBooking('desktop_guests.adults'),
+    adultsSub: tBooking('desktop_guests.adults_sub'),
+    children: tBooking('desktop_guests.children'),
+    childrenSub: tBooking('desktop_guests.children_sub'),
+    infants: tBooking('desktop_guests.infants'),
+    infantsSub: tBooking('desktop_guests.infants_sub'),
+    dogs: tBooking('desktop_guests.dogs'),
+    decrease: tBooking('desktop_guests.decrease'),
+    increase: tBooking('desktop_guests.increase'),
+    note: (c: number, d: boolean) => `${tfBooking('desktop_guests.note', { count: c })} ${d ? tBooking('desktop_guests.note_dog') : tBooking('desktop_guests.note_no_pets')}`,
+  };
   const peopleTotal = value.adults + value.children + value.infants;
 
   const rows: { field: GuestField; label: string; sub?: string }[] = [

@@ -4,13 +4,6 @@ import { useEffect } from "react";
 import { useTranslations } from "@/app/providers/TranslationsProvider";
 import DateRangePicker from "./DateRangePicker";
 
-const titleByLocale: Record<string, string> = {
-  en: "Select Dates & Guests",
-  fr: "Sélectionner les dates et invités",
-  de: "Daten und Gäste auswählen",
-  nl: "Selecteer data en gasten",
-};
-
 interface CabinInfo {
   slug: string;
   name: string;
@@ -59,8 +52,10 @@ export default function MobileBottomSheet({
   onSave,
 }: MobileBottomSheetProps) {
   const { locale } = useTranslations();
-  const title = titleByLocale[locale] || titleByLocale.en;
-  const closeLabel = ({ en: "Close", fr: "Fermer", de: "Schließen", nl: "Sluiten" }[locale]) || "Close";
+  const { t: tBooking } = useTranslations('booking');
+  const { t: tCommon } = useTranslations('common');
+  const title = tBooking('sheet_title');
+  const closeLabel = tCommon('button.close');
 
   useEffect(() => {
     const handleEscape = (e: KeyboardEvent) => {

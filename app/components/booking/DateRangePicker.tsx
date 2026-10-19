@@ -3,6 +3,7 @@
 import { useMemo, useState } from 'react';
 import { useRatesCalendar } from './hooks/useRatesCalendar';
 import GuestSteppers, { GuestCounts } from '../search/GuestSteppers';
+import { useTranslations } from '@/app/providers/TranslationsProvider';
 
 interface DateRangePickerProps {
   slug: string;
@@ -29,76 +30,7 @@ interface DateRangePickerProps {
   }) => void;
 }
 
-// Locale-scoped UI strings (kept local to match the existing booking components)
-const STRINGS: Record<
-  string,
-  {
-    selectCheckIn: string;
-    selectCheckOut: string;
-    minStay: (n: number) => string;
-    notAvailable: string;
-    guests: string;
-    guest: string;
-    confirm: string;
-    selectToContinue: string;
-    nightsTotal: (n: number) => string;
-    perNight: string;
-    clear: string;
-  }
-> = {
-  en: {
-    selectCheckIn: 'Select your check-in date',
-    selectCheckOut: 'Select your check-out date',
-    minStay: (n) => `Minimum stay: ${n} night${n === 1 ? '' : 's'}`,
-    notAvailable: 'Those dates are not available. Please choose another check-out.',
-    guests: 'Guests',
-    guest: 'guest',
-    confirm: 'Confirm dates',
-    selectToContinue: 'Select dates to continue',
-    nightsTotal: (n) => `${n} night${n === 1 ? '' : 's'}`,
-    perNight: 'night',
-    clear: 'Clear',
-  },
-  fr: {
-    selectCheckIn: "Sélectionnez votre date d'arrivée",
-    selectCheckOut: 'Sélectionnez votre date de départ',
-    minStay: (n) => `Séjour minimum : ${n} nuit${n === 1 ? '' : 's'}`,
-    notAvailable: 'Ces dates ne sont pas disponibles. Choisissez un autre départ.',
-    guests: 'Invités',
-    guest: 'invité',
-    confirm: 'Confirmer les dates',
-    selectToContinue: 'Sélectionnez les dates',
-    nightsTotal: (n) => `${n} nuit${n === 1 ? '' : 's'}`,
-    perNight: 'nuit',
-    clear: 'Effacer',
-  },
-  de: {
-    selectCheckIn: 'Wählen Sie Ihr Anreisedatum',
-    selectCheckOut: 'Wählen Sie Ihr Abreisedatum',
-    minStay: (n) => `Mindestaufenthalt: ${n} Nacht${n === 1 ? '' : 'e'}`,
-    notAvailable: 'Diese Daten sind nicht verfügbar. Bitte wählen Sie eine andere Abreise.',
-    guests: 'Gäste',
-    guest: 'Gast',
-    confirm: 'Daten bestätigen',
-    selectToContinue: 'Daten auswählen',
-    nightsTotal: (n) => `${n} Nacht${n === 1 ? '' : 'e'}`,
-    perNight: 'Nacht',
-    clear: 'Löschen',
-  },
-  nl: {
-    selectCheckIn: 'Selecteer uw aankomstdatum',
-    selectCheckOut: 'Selecteer uw vertrekdatum',
-    minStay: (n) => `Minimaal verblijf: ${n} nacht${n === 1 ? '' : 'en'}`,
-    notAvailable: 'Deze data zijn niet beschikbaar. Kies een andere vertrekdatum.',
-    guests: 'Gasten',
-    guest: 'gast',
-    confirm: 'Data bevestigen',
-    selectToContinue: 'Selecteer data',
-    nightsTotal: (n) => `${n} nacht${n === 1 ? '' : 'en'}`,
-    perNight: 'nacht',
-    clear: 'Wissen',
-  },
-};
+
 
 const BCP47: Record<string, string> = {
   en: 'en-GB',
@@ -107,16 +39,7 @@ const BCP47: Record<string, string> = {
   nl: 'nl-NL',
 };
 
-// Screen-reader labels (not visible text)
-const ARIA: Record<
-  string,
-  { prevMonth: string; nextMonth: string; decGuests: string; incGuests: string }
-> = {
-  en: { prevMonth: 'Previous month', nextMonth: 'Next month', decGuests: 'Decrease guests', incGuests: 'Increase guests' },
-  fr: { prevMonth: 'Mois précédent', nextMonth: 'Mois suivant', decGuests: "Moins d'invités", incGuests: "Plus d'invités" },
-  de: { prevMonth: 'Vorheriger Monat', nextMonth: 'Nächster Monat', decGuests: 'Weniger Gäste', incGuests: 'Mehr Gäste' },
-  nl: { prevMonth: 'Vorige maand', nextMonth: 'Volgende maand', decGuests: 'Minder gasten', incGuests: 'Meer gasten' },
-};
+
 
 // --- pure date helpers (UTC-based to avoid tz drift) ---
 function toDate(d: string): Date {
@@ -164,8 +87,26 @@ export default function DateRangePicker({
   enabled = true,
   onConfirm,
 }: DateRangePickerProps) {
-  const t = STRINGS[locale] || STRINGS.en;
-  const aria = ARIA[locale] || ARIA.en;
+  const { t: tBooking, tn: tnBooking } = useTranslations('booking');
+  const t = {
+    selectCheckIn: tBooking('daterange.select_check_in'),
+    selectCheckOut: tBooking('daterange.select_check_out'),
+    minStay: (n: number) => tnBooking('shared.min_stay', n),
+    notAvailable: tBooking('daterange.not_available'),
+    guests: tBooking('daterange.guests'),
+    guest: tBooking('daterange.guest'),
+    confirm: tBooking('daterange.confirm'),
+    selectToContinue: tBooking('daterange.select_to_continue'),
+    nightsTotal: (n: number) => tnBooking('shared.nights', n),
+    perNight: tBooking('daterange.per_night'),
+    clear: tBooking('daterange.clear'),
+  };
+  const aria = {
+    prevMonth: tBooking('daterange_aria.prev_month'),
+    nextMonth: tBooking('daterange_aria.next_month'),
+    decGuests: tBooking('daterange_aria.dec_guests'),
+    incGuests: tBooking('daterange_aria.inc_guests'),
+  };
   const bcp47 = BCP47[locale] || 'en-GB';
 
   const { loading, error, helpers } = useRatesCalendar({ slug, enabled, locale });

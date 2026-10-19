@@ -56,18 +56,7 @@ const localeMap: Record<string, string> = {
   nl: 'nl-NL',
 };
 
-// Hardcoded translations for cabin section (fallback when CMS translations not available)
-const sectionTranslations: Record<string, {
-  persons: string;
-  available: string;
-  availableNow: string;
-  perNight: string;
-}> = {
-  en: { persons: 'Persons', available: 'Available', availableNow: 'Today', perNight: '/night' },
-  fr: { persons: 'Personnes', available: 'Disponible', availableNow: 'Aujourd\'hui', perNight: '/nuit' },
-  de: { persons: 'Personen', available: 'Verfügbar', availableNow: 'Heute', perNight: '/Nacht' },
-  nl: { persons: 'Personen', available: 'Beschikbaar', availableNow: 'Vandaag', perNight: '/nacht' },
-};
+
 
 /**
  * Extract image URLs from cabin, ensuring featured image is first
@@ -114,7 +103,13 @@ const CabinsSection = ({ cabins: rawCabins }: { cabins: RawCabin[] }) => {
   const { t, locale } = useTranslations('homepage');
 
   // Get hardcoded translations for current locale
-  const st = sectionTranslations[locale] || sectionTranslations.en;
+  const { t: tHomepage } = useTranslations('homepage');
+  const st = {
+    persons: tHomepage('cabins_section.persons'),
+    available: tHomepage('cabins_section.available'),
+    availableNow: tHomepage('cabins_section.available_now'),
+    perNight: tHomepage('cabins_section.per_night'),
+  };
 
   // Format date string with locale support
   const formatAvailabilityDate = (dateStr?: string): string => {

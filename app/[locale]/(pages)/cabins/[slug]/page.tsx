@@ -300,13 +300,6 @@ async function getCabinPageSettings(): Promise<{ showMobileSubtitle: boolean }> 
   }
 }
 
-const BREADCRUMB_LABELS: Record<string, { home: string; cabins: string }> = {
-  en: { home: 'Home', cabins: 'Cabins' },
-  fr: { home: 'Accueil', cabins: 'Chalets' },
-  de: { home: 'Startseite', cabins: 'Hütten' },
-  nl: { home: 'Home', cabins: 'Hutten' },
-};
-
 async function getCabinReviews(cabinId: string, locale: string): Promise<ReviewData[]> {
   const apiKey = process.env.API_KEY;
   const apiBaseUrl = process.env.API_BASE_URL || 'http://localhost:3000/api/v1';
@@ -387,7 +380,10 @@ export default async function CabinDetailPage({
     getCabinPageSettings(),
   ]);
 
-  const breadcrumbLabels = BREADCRUMB_LABELS[locale] || BREADCRUMB_LABELS.en;
+  const breadcrumbLabels = {
+    home: translations['cabin.breadcrumb.home'] || '',
+    cabins: translations['cabin.breadcrumb.cabins'] || '',
+  };
   const siteUrl = getSiteUrl();
 
   const t = (key: string): string => translations[`cabin.${key}`] || '';

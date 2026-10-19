@@ -10,6 +10,7 @@ import {
   toDate,
   weekdayLabels,
 } from '../booking/calendarUtils';
+import { useTranslations } from '@/app/providers/TranslationsProvider';
 
 interface SearchDateRangeProps {
   checkIn?: string; // ISO
@@ -21,12 +22,7 @@ interface SearchDateRangeProps {
   onPickDay: (date: string) => void;
 }
 
-const ARIA: Record<string, { prev: string; next: string }> = {
-  en: { prev: 'Previous month', next: 'Next month' },
-  fr: { prev: 'Mois précédent', next: 'Mois suivant' },
-  de: { prev: 'Vorheriger Monat', next: 'Nächster Monat' },
-  nl: { prev: 'Vorige maand', next: 'Volgende maand' },
-};
+
 
 /**
  * Plain, availability-agnostic range calendar for the multi-property search.
@@ -43,7 +39,11 @@ export default function SearchDateRange({
   onPickDay,
 }: SearchDateRangeProps) {
   const bcp47 = BCP47[locale] || 'en-GB';
-  const aria = ARIA[locale] || ARIA.en;
+  const { t: tSearch } = useTranslations('search');
+  const aria = {
+    prev: tSearch('daterange_aria.prev'),
+    next: tSearch('daterange_aria.next'),
+  };
 
   const [viewMonth, setViewMonth] = useState<string>(() => firstOfMonth(checkIn || today));
   const [hover, setHover] = useState<string | undefined>();

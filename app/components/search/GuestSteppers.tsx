@@ -1,4 +1,5 @@
 'use client';
+import { useTranslations } from '@/app/providers/TranslationsProvider';
 
 export interface GuestCounts {
   adults: number;
@@ -19,50 +20,7 @@ interface GuestSteppersProps {
   allowDogs?: boolean;
 }
 
-const STRINGS: Record<
-  string,
-  {
-    adults: string;
-    adultsSub: string;
-    children: string;
-    childrenSub: string;
-    infants: string;
-    infantsSub: string;
-    dogs: string;
-    decrease: string;
-    increase: string;
-    note: (cap: number, dogs: boolean) => string;
-  }
-> = {
-  en: {
-    adults: 'adults', adultsSub: 'Ages 13 or above',
-    children: 'children', childrenSub: 'Ages 2-12',
-    infants: 'infants', infantsSub: 'Under 2',
-    dogs: 'dogs', decrease: 'Decrease', increase: 'Increase',
-    note: (c, d) => `Up to ${c} guest${c === 1 ? '' : 's'}${d ? ' and 1 dog' : ''}.`,
-  },
-  fr: {
-    adults: 'adultes', adultsSub: '13 ans et plus',
-    children: 'enfants', childrenSub: '2 à 12 ans',
-    infants: 'bébés', infantsSub: 'Moins de 2 ans',
-    dogs: 'chiens', decrease: 'Diminuer', increase: 'Augmenter',
-    note: (c, d) => `Jusqu'à ${c} personne${c === 1 ? '' : 's'}${d ? ' et 1 chien' : ''}.`,
-  },
-  de: {
-    adults: 'Erwachsene', adultsSub: 'Ab 13 Jahren',
-    children: 'Kinder', childrenSub: '2 bis 12 Jahre',
-    infants: 'Kleinkinder', infantsSub: 'Unter 2',
-    dogs: 'Hunde', decrease: 'Verringern', increase: 'Erhöhen',
-    note: (c, d) => `Bis zu ${c} ${c === 1 ? 'Gast' : 'Gäste'}${d ? ' und 1 Hund' : ''}.`,
-  },
-  nl: {
-    adults: 'volwassenen', adultsSub: '13 jaar en ouder',
-    children: 'kinderen', childrenSub: '2 tot 12 jaar',
-    infants: "baby's", infantsSub: 'Onder 2',
-    dogs: 'honden', decrease: 'Verminderen', increase: 'Verhogen',
-    note: (c, d) => `Tot ${c} ${c === 1 ? 'gast' : 'gasten'}${d ? ' en 1 hond' : ''}.`,
-  },
-};
+
 
 const MIN: Record<GuestField, number> = { adults: 1, children: 0, infants: 0, pets: 0 };
 const DOG_CAP = 1;
@@ -79,7 +37,19 @@ export default function GuestSteppers({
   peopleCap = 4,
   allowDogs = true,
 }: GuestSteppersProps) {
-  const t = STRINGS[locale] || STRINGS.en;
+  const { t: tSearch, tn: tnSearch } = useTranslations('search');
+  const t = {
+    adults: tSearch('guests.adults'),
+    adultsSub: tSearch('guests.adults_sub'),
+    children: tSearch('guests.children'),
+    childrenSub: tSearch('guests.children_sub'),
+    infants: tSearch('guests.infants'),
+    infantsSub: tSearch('guests.infants_sub'),
+    dogs: tSearch('guests.dogs'),
+    decrease: tSearch('guests.decrease'),
+    increase: tSearch('guests.increase'),
+    note: (c: number, d: boolean) => (d ? tnSearch('guests.note_dog', c, { count: c }) : tnSearch('guests.note', c, { count: c })),
+  };
   const peopleTotal = value.adults + value.children + value.infants;
 
   const rows: { field: GuestField; label: string; sub?: string }[] = [
