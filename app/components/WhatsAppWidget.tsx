@@ -2,11 +2,13 @@
 
 import { useEffect, useState } from 'react';
 import { usePathname } from 'next/navigation';
+import { useTranslations } from '@/app/providers/TranslationsProvider';
 
 const WHATSAPP_NUMBER = '32470091183';
 const DEFAULT_MESSAGE = 'Hi, how can we help?';
 
 const WhatsAppWidget = () => {
+  const { t: tc } = useTranslations('common');
   const pathname = usePathname();
   const [isVisible, setIsVisible] = useState(false);
 
@@ -44,7 +46,7 @@ const WhatsAppWidget = () => {
       target="_blank"
       rel="noopener noreferrer"
       className="fixed bottom-5 right-5 z-[999999] w-14 h-14 bg-[#F49A4A] hover:bg-[#e08a3a] rounded-full flex items-center justify-center shadow-lg transition-colors"
-      aria-label="Chat on WhatsApp"
+      aria-label={tc('aria.chat_whatsapp')}
     >
       <svg
         xmlns="http://www.w3.org/2000/svg"

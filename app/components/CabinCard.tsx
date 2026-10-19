@@ -139,6 +139,7 @@ const CabinCard: React.FC<CabinCardProps> = ({
   priceType = 'perNight',
   warningMessage,
 }) => {
+  const { t: tc } = useTranslations('common');
   const altOf = useMediaAlt();
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const { t, locale } = useTranslations('cabin');
@@ -189,7 +190,7 @@ const CabinCard: React.FC<CabinCardProps> = ({
         <button
           onClick={prevImage}
           className="absolute left-3 top-1/2 -translate-y-1/2 flex items-center justify-center transition hover:opacity-70"
-          aria-label="Previous image"
+          aria-label={tc('aria.previous_image')}
         >
           <svg className="w-8 h-8" fill="none" stroke="white" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
             <polyline points="15 18 9 12 15 6"></polyline>
@@ -198,7 +199,7 @@ const CabinCard: React.FC<CabinCardProps> = ({
         <button
           onClick={nextImage}
           className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center justify-center transition hover:opacity-70"
-          aria-label="Next image"
+          aria-label={tc('aria.next_image')}
         >
           <svg className="w-8 h-8" fill="none" stroke="white" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
             <polyline points="9 18 15 12 9 6"></polyline>

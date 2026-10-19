@@ -2,6 +2,7 @@
 
 import { EatDrinkItem } from '@/app/types/content';
 import { useMediaAlt } from '@/app/providers/MediaAltProvider';
+import { useTranslations } from '@/app/providers/TranslationsProvider';
 
 interface EatDrinkCardProps {
   item: EatDrinkItem;
@@ -10,6 +11,7 @@ interface EatDrinkCardProps {
 }
 
 const EatDrinkCard: React.FC<EatDrinkCardProps> = ({ item, onReadMore, isReversed = false }) => {
+  const { t: tc } = useTranslations('common');
   const altOf = useMediaAlt();
   return (
     <div className="bg-white border border-black">
@@ -55,7 +57,7 @@ const EatDrinkCard: React.FC<EatDrinkCardProps> = ({ item, onReadMore, isReverse
               onClick={() => onReadMore(item)}
               className="w-full sm:w-auto px-8 py-2 bg-[#939D92] text-white text-[16px] font-heading font-medium uppercase tracking-wider hover:bg-opacity-90 transition-colors text-center"
             >
-              READ MORE
+              {tc('label.read_more')}
             </button>
           </div>
         </div>

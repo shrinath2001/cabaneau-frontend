@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import Image from 'next/image';
+import { useTranslations } from '@/app/providers/TranslationsProvider';
 
 // Image type that supports both old string[] and new tagged image format
 interface CabinImage {
@@ -26,6 +27,7 @@ interface MobileCarouselModalProps {
 }
 
 const MobileCarouselModal = ({ isOpen, onClose, images, initialIndex = 0 }: MobileCarouselModalProps) => {
+  const { t: tc } = useTranslations('common');
   const [currentIndex, setCurrentIndex] = useState(initialIndex);
   const touchStartX = useRef(0);
   const touchEndX = useRef(0);
@@ -101,7 +103,7 @@ const MobileCarouselModal = ({ isOpen, onClose, images, initialIndex = 0 }: Mobi
         <button
           onClick={onClose}
           className="text-white p-2 hover:bg-white/10 transition"
-          aria-label="Close"
+          aria-label={tc('button.close')}
         >
           <svg className="w-6 h-6 md:w-7 md:h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -133,7 +135,7 @@ const MobileCarouselModal = ({ isOpen, onClose, images, initialIndex = 0 }: Mobi
             <button
               onClick={prevImage}
               className="absolute left-4 md:left-8 top-1/2 -translate-y-1/2 w-10 h-10 md:w-12 md:h-12 flex items-center justify-center bg-white/20 hover:bg-white/30 backdrop-blur-sm transition z-10"
-              aria-label="Previous image"
+              aria-label={tc('aria.previous_image')}
             >
               <svg className="w-6 h-6 md:w-7 md:h-7 text-white" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
                 <polyline points="15 18 9 12 15 6"></polyline>
@@ -142,7 +144,7 @@ const MobileCarouselModal = ({ isOpen, onClose, images, initialIndex = 0 }: Mobi
             <button
               onClick={nextImage}
               className="absolute right-4 md:right-8 top-1/2 -translate-y-1/2 w-10 h-10 md:w-12 md:h-12 flex items-center justify-center bg-white/20 hover:bg-white/30 backdrop-blur-sm transition z-10"
-              aria-label="Next image"
+              aria-label={tc('aria.next_image')}
             >
               <svg className="w-6 h-6 md:w-7 md:h-7 text-white" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
                 <polyline points="9 18 15 12 9 6"></polyline>

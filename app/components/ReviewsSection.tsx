@@ -161,6 +161,7 @@ function ChannelBadge({ channel }: { channel: string }) {
  * paint - no fetch, no loading state.
  */
 const ReviewsSection = ({ title, subtitle, backgroundColor, inline = false, reviews, stats }: ReviewsSectionProps) => {
+  const { t: tc } = useTranslations('common');
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const { t } = useTranslations('homepage');
 
@@ -199,7 +200,7 @@ const ReviewsSection = ({ title, subtitle, backgroundColor, inline = false, revi
           {/* Reviews Carousel */}
           <div className="relative">
             {reviews.length > 2 && (
-              <button onClick={scrollLeft} className="hidden md:flex absolute left-0 top-1/2 -translate-y-1/2 z-10 w-8 h-8 bg-white shadow-md rounded-full items-center justify-center hover:bg-gray-50 transition-colors" aria-label="Scroll left">
+              <button onClick={scrollLeft} className="hidden md:flex absolute left-0 top-1/2 -translate-y-1/2 z-10 w-8 h-8 bg-white shadow-md rounded-full items-center justify-center hover:bg-gray-50 transition-colors" aria-label={tc('aria.scroll_left')}>
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#495D4D" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M15 18l-6-6 6-6" /></svg>
               </button>
             )}
@@ -246,7 +247,7 @@ const ReviewsSection = ({ title, subtitle, backgroundColor, inline = false, revi
               ))}
             </div>
             {reviews.length > 2 && (
-              <button onClick={scrollRight} className="hidden md:flex absolute right-0 top-1/2 -translate-y-1/2 z-10 w-8 h-8 bg-white shadow-md rounded-full items-center justify-center hover:bg-gray-50 transition-colors" aria-label="Scroll right">
+              <button onClick={scrollRight} className="hidden md:flex absolute right-0 top-1/2 -translate-y-1/2 z-10 w-8 h-8 bg-white shadow-md rounded-full items-center justify-center hover:bg-gray-50 transition-colors" aria-label={tc('aria.scroll_right')}>
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#495D4D" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 18l6-6-6-6" /></svg>
               </button>
             )}
@@ -383,7 +384,7 @@ const ReviewsSection = ({ title, subtitle, backgroundColor, inline = false, revi
               <button
                 onClick={scrollLeft}
                 className="hidden md:flex absolute left-6 top-1/2 -translate-y-1/2 z-10 w-10 h-10 bg-white shadow-md rounded-full items-center justify-center hover:bg-gray-50 transition-colors"
-                aria-label="Scroll left"
+                aria-label={tc('aria.scroll_left')}
               >
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#495D4D" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M15 18l-6-6 6-6" />
@@ -457,7 +458,7 @@ const ReviewsSection = ({ title, subtitle, backgroundColor, inline = false, revi
               <button
                 onClick={scrollRight}
                 className="hidden md:flex absolute right-6 top-1/2 -translate-y-1/2 z-10 w-10 h-10 bg-white shadow-md rounded-full items-center justify-center hover:bg-gray-50 transition-colors"
-                aria-label="Scroll right"
+                aria-label={tc('aria.scroll_right')}
               >
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#495D4D" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M9 18l6-6-6-6" />

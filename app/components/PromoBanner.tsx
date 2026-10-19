@@ -12,6 +12,7 @@ interface PromoBannerData {
 }
 
 const PromoBanner = () => {
+  const { t: tc } = useTranslations('common');
   const { locale } = useTranslations();
   const [mounted, setMounted] = useState(false);
   const [banner, setBanner] = useState<PromoBannerData | null>(null);
@@ -104,7 +105,7 @@ const PromoBanner = () => {
         onClick={() => setDismissed(true)}
         className="absolute right-2 top-1/2 -translate-y-1/2 p-1 hover:opacity-70 transition-opacity"
         style={{ color: banner.textColor }}
-        aria-label="Dismiss banner"
+        aria-label={tc('aria.dismiss_banner')}
       >
         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />

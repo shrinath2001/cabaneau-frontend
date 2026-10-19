@@ -12,6 +12,7 @@ interface SleepingAreasSectionProps {
 }
 
 const SleepingAreasSection = ({ locationImage, cabinName, sleepingAreaDescription }: SleepingAreasSectionProps) => {
+  const { t: tc } = useTranslations('common');
   const altOf = useMediaAlt();
   const { t } = useTranslations('cabin');
 
@@ -54,7 +55,7 @@ const SleepingAreasSection = ({ locationImage, cabinName, sleepingAreaDescriptio
             {/* Fullscreen button */}
             <button
               className="absolute top-2 right-2 sm:top-4 sm:right-4 bg-white p-1.5 sm:p-2 shadow-md hover:bg-gray-50 transition"
-              aria-label="View fullscreen"
+              aria-label={tc('aria.view_fullscreen')}
             >
               <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5v-4m0 4h-4m4 0l-5-5" />
@@ -65,7 +66,7 @@ const SleepingAreasSection = ({ locationImage, cabinName, sleepingAreaDescriptio
             <div className="absolute bottom-2 right-2 sm:bottom-4 sm:right-4 bg-white shadow-md overflow-hidden">
               <button
                 className="block p-1.5 sm:p-2 hover:bg-gray-50 transition border-b border-gray-200"
-                aria-label="Zoom in"
+                aria-label={tc('aria.zoom_in')}
               >
                 <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
@@ -73,7 +74,7 @@ const SleepingAreasSection = ({ locationImage, cabinName, sleepingAreaDescriptio
               </button>
               <button
                 className="block p-1.5 sm:p-2 hover:bg-gray-50 transition"
-                aria-label="Zoom out"
+                aria-label={tc('aria.zoom_out')}
               >
                 <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 12H4" />

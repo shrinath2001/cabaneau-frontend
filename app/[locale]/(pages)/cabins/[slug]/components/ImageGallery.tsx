@@ -104,6 +104,7 @@ const HeroVideoTile = ({
 };
 
 const ImageGallery = ({ images, featuredImage, onShowAllClick, onMobileImageClick, heroVideo, heroVideoPoster }: ImageGalleryProps) => {
+  const { t: tc } = useTranslations('common');
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const { t } = useTranslations('cabin');
 
@@ -221,7 +222,7 @@ const ImageGallery = ({ images, featuredImage, onShowAllClick, onMobileImageClic
               prevImage();
             }}
             className="absolute left-3 top-1/2 -translate-y-1/2 w-8 h-8 flex items-center justify-center bg-white/80 hover:bg-white rounded-full transition"
-            aria-label="Previous image"
+            aria-label={tc('aria.previous_image')}
           >
             <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
               <polyline points="15 18 9 12 15 6"></polyline>
@@ -233,7 +234,7 @@ const ImageGallery = ({ images, featuredImage, onShowAllClick, onMobileImageClic
               nextImage();
             }}
             className="absolute right-3 top-1/2 -translate-y-1/2 w-8 h-8 flex items-center justify-center bg-white/80 hover:bg-white rounded-full transition"
-            aria-label="Next image"
+            aria-label={tc('aria.next_image')}
           >
             <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
               <polyline points="9 18 15 12 9 6"></polyline>

@@ -59,6 +59,7 @@ function computePos(anchor: HTMLElement, desiredWidth: number, align: 'left' | '
 }
 
 export default function SearchWidget({ variant = 'page' }: SearchWidgetProps) {
+  const { t: tc } = useTranslations('common');
   const router = useRouter();
   const { locale } = useTranslations();
   const { arrival, departure, adults, children, infants, pets, setDates, clearDates } =
@@ -214,7 +215,7 @@ export default function SearchWidget({ variant = 'page' }: SearchWidgetProps) {
             <button
               type="button"
               onClick={() => clearDates()}
-              aria-label="Clear dates"
+              aria-label={tc('aria.clear_dates')}
               className={`shrink-0 px-1.5 md:px-2 ${clearCls}`}
             >
               <svg className="w-4 h-4 md:w-5 md:h-5" fill="currentColor" viewBox="0 0 20 20">

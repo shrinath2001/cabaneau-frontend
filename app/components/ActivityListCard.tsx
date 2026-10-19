@@ -9,6 +9,8 @@ interface ActivityListCardProps {
 }
 
 const ActivityListCard: React.FC<ActivityListCardProps> = ({ activity }) => {
+  const { t: tc } = useTranslations('common');
+  const { t: tn } = useTranslations('navigation');
   const altOf = useMediaAlt();
   const { t } = useTranslations('activities');
   const price = activity.price !== undefined && activity.price !== null && activity.price !== ''
@@ -103,7 +105,7 @@ const ActivityListCard: React.FC<ActivityListCardProps> = ({ activity }) => {
                   rel="noopener noreferrer"
                   className="px-8 py-2 bg-[#939D92] text-white text-[16px] font-heading font-medium uppercase tracking-wider hover:bg-opacity-90 transition-colors text-center"
                 >
-                  READ MORE
+                  {tc('label.read_more')}
                 </a>
               )}
               {activity.bookNowUrl && (
@@ -113,7 +115,7 @@ const ActivityListCard: React.FC<ActivityListCardProps> = ({ activity }) => {
                   rel="noopener noreferrer"
                   className="px-8 py-2 bg-[#495D4D] text-white text-[16px] font-heading font-medium uppercase tracking-wider hover:bg-opacity-90 transition-colors text-center"
                 >
-                  BOOK NOW
+                  {tn('button.book_now')}
                 </a>
               )}
             </div>

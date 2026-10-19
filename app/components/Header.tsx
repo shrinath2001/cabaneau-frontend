@@ -42,6 +42,7 @@ const Header = ({
   languages?: Language[];
   cabins?: Cabin[];
 }) => {
+  const { t: tc } = useTranslations('common');
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isLanguageOpen, setIsLanguageOpen] = useState(false);
   const [isCabinsOpen, setIsCabinsOpen] = useState(false);
@@ -345,7 +346,7 @@ const Header = ({
               <button
                 className="text-white"
                 onClick={() => setIsMenuOpen(!isMenuOpen)}
-                aria-label="Toggle mobile menu"
+                aria-label={tc('aria.toggle_menu')}
               >
                 <svg
                   className="w-6 h-6"
@@ -422,7 +423,7 @@ const Header = ({
                   <button
                     onClick={() => setIsMenuOpen(false)}
                     className="text-gray-600 hover:text-gray-900"
-                    aria-label="Close menu"
+                    aria-label={tc('button.close')}
                   >
                     <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />

@@ -11,6 +11,7 @@ import {
   isOldFormat,
   replaceTemplatePlaceholders,
 } from './thingsToKnowContent';
+import { useTranslations } from '@/app/providers/TranslationsProvider';
 
 export type PanelType = string;
 
@@ -41,6 +42,7 @@ const ThingsToKnowSlidePanel = ({
   locale,
   thingsToKnow,
 }: ThingsToKnowSlidePanelProps) => {
+  const { t: tc } = useTranslations('common');
   // Prevent body scroll when panel is open
   useEffect(() => {
     if (isOpen) {
@@ -205,7 +207,7 @@ const ThingsToKnowSlidePanel = ({
           <button
             onClick={onClose}
             className="flex items-center text-[#212121] font-jost font-medium text-base"
-            aria-label="Close panel"
+            aria-label={tc('button.close')}
           >
             <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />

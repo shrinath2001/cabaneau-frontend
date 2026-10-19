@@ -3,6 +3,7 @@
 import { EatDrinkItem } from '@/app/types/content';
 import { useEffect } from 'react';
 import { useMediaAlt } from '@/app/providers/MediaAltProvider';
+import { useTranslations } from '@/app/providers/TranslationsProvider';
 
 interface EatDrinkDetailModalProps {
   item: EatDrinkItem | null;
@@ -11,6 +12,7 @@ interface EatDrinkDetailModalProps {
 }
 
 const EatDrinkDetailModal: React.FC<EatDrinkDetailModalProps> = ({ item, isOpen, onClose }) => {
+  const { t: tc } = useTranslations('common');
   const altOf = useMediaAlt();
   useEffect(() => {
     if (isOpen) {
@@ -40,7 +42,7 @@ const EatDrinkDetailModal: React.FC<EatDrinkDetailModalProps> = ({ item, isOpen,
           <button
             onClick={onClose}
             className="w-7 h-7 flex items-center justify-center bg-gray-200 hover:bg-gray-300 transition-colors pointer-events-auto"
-            aria-label="Close modal"
+            aria-label={tc('button.close')}
           >
             <span className="text-gray-600 text-lg font-bold">×</span>
           </button>
@@ -64,14 +66,14 @@ const EatDrinkDetailModal: React.FC<EatDrinkDetailModalProps> = ({ item, isOpen,
           {/* Price */}
           {item.price && (
             <div className="mb-6">
-              <h3 className="text-xs font-logga uppercase text-gray-900 mb-3 tracking-wide">PRICE</h3>
+              <h3 className="text-xs font-logga uppercase text-gray-900 mb-3 tracking-wide">{tc('label.price')}</h3>
               <p className="text-[22px] font-medium font-heading" style={{ color: '#212121' }}>{item.price}</p>
             </div>
           )}
 
           {/* Description Section */}
           <div className="mb-6">
-            <h3 className="text-xs font-logga uppercase text-gray-900 mb-3 tracking-wide">DESCRIPTION</h3>
+            <h3 className="text-xs font-logga uppercase text-gray-900 mb-3 tracking-wide">{tc('label.description')}</h3>
             <p className="text-[18px] font-jost font-light leading-relaxed" style={{ color: '#706C6C' }}>{item.description}</p>
           </div>
 

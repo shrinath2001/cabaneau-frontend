@@ -11,6 +11,7 @@ import {
   isOldFormat,
   replaceTemplatePlaceholders,
 } from './thingsToKnowContent';
+import { useTranslations } from '@/app/providers/TranslationsProvider';
 
 // Fallback text when no check-in date is selected
 const noDateFallback = {
@@ -39,6 +40,7 @@ const ThingsToKnowModal = ({
   locale,
   thingsToKnow,
 }: ThingsToKnowModalProps) => {
+  const { t: tc } = useTranslations('common');
   // Prevent body scroll when modal is open
   useEffect(() => {
     if (isOpen) {
@@ -218,7 +220,7 @@ const ThingsToKnowModal = ({
             <h2 className="font-logga font-semibold text-xl uppercase tracking-wide text-[#212121]">
               {title}
             </h2>
-            <button onClick={onClose} className="p-2" aria-label="Close modal">
+            <button onClick={onClose} className="p-2" aria-label={tc('button.close')}>
               <svg className="w-5 h-5 text-[#222222]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
               </svg>

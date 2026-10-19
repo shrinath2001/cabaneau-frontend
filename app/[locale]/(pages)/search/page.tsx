@@ -378,6 +378,7 @@ function parseSearchParams(params: URLSearchParams): {
 }
 
 function SearchResults() {
+  const { t: tc } = useTranslations('common');
   const searchParams = useSearchParams();
   const [cabins, setCabins] = useState<CabinWithQuote[]>([]);
   const [loading, setLoading] = useState(true);
@@ -599,7 +600,7 @@ function SearchResults() {
         {error && !loading && (
           <div className="text-center py-16">
             <div className="bg-red-50 border border-red-200 text-red-800 px-6 py-4 inline-block">
-              <p className="font-medium">Error loading cabins</p>
+              <p className="font-medium">{tc('label.error_loading_cabins')}</p>
               <p className="text-sm mt-1">{error}</p>
             </div>
           </div>
