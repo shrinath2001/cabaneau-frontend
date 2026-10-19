@@ -101,7 +101,8 @@ const OtherCabinsSection = ({ cabins: rawCabins }: OtherCabinsSectionProps) => {
       ? `2-${cabin.capacity} ${t('detail.persons')}`
       : '',
     shortDescription: cabin.shortDescription,
-    availability: cabin.nextAvailableDate
+    // Available today (or already open): show "Today" instead of today's date
+    availability: cabin.nextAvailableDate && cabin.nextAvailableDate.slice(0, 10) > new Date().toLocaleDateString('en-CA')
       ? new Date(cabin.nextAvailableDate).toLocaleDateString(
           locale === 'en' ? 'en-GB' : locale,
           { day: 'numeric', month: 'short' }

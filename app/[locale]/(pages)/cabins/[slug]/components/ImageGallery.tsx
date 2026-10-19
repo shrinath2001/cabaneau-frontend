@@ -117,7 +117,9 @@ const ImageGallery = ({ images, featuredImage, onShowAllClick, onMobileImageClic
   (images || []).forEach((img) => {
     if (typeof img !== 'string' && img.alt) altByUrl.set(img.url, img.alt);
   });
-  const altFor = (url: string | undefined, fallback: string) => (url && altByUrl.get(url)) || altOf(url, fallback);
+  // Grey placeholder tiles (a cabin without gallery images) are decoration: no alt text
+  const altFor = (url: string | undefined, fallback: string) =>
+    !url || url.startsWith('data:') ? '' : altByUrl.get(url) || altOf(url, fallback);
   const allImages = imageUrls.length > 0 ? [...imageUrls] : [];
   if (featuredImage && !allImages.includes(featuredImage)) {
     allImages.unshift(featuredImage);
