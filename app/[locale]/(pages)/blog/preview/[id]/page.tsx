@@ -110,13 +110,11 @@ export default function BlogPreviewPage() {
       </div>
 
       {/* Hero Section */}
-      <section className="relative h-[300px] md:h-[400px] lg:h-[500px] flex items-center justify-center">
+      <section className="relative h-[300px] md:h-[400px] lg:h-[500px] flex items-center justify-center bg-[#495D4D]">
         <div
           className="absolute inset-0 bg-cover bg-center"
           style={{
-            backgroundImage: post.featuredImage
-              ? `url(${post.featuredImage})`
-              : 'url(/assets/d206536ef067f64b29cad184324fe360bb763e30.jpg)',
+            backgroundImage: post.featuredImage ? `url(${post.featuredImage})` : undefined,
           }}
         >
           <div className="absolute inset-0" style={{ backgroundColor: 'rgba(0, 0, 0, 0.50)' }}></div>

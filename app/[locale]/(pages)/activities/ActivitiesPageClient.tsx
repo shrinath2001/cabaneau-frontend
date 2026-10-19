@@ -104,7 +104,7 @@ export default function ActivitiesPageClient({ activities, categories, pageData 
         <div
           className="absolute inset-0 bg-cover bg-center transition-opacity duration-300"
           style={{
-            backgroundImage: `url(${pageData.heroImage || '/assets/d206536ef067f64b29cad184324fe360bb763e30.jpg'})`,
+            backgroundImage: pageData.heroImage ? `url(${pageData.heroImage})` : undefined,
           }}
         >
           <div className="absolute inset-0" style={{ backgroundColor: 'rgba(0, 0, 0, 0.50)' }}></div>
@@ -166,9 +166,9 @@ export default function ActivitiesPageClient({ activities, categories, pageData 
         className="relative h-[300px] md:h-[400px] flex flex-col items-center justify-center"
       >
         <div
-          className="absolute inset-0 bg-cover bg-center"
+          className="absolute inset-0 bg-cover bg-center bg-[#495D4D]"
           style={{
-            backgroundImage: `url(${pageData.discoverSection?.main?.image || '/assets/breakfast.jpg'})`,
+            backgroundImage: pageData.discoverSection?.main?.image ? `url(${pageData.discoverSection.main.image})` : undefined,
           }}
         >
           <div className="absolute inset-0" style={{ backgroundColor: 'rgba(0, 0, 0, 0.50)' }}></div>

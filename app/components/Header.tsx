@@ -167,7 +167,8 @@ const Header = ({
       style={heroSettings?.backgroundType === 'video' && heroSettings?.backgroundUrl ? {} : {
         backgroundImage: heroSettings?.backgroundUrl
           ? `url(${heroSettings.backgroundUrl})`
-          : "url(/assets/d206536ef067f64b29cad184324fe360bb763e30.jpg)",
+          : undefined,
+        backgroundColor: heroSettings?.backgroundUrl ? undefined : '#495D4D'
       }}
     >
       {heroSettings?.backgroundType === 'video' && heroSettings?.backgroundUrl && (

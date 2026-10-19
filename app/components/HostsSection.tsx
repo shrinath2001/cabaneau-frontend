@@ -33,7 +33,7 @@ const HostsSection = ({
 
   const displayTitle = title;
   const displayNames = config?.names;
-  const displayImage = config?.image || '/assets/d206536ef067f64b29cad184324fe360bb763e30.jpg';
+  const displayImage = config?.image || '';
   const displayDescription = config?.description || '';
   const phone = config?.phone;
   const email = config?.email;
@@ -56,7 +56,8 @@ const HostsSection = ({
           )}
 
           <div className="flex flex-col md:flex-row gap-8 md:gap-12">
-            {/* Image Section */}
+            {/* Image Section - only when an image is set in the CMS */}
+            {displayImage && (
             <div className="flex-shrink-0">
               <div className="relative w-full md:w-[501px] h-[400px] md:h-[569px]">
                 <Image
@@ -68,6 +69,7 @@ const HostsSection = ({
                 />
               </div>
             </div>
+            )}
 
             {/* Text Section */}
             <div className="flex-1 flex flex-col justify-start">

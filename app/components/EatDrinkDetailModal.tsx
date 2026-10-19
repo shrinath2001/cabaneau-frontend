@@ -48,7 +48,8 @@ const EatDrinkDetailModal: React.FC<EatDrinkDetailModalProps> = ({ item, isOpen,
           </button>
         </div>
 
-        {/* Image */}
+        {/* Image - only when one is set */}
+        {(item.detailImage || item.image) && (
         <div className="w-full h-[280px] relative -mt-[52px]">
           <img
             src={item.detailImage || item.image}
@@ -56,6 +57,7 @@ const EatDrinkDetailModal: React.FC<EatDrinkDetailModalProps> = ({ item, isOpen,
             className="w-full h-full object-cover"
           />
         </div>
+        )}
 
         {/* Content */}
         <div className="p-[17px] md:p-8">

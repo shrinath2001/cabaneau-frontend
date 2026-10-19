@@ -22,7 +22,8 @@ const ActivityListCard: React.FC<ActivityListCardProps> = ({ activity }) => {
   return (
     <div className="bg-white border border-black">
       <div className="flex flex-col md:flex-row p-4 sm:p-6">
-        {/* Image Section - 358px × 366px */}
+        {/* Image Section - 358px × 366px, only when an image is set */}
+        {activity.image && (
         <div className="relative w-full md:w-[358px] h-[250px] md:h-[366px] flex-shrink-0 mb-4 md:mb-0 md:mr-4">
           <img
             src={activity.image}
@@ -35,6 +36,7 @@ const ActivityListCard: React.FC<ActivityListCardProps> = ({ activity }) => {
             </span>
           )}
         </div>
+        )}
 
         {/* Content Section */}
         <div className="flex-1 flex flex-col">

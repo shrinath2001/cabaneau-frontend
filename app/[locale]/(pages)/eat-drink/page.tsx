@@ -49,7 +49,7 @@ function transformService(service: APIService): EatDrinkItemWithPrice {
     rawPrice: service.price ? Number(service.price) : undefined,
     rawPriceUnit: service.priceUnit,
     description: service.description || '',
-    image: service.featuredImage || '/assets/dinner.png',
+    image: service.featuredImage || '',
     detailImage: service.images?.[0],
   };
 }

@@ -156,7 +156,7 @@ export default function EatDrinkPageClient({ dining, breakfast, drinks, pageData
         <div
           className="absolute inset-0 bg-cover bg-center transition-opacity duration-300"
           style={{
-            backgroundImage: `url(${pageData.heroImage || '/assets/d206536ef067f64b29cad184324fe360bb763e30.jpg'})`,
+            backgroundImage: pageData.heroImage ? `url(${pageData.heroImage})` : undefined,
           }}
         >
           <div className="absolute inset-0" style={{ backgroundColor: 'rgba(0, 0, 0, 0.50)' }}></div>
@@ -242,11 +242,11 @@ export default function EatDrinkPageClient({ dining, breakfast, drinks, pageData
           const slot1Text = slot1?.text?.[locale] || slot1?.text?.en;
           const slot1BtnText = slot1?.buttonText?.[locale] || slot1?.buttonText?.en;
           const slot1BtnLink = slot1?.buttonLink;
-          const slot1Image = slot1?.image || '/assets/dinner.png';
+          const slot1Image = slot1?.image;
           const slot1FallbackTab: TabType = activeTab === 'dining' ? 'breakfast' : 'dining';
           return (
             <div className="relative h-[300px] md:h-[400px] flex flex-col items-center justify-center">
-              <div className="absolute inset-0 bg-cover bg-center" style={{ backgroundImage: `url(${slot1Image})` }}>
+              <div className="absolute inset-0 bg-cover bg-center bg-[#495D4D]" style={{ backgroundImage: slot1Image ? `url(${slot1Image})` : undefined }}>
                 <div className="absolute inset-0" style={{ backgroundColor: 'rgba(0, 0, 0, 0.50)' }}></div>
               </div>
               {slot1Text && (
@@ -281,11 +281,11 @@ export default function EatDrinkPageClient({ dining, breakfast, drinks, pageData
           const slot2Text = slot2?.text?.[locale] || slot2?.text?.en;
           const slot2BtnText = slot2?.buttonText?.[locale] || slot2?.buttonText?.en;
           const slot2BtnLink = slot2?.buttonLink;
-          const slot2Image = slot2?.image || '/assets/drinks.jpg';
+          const slot2Image = slot2?.image;
           const slot2FallbackTab: TabType = activeTab === 'drinks' ? 'breakfast' : 'drinks';
           return (
             <div className="relative h-[300px] md:h-[400px] flex flex-col items-center justify-center">
-              <div className="absolute inset-0 bg-cover bg-center" style={{ backgroundImage: `url(${slot2Image})` }}>
+              <div className="absolute inset-0 bg-cover bg-center bg-[#495D4D]" style={{ backgroundImage: slot2Image ? `url(${slot2Image})` : undefined }}>
                 <div className="absolute inset-0" style={{ backgroundColor: 'rgba(0, 0, 0, 0.50)' }}></div>
               </div>
               {slot2Text && (

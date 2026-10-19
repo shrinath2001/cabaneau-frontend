@@ -10,6 +10,7 @@ interface Page {
   content: string;
   metaTitle?: string;
   metaDescription?: string;
+  heroImage?: string;
   updatedAt?: string;
 }
 
@@ -79,11 +80,11 @@ export default async function StaticPage({
   return (
     <main>
       {/* Hero Section */}
-      <section className="relative h-[250px] md:h-[300px] flex items-center justify-center">
+      <section className="relative h-[250px] md:h-[300px] flex items-center justify-center bg-[#495D4D]">
         <div
           className="absolute inset-0 bg-cover bg-center"
           style={{
-            backgroundImage: 'url(/assets/d206536ef067f64b29cad184324fe360bb763e30.jpg)',
+            backgroundImage: page.heroImage ? `url(${page.heroImage})` : undefined,
           }}
         >
           <div className="absolute inset-0" style={{ backgroundColor: 'rgba(0, 0, 0, 0.50)' }}></div>

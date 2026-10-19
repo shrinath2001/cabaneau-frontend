@@ -115,11 +115,6 @@ function getCabinImageUrls(cabin: SearchCabin): string[] {
     }
   }
 
-  // Fallback to placeholder if no images
-  if (imageUrls.length === 0) {
-    imageUrls.push('/assets/placeholder.jpg');
-  }
-
   return imageUrls;
 }
 
@@ -606,7 +601,7 @@ function SearchResults() {
                     <div className="flex flex-col gap-3">
                       {smartAlternatives.alternatives.map((alt: any) => {
                         const cabin = alt.cabin;
-                        const imgUrl = cabin.featuredImage || '/assets/placeholder.jpg';
+                        const imgUrl = cabin.featuredImage || '';
                         const dateLocale = localeMap[locale] || 'en-US';
                         const priceDisplay = cabin.basePrice
                           ? Math.round(Number(cabin.basePrice)) + ' €'
@@ -655,14 +650,16 @@ function SearchResults() {
                             className="flex items-center gap-4 p-3 border border-gray-200 hover:border-[#495D4D] hover:shadow-md transition-all duration-200 bg-white group"
                           >
                             {/* Thumbnail */}
-                            <div className="relative w-20 h-20 md:w-24 md:h-24 overflow-hidden flex-shrink-0">
-                              <Image
-                                src={imgUrl}
-                                alt={cabin.name || ''}
-                                fill
-                                style={{ objectFit: 'cover' }}
-                                sizes="96px"
-                              />
+                            <div className="relative w-20 h-20 md:w-24 md:h-24 overflow-hidden flex-shrink-0 bg-gray-100">
+                              {imgUrl && (
+                                <Image
+                                  src={imgUrl}
+                                  alt={cabin.name || ''}
+                                  fill
+                                  style={{ objectFit: 'cover' }}
+                                  sizes="96px"
+                                />
+                              )}
                             </div>
 
                             {/* Info */}

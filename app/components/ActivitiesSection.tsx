@@ -64,7 +64,7 @@ const ActivitiesSection = ({
             .slice(0, 3);
 
           setActivities(nonDiningActivities.map((a: any) => ({
-            imageSrc: a.featuredImage || '/assets/d206536ef067f64b29cad184324fe360bb763e30.jpg',
+            imageSrc: a.featuredImage || '',
             activityName: a.name?.toUpperCase() || '',
             // Deep-link into the matching tab on the activities page.
             link: a.category ? `/activities#${a.category}` : undefined,

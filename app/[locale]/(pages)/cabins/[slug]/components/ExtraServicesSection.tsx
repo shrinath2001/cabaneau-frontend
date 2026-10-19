@@ -19,39 +19,8 @@ interface ExtraServicesSectionProps {
 const ExtraServicesSection = ({ services }: ExtraServicesSectionProps) => {
   const { t } = useTranslations('cabin');
 
-  // Fallback static services if none provided from API
-  const fallbackServices: ServiceInfo[] = [
-    {
-      id: 'breakfast',
-      name: 'BREAKFAST',
-      slug: 'breakfast',
-      category: 'BREAKFAST',
-      featuredImage: '/assets/breakfast.jpg',
-    },
-    {
-      id: 'dinner',
-      name: 'DINNER',
-      slug: 'dinner',
-      category: 'DINING',
-      featuredImage: '/assets/dinner.jpg',
-    },
-    {
-      id: 'bbq',
-      name: 'BBQ PACKAGE',
-      slug: 'bbq',
-      category: 'DINING',
-      featuredImage: '/assets/bbq.jpg',
-    },
-    {
-      id: 'massage',
-      name: 'MASSAGE',
-      slug: 'massage',
-      category: 'WELLNESS',
-      featuredImage: '/assets/massage.jpg',
-    },
-  ];
-
-  const displayServices = services && services.length > 0 ? services : fallbackServices;
+  // Services come from the CMS only (cabin > services)
+  const displayServices = services || [];
 
   // Don't render section if no services
   if (!displayServices || displayServices.length === 0) {
@@ -60,7 +29,7 @@ const ExtraServicesSection = ({ services }: ExtraServicesSectionProps) => {
 
   // Get image URL - handle both absolute and relative paths
   const getImageUrl = (image?: string) => {
-    if (!image) return '/assets/placeholder.jpg';
+    if (!image) return '';
     if (image.startsWith('http')) return image;
     // For relative paths, prepend API URL
     return `${process.env.NEXT_PUBLIC_API_URL || ''}${image}`;
@@ -78,7 +47,7 @@ const ExtraServicesSection = ({ services }: ExtraServicesSectionProps) => {
             <div
               className="w-[70px] h-[70px] sm:w-[80px] sm:h-[80px] lg:w-[100px] lg:h-[100px] bg-gray-200 overflow-hidden mb-2 sm:mb-3 mx-auto"
               style={{
-                backgroundImage: `url(${getImageUrl(service.featuredImage)})`,
+                backgroundImage: service.featuredImage ? `url(${getImageUrl(service.featuredImage)})` : undefined,
                 backgroundSize: 'cover',
                 backgroundPosition: 'center'
               }}

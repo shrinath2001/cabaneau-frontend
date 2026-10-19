@@ -98,7 +98,7 @@ const BlogSidebarCabin = () => {
             slug: cabin.slug || `cabin-${index + 1}`,
             images: cabin.images?.length > 0 ? cabin.images :
                     cabin.featuredImage ? [cabin.featuredImage] :
-                    ['/assets/d206536ef067f64b29cad184324fe360bb763e30.jpg'],
+                    [],
             title: cabin.name || cabin.title || cabin.slug?.replace(/-/g, ' ').toUpperCase() || '',
             rating: cabin.rating ?? 5,
             area: cabin.squareMeters ? `${cabin.squareMeters}m²` : cabin.area || '',

@@ -80,11 +80,6 @@ function getCabinImageUrls(cabin: RawCabin): string[] {
     }
   }
 
-  // Fallback to placeholder if no images
-  if (imageUrls.length === 0) {
-    imageUrls.push('/assets/placeholder.jpg');
-  }
-
   return imageUrls;
 }
 

@@ -305,8 +305,9 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const { locale } = await params;
   const seo = await getHomepageSeo(locale);
 
-  const title = seo.metaTitle || 'Cabaneau - Luxury Cabin Rentals with Private Wellness';
-  const description = seo.metaDescription || 'Experience luxury cabins with private wellness facilities, saunas, and stunning natural surroundings. Perfect for romantic getaways and peaceful retreats.';
+  // CMS only (Site Settings > Homepage SEO): empty stays empty
+  const title = seo.metaTitle || undefined;
+  const description = seo.metaDescription || undefined;
 
   return {
     title,

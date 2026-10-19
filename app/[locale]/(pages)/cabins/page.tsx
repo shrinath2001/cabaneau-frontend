@@ -121,9 +121,7 @@ export default async function CabinsPage() {
         imageUrls.push(url);
       }
     }
-    const displayImages = imageUrls.length > 0
-      ? imageUrls
-      : ['/assets/d206536ef067f64b29cad184324fe360bb763e30.jpg'];
+    const displayImages = imageUrls;
 
     return {
     id: cabin.id || index + 1,

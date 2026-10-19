@@ -130,13 +130,13 @@ const Footer = ({ sections: initialSections }: { sections?: FooterSection[] } = 
   const renderLogoDescription = () => {
     const section = getSection('LOGO_DESCRIPTION');
     const config = section?.config || {};
-    const logoUrl = (config.logoUrl as string) || '/assets/Group 1.png';
+    const logoUrl = (config.logoUrl as string) || '';
     const description = (config.description as string) || '';
     const lines = description.split('\n');
 
     return (
       <div className="w-[240px] flex-shrink-0">
-        <Image src={logoUrl} alt="Cabanéau Logo" width={150} height={50} className="mb-3" />
+        {logoUrl && <Image src={logoUrl} alt="Cabanéau Logo" width={150} height={50} className="mb-3" />}
         <p className="text-[14px] font-jost font-light leading-[1.4] text-white">
           {lines.map((line, i) => (
             <span key={i}>{line}{i < lines.length - 1 && <br/>}</span>
@@ -287,7 +287,7 @@ const Footer = ({ sections: initialSections }: { sections?: FooterSection[] } = 
   const renderBottomBar = () => {
     const section = getSection('BOTTOM_BAR');
     const config = section?.config || {};
-    let copyrightText = (config.copyrightText as string) || '{year} Cabaneau All Rights Reserved.';
+    let copyrightText = (config.copyrightText as string) || '';
     copyrightText = copyrightText.replace('{year}', new Date().getFullYear().toString());
     const links = (config.links as FooterLink[]) || [];
 
@@ -434,9 +434,9 @@ const Footer = ({ sections: initialSections }: { sections?: FooterSection[] } = 
     );
   };
 
-  // If loading or no sections, show static fallback
+  // Footer content comes from the CMS only: nothing to show until it is loaded
   if (isLoading || sections.length === 0) {
-    return <FooterFallback t={t} link={link} />;
+    return null;
   }
 
   return (
@@ -449,15 +449,17 @@ const Footer = ({ sections: initialSections }: { sections?: FooterSection[] } = 
             {(() => {
               const section = getSection('LOGO_DESCRIPTION');
               const config = section?.config || {};
-              const logoUrl = (config.logoUrl as string) || '/assets/Group 1.png';
+              const logoUrl = (config.logoUrl as string) || '';
               const description = (config.description as string) || '';
               const lines = description.split('\n');
 
               return (
                 <>
-                  <div className="flex items-center gap-2 mb-4">
-                    <Image src={logoUrl} alt="Cabanéau Logo" width={150} height={50} className="max-w-full" />
-                  </div>
+                  {logoUrl && (
+                    <div className="flex items-center gap-2 mb-4">
+                      <Image src={logoUrl} alt="Cabanéau Logo" width={150} height={50} className="max-w-full" />
+                    </div>
+                  )}
                   <p className="text-[16px] font-jost font-light leading-relaxed text-gray-100 max-w-[354px]">
                     {lines.map((line, i) => (
                       <span key={i}>{line}{i < lines.length - 1 && <br/>}</span>
@@ -495,102 +497,5 @@ const Footer = ({ sections: initialSections }: { sections?: FooterSection[] } = 
     </footer>
   );
 };
-
-// Static fallback component when API fails or loading
-const FooterFallback = ({ t, link }: { t: (key: string) => string; link: (path: string) => string }) => (
-  <footer className="bg-[#1a1a1a] text-white m-2 md:m-5">
-    <div className="max-w-[1920px] mx-auto px-4 md:px-8 lg:px-20 py-8 md:py-12">
-      {/* Mobile Layout */}
-      <div className="md:hidden">
-        <div className="mb-6">
-          <div className="flex items-center gap-2 mb-4">
-            <Image src="/assets/Group 1.png" alt="Cabanéau Logo" width={150} height={50} className="max-w-full" />
-          </div>
-          <p className="text-[16px] font-jost font-light leading-relaxed text-gray-100 max-w-[354px]">
-            {t('description_line1')}<br/>
-            {t('description_line2')}
-          </p>
-        </div>
-
-        <div className="flex gap-3 mb-6">
-          <Link href={link('/search')} className="bg-[#495D4D] font-heading text-white flex-1 h-[43px] flex items-center justify-center text-sm font-medium tracking-wider hover:bg-[#3d5a3d] transition whitespace-nowrap">
-            {t('button_book_now')}
-          </Link>
-          <Link href={link('/gift-voucher')} className="bg-[#939D92] font-heading text-white flex-1 h-[43px] flex items-center justify-center text-sm font-medium tracking-wider hover:bg-[#7d8d7d] transition whitespace-nowrap">
-            {t('button_gift_voucher')}
-          </Link>
-        </div>
-
-        <div className="grid grid-cols-2 gap-6 mb-8">
-          <div>
-            <p className="font-logga text-[18px] mb-4 text-customyellow">{t('section_our_cabins')}</p>
-            <ul className="space-y-2 font-jost font-light text-[13px] text-gray-100">
-              <li><Link href={link('/cabins')} className="hover:text-white transition">{t('menu_all_cabins')}</Link></li>
-            </ul>
-          </div>
-          <div>
-            <p className="font-logga text-[18px] mb-4 text-customyellow">{t('section_contact_us')}</p>
-            <ul className="space-y-3 font-jost font-light text-[13px] text-gray-100">
-              <li>
-                <a href="mailto:hello@cabaneau.com" className="hover:text-white transition">{t('contact_email')}</a>
-              </li>
-            </ul>
-          </div>
-        </div>
-      </div>
-
-      {/* Desktop Layout */}
-      <div className="hidden md:flex justify-between items-start mb-12">
-        <div className="w-[240px] flex-shrink-0">
-          <Image src="/assets/Group 1.png" alt="Cabanéau Logo" width={150} height={50} className="mb-3" />
-          <p className="text-[13px] font-jost font-light leading-[1.4] text-white">
-            {t('description_line1')}<br/>
-            {t('description_line2')}
-          </p>
-        </div>
-
-        <div className="flex gap-12 lg:gap-16 xl:gap-20">
-          <div>
-            <p className="font-logga text-[16px] mb-3 text-customyellow">{t('section_our_cabins')}</p>
-            <ul className="space-y-1.5 font-jost font-light text-[13px] text-gray-100">
-              <li><Link href={link('/cabins')} className="hover:text-white transition">{t('menu_all_cabins')}</Link></li>
-            </ul>
-          </div>
-          <div>
-            <p className="font-logga text-[16px] mb-3 text-customyellow">{t('section_contact_us')}</p>
-            <ul className="space-y-2 font-jost font-light text-[13px] text-gray-100">
-              <li>
-                <a href="mailto:hello@cabaneau.com" className="hover:text-white transition">{t('contact_email')}</a>
-              </li>
-            </ul>
-          </div>
-        </div>
-
-        <div className="flex flex-col gap-2.5 flex-shrink-0">
-          <Link href={link('/search')} className="bg-[#495D4D] font-heading text-white w-[134px] h-[40px] flex items-center justify-center text-[13px] font-medium tracking-wider hover:bg-[#3d5a3d] transition whitespace-nowrap">
-            {t('button_book_now')}
-          </Link>
-          <Link href={link('/gift-voucher')} className="bg-[#939D92] font-heading text-white w-[134px] h-[40px] flex items-center justify-center text-[13px] font-medium tracking-wider hover:bg-[#7d8d7d] transition whitespace-nowrap">
-            {t('button_gift_voucher')}
-          </Link>
-        </div>
-      </div>
-
-      <div className="pt-6 border-t border-gray-700">
-        <div className="flex flex-col md:flex-row justify-between items-center gap-4">
-          <p className="text-[13px] font-jost font-light text-gray-100">{new Date().getFullYear()} Cabaneau All Rights Reserved.</p>
-          <div className="flex items-center gap-4 md:gap-6">
-            <Link href={link('/terms')} className="text-[13px] font-jost font-light text-gray-100 hover:text-white transition">
-              {t('link_terms')}
-            </Link>
-            <Link href={link('/privacy')} className="text-[13px] font-jost font-light text-gray-100 hover:text-white transition">
-              {t('link_privacy')}
-            </Link>
-          </div>
-        </div>
-      </div>
-    </div>
-  </footer>
-);
 
 export default Footer;
