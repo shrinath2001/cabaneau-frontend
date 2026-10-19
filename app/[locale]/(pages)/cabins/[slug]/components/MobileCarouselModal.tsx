@@ -9,6 +9,8 @@ interface CabinImage {
   thumbnailUrl?: string;
   tag: string;
   order: number;
+  /** Alt text from the CMS media library, in the page language. */
+  alt?: string;
 }
 
 // Helper to extract URL from either string or CabinImage
@@ -30,6 +32,10 @@ const MobileCarouselModal = ({ isOpen, onClose, images, initialIndex = 0 }: Mobi
 
   // Extract URLs for display
   const imageUrls = (images || []).map(getImageUrl);
+  const currentAlt = (() => {
+    const current = (images || [])[currentIndex];
+    return current && typeof current !== 'string' && current.alt ? current.alt : undefined;
+  })();
 
   // Update current index when initial index changes
   useEffect(() => {
@@ -114,7 +120,7 @@ const MobileCarouselModal = ({ isOpen, onClose, images, initialIndex = 0 }: Mobi
       >
         <Image
           src={imageUrls[currentIndex]}
-          alt={`Image ${currentIndex + 1}`}
+          alt={currentAlt || `Image ${currentIndex + 1}`}
           fill
           className="object-contain"
           sizes="100vw"

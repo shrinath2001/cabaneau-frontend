@@ -10,6 +10,8 @@ interface CabinImage {
   thumbnailUrl?: string;
   tag: string;
   order: number;
+  /** Alt text from the CMS media library, in the page language. */
+  alt?: string;
 }
 
 interface ImageGalleryProps {
@@ -106,6 +108,12 @@ const ImageGallery = ({ images, featuredImage, onShowAllClick, onMobileImageClic
 
   // Prepare images - extract URLs for display
   const imageUrls = (images || []).map(getImageUrl);
+  // Alt text set in the CMS media library; falls back to a generic label.
+  const altByUrl = new Map<string, string>();
+  (images || []).forEach((img) => {
+    if (typeof img !== 'string' && img.alt) altByUrl.set(img.url, img.alt);
+  });
+  const altFor = (url: string | undefined, fallback: string) => (url && altByUrl.get(url)) || fallback;
   const allImages = imageUrls.length > 0 ? [...imageUrls] : [];
   if (featuredImage && !allImages.includes(featuredImage)) {
     allImages.unshift(featuredImage);
@@ -197,7 +205,7 @@ const ImageGallery = ({ images, featuredImage, onShowAllClick, onMobileImageClic
         >
           <Image
             src={allImages[currentImageIndex] || displayImages[0]}
-            alt={`Cabin view ${currentImageIndex + 1}`}
+            alt={altFor(allImages[currentImageIndex], `Cabin view ${currentImageIndex + 1}`)}
             fill
             className="object-cover"
             sizes="100vw"
@@ -266,7 +274,7 @@ const ImageGallery = ({ images, featuredImage, onShowAllClick, onMobileImageClic
           >
             <Image
               src={displayImages[0]}
-              alt="Cabin view 1"
+              alt={altFor(displayImages[0], "Cabin view 1")}
               fill
               className="object-cover"
               sizes="60vw"
@@ -283,7 +291,7 @@ const ImageGallery = ({ images, featuredImage, onShowAllClick, onMobileImageClic
           >
             <Image
               src={displayImages[1]}
-              alt="Cabin view 2"
+              alt={altFor(displayImages[1], "Cabin view 2")}
               fill
               className="object-cover"
               sizes="20vw"
@@ -297,7 +305,7 @@ const ImageGallery = ({ images, featuredImage, onShowAllClick, onMobileImageClic
           >
             <Image
               src={displayImages[2]}
-              alt="Cabin view 3"
+              alt={altFor(displayImages[2], "Cabin view 3")}
               fill
               className="object-cover"
               sizes="20vw"
@@ -311,7 +319,7 @@ const ImageGallery = ({ images, featuredImage, onShowAllClick, onMobileImageClic
           >
             <Image
               src={displayImages[3]}
-              alt="Cabin view 4"
+              alt={altFor(displayImages[3], "Cabin view 4")}
               fill
               className="object-cover"
               sizes="20vw"
@@ -325,7 +333,7 @@ const ImageGallery = ({ images, featuredImage, onShowAllClick, onMobileImageClic
           >
             <Image
               src={displayImages[4]}
-              alt="Cabin view 5"
+              alt={altFor(displayImages[4], "Cabin view 5")}
               fill
               className="object-cover"
               sizes="20vw"
