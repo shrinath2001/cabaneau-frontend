@@ -46,7 +46,7 @@ export default function MobileStickyBar({
           </div>
           <button
             onClick={onCheckAvailability}
-            className="bg-[#F49A4A] hover:bg-[#e08a3a] text-white text-sm font-jost font-bold tracking-wide uppercase py-3 px-5 transition"
+            className="bg-[#495D4D] hover:bg-[#3d4d3f] text-white text-sm font-jost font-bold tracking-wide uppercase py-3 px-5 transition"
           >
             {t('check_availability')}
           </button>
@@ -290,7 +290,7 @@ export default function MobileStickyBar({
           </div>
           <button
             onClick={handleReserve}
-            className="bg-[#F49A4A] hover:bg-[#e08a3a] text-white text-sm font-jost font-bold tracking-wide uppercase py-3 px-5 transition"
+            className="bg-[#495D4D] hover:bg-[#3d4d3f] text-white text-sm font-jost font-bold tracking-wide uppercase py-3 px-5 transition"
           >
             {t('book_now')}
           </button>
