@@ -18,7 +18,7 @@ const ActivityCard: React.FC<ActivityCardProps> = ({ imageSrc, activityName, sub
       </div>
       {/* Hover Overlay */}
       <div className="absolute inset-0 bg-[#F49A4A] opacity-0 group-hover:opacity-90 transition-opacity duration-300 flex flex-col items-center justify-center text-center px-6">
-        <h3 className="text-[#F0E8C6] text-2xl md:text-3xl font-logga font-extrabold tracking-wider drop-shadow-lg text-center">{activityName}</h3>
+        <p className="text-[#F0E8C6] text-2xl md:text-3xl font-logga font-extrabold tracking-wider drop-shadow-lg text-center">{activityName}</p>
         {subtitle && (
           <p className="text-[#F0E8C6] text-sm md:text-base font-jost font-light mt-2 max-w-[280px]">{subtitle}</p>
         )}

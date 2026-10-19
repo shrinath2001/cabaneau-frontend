@@ -151,7 +151,7 @@ const Footer = ({ sections: initialSections }: { sections?: FooterSection[] } = 
     const links = (section.config.links as FooterLink[]) || [];
     return (
       <div key={section.id}>
-        <h3 className="font-logga text-[17px] mb-3 text-customyellow">{section.title}</h3>
+        <p className="font-logga text-[17px] mb-3 text-customyellow">{section.title}</p>
         <ul className="space-y-1.5 font-jost font-light text-[14px] text-gray-100">
           {links.map((linkItem, index) => (
             <li key={index}>
@@ -184,7 +184,7 @@ const Footer = ({ sections: initialSections }: { sections?: FooterSection[] } = 
 
     return (
       <div>
-        <h3 className="font-logga text-[17px] mb-3 text-customyellow">{section.title}</h3>
+        <p className="font-logga text-[17px] mb-3 text-customyellow">{section.title}</p>
         <ul className="space-y-2 font-jost font-light text-[14px] text-gray-100">
           {phone && (
             <li className="flex items-start gap-2">
@@ -323,7 +323,7 @@ const Footer = ({ sections: initialSections }: { sections?: FooterSection[] } = 
           const links = (section.config.links as FooterLink[]) || [];
           return (
             <div key={section.id}>
-              <h3 className="font-logga text-[18px] mb-4 text-customyellow">{section.title}</h3>
+              <p className="font-logga text-[18px] mb-4 text-customyellow">{section.title}</p>
               <ul className="space-y-2 font-jost font-light text-[13px] text-gray-100">
                 {links.map((linkItem, index) => (
                   <li key={index}>
@@ -355,7 +355,7 @@ const Footer = ({ sections: initialSections }: { sections?: FooterSection[] } = 
 
               return (
                 <>
-                  <h3 className="font-logga text-[18px] mb-4 text-customyellow">{section.title}</h3>
+                  <p className="font-logga text-[18px] mb-4 text-customyellow">{section.title}</p>
                   <ul className="space-y-3 font-jost font-light text-[13px] text-gray-100">
                     {phone && (
                       <li className="flex items-start gap-2">
@@ -523,13 +523,13 @@ const FooterFallback = ({ t, link }: { t: (key: string) => string; link: (path: 
 
         <div className="grid grid-cols-2 gap-6 mb-8">
           <div>
-            <h3 className="font-logga text-[18px] mb-4 text-customyellow">{t('section_our_cabins')}</h3>
+            <p className="font-logga text-[18px] mb-4 text-customyellow">{t('section_our_cabins')}</p>
             <ul className="space-y-2 font-jost font-light text-[13px] text-gray-100">
               <li><Link href={link('/cabins')} className="hover:text-white transition">{t('menu_all_cabins')}</Link></li>
             </ul>
           </div>
           <div>
-            <h3 className="font-logga text-[18px] mb-4 text-customyellow">{t('section_contact_us')}</h3>
+            <p className="font-logga text-[18px] mb-4 text-customyellow">{t('section_contact_us')}</p>
             <ul className="space-y-3 font-jost font-light text-[13px] text-gray-100">
               <li>
                 <a href="mailto:hello@cabaneau.com" className="hover:text-white transition">{t('contact_email')}</a>
@@ -551,13 +551,13 @@ const FooterFallback = ({ t, link }: { t: (key: string) => string; link: (path: 
 
         <div className="flex gap-12 lg:gap-16 xl:gap-20">
           <div>
-            <h3 className="font-logga text-[16px] mb-3 text-customyellow">{t('section_our_cabins')}</h3>
+            <p className="font-logga text-[16px] mb-3 text-customyellow">{t('section_our_cabins')}</p>
             <ul className="space-y-1.5 font-jost font-light text-[13px] text-gray-100">
               <li><Link href={link('/cabins')} className="hover:text-white transition">{t('menu_all_cabins')}</Link></li>
             </ul>
           </div>
           <div>
-            <h3 className="font-logga text-[16px] mb-3 text-customyellow">{t('section_contact_us')}</h3>
+            <p className="font-logga text-[16px] mb-3 text-customyellow">{t('section_contact_us')}</p>
             <ul className="space-y-2 font-jost font-light text-[13px] text-gray-100">
               <li>
                 <a href="mailto:hello@cabaneau.com" className="hover:text-white transition">{t('contact_email')}</a>

@@ -473,7 +473,7 @@ export default async function CabinDetailPage({
           <div>
             {/* Cabin Details Title */}
             <div className="mb-4 md:mb-6">
-              <h2
+              <p
                 className="font-jost font-medium text-[16px] md:text-[20px] lg:text-[24px] mb-3 md:mb-4 uppercase tracking-wide"
                 style={{ color: "#212121" }}
               >
@@ -488,7 +488,7 @@ export default async function CabinDetailPage({
                     ? t("detail.bathrooms")
                     : t("detail.bathroom")
                 }`}
-              </h2>
+              </p>
 
               {/* Review score - plain anchor to the guest reviews section
                   below (no JS needed to jump there; smooth scroll is a CSS

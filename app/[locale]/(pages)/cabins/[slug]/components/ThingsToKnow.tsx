@@ -89,9 +89,9 @@ const ThingsToKnow = ({ capacity = 6, locale = 'en', thingsToKnow }: ThingsToKno
               <i className={`fa-regular ${row.icon} text-2xl`}></i>
             </div>
             <div className="flex-1 min-w-0">
-              <h3 className="font-jost font-medium text-[#212121] text-base mb-1">
+              <p className="font-jost font-medium text-[#212121] text-base mb-1">
                 {row.title}
-              </h3>
+              </p>
               <div className="space-y-0.5">
                 {row.previewLines.map((line, index) => (
                   <p key={index} className="font-jost font-light text-gray-600 text-sm leading-relaxed truncate">

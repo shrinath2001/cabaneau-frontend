@@ -79,9 +79,11 @@ const HostsSection = ({
               />
               {hasContactDetails && (
                 <div className="mt-6 md:mt-8">
-                  <h4 className="font-heading font-medium text-[16px] md:text-[18px] tracking-widest uppercase mb-4 text-[#495D4D]">
-                    {t('hosts_section.get_in_touch')}
-                  </h4>
+                  {t('hosts_section.get_in_touch') && (
+                    <h4 className="font-heading font-medium text-[16px] md:text-[18px] tracking-widest uppercase mb-4 text-[#495D4D]">
+                      {t('hosts_section.get_in_touch')}
+                    </h4>
+                  )}
                   <ul className="flex flex-col gap-3 font-jost font-light text-[16px] md:text-[18px]">
                     {phone && (
                       <li className="flex items-center gap-3">
