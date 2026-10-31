@@ -80,7 +80,10 @@ const HeroVideoTile = ({
           className="absolute inset-0 flex items-center justify-center group"
         >
           <span
-            className="flex items-center justify-center w-16 h-16 shadow-lg transition-transform group-hover:scale-110"
+            // rounded-full on purpose: the one round button left on the
+            // site. Square, it was no longer recognised as a play button
+            // (client feedback 20 Oct).
+            className="flex items-center justify-center w-16 h-16 rounded-full shadow-lg transition-transform group-hover:scale-110"
             style={{ backgroundColor: '#F49A4A' }}
           >
             <svg className="w-6 h-6 text-white" viewBox="0 0 24 24" fill="currentColor">

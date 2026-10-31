@@ -53,10 +53,13 @@ body {
  * space from the first and last line of every Logga title (down to the cap
  * height and the baseline) so the margins set around a title are exactly the
  * visible space. Browsers without text-box support keep the old look.
+ *
+ * .logga-untrimmed opts a title out, for titles whose spacing was designed
+ * around the font's own blank space (e.g. the cabin name in the booking card).
  */
 @supports (text-box: trim-both cap alphabetic) {
-  :is(h1, h2, h3, h4, h5, h6, p, div).font-logga,
-  :is(h1, h2, h3, h4, h5, h6, p, div).font-custom {
+  :is(h1, h2, h3, h4, h5, h6, p, div).font-logga:not(.logga-untrimmed),
+  :is(h1, h2, h3, h4, h5, h6, p, div).font-custom:not(.logga-untrimmed) {
     text-box: trim-both cap alphabetic;
   }
 }

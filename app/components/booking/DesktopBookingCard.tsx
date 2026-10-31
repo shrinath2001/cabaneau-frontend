@@ -96,9 +96,10 @@ export default function DesktopBookingCard({
       className="bg-white shadow-[0_1px_3px_rgba(0,0,0,0.08),0_8px_24px_-6px_rgba(0,0,0,0.14)] w-full md:w-[380px] md:sticky md:top-24"
       style={{ maxHeight: 'calc(100vh - 100px)' }}
     >
-      {/* Cabin Name Header */}
+      {/* Cabin Name Header - logga-untrimmed keeps the font's own space
+          above the name, which the global Logga trim (19 Oct) had removed */}
       <div className="px-5 py-3 border-b border-gray-300">
-        <h2 className="font-logga font-semibold text-[18px] md:text-[20px] uppercase text-gray-800">
+        <h2 className="font-logga logga-untrimmed font-semibold text-[18px] md:text-[20px] uppercase text-gray-800">
           {cabin.name}
         </h2>
       </div>
@@ -288,7 +289,9 @@ export default function DesktopBookingCard({
               )}
 
               {quote.pricing.discount && (
-                <div className="flex justify-between items-center bg-green-50 -mx-4 px-4 py-2">
+                // No negative margin: the green row lines up with the
+                // edges of the other boxes and buttons in the card.
+                <div className="flex justify-between items-center bg-green-50 px-3 py-2">
                   <span className="text-sm font-jost text-green-700 font-medium">
                     {translateLineItem(quote.pricing.discount.name, t)}
                     {quote.pricing.discount.percentage && (
