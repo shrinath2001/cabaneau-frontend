@@ -3,6 +3,7 @@
 import { useEffect, useRef } from 'react';
 import DesktopGuestSteppers from './DesktopGuestSteppers';
 import type { GuestCounts } from '../search/GuestSteppers';
+import { useTranslations } from '@/app/providers/TranslationsProvider';
 
 type GuestField = keyof GuestCounts;
 
@@ -31,6 +32,8 @@ export default function DesktopGuestsPopover({
   allowDogs,
 }: DesktopGuestsPopoverProps) {
   const popoverRef = useRef<HTMLDivElement>(null);
+  // Same CMS key as the Close button of the dates popover.
+  const { t: tBooking } = useTranslations('booking');
 
   useEffect(() => {
     if (!isOpen) return;
@@ -66,6 +69,18 @@ export default function DesktopGuestsPopover({
         peopleCap={peopleCap}
         allowDogs={allowDogs}
       />
+      {/* Airbnb-style text "Close" at the bottom right (client request,
+          20 Oct): clicking outside or Escape also close, but guests did not
+          find those. */}
+      <div className="flex justify-end mt-3">
+        <button
+          type="button"
+          onClick={onClose}
+          className="font-jost font-medium text-[15px] text-gray-900 underline underline-offset-2 hover:text-[#495D4D] transition-colors"
+        >
+          {tBooking('popover.close')}
+        </button>
+      </div>
     </div>
   );
 }
