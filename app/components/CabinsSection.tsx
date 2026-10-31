@@ -220,10 +220,16 @@ const CabinsSection = ({ cabins: rawCabins }: { cabins: RawCabin[] }) => {
                 // in as a negative margin. On mobile the content column
                 // already equals the viewport width, so the calc is 0 there
                 // with no extra rule needed.
-                <div className="relative mr-[calc((100%-100vw)/2)]">
+                //
+                // overflow-x-auto clips the cards' box-shadow at the rail's
+                // left edge. md:-ml-6 + md:pl-6 moves that edge 24px further
+                // out without moving the cards, so the first card's hover
+                // shadow (~20px) is no longer cut off. Mobile already has the
+                // 10px spacer + gap of room.
+                <div className="relative md:-ml-6 mr-[calc((100%-100vw)/2)]">
                   <div
                     ref={scrollContainerRef}
-                    className={`flex gap-[19.42px] overflow-x-auto no-scrollbar py-8 ${isOverflowing ? '' : 'md:justify-center'}`}
+                    className={`flex gap-[19.42px] overflow-x-auto no-scrollbar py-8 md:pl-6 ${isOverflowing ? '' : 'md:justify-center'}`}
                     style={{ scrollSnapType: 'x mandatory' }}
                   >
                     <div className="flex-shrink-0 w-[10px] md:w-0"></div>

@@ -194,10 +194,14 @@ const BlogSidebarCabin = () => {
               <p className="text-gray-600">{t.loading}</p>
             </div>
           ) : (
-            <div className="relative">
+            // -ml-6 + pl-6 moves the rail's clipping edge 24px into the
+            // column gap without moving the cards, so the first card's left
+            // shadow is not cut off; scroll-pl-6 keeps snap-start from
+            // scrolling a card flush against that edge again.
+            <div className="relative -ml-6">
               <div
                 ref={scrollContainerRef}
-                className="flex gap-[19.42px] overflow-x-auto no-scrollbar py-8"
+                className="flex gap-[19.42px] overflow-x-auto no-scrollbar py-8 pl-6 scroll-pl-6"
                 style={{ scrollSnapType: 'x mandatory' }}
               >
                 {cabins.map((cabin, index) => (

@@ -128,9 +128,15 @@ const OtherCabinsSection = ({ cabins: rawCabins }: OtherCabinsSectionProps) => {
         {t('detail.other_cabins')}
       </h2>
 
+      {/* overflow-x-auto clips the cards' box-shadow at the rail's edge, so
+          the rail is pulled left by a negative margin and padded back by the
+          same amount: the cards stay aligned with the title bar while their
+          left shadow (up to ~20px on hover) has room to render. The matching
+          scroll-padding keeps snap-start from scrolling a card flush against
+          the clipping edge again. */}
       <div
         ref={bleedRef}
-        className="flex gap-4 overflow-x-auto pt-8 pb-6 md:pb-8 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden snap-x"
+        className="flex gap-4 overflow-x-auto -ml-4 pl-4 scroll-pl-4 md:-ml-6 md:pl-6 md:scroll-pl-6 pt-8 pb-6 md:pb-8 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden snap-x"
         style={bleedWidth ? { width: bleedWidth } : undefined}
       >
         {cabins.map((cabin) => (
