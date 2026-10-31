@@ -268,8 +268,14 @@ const ReviewsSection = ({ title, subtitle, backgroundColor, inline = false, revi
           scrollbar-width: none;
         }
       `}</style>
+      {/* Same column as CabinsSection (section md:px-20 > container >
+          max-w-[1390px]), so the left edge of the rating bar and the slider
+          lines up with the cabin cards above, while both bleed out to the
+          right edge of the screen like the cabins carousel does. */}
       <section className="pt-8 md:pt-[55px] pb-4 md:pb-[23px] px-0 md:px-20 bg-white" style={bgStyle}>
-        <div className="max-w-[1390px] mx-auto px-4 md:px-0">
+        <div className="container mx-auto">
+        <div className="max-w-[1390px] mx-auto">
+        <div className="px-4 md:px-0">
           {/* Section Title */}
           <h2 className={`font-logga text-[28px] md:text-[42px] font-semibold md:font-normal text-center ${subtitle ? 'mb-4' : 'mb-8 md:mb-[55px]'}`}>
             {displayTitle}
@@ -328,8 +334,10 @@ const ReviewsSection = ({ title, subtitle, backgroundColor, inline = false, revi
                 </div>
               </div>
 
-              {/* Desktop: horizontal row - full width */}
-              <div className="hidden md:flex justify-center gap-0 bg-white border-y border-gray-100 overflow-hidden">
+              {/* Desktop: horizontal row - full screen width. The content
+                  column is centred, so the same (100% - 100vw) / 2 gutter is
+                  pulled in as a negative margin on both sides. */}
+              <div className="hidden md:flex mx-[calc((100%-100vw)/2)] justify-center gap-0 bg-white border-y border-gray-100 overflow-hidden">
                 {stats.channels.map((ch) => {
                   const config = CHANNEL_CONFIG[ch.channel] || CHANNEL_CONFIG.WEBSITE;
                   return (
@@ -377,13 +385,16 @@ const ReviewsSection = ({ title, subtitle, backgroundColor, inline = false, revi
             </div>
           )}
 
-          {/* Reviews Carousel */}
-          <div className="relative">
+          {/* Reviews Carousel - same layout as the CabinsSection carousel:
+              mr-[calc((100%-100vw)/2)] bleeds the right edge to the screen
+              edge, the left edge stays on the content column, and
+              md:-ml-6 + md:pl-6 leave room for the first card's shadow. */}
+          <div className="relative md:-ml-6 mr-[calc((100%-100vw)/2)]">
             {/* Left Arrow */}
             {reviews.length > 3 && (
               <button
                 onClick={scrollLeft}
-                className="hidden md:flex absolute left-6 top-1/2 -translate-y-1/2 z-10 w-10 h-10 bg-white shadow-md items-center justify-center hover:bg-gray-50 transition-colors"
+                className="hidden md:flex absolute left-0 top-1/2 -translate-y-1/2 z-10 w-10 h-10 bg-white shadow-md items-center justify-center hover:bg-gray-50 transition-colors"
                 aria-label={tc('aria.scroll_left')}
               >
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#495D4D" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -394,15 +405,15 @@ const ReviewsSection = ({ title, subtitle, backgroundColor, inline = false, revi
 
             <div
               ref={scrollContainerRef}
-              className="flex gap-[19.42px] overflow-x-auto reviews-no-scrollbar py-4 md:py-8"
+              className="flex gap-[19.42px] overflow-x-auto reviews-no-scrollbar py-4 md:py-8 md:pl-6"
               style={{ scrollSnapType: 'x mandatory' }}
             >
-              <div className="flex-shrink-0 w-[16px] md:w-[24px]"></div>
-              {reviews.map((review, index) => (
+              <div className="flex-shrink-0 w-[10px] md:w-0"></div>
+              {reviews.map((review) => (
                 <div
                   key={review.id}
-                  className="flex-shrink-0 w-[380px] bg-white p-[15px] shadow-[0_2px_10px_rgba(0,0,0,0.06)] border border-gray-100 transition-all duration-300 hover:-translate-y-2 hover:shadow-[0_12px_36px_rgba(0,0,0,0.14)]"
-                  style={{ scrollSnapAlign: index === 0 ? 'start' : 'center' }}
+                  className="flex-shrink-0 w-[85vw] max-w-[380px] sm:w-[380px] bg-white p-[15px] shadow-[0_2px_10px_rgba(0,0,0,0.06)] border border-gray-100 transition-all duration-300 hover:-translate-y-2 hover:shadow-[0_12px_36px_rgba(0,0,0,0.14)]"
+                  style={{ scrollSnapAlign: 'center' }}
                 >
                   {/* Header: Avatar + Name + Channel */}
                   <div className="flex items-start gap-3 mb-4">
@@ -450,7 +461,7 @@ const ReviewsSection = ({ title, subtitle, backgroundColor, inline = false, revi
                   )}
                 </div>
               ))}
-              <div className="flex-shrink-0 w-[16px] md:w-[24px]"></div>
+              <div className="flex-shrink-0 w-[10px] md:w-0"></div>
             </div>
 
             {/* Right Arrow */}
@@ -466,6 +477,8 @@ const ReviewsSection = ({ title, subtitle, backgroundColor, inline = false, revi
               </button>
             )}
           </div>
+        </div>
+        </div>
       </section>
     </>
   );
