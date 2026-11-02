@@ -73,9 +73,10 @@ const HostsSection = ({
 
             {/* Text Section */}
             <div className="flex-1 flex flex-col justify-start">
-              <h3 className="font-jost text-[24px] md:text-[40px] font-medium mb-4 md:mb-6 tracking-wide">
+              {/* A paragraph, not a heading: styled like one (SEO verification V2) */}
+              <p className="font-jost text-[24px] md:text-[40px] font-medium mb-4 md:mb-6 tracking-wide">
                 {displayNames}
-              </h3>
+              </p>
               <div
                 className="font-jost font-light text-[14px] md:text-[16px] leading-relaxed [&_*]:font-jost! [&_*]:text-inherit! [&_*]:text-[14px]! md:[&_*]:text-[16px]!"
                 style={{ color: '#706C6C' }}

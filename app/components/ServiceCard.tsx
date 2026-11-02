@@ -15,7 +15,7 @@ const ServiceCard: React.FC<ServiceCardProps> = ({ imageSrc, serviceName, subtit
     <div className="relative h-[160px] md:h-[461px] w-full md:w-[410px] overflow-hidden group cursor-pointer bg-[#939D92]">
       {imageSrc && <Image src={imageSrc} alt={altOf(imageSrc, serviceName)} fill style={{ objectFit: 'cover' }} />}
       <div className="absolute inset-0 flex items-end justify-center p-6 bg-gradient-to-t from-black/60 to-transparent group-hover:opacity-0 transition-opacity duration-300">
-        <h3 className="text-white text-xl md:text-2xl font-logga">{serviceName}</h3>
+        <p className="text-white text-xl md:text-2xl font-logga">{serviceName}</p>
       </div>
       {/* Hover Overlay */}
       <div className="absolute inset-0 bg-[#495D4D] opacity-0 group-hover:opacity-90 transition-opacity duration-300 flex flex-col items-center justify-center text-center px-6">
