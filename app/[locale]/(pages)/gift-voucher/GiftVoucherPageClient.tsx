@@ -38,7 +38,6 @@ export default function GiftVoucherPageClient({ content, cabins }: GiftVoucherPa
 
   const [amounts, setAmounts] = useState<number[]>([]);
   const [selectedAmount, setSelectedAmount] = useState<number | null>(null);
-  const [isGift, setIsGift] = useState(false);
 
   const [purchaserName, setPurchaserName] = useState('');
   const [purchaserEmail, setPurchaserEmail] = useState('');
@@ -81,15 +80,17 @@ export default function GiftVoucherPageClient({ content, cabins }: GiftVoucherPa
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           amount: selectedAmount,
-          isGift,
+          // Always a gift: the "for myself" option was removed (client
+          // feedback 2 Nov 2026), the voucher goes to the recipient.
+          isGift: true,
           purchaserName,
           purchaserEmail,
-          recipientName: isGift ? recipientName : undefined,
-          recipientEmail: isGift ? recipientEmail : undefined,
-          personalMessage: isGift && personalMessage ? personalMessage : undefined,
-          occasion: isGift && occasion ? occasion : undefined,
+          recipientName,
+          recipientEmail,
+          personalMessage: personalMessage || undefined,
+          occasion: occasion || undefined,
           scheduledSendAt:
-            isGift && scheduleEnabled && scheduledDate
+            scheduleEnabled && scheduledDate
               ? `${scheduledDate}T09:00:00.000Z`
               : undefined,
         }),
@@ -178,32 +179,6 @@ export default function GiftVoucherPageClient({ content, cabins }: GiftVoucherPa
                     </select>
                   </div>
   
-                  {/* For myself / as a gift */}
-                  <div className="grid grid-cols-2 gap-2">
-                    <button
-                      type="button"
-                      onClick={() => setIsGift(false)}
-                      className={`py-2.5 px-4 border font-jost text-sm transition ${
-                        !isGift
-                          ? 'bg-[#495D4D] border-[#495D4D] text-white'
-                          : 'border-gray-400 text-gray-800 hover:border-[#495D4D]'
-                      }`}
-                    >
-                      {t('for_myself')}
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => setIsGift(true)}
-                      className={`py-2.5 px-4 border font-jost text-sm transition ${
-                        isGift
-                          ? 'bg-[#495D4D] border-[#495D4D] text-white'
-                          : 'border-gray-400 text-gray-800 hover:border-[#495D4D]'
-                      }`}
-                    >
-                      {t('as_a_gift')}
-                    </button>
-                  </div>
-  
                   {/* Purchaser */}
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
@@ -228,89 +203,85 @@ export default function GiftVoucherPageClient({ content, cabins }: GiftVoucherPa
                     </div>
                   </div>
   
-                  {/* Recipient + occasion + message + schedule - gift only */}
-                  {isGift && (
-                    <>
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        <div>
-                          <label className={labelClass}>
-                            {t('recipient_name')}
-                          </label>
-                          <input
-                            type="text"
-                            required={isGift}
-                            value={recipientName}
-                            onChange={(e) => setRecipientName(e.target.value)}
-                            className={inputClass}
-                          />
-                        </div>
-                        <div>
-                          <label className={labelClass}>
-                            {t('recipient_email')}
-                          </label>
-                          <input
-                            type="email"
-                            required={isGift}
-                            value={recipientEmail}
-                            onChange={(e) => setRecipientEmail(e.target.value)}
-                            className={inputClass}
-                          />
-                        </div>
-                      </div>
-  
-                      <div>
-                        <label className={labelClass}>{t('occasion_label')}</label>
-                        <select
-                          value={occasion}
-                          onChange={(e) => setOccasion(e.target.value)}
-                          className={inputClass}
-                        >
-                          <option value="" />
-                          {OCCASIONS.map((o) => (
-                            <option key={o} value={o}>
-                              {t(OCCASION_LABEL_KEY[o])}
-                            </option>
-                          ))}
-                        </select>
-                      </div>
-  
+                  {/* Recipient + occasion + message + schedule */}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div>
                         <label className={labelClass}>
-                          {t('message_label')}
+                          {t('recipient_name')}
                         </label>
-                        <textarea
-                          rows={3}
-                          value={personalMessage}
-                          onChange={(e) => setPersonalMessage(e.target.value)}
-                          placeholder={t('message_placeholder')}
+                        <input
+                          type="text"
+                          required
+                          value={recipientName}
+                          onChange={(e) => setRecipientName(e.target.value)}
                           className={inputClass}
                         />
                       </div>
-  
                       <div>
-                        <label className="flex items-center gap-2 font-jost font-light text-sm text-gray-800 cursor-pointer">
-                          <input
-                            type="checkbox"
-                            checked={scheduleEnabled}
-                            onChange={(e) => setScheduleEnabled(e.target.checked)}
-                            className="w-4 h-4"
-                          />
-                          {t('schedule_toggle')}
+                        <label className={labelClass}>
+                          {t('recipient_email')}
                         </label>
-                        {scheduleEnabled && (
-                          <input
-                            type="date"
-                            required={scheduleEnabled}
-                            min={tomorrowIso()}
-                            value={scheduledDate}
-                            onChange={(e) => setScheduledDate(e.target.value)}
-                            className={`${inputClass} mt-3`}
-                            aria-label={t('schedule_date_label')}
-                          />
-                        )}
+                        <input
+                          type="email"
+                          required
+                          value={recipientEmail}
+                          onChange={(e) => setRecipientEmail(e.target.value)}
+                          className={inputClass}
+                        />
                       </div>
-                    </>
-                  )}
+                    </div>
+  
+                    <div>
+                      <label className={labelClass}>{t('occasion_label')}</label>
+                      <select
+                        value={occasion}
+                        onChange={(e) => setOccasion(e.target.value)}
+                        className={inputClass}
+                      >
+                        <option value="" />
+                        {OCCASIONS.map((o) => (
+                          <option key={o} value={o}>
+                            {t(OCCASION_LABEL_KEY[o])}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+  
+                    <div>
+                      <label className={labelClass}>
+                        {t('message_label')}
+                      </label>
+                      <textarea
+                        rows={3}
+                        value={personalMessage}
+                        onChange={(e) => setPersonalMessage(e.target.value)}
+                        placeholder={t('message_placeholder')}
+                        className={inputClass}
+                      />
+                    </div>
+  
+                    <div>
+                      <label className="flex items-center gap-2 font-jost font-light text-sm text-gray-800 cursor-pointer">
+                        <input
+                          type="checkbox"
+                          checked={scheduleEnabled}
+                          onChange={(e) => setScheduleEnabled(e.target.checked)}
+                          className="w-4 h-4"
+                        />
+                        {t('schedule_toggle')}
+                      </label>
+                      {scheduleEnabled && (
+                        <input
+                          type="date"
+                          required={scheduleEnabled}
+                          min={tomorrowIso()}
+                          value={scheduledDate}
+                          onChange={(e) => setScheduledDate(e.target.value)}
+                          className={`${inputClass} mt-3`}
+                          aria-label={t('schedule_date_label')}
+                        />
+                      )}
+                    </div>
   
                   <div className="font-jost font-light text-sm text-gray-600 space-y-1">
                     <p>{t('validity_note')}</p>
