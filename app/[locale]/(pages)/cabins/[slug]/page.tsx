@@ -449,16 +449,17 @@ export default async function CabinDetailPage({
           imageTags={imageTags}
         />
 
-        {/* Short cabin name - mobile only, an H2 under the gallery. Hidden when
+        {/* Short cabin name - mobile only, a paragraph under the gallery. Hidden when
             switched off in CMS > Site Settings > Cabin Page. */}
         {cabinPageSettings.showMobileSubtitle && (
           <div className="md:hidden px-4 pt-1 pb-2">
-            <h2
+            {/* <p>, not a heading: the page already has its H1 (SEO verification V2) */}
+            <p
               className="font-logga font-medium text-[22px] uppercase tracking-wide"
               style={{ color: "#212121" }}
             >
               {cabin.name?.toUpperCase()}
-            </h2>
+            </p>
           </div>
         )}
 

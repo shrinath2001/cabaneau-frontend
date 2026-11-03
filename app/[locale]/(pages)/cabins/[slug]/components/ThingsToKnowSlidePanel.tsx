@@ -218,9 +218,9 @@ const ThingsToKnowSlidePanel = ({
 
         {/* Scrollable Content */}
         <div className="overflow-y-auto h-[calc(100%-60px)] px-4 pt-6 pb-8">
-          <h2 className="font-logga font-semibold text-2xl uppercase tracking-wide text-[#212121] mb-4">
+          <p className="font-logga font-semibold text-2xl uppercase tracking-wide text-[#212121] mb-4">
             {title}
-          </h2>
+          </p>
           {isCancellation
             ? renderCancellationContent(cancellationPolicyContent)
             : getCMSSection() && renderCMSContent(getCMSSection()!)}

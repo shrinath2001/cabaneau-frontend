@@ -45,10 +45,10 @@ const AreaInfoSection = ({ title, categories }: AreaInfoSectionProps) => {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
         {categories.map((category, index) => (
           <div key={index}>
-            <h3 className="flex items-center gap-2 font-jost font-medium text-[15px] uppercase tracking-wide text-gray-800 mb-3">
+            <p className="flex items-center gap-2 font-jost font-medium text-[15px] uppercase tracking-wide text-gray-800 mb-3">
               <i className={`${iconClass(category.icon)} text-[#F49A4A]`} />
               {category.title}
-            </h3>
+            </p>
             <ul>
               {category.items.map((item, itemIndex) => (
                 <li

@@ -99,9 +99,9 @@ export default function DesktopBookingCard({
       {/* Cabin Name Header - logga-untrimmed keeps the font's own space
           above the name, which the global Logga trim (19 Oct) had removed */}
       <div className="px-5 py-3 border-b border-gray-300">
-        <h2 className="font-logga logga-untrimmed font-semibold text-[18px] md:text-[20px] uppercase text-gray-800">
+        <p className="font-logga logga-untrimmed font-semibold text-[18px] md:text-[20px] uppercase text-gray-800">
           {cabin.name}
-        </h2>
+        </p>
       </div>
 
       <div className="p-4 md:p-5 space-y-3">

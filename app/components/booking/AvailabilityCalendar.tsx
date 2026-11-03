@@ -270,9 +270,9 @@ export default function AvailabilityCalendar({
           uses (Amenities, Extra Services, etc.): same size, weight, tracking,
           padding, and #F1FAF7 background. Was plain text with no background
           and a one-off 22px desktop size. */}
-      <h2 className="font-logga font-semibold text-[18px] md:text-[20px] mb-6 uppercase tracking-wide text-gray-800 px-4 md:px-6 py-[17px]" style={{ backgroundColor: '#F1FAF7' }}>
+      <p className="font-logga font-semibold text-[18px] md:text-[20px] mb-6 uppercase tracking-wide text-gray-800 px-4 md:px-6 py-[17px]" style={{ backgroundColor: '#F1FAF7' }}>
         {heading}
-      </h2>
+      </p>
       <div className="min-h-[20px] mb-4">
         {subtitle ? (
           <p className="text-sm font-light text-gray-500 mt-1">{subtitle}</p>

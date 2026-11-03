@@ -217,9 +217,9 @@ const ThingsToKnowModal = ({
         >
           {/* Header */}
           <div className="flex items-center justify-between px-6 py-4 border-b border-[#EBEBEB]">
-            <h2 className="font-logga font-semibold text-xl uppercase tracking-wide text-[#212121]">
+            <p className="font-logga font-semibold text-xl uppercase tracking-wide text-[#212121]">
               {title}
-            </h2>
+            </p>
             <button onClick={onClose} className="p-2" aria-label={tc('button.close')}>
               <svg className="w-5 h-5 text-[#222222]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
